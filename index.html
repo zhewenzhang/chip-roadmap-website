@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="芯片公司 Roadmap 数据库 - 查询中国和全球芯片公司信息、产品线、ABF载板需求等">
+    <meta name="keywords" content="芯片, 半导体, Roadmap, GPU, AI芯片, 中国芯片, ABF载板">
+    <title>Chip Roadmap Database | 芯片公司 Roadmap 数据库</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🔬</span>
+                    <h1>Chip Roadmap <span class="highlight">Database</span></h1>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="搜索公司、产品、地区..." autocomplete="off">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-card" data-stat="total">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">总公司数</div>
+                </div>
+                <div class="stat-card" data-stat="china">
+                    <div class="stat-icon">🇨🇳</div>
+                    <div class="stat-number" id="chinaCount">0</div>
+                    <div class="stat-label">中国公司</div>
+                </div>
+                <div class="stat-card" data-stat="global">
+                    <div class="stat-icon">🌍</div>
+                    <div class="stat-number" id="globalCount">0</div>
+                    <div class="stat-label">海外公司</div>
+                </div>
+                <div class="stat-card" data-stat="listed">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-number" id="listedCount">0</div>
+                    <div class="stat-label">上市公司</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filters-section">
+        <div class="container">
+            <div class="filters-row">
+                <div class="filter-group">
+                    <label>地区</label>
+                    <select id="regionFilter">
+                        <option value="all">全部地区</option>
+                        <option value="china">中国</option>
+                        <option value="global">海外</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>类型</label>
+                    <select id="categoryFilter">
+                        <option value="all">全部类型</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>ABF需求</label>
+                    <select id="abfFilter">
+                        <option value="all">全部</option>
+                        <option value="高">高</option>
+                        <option value="中">中</option>
+                        <option value="低">低</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>上市状态</label>
+                    <select id="listingFilter">
+                        <option value="all">全部</option>
+                        <option value="listed">上市公司</option>
+                        <option value="unlisted">未上市</option>
+                    </select>
+                </div>
+                <button class="reset-btn" id="resetFilters">重置筛选</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Companies Section -->
+    <section class="companies-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>公司列表</h2>
+                <span class="results-count" id="resultsCount">显示 0 家公司</span>
+            </div>
+            <div class="companies-grid" id="companiesGrid">
+                <!-- Companies will be loaded here -->
+            </div>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>加载数据中...</p>
+            </div>
+            <div class="no-results" id="noResults" style="display: none;">
+                <span class="no-results-icon">🔍</span>
+                <p>没有找到匹配的公司</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Company Detail Modal -->
+    <div class="modal" id="companyModal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">×</button>
+            <div class="modal-header">
+                <h2 id="modalCompanyName">公司名称</h2>
+                <span class="modal-region" id="modalRegion">地区</span>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Chip Roadmap Database © 2026 | 数据来源: 公开信息、财报、官网</p>
+            <p class="footer-note">本站数据仅供参考，不构成投资建议</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
