@@ -1,436 +1,512 @@
-// ==================== //
-// Data & State
-// ==================== //
-let allCompanies = [];
-let filteredCompanies = [];
-let categories = new Set();
+/**
+ * 芯片产业分析平台 - 功能逻辑
+ */
 
-// ==================== //
-// DOM Elements
-// ==================== //
-const searchInput = document.getElementById('searchInput');
-const regionFilter = document.getElementById('regionFilter');
-const categoryFilter = document.getElementById('categoryFilter');
-const abfFilter = document.getElementById('abfFilter');
-const listingFilter = document.getElementById('listingFilter');
-const resetFiltersBtn = document.getElementById('resetFilters');
-const companiesGrid = document.getElementById('companiesGrid');
-const loadingEl = document.getElementById('loading');
-const noResultsEl = document.getElementById('noResults');
-const resultsCountEl = document.getElementById('resultsCount');
-const modal = document.getElementById('companyModal');
-const modalClose = document.getElementById('modalClose');
-const modalOverlay = modal.querySelector('.modal-overlay');
+// ============== 全局数据 ==============
+let companiesData = {};
+let roadmapsData = {};
+let marketData = {};
+let insightsData = {};
 
-// Stats elements
-const totalCountEl = document.getElementById('totalCount');
-const chinaCountEl = document.getElementById('chinaCount');
-const globalCountEl = document.getElementById('globalCount');
-const listedCountEl = document.getElementById('listedCount');
+// ============== 初始化 ==============
+document.addEventListener('DOMContentLoaded', function() {
+    loadAllData();
+    initSearch();
+    initFilters();
+});
 
-// ==================== //
-// Data Loading
-// ==================== //
-async function loadData() {
+// ============== 数据加载 ==============
+async function loadAllData() {
     try {
-        showLoading(true);
-        
-        const [chinaRes, globalRes] = await Promise.all([
-            fetch('data/china_companies.json'),
-            fetch('data/global_companies.json')
+        // 并行加载所有 JSON 数据
+        const [companiesRes, roadmapsRes, marketRes, insightsRes] = await Promise.all([
+            fetch('data/companies.json'),
+            fetch('data/roadmaps.json'),
+            fetch('data/market.json'),
+            fetch('data/insights.json')
         ]);
-        
-        const chinaData = await chinaRes.json();
-        const globalData = await globalRes.json();
-        
-        // Normalize data structure
-        const normalizedChina = chinaData.map(c => normalizeCompany(c, 'china'));
-        const normalizedGlobal = globalData.map(c => normalizeCompany(c, 'global'));
-        
-        allCompanies = [...normalizedChina, ...normalizedGlobal];
-        
-        // Extract categories
-        allCompanies.forEach(c => {
-            if (c.category) categories.add(c.category);
+
+        companiesData = await companiesRes.json();
+        roadmapsData = await roadmapsRes.json();
+        marketData = await marketRes.json();
+        insightsData = await insightsRes.json();
+
+        console.log('数据加载完成:', {
+            companies: Object.keys(companiesData).length,
+            roadmaps: Object.keys(roadmapsData).length
         });
-        
-        populateCategoryFilter();
-        updateStats();
-        filterAndRender();
-        
+
+        // 根据页面类型初始化特定功能
+        initPageSpecific();
     } catch (error) {
-        console.error('Error loading data:', error);
-        showError('数据加载失败，请刷新页面重试');
-    } finally {
-        showLoading(false);
+        console.error('数据加载失败:', error);
+        showNotification('数据加载失败，请刷新页面重试', 'error');
     }
 }
 
-function normalizeCompany(company, region) {
-    // Handle China companies
-    if (region === 'china') {
-        return {
-            id: generateId(),
-            name: company.company_cn || company.company_name || '',
-            nameEn: company.company_en || '',
-            region: 'china',
-            category: company.category || company.type || '',
-            products: company.main_products || '',
-            stockCode: company.stock_code || '',
-            establishmentYear: company.establishment_year || '',
-            headquarters: company.headquarters || '',
-            benchmark: company.benchmark_company || '',
-            benchmarkProducts: company.benchmark_products || '',
-            abfRelevance: company.abf_relevance || '',
-            marketPosition: company.market_position || '',
-            listingStatus: company.listing_status || '',
-            dataSource: company.data_source || ''
-        };
+// ============== 页面特定初始化 ==============
+function initPageSpecific() {
+    const path = window.location.pathname;
+    
+    if (path.includes('roadmap.html')) {
+        initRoadmapPage();
+    } else if (path.includes('companies.html')) {
+        initCompaniesPage();
+    } else if (path.includes('insights.html')) {
+        initInsightsPage();
+    } else {
+        initHomePage();
     }
-    
-    // Handle Global companies
-    return {
-        id: generateId(),
-        name: company.company_name || '',
-        nameEn: company.company_name || '',
-        region: 'global',
-        category: company.type || '',
-        products: company.main_products || '',
-        country: company.country || '',
-        timeline: company.timeline || '',
-        benchmark: company.benchmark_products || '',
-        abfRelevance: company.abf_demand || '',
-        marketPosition: company.market_position || '',
-        dataSource: company.data_source || ''
-    };
 }
 
-function generateId() {
-    return Math.random().toString(36).substr(2, 9);
+// ============== 首页初始化 ==============
+function initHomePage() {
+    // 首页数据由 HTML 静态渲染
+    console.log('首页初始化完成');
 }
 
-// ==================== //
-// Filtering
-// ==================== //
-function filterAndRender() {
-    const searchTerm = searchInput.value.toLowerCase().trim();
-    const regionValue = regionFilter.value;
-    const categoryValue = categoryFilter.value;
-    const abfValue = abfFilter.value;
-    const listingValue = listingFilter.value;
+// ============== Roadmap 页面初始化 ==============
+function initRoadmapPage() {
+    renderTimeline();
+}
+
+function renderTimeline(filterCompany = null) {
+    const container = document.getElementById('timelineContainer');
+    if (!container) return;
+
+    let timelineHTML = '<div class="timeline">';
     
-    filteredCompanies = allCompanies.filter(company => {
-        // Search filter
+    // 收集所有 roadmap 数据
+    const allTimelines = [];
+    
+    Object.entries(roadmapsData).forEach(([companyId, data]) => {
+        if (!data.timeline) return;
+        
+        if (filterCompany && companyId !== filterCompany) return;
+        
+        data.timeline.forEach(item => {
+            allTimelines.push({
+                company: data.company,
+                companyId: companyId,
+                ...item
+            });
+        });
+    });
+
+    // 按年份和季度排序
+    allTimelines.sort((a, b) => {
+        if (a.year !== b.year) return b.year - a.year;
+        return (b.quarter || 'Q4').localeCompare(a.quarter || 'Q4');
+    });
+
+    // 渲染时间线项目
+    allTimelines.forEach((item, index) => {
+        const companyClass = item.companyId.toLowerCase();
+        
+        timelineHTML += `
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <span class="timeline-year">${item.year} ${item.quarter || ''}</span>
+                    <span class="timeline-company ${companyClass}">${item.company}</span>
+                    <h3 class="timeline-product">${item.product}</h3>
+                    ${item.specs ? `<p class="timeline-specs">${item.specs}</p>` : ''}
+                    ${item.process ? `<p class="timeline-process">${item.process}</p>` : ''}
+                </div>
+            </div>
+        `;
+    });
+
+    timelineHTML += '</div>';
+    container.innerHTML = timelineHTML || '<p style="text-align:center;color:var(--text-muted);">暂无数据</p>';
+}
+
+// ============== 公司页面初始化 ==============
+function initCompaniesPage() {
+    renderCompaniesGrid();
+}
+
+function renderCompaniesGrid(filter = 'all', searchTerm = '') {
+    const container = document.getElementById('companiesGrid');
+    if (!container) return;
+
+    let companiesHTML = '';
+    const companies = Object.values(companiesData);
+    
+    // 按筛选条件过滤
+    const filteredCompanies = companies.filter(company => {
+        // 区域筛选
+        if (filter !== 'all') {
+            if (filter === 'china' && company.region !== 'China') return false;
+            if (filter === 'overseas' && company.region === 'China') return false;
+        }
+        
+        // 搜索过滤
         if (searchTerm) {
-            const searchFields = [
-                company.name,
-                company.nameEn,
-                company.products,
-                company.headquarters,
-                company.country,
-                company.category,
-                company.benchmark
-            ].filter(Boolean).join(' ').toLowerCase();
-            
-            if (!searchFields.includes(searchTerm)) {
-                return false;
-            }
-        }
-        
-        // Region filter
-        if (regionValue !== 'all' && company.region !== regionValue) {
-            return false;
-        }
-        
-        // Category filter
-        if (categoryValue !== 'all' && company.category !== categoryValue) {
-            return false;
-        }
-        
-        // ABF filter
-        if (abfValue !== 'all') {
-            const abf = company.abfRelevance || '';
-            if (!abf.includes(abfValue)) {
-                return false;
-            }
-        }
-        
-        // Listing filter
-        if (listingValue !== 'all') {
-            const isListed = (company.listingStatus || '').includes('上市公司');
-            if (listingValue === 'listed' && !isListed) return false;
-            if (listingValue === 'unlisted' && isListed) return false;
+            const term = searchTerm.toLowerCase();
+            const nameMatch = (company.name_en || '').toLowerCase().includes(term) ||
+                             (company.name_cn || '').toLowerCase().includes(term);
+            const productMatch = (company.products || []).some(p => 
+                p.toLowerCase().includes(term)
+            );
+            if (!nameMatch && !productMatch) return false;
         }
         
         return true;
     });
-    
-    renderCompanies(searchTerm);
-    updateResultsCount();
-}
 
-// ==================== //
-// Rendering
-// ==================== //
-function renderCompanies(searchTerm = '') {
-    companiesGrid.innerHTML = '';
-    
-    if (filteredCompanies.length === 0) {
-        noResultsEl.style.display = 'block';
-        return;
-    }
-    
-    noResultsEl.style.display = 'none';
-    
+    // 渲染公司卡片
     filteredCompanies.forEach(company => {
-        const card = createCompanyCard(company, searchTerm);
-        companiesGrid.appendChild(card);
+        const regionClass = (company.region || '').toLowerCase();
+        const productsHTML = (company.products || []).slice(0, 4).map(p => 
+            `<span class="product-tag">${p.trim()}</span>`
+        ).join('');
+
+        companiesHTML += `
+            <div class="company-card" data-company="${company.id}">
+                <div class="company-card-header">
+                    <div>
+                        <h3 class="company-name">${company.name_en || company.name_cn || company.id}</h3>
+                        ${company.name_cn ? `<p style="font-size:12px;color:var(--text-muted);">${company.name_cn}</p>` : ''}
+                    </div>
+                    <span class="company-region">${company.region || company.country || '未知'}</span>
+                </div>
+                <p class="company-category">${company.category || '半导体公司'}</p>
+                <p class="company-description">${company.description || company.market_position || '暂无描述'}</p>
+                <div class="company-metrics">
+                    <div class="metric">
+                        <span class="metric-label">ABF需求</span>
+                        <span class="metric-value">${company.abf_demand || '未知'}</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">市场地位</span>
+                        <span class="metric-value">${company.market_position ? company.market_position.substring(0, 15) + '...' : '未知'}</span>
+                    </div>
+                </div>
+                <div class="company-products">
+                    ${productsHTML || '<span class="product-tag">暂无产品</span>'}
+                </div>
+            </div>
+        `;
+    });
+
+    container.innerHTML = companiesHTML || '<p style="text-align:center;color:var(--text-muted);">暂无匹配的公司数据</p>';
+    
+    // 添加点击事件
+    container.querySelectorAll('.company-card').forEach(card => {
+        card.addEventListener('click', () => showCompanyDetail(card.dataset.company));
     });
 }
 
-function createCompanyCard(company, searchTerm = '') {
-    const card = document.createElement('div');
-    card.className = 'company-card';
-    card.dataset.id = company.id;
-    
-    const abfClass = getAbfClass(company.abfRelevance);
-    const isListed = (company.listingStatus || '').includes('上市公司');
-    
-    const displayName = highlightText(company.name, searchTerm);
-    const displayNameEn = highlightText(company.nameEn, searchTerm);
-    const displayProducts = highlightText(company.products, searchTerm);
-    
-    card.innerHTML = `
-        <div class="card-header">
-            <div>
-                <div class="company-name">${displayName}</div>
-                ${company.nameEn && company.nameEn !== company.name ? 
-                    `<div class="company-name-en">${displayNameEn}</div>` : ''}
+function showCompanyDetail(companyId) {
+    const company = companiesData[companyId];
+    if (!company) return;
+
+    // 创建模态框
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <button class="modal-close">&times;</button>
+            <h2>${company.name_en || company.name_cn || companyId}</h2>
+            ${company.name_cn ? `<p style="color:var(--text-muted);">${company.name_cn}</p>` : ''}
+            
+            <div class="modal-section">
+                <h4>基本信息</h4>
+                <p><strong>国家/地区:</strong> ${company.country || '未知'}</p>
+                <p><strong>总部:</strong> ${company.headquarters || '未知'}</p>
+                <p><strong>类型:</strong> ${company.category || '未知'}</p>
+                <p><strong>市场地位:</strong> ${company.market_position || '未知'}</p>
             </div>
-            <span class="region-badge ${company.region}">
-                ${company.region === 'china' ? '中国' : company.country || '海外'}
-            </span>
-        </div>
-        <div class="card-body">
-            <div class="card-row">
-                <span class="label">类型</span>
-                <span class="value">${company.category || '-'}</span>
-            </div>
-            <div class="card-row">
-                <span class="label">产品</span>
-                <span class="value">${displayProducts || '-'}</span>
-            </div>
-            ${company.headquarters ? `
-            <div class="card-row">
-                <span class="label">总部</span>
-                <span class="value">${company.headquarters}</span>
-            </div>
+            
+            ${company.products && company.products.length > 0 ? `
+                <div class="modal-section">
+                    <h4>主要产品</h4>
+                    <div class="company-products">
+                        ${company.products.map(p => `<span class="product-tag">${p.trim()}</span>`).join('')}
+                    </div>
+                </div>
             ` : ''}
-            ${company.stockCode && company.stockCode !== '未上市' ? `
-            <div class="card-row">
-                <span class="label">股票代码</span>
-                <span class="value highlight">${company.stockCode}</span>
-            </div>
+            
+            ${company.roadmap && company.roadmap.length > 0 ? `
+                <div class="modal-section">
+                    <h4>Roadmap</h4>
+                    <ul style="list-style:none;padding:0;">
+                        ${company.roadmap.map(r => `
+                            <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">
+                                <strong>${r.year}</strong> ${r.quarter || ''} - ${r.product}
+                                <br><span style="color:var(--text-muted);font-size:12px;">${r.process || ''}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
             ` : ''}
-        </div>
-        <div class="card-footer">
-            ${company.abfRelevance ? `<span class="tag ${abfClass}">ABF: ${extractAbfLevel(company.abfRelevance)}</span>` : ''}
-            ${isListed ? '<span class="tag listed">上市公司</span>' : ''}
-            ${company.category ? `<span class="tag">${company.category}</span>` : ''}
+            
+            ${company.analysis && Object.keys(company.analysis).length > 0 ? `
+                <div class="modal-section">
+                    <h4>SWOT 分析</h4>
+                    <p><strong>优势:</strong> ${company.analysis.strengths?.join(', ') || '暂无'}</p>
+                    <p><strong>劣势:</strong> ${company.analysis.weaknesses?.join(', ') || '暂无'}</p>
+                    <p><strong>机会:</strong> ${company.analysis.opportunities?.join(', ') || '暂无'}</p>
+                    <p><strong>威胁:</strong> ${company.analysis.threats?.join(', ') || '暂无'}</p>
+                </div>
+            ` : ''}
         </div>
     `;
-    
-    card.addEventListener('click', () => openModal(company));
-    
-    return card;
+
+    document.body.appendChild(modal);
+
+    // 关闭模态框
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.remove();
+    });
+    modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
 }
 
-function highlightText(text, searchTerm) {
-    if (!text || !searchTerm) return text || '';
-    
-    const regex = new RegExp(`(${escapeRegex(searchTerm)})`, 'gi');
-    return text.replace(regex, '<span class="highlight-text">$1</span>');
+// ============== 洞察页面初始化 ==============
+function initInsightsPage() {
+    renderTrends();
+    renderTopPlayers();
+    renderABFAnalysis();
+    renderKeyInsights();
 }
 
-function escapeRegex(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
+function renderTrends() {
+    const container = document.getElementById('trendsContainer');
+    if (!container || !insightsData.trends) return;
 
-function getAbfClass(abfRelevance) {
-    if (!abfRelevance) return '';
-    if (abfRelevance.includes('高')) return 'abf-high';
-    if (abfRelevance.includes('中')) return 'abf-medium';
-    return 'abf-low';
-}
-
-function extractAbfLevel(abfRelevance) {
-    if (!abfRelevance) return '-';
-    if (abfRelevance.includes('高')) return '高';
-    if (abfRelevance.includes('中')) return '中';
-    if (abfRelevance.includes('低')) return '低';
-    return abfRelevance;
-}
-
-// ==================== //
-// Modal
-// ==================== //
-function openModal(company) {
-    const modalCompanyName = document.getElementById('modalCompanyName');
-    const modalRegion = document.getElementById('modalRegion');
-    const modalBody = document.getElementById('modalBody');
-    
-    modalCompanyName.textContent = `${company.name}${company.nameEn && company.nameEn !== company.name ? ` (${company.nameEn})` : ''}`;
-    
-    modalRegion.textContent = company.region === 'china' ? '中国' : (company.country || '海外');
-    modalRegion.className = `modal-region region-badge ${company.region}`;
-    
-    const details = [];
-    
-    if (company.category) details.push({ label: '类型', value: company.category });
-    if (company.products) details.push({ label: '主要产品', value: company.products });
-    if (company.headquarters) details.push({ label: '总部', value: company.headquarters });
-    if (company.country && company.region === 'global') details.push({ label: '国家', value: company.country });
-    if (company.establishmentYear) details.push({ label: '成立时间', value: company.establishmentYear });
-    if (company.stockCode && company.stockCode !== '未上市') details.push({ label: '股票代码', value: company.stockCode, highlight: true });
-    if (company.listingStatus) details.push({ label: '上市状态', value: company.listingStatus });
-    if (company.benchmark) details.push({ label: '对标公司', value: company.benchmark });
-    if (company.benchmarkProducts) details.push({ label: '对标产品', value: company.benchmarkProducts });
-    if (company.abfRelevance) details.push({ label: 'ABF相关度', value: company.abfRelevance });
-    if (company.marketPosition) details.push({ label: '市场地位', value: company.marketPosition });
-    if (company.timeline) details.push({ label: '时间线', value: company.timeline });
-    if (company.dataSource) details.push({ label: '数据来源', value: company.dataSource });
-    
-    modalBody.innerHTML = details.map(d => `
-        <div class="detail-row">
-            <span class="detail-label">${d.label}</span>
-            <span class="detail-value ${d.highlight ? 'highlight' : ''}">${d.value}</span>
+    container.innerHTML = insightsData.trends.map(trend => `
+        <div class="trend-card">
+            <h3>${trend.title}</h3>
+            <p>${trend.description}</p>
+            <span class="insight-impact ${trend.impact?.toLowerCase() || 'medium'}">${trend.impact || '中'} 影响</span>
+            <div class="trend-companies" style="margin-top:16px;">
+                ${trend.companies?.map(c => `<span class="company-chip">${c}</span>`).join('') || ''}
+            </div>
         </div>
     `).join('');
+}
+
+function renderTopPlayers() {
+    const container = document.getElementById('topPlayersContainer');
+    if (!container || !insightsData.top_players) return;
+
+    container.innerHTML = insightsData.top_players.map((player, index) => `
+        <div class="player-card">
+            <div class="player-header">
+                <h3 class="player-name">${index + 1}. ${player.name}</h3>
+                <span class="player-share">${player.market_share}</span>
+            </div>
+            <div class="player-section">
+                <h4>核心优势</h4>
+                <p>${player.strength}</p>
+            </div>
+            <div class="player-section">
+                <h4>主要弱点</h4>
+                <p>${player.weakness || '暂无'}</p>
+            </div>
+            <div class="player-section">
+                <h4>前景展望</h4>
+                <p class="player-outlook">${player.outlook}</p>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderABFAnalysis() {
+    const container = document.getElementById('abfAnalysisContainer');
+    if (!container || !insightsData.abf_demand_analysis) return;
+
+    const analysis = insightsData.abf_demand_analysis;
     
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    container.innerHTML = `
+        <div class="abf-tier high">
+            <h3>高需求</h3>
+            ${Object.entries(analysis.high_demand || {}).map(([name, data]) => `
+                <div class="abf-item">
+                    <h4>${name}</h4>
+                    <p>ABF层数: ${data.abf_layers}</p>
+                    <p>价格区间: ${data.price_range}</p>
+                </div>
+            `).join('')}
+        </div>
+        <div class="abf-tier medium">
+            <h3>中需求</h3>
+            ${Object.entries(analysis.medium_demand || {}).map(([name, data]) => `
+                <div class="abf-item">
+                    <h4>${name}</h4>
+                    <p>ABF层数: ${data.abf_layers}</p>
+                    <p>价格区间: ${data.price_range}</p>
+                </div>
+            `).join('')}
+        </div>
+        <div class="abf-tier low">
+            <h3>低需求</h3>
+            ${Object.entries(analysis.low_demand || {}).map(([name, data]) => `
+                <div class="abf-item">
+                    <h4>${name}</h4>
+                    <p>ABF层数: ${data.abf_layers}</p>
+                    <p>价格区间: ${data.price_range}</p>
+                </div>
+            `).join('')}
+        </div>
+    `;
 }
 
-function closeModal() {
-    modal.classList.remove('active');
-    document.body.style.overflow = '';
+function renderKeyInsights() {
+    const container = document.getElementById('keyInsightsList');
+    if (!container || !insightsData.key_insights) return;
+
+    container.innerHTML = insightsData.key_insights.map(insight => `
+        <li>${insight}</li>
+    `).join('');
 }
 
-// ==================== //
-// Stats & UI Updates
-// ==================== //
-function updateStats() {
-    const chinaCount = allCompanies.filter(c => c.region === 'china').length;
-    const globalCount = allCompanies.filter(c => c.region === 'global').length;
-    const listedCount = allCompanies.filter(c => (c.listingStatus || '').includes('上市公司')).length;
-    
-    animateNumber(totalCountEl, allCompanies.length);
-    animateNumber(chinaCountEl, chinaCount);
-    animateNumber(globalCountEl, globalCount);
-    animateNumber(listedCountEl, listedCount);
-}
+// ============== 搜索功能 ==============
+function initSearch() {
+    const searchInput = document.getElementById('globalSearch');
+    if (!searchInput) return;
 
-function animateNumber(element, target) {
-    const duration = 1000;
-    const start = parseInt(element.textContent) || 0;
-    const increment = (target - start) / (duration / 16);
-    let current = start;
-    
-    const animate = () => {
-        current += increment;
-        if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
-            element.textContent = target;
-        } else {
-            element.textContent = Math.floor(current);
-            requestAnimationFrame(animate);
-        }
-    };
-    
-    animate();
-}
-
-function updateResultsCount() {
-    resultsCountEl.textContent = `显示 ${filteredCompanies.length} 家公司`;
-}
-
-function populateCategoryFilter() {
-    const sortedCategories = Array.from(categories).sort();
-    sortedCategories.forEach(cat => {
-        const option = document.createElement('option');
-        option.value = cat;
-        option.textContent = cat;
-        categoryFilter.appendChild(option);
+    let debounceTimer;
+    searchInput.addEventListener('input', (e) => {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            const term = e.target.value.trim();
+            
+            // 如果在公司页面，实时过滤
+            if (window.location.pathname.includes('companies.html')) {
+                const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
+                renderCompaniesGrid(activeFilter, term);
+            }
+        }, 300);
     });
 }
 
-function showLoading(show) {
-    loadingEl.style.display = show ? 'block' : 'none';
-    companiesGrid.style.display = show ? 'none' : 'grid';
-}
-
-function showError(message) {
-    companiesGrid.innerHTML = `<div class="no-results"><p>${message}</p></div>`;
-}
-
-function resetFilters() {
-    searchInput.value = '';
-    regionFilter.value = 'all';
-    categoryFilter.value = 'all';
-    abfFilter.value = 'all';
-    listingFilter.value = 'all';
-    filterAndRender();
-}
-
-// ==================== //
-// Event Listeners
-// ==================== //
-searchInput.addEventListener('input', debounce(filterAndRender, 300));
-regionFilter.addEventListener('change', filterAndRender);
-categoryFilter.addEventListener('change', filterAndRender);
-abfFilter.addEventListener('change', filterAndRender);
-listingFilter.addEventListener('change', filterAndRender);
-resetFiltersBtn.addEventListener('click', resetFilters);
-modalClose.addEventListener('click', closeModal);
-modalOverlay.addEventListener('click', closeModal);
-
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
-});
-
-// Stat card click filters
-document.querySelectorAll('.stat-card').forEach(card => {
-    card.addEventListener('click', () => {
-        const stat = card.dataset.stat;
-        if (stat === 'china') {
-            regionFilter.value = 'china';
-        } else if (stat === 'global') {
-            regionFilter.value = 'global';
-        } else if (stat === 'listed') {
-            listingFilter.value = 'listed';
-        } else {
-            regionFilter.value = 'all';
-            listingFilter.value = 'all';
-        }
-        filterAndRender();
+// ============== 筛选功能 ==============
+function initFilters() {
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            // 更新活动状态
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            const filter = btn.dataset.filter;
+            const searchTerm = document.getElementById('globalSearch')?.value.trim() || '';
+            
+            // 重新渲染
+            if (window.location.pathname.includes('companies.html')) {
+                renderCompaniesGrid(filter, searchTerm);
+            } else if (window.location.pathname.includes('roadmap.html')) {
+                renderTimeline(filter === 'all' ? null : filter);
+            }
+        });
     });
-});
-
-// ==================== //
-// Utilities
-// ==================== //
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
 }
 
-// ==================== //
-// Initialize
-// ==================== //
-document.addEventListener('DOMContentLoaded', loadData);
+// ============== 通知提示 ==============
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        padding: 16px 24px;
+        background: ${type === 'error' ? 'var(--danger)' : 'var(--accent-blue)'};
+        color: white;
+        border-radius: 8px;
+        box-shadow: var(--shadow-lg);
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// ============== 动画关键帧 ==============
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(100%); opacity: 0; }
+    }
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+    }
+    .modal-content {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 32px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    .modal-close {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: none;
+        border: none;
+        color: var(--text-muted);
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .modal-close:hover { color: var(--text-primary); }
+    .modal-section {
+        margin-top: 24px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border-color);
+    }
+    .modal-section h4 {
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    .modal-section p {
+        color: var(--text-secondary);
+        margin-bottom: 8px;
+    }
+`;
+document.head.appendChild(style);
+
+// ============== 工具函数 ==============
+function formatNumber(num) {
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
+}
+
+function getCompanyColor(companyId) {
+    const colors = {
+        'nvidia': '#4CAF50',
+        'amd': '#FF5722',
+        'intel': '#2196F3',
+        'huawei': '#F44336'
+    };
+    return colors[companyId.toLowerCase()] || '#00D4FF';
+}

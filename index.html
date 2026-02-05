@@ -3,138 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="芯片公司 Roadmap 数据库 - 查询中国和全球芯片公司信息、产品线、ABF载板需求等">
-    <meta name="keywords" content="芯片, 半导体, Roadmap, GPU, AI芯片, 中国芯片, ABF载板">
-    <title>Chip Roadmap Database | 芯片公司 Roadmap 数据库</title>
+    <title>芯片 Roadmap 专业分析平台 | Semiconductor Industry Intelligence</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon">🔬</span>
-                    <h1>Chip Roadmap <span class="highlight">Database</span></h1>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">&#9672;</span>
+                <span class="logo-text">芯片产业分析</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">首页</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+                <li><a href="companies.html">公司分析</a></li>
+                <li><a href="insights.html">行业洞察</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="搜索公司/产品...">
+                <button class="search-btn">&#128269;</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero 区域 -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>全球芯片产业 Roadmap 分析</h1>
+            <p class="hero-subtitle">深度追踪 250+ 家公司 | 67+ 款核心芯片 | 行业趋势洞察</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-number">255</span>
+                    <span class="stat-label">家公司</span>
                 </div>
-                <div class="search-box">
-                    <input type="text" id="searchInput" placeholder="搜索公司、产品、地区..." autocomplete="off">
-                    <span class="search-icon">🔍</span>
+                <div class="stat-item">
+                    <span class="stat-number">67</span>
+                    <span class="stat-label">款芯片</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">12</span>
+                    <span class="stat-label">个国家/地区</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">2026</span>
+                    <span class="stat-label">年 Roadmap</span>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="container">
-            <div class="stats-grid">
-                <div class="stat-card" data-stat="total">
-                    <div class="stat-icon">📊</div>
-                    <div class="stat-number" id="totalCount">0</div>
-                    <div class="stat-label">总公司数</div>
-                </div>
-                <div class="stat-card" data-stat="china">
-                    <div class="stat-icon">🇨🇳</div>
-                    <div class="stat-number" id="chinaCount">0</div>
-                    <div class="stat-label">中国公司</div>
-                </div>
-                <div class="stat-card" data-stat="global">
-                    <div class="stat-icon">🌍</div>
-                    <div class="stat-number" id="globalCount">0</div>
-                    <div class="stat-label">海外公司</div>
-                </div>
-                <div class="stat-card" data-stat="listed">
-                    <div class="stat-icon">📈</div>
-                    <div class="stat-number" id="listedCount">0</div>
-                    <div class="stat-label">上市公司</div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Filters Section -->
-    <section class="filters-section">
-        <div class="container">
-            <div class="filters-row">
-                <div class="filter-group">
-                    <label>地区</label>
-                    <select id="regionFilter">
-                        <option value="all">全部地区</option>
-                        <option value="china">中国</option>
-                        <option value="global">海外</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>类型</label>
-                    <select id="categoryFilter">
-                        <option value="all">全部类型</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>ABF需求</label>
-                    <select id="abfFilter">
-                        <option value="all">全部</option>
-                        <option value="高">高</option>
-                        <option value="中">中</option>
-                        <option value="低">低</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>上市状态</label>
-                    <select id="listingFilter">
-                        <option value="all">全部</option>
-                        <option value="listed">上市公司</option>
-                        <option value="unlisted">未上市</option>
-                    </select>
-                </div>
-                <button class="reset-btn" id="resetFilters">重置筛选</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Companies Section -->
-    <section class="companies-section">
-        <div class="container">
+    <!-- 主要内容区域 -->
+    <main class="main-content">
+        <!-- 市场概览 -->
+        <section class="section market-overview">
             <div class="section-header">
-                <h2>公司列表</h2>
-                <span class="results-count" id="resultsCount">显示 0 家公司</span>
+                <h2>市场概览</h2>
+                <span class="section-badge">Market Overview</span>
             </div>
-            <div class="companies-grid" id="companiesGrid">
-                <!-- Companies will be loaded here -->
+            <div class="stats-grid">
+                <div class="stats-row">
+                    <div class="stat-card">
+                        <div class="stat-icon">&#127471;</div>
+                        <div class="stat-info">
+                            <h3>中国</h3>
+                            <p class="stat-value">180</p>
+                            <p class="stat-note">家公司</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">&#127482;</div>
+                        <div class="stat-info">
+                            <h3>美国</h3>
+                            <p class="stat-value">45</p>
+                            <p class="stat-note">家公司</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">&#127481;</div>
+                        <div class="stat-info">
+                            <h3>台湾</h3>
+                            <p class="stat-value">12</p>
+                            <p class="stat-note">家公司</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">&#127472;</div>
+                        <div class="stat-info">
+                            <h3>其他地区</h3>
+                            <p class="stat-value">18</p>
+                            <p class="stat-note">家公司</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card highlight">
+                        <div class="stat-icon">&#128200;</div>
+                        <div class="stat-info">
+                            <h3>AI 加速器</h3>
+                            <p class="stat-value">85</p>
+                            <p class="stat-note">占比 33%</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">&#128187;</div>
+                        <div class="stat-info">
+                            <h3>CPU</h3>
+                            <p class="stat-value">42</p>
+                            <p class="stat-note">占比 16%</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">&#128299;</div>
+                        <div class="stat-info">
+                            <h3>GPU</h3>
+                            <p class="stat-value">38</p>
+                            <p class="stat-note">占比 15%</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">&#128187;</div>
+                        <div class="stat-info">
+                            <h3>MCU</h3>
+                            <p class="stat-value">55</p>
+                            <p class="stat-note">占比 22%</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p>加载数据中...</p>
-            </div>
-            <div class="no-results" id="noResults" style="display: none;">
-                <span class="no-results-icon">🔍</span>
-                <p>没有找到匹配的公司</p>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Company Detail Modal -->
-    <div class="modal" id="companyModal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">×</button>
-            <div class="modal-header">
-                <h2 id="modalCompanyName">公司名称</h2>
-                <span class="modal-region" id="modalRegion">地区</span>
+        <!-- 最新动态 -->
+        <section class="section latest-updates">
+            <div class="section-header">
+                <h2>最新动态</h2>
+                <span class="section-badge">Latest Updates</span>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Details will be loaded here -->
+            <div class="updates-grid">
+                <div class="update-card">
+                    <div class="update-header">
+                        <span class="update-company nvidia">NVIDIA</span>
+                        <span class="update-date">2025 Q1</span>
+                    </div>
+                    <div class="update-content">
+                        <h4>Blackwell B200 量产</h4>
+                        <p>FP4 45PFLOPS 性能，TSMC 4nm 制程</p>
+                    </div>
+                </div>
+                <div class="update-card">
+                    <div class="update-header">
+                        <span class="update-company amd">AMD</span>
+                        <span class="update-date">2025 Q2</span>
+                    </div>
+                    <div class="update-content">
+                        <h4>MI350X 即将发布</h4>
+                        <p>CDNA4 架构，HBM3E 内存</p>
+                    </div>
+                </div>
+                <div class="update-card">
+                    <div class="update-header">
+                        <span class="update-company intel">Intel</span>
+                        <span class="update-date">2025 Q2</span>
+                    </div>
+                    <div class="update-content">
+                        <h4>Falcon Shores 延期</h4>
+                        <p>XPU 混合架构，Intel 18A 制程</p>
+                    </div>
+                </div>
+                <div class="update-card">
+                    <div class="update-header">
+                        <span class="update-company china">华为</span>
+                        <span class="update-date">2025 Q1</span>
+                    </div>
+                    <div class="update-content">
+                        <h4>昇腾 910C 发布</h4>
+                        <p>性能提升 20%，SMIC 7nm</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
 
-    <!-- Footer -->
+        <!-- 行业洞察摘要 -->
+        <section class="section insights-summary">
+            <div class="section-header">
+                <h2>行业洞察</h2>
+                <span class="section-badge">Key Insights</span>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-icon">&#128200;</div>
+                    <h4>RISC-V 生态爆发</h4>
+                    <p>2025 年 NVIDIA 宣布移植 CUDA 到 RISC-V，加速架构在 AI 领域渗透</p>
+                    <span class="insight-impact high">高影响</span>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">&#128300;</div>
+                    <h4>光子计算崛起</h4>
+                    <p>Lightmatter、Celestial AI 引领光互连和光子计算革命</p>
+                    <span class="insight-impact high">高影响</span>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">&#127760;</div>
+                    <h4>云厂商自研加速</h4>
+                    <p>AWS、微软、Meta 降低对 NVIDIA 依赖，推出自研 AI 芯片</p>
+                    <span class="insight-impact high">高影响</span>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-icon">&#128202;</div>
+                    <h4>ABF 需求分化</h4>
+                    <p>AI 芯片需求 12-20 层 ABF，消费电子维持 2-6 层</p>
+                    <span class="insight-impact medium">中影响</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 头部玩家 -->
+        <section class="section top-players">
+            <div class="section-header">
+                <h2>头部玩家</h2>
+                <span class="section-badge">Top Players</span>
+            </div>
+            <div class="players-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>排名</th>
+                            <th>公司</th>
+                            <th>市场份额</th>
+                            <th>核心优势</th>
+                            <th>主要挑战</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td><span class="company-tag nvidia">NVIDIA</span></td>
+                            <td>80%+</td>
+                            <td>CUDA 生态完善</td>
+                            <td>地缘政治风险</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td><span class="company-tag amd">AMD</span></td>
+                            <td>10-15%</td>
+                            <td>性价比优势</td>
+                            <td>软件生态落后</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td><span class="company-tag intel">Intel</span></td>
+                            <td>&lt;5%</td>
+                            <td>x86 生态</td>
+                            <td>AI 芯片落后</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td><span class="company-tag china">华为</span></td>
+                            <td>中国&gt;50%</td>
+                            <td>全栈能力</td>
+                            <td>先进制程受限</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
     <footer class="footer">
-        <div class="container">
-            <p>Chip Roadmap Database © 2026 | 数据来源: 公开信息、财报、官网</p>
-            <p class="footer-note">本站数据仅供参考，不构成投资建议</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>数据来源</h4>
+                <ul>
+                    <li>公司财报 & 官网</li>
+                    <li>行业研究报告</li>
+                    <li>公开新闻 & 招股书</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>更新频率</h4>
+                <ul>
+                    <li>每周: 行业快讯</li>
+                    <li>每月: 深度扫描</li>
+                    <li>每季度: Roadmap 更新</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>联系方式</h4>
+                <ul>
+                    <li>GitHub: github.com/...</li>
+                    <li>数据最后更新: 2026-02-05</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 芯片产业分析平台 | Semiconductor Industry Intelligence</p>
         </div>
     </footer>
 

@@ -1,0 +1,37 @@
+{
+  "total_companies": 33,
+  "total_chips": 71,
+  "by_region": {
+    "china": 237,
+    "usa": 45,
+    "taiwan": 12,
+    "korea": 6,
+    "europe": 8,
+    "japan": 4
+  },
+  "by_category": {
+    "AI加速器": 85,
+    "CPU": 42,
+    "GPU": 38,
+    "MCU": 55,
+    "其他": 35
+  },
+  "abf_demand_tiers": {
+    "高需求": [
+      "AI加速器",
+      "高性能GPU",
+      "服务器CPU",
+      "网络芯片"
+    ],
+    "中需求": [
+      "消费级CPU",
+      "FPGA",
+      "汽车SoC"
+    ],
+    "低需求": [
+      "MCU",
+      "物联网芯片",
+      "电源管理"
+    ]
+  }
+}

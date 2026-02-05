@@ -1,0 +1,139 @@
+{
+  "nvidia": {
+    "company": "NVIDIA",
+    "timeline": [
+      {
+        "year": 2024,
+        "quarter": "Q1",
+        "product": "Blackwell B100",
+        "specs": "FP8 20PFLOPS",
+        "process": "TSMC 4nm"
+      },
+      {
+        "year": 2024,
+        "quarter": "Q2",
+        "product": "H200",
+        "specs": "141GB HBM3e",
+        "process": "TSMC 4nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q1",
+        "product": "Blackwell B200",
+        "specs": "FP4 45PFLOPS",
+        "process": "TSMC 4nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q4",
+        "product": "Rubin",
+        "specs": "下一代架构",
+        "process": "TSMC 3nm"
+      }
+    ]
+  },
+  "amd": {
+    "company": "AMD",
+    "timeline": [
+      {
+        "year": 2024,
+        "quarter": "Q2",
+        "product": "MI300X",
+        "specs": "192GB HBM3, 5.2TB/s",
+        "process": "TSMC 5nm+4nm"
+      },
+      {
+        "year": 2024,
+        "quarter": "Q4",
+        "product": "MI300A",
+        "specs": "CPU+GPU混合",
+        "process": "TSMC 5nm+4nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q2",
+        "product": "MI350X",
+        "specs": "CDNA4架构",
+        "process": "TSMC 3nm"
+      },
+      {
+        "year": 2026,
+        "quarter": "Q1",
+        "product": "MI400",
+        "specs": "下一代CDNA",
+        "process": "TSMC 2nm"
+      }
+    ]
+  },
+  "intel": {
+    "company": "Intel",
+    "timeline": [
+      {
+        "year": 2024,
+        "quarter": "Q1",
+        "product": "Gaudi 3",
+        "specs": "7nm, 2倍Gaudi2",
+        "process": "台积电 7nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q2",
+        "product": "Falcon Shores",
+        "specs": "XPU混合架构",
+        "process": "Intel 18A"
+      },
+      {
+        "year": 2026,
+        "quarter": "Q4",
+        "product": "下一代AI芯片",
+        "specs": "待公布",
+        "process": "Intel 14A"
+      }
+    ]
+  },
+  "huawei_ascend": {
+    "company": "Huawei Ascend",
+    "timeline": [
+      {
+        "year": 2024,
+        "quarter": "Q2",
+        "product": "昇腾910B",
+        "specs": "FP64 40TFLOPS",
+        "process": "SMIC 7nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q1",
+        "product": "昇腾910C",
+        "specs": "性能提升20%",
+        "process": "SMIC 7nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q4",
+        "product": "昇腾920",
+        "specs": "下一代架构",
+        "process": "SMIC 5nm"
+      }
+    ]
+  },
+  "cambricon": {
+    "company": "Cambricon",
+    "timeline": [
+      {
+        "year": 2024,
+        "quarter": "Q3",
+        "product": "思元590",
+        "specs": "7nm, 128GB HBM2e",
+        "process": "台积电 7nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q3",
+        "product": "思元690",
+        "specs": "5nm, 256GB HBM3",
+        "process": "台积电 5nm"
+      }
+    ]
+  }
+}

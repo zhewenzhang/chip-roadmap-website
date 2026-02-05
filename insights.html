@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行业洞察 | Industry Insights</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">&#9672;</span>
+                <span class="logo-text">芯片产业分析</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+                <li><a href="companies.html">公司分析</a></li>
+                <li><a href="insights.html" class="active">行业洞察</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="搜索公司/产品...">
+                <button class="search-btn">&#128269;</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <section class="insights-page">
+        <div class="insights-hero">
+            <h1>行业洞察</h1>
+            <p>深度分析全球半导体产业趋势、技术演进和市场变化</p>
+        </div>
+
+        <!-- 关键趋势 -->
+        <section class="insight-section">
+            <h2>关键技术趋势</h2>
+            <div class="trend-cards" id="trendsContainer">
+                <!-- 动态加载 -->
+            </div>
+        </section>
+
+        <!-- 头部玩家 -->
+        <section class="insight-section">
+            <h2>头部玩家分析</h2>
+            <div class="player-cards" id="topPlayersContainer">
+                <!-- 动态加载 -->
+            </div>
+        </section>
+
+        <!-- ABF 需求分析 -->
+        <section class="insight-section">
+            <h2>ABF 载板需求分析</h2>
+            <div class="abf-analysis" id="abfAnalysisContainer">
+                <!-- 动态加载 -->
+            </div>
+        </section>
+
+        <!-- 关键洞察 -->
+        <section class="insight-section">
+            <h2>核心观点</h2>
+            <ul class="insights-list" id="keyInsightsList">
+                <!-- 动态加载 -->
+            </ul>
+        </section>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-bottom" style="max-width: 1200px; margin: 0 auto;">
+            <p>数据最后更新: 2026-02-05 | 数据来源: 公司财报、官网、行业报告</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

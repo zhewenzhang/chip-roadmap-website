@@ -1,63 +1,118 @@
-# 芯片 Roadmap 数据库网站项目
+# 芯片 Roadmap 专业分析网站 - 重构计划
 
-## 🎯 目标
-创建一个可部署在 GitHub Pages 的芯片公司 Roadmap 查询网站
+## 🎯 核心问题诊断
 
-## 📊 现有数据
-- **67+ 款芯片**：已收录在 `semiconductor_roadmaps/`
-- **180+ 中国公司**：`china/china_chip_companies_expanded.csv`
-- **75+ 海外公司**：`global/global_chip_companies.csv`
-- **27 家核心公司**：有详细 Roadmap Excel 文件
+### 当前网站问题
+1. ❌ 只有公司介绍，缺少 Roadmap 时间轴
+2. ❌ 缺少对公司深度分析
+3. ❌ 页面太"AI化"，不够专业
+4. ❌ 数据展示单一
+
+### 解决方案
+1. ✅ 加入 Roadmap 时间轴可视化
+2. ✅ 添加公司深度分析（市场地位、技术特点）
+3. ✅ 专业设计风格（半导体行业风格）
+4. ✅ 增加 ABF 载板需求分析
+5. ✅ 添加竞争格局分析
+
+## 📊 数据整合
+
+### 数据源
+| 数据 | 来源 | 用途 |
+|-----|------|------|
+| 67款芯片 | CHIP_Master_Database.xlsx | Roadmap 时间轴 |
+| 255家公司 | CSV 文件 | 公司列表 |
+| 深度分析 | TASK_COMPLETION_REPORT.md | 市场分析 |
+| 竞争对手 | competitor_list.csv | 竞争格局 |
+
+### 新增 JSON 数据结构
+```json
+{
+  "companies": [
+    {
+      "id": "nvidia",
+      "name_en": "NVIDIA",
+      "name_cn": "英伟达",
+      "country": "USA",
+      "region": "Americas",
+      "category": "AI加速器/GPU",
+      "headquarters": "Santa Clara, CA",
+      "founded": 1993,
+      "market_cap": "$3T+",
+      "employees": 29600,
+      "abf_demand": "高",
+      "market_position": "数据中心GPU市占率80%+",
+      "products": [...],
+      "roadmap": [...],
+      "analysis": {...}
+    }
+  ],
+  "roadmaps": [
+    {
+      "company": "NVIDIA",
+      "timeline": [
+        {"year": 2024, "product": "Blackwell B100", "process": "TSMC 4nm"},
+        {"year": 2025, "product": "Blackwell B200", "process": "TSMC 4nm"},
+        {"year": 2026, "product": "Rubin", "process": "TSMC 3nm"}
+      ]
+    }
+  ],
+  "market": {
+    "total_companies": 255,
+    "by_region": {...},
+    "by_category": {...}
+  }
+}
+```
 
 ## 📋 执行计划
 
-### Phase 1: 数据整理 [in_progress]
-- [ ] 统一所有 CSV/Excel 数据为 JSON 格式
-- [ ] 验证数据完整性
-- [ ] 创建统一数据索引
+### Phase 1: 数据重构 [in_progress]
+- [ ] 解析 CHIP_Master_Database.xlsx 获取 67 款芯片 Roadmap
+- [ ] 整合 255 家公司数据
+- [ ] 添加分析字段（市场地位、技术特点）
+- [ ] 创建统一 JSON 数据
 
-### Phase 2: 网站开发 [pending]
-- [ ] 创建 HTML/CSS/JS 静态网站
-- [ ] 实现搜索功能
-- [ ] 实现筛选功能（按地区、产品线、制程）
-- [ ] 实现 Roadmap 时间轴可视化
-- [ ] 响应式设计（移动端适配）
+### Phase 2: 专业设计 [pending]
+- [ ] 半导体行业风格设计
+- [ ] 深蓝色主色调（科技感）
+- [ ] 清晰的数据展示
+- [ ] Roadmap 时间轴组件
 
-### Phase 3: 部署 [pending]
-- [ ] 创建 GitHub 仓库
-- [ ] 配置 GitHub Pages
-- [ ] 测试部署
+### Phase 3: 核心页面 [pending]
+- [ ] 主页：统计概览 + 市场分析
+- [ ] Roadmap 页面：时间轴可视化
+- [ ] 公司页面：详情 + 分析
+- [ ] 市场分析页面：竞争格局
 
-### Phase 4: 自动更新机制 [pending]
-- [ ] 设计 Cron 任务自动检查更新
-- [ ] 创建数据更新脚本
+### Phase 4: 部署 [pending]
+- [ ] 更新 GitHub 仓库
+- [ ] 自动部署到 Pages
 
-## 📁 文件结构
-```
-chip-roadmap-website/
-├── index.html          # 主页
-├── css/
-│   └── style.css       # 样式
-├── js/
-│   └── app.js          # 逻辑
-├── data/
-│   ├── companies.json  # 公司数据
-│   ├── chips.json      # 芯片数据
-│   └── roadmaps.json   # Roadmap 数据
-└── README.md           # 项目说明
-```
+## 🎨 设计规范
 
-## 🎨 网站功能
-1. **首页**: 统计概览、最新更新
-2. **公司列表**: 按地区分类，可搜索
-3. **芯片搜索**: 按名称、制程、应用搜索
-4. **Roadmap 时间轴**: 可视化展示
-5. **详情页**: 单芯片详细信息
+### 配色方案
+- 主色：#0A1628 (深蓝)
+- 强调色：#00D4FF (科技蓝)
+- 辅助色：#7B68EE (紫色)
+- 背景：#0F172A
+- 卡片：#1E293B
+
+### 字体
+- 中文：思源黑体 (Source Han Sans)
+- 英文：Inter
+
+### 风格
+- 简洁、专业、数据驱动
+- 避免花哨动画
+- 强调可读性
 
 ## 错误日志
 | 错误 | 尝试 | 解决方案 |
 |------|------|----------|
-| - | - | - |
+| 网站太AI化 | 1 | 重新设计，采用半导体行业风格 |
+| 缺少Roadmap | 1 | 添加时间轴可视化组件 |
+| 缺少分析 | 1 | 整合深度分析数据 |
 
 ## 进度更新
-- 2026-02-05 21:13: 项目启动
+- 2026-02-05 21:37: 诊断问题，重新规划

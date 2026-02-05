@@ -1,0 +1,856 @@
+{
+  "": {
+    "id": "",
+    "name_en": "",
+    "name_cn": "",
+    "country": "China",
+    "region": "China",
+    "category": "GPU/AI加速器",
+    "headquarters": "北京",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "",
+    "market_position": "官网",
+    "description": "",
+    "products": [
+      "具身智能"
+    ],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "nvidia": {
+    "id": "nvidia",
+    "name_en": "NVIDIA",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器/CPU/GPU",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "数据中心GPU市占率80%+",
+    "description": "",
+    "products": [],
+    "roadmap": [
+      {
+        "year": 2024,
+        "quarter": "Q1",
+        "product": "Blackwell B100",
+        "specs": "FP8 20PFLOPS",
+        "process": "TSMC 4nm"
+      },
+      {
+        "year": 2024,
+        "quarter": "Q2",
+        "product": "H200",
+        "specs": "141GB HBM3e",
+        "process": "TSMC 4nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q1",
+        "product": "Blackwell B200",
+        "specs": "FP4 45PFLOPS",
+        "process": "TSMC 4nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q4",
+        "product": "Rubin",
+        "specs": "下一代架构",
+        "process": "TSMC 3nm"
+      }
+    ],
+    "analysis": {
+      "strengths": [
+        "技术领先1-2代",
+        "CUDA生态完善",
+        "CoWoS产能保障",
+        "HBM供应链优势"
+      ],
+      "weaknesses": [
+        "价格高昂",
+        "供应持续紧张",
+        "地缘政治风险"
+      ],
+      "opportunities": [
+        "AI需求持续爆发",
+        "数据中心GPU扩张",
+        "主权AI趋势"
+      ],
+      "threats": [
+        "AMD MI系列竞争",
+        "云厂商自研芯片",
+        "中国替代方案"
+      ]
+    }
+  },
+  "amd": {
+    "id": "amd",
+    "name_en": "AMD",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器/CPU/GPU",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "数据中心GPU市占率10-15%",
+    "description": "",
+    "products": [],
+    "roadmap": [
+      {
+        "year": 2024,
+        "quarter": "Q2",
+        "product": "MI300X",
+        "specs": "192GB HBM3, 5.2TB/s",
+        "process": "TSMC 5nm+4nm"
+      },
+      {
+        "year": 2024,
+        "quarter": "Q4",
+        "product": "MI300A",
+        "specs": "CPU+GPU混合",
+        "process": "TSMC 5nm+4nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q2",
+        "product": "MI350X",
+        "specs": "CDNA4架构",
+        "process": "TSMC 3nm"
+      },
+      {
+        "year": 2026,
+        "quarter": "Q1",
+        "product": "MI400",
+        "specs": "下一代CDNA",
+        "process": "TSMC 2nm"
+      }
+    ],
+    "analysis": {
+      "strengths": [
+        "性价比优势",
+        "CPU+GPU协同",
+        "台积电先进制程"
+      ],
+      "weaknesses": [
+        "软件生态落后NVIDIA",
+        "市场份额差距大"
+      ],
+      "opportunities": [
+        "MI300系列性能提升",
+        "数据中心份额增长"
+      ],
+      "threats": [
+        "NVIDIA垄断地位",
+        "价格战压力"
+      ]
+    }
+  },
+  "intel": {
+    "id": "intel",
+    "name_en": "Intel",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "CPU/GPU",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "数据中心AI加速器份额<5%",
+    "description": "",
+    "products": [],
+    "roadmap": [
+      {
+        "year": 2024,
+        "quarter": "Q1",
+        "product": "Gaudi 3",
+        "specs": "7nm, 2倍Gaudi2",
+        "process": "台积电 7nm"
+      },
+      {
+        "year": 2025,
+        "quarter": "Q2",
+        "product": "Falcon Shores",
+        "specs": "XPU混合架构",
+        "process": "Intel 18A"
+      },
+      {
+        "year": 2026,
+        "quarter": "Q4",
+        "product": "下一代AI芯片",
+        "specs": "待公布",
+        "process": "Intel 14A"
+      }
+    ],
+    "analysis": {
+      "strengths": [
+        "x86生态",
+        "代工业务长期潜力",
+        "政府补贴"
+      ],
+      "weaknesses": [
+        "AI芯片落后",
+        "制程工艺延迟",
+        "市场份额下滑"
+      ],
+      "opportunities": [
+        "Gaudi系列起量",
+        "IDM 2.0转型",
+        "ARM架构PC"
+      ],
+      "threats": [
+        "AMD数据中心份额",
+        "ARM架构入侵",
+        "中国竞争"
+      ]
+    }
+  },
+  "apple": {
+    "id": "apple",
+    "name_en": "Apple",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "CPU/GPU",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "定制化SoC",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "google_tpu": {
+    "id": "google_tpu",
+    "name_en": "Google TPU",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "云端AI训练市占率约10%",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "qualcomm": {
+    "id": "qualcomm",
+    "name_en": "Qualcomm",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "CPU/网通/AI",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "ARM PC芯片新兴竞争者",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "groq": {
+    "id": "groq",
+    "name_en": "Groq",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "AI推理芯片新秀",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "cerebras": {
+    "id": "cerebras",
+    "name_en": "Cerebras",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "超大尺寸AI训练芯片",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "sambanova": {
+    "id": "sambanova",
+    "name_en": "SambaNova",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "企业级AI训练",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "graphcore": {
+    "id": "graphcore",
+    "name_en": "Graphcore",
+    "name_cn": "",
+    "country": "英国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "英国AI芯片独角兽",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "mythic": {
+    "id": "mythic",
+    "name_en": "Mythic",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "边缘AI模拟计算",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "untether_ai": {
+    "id": "untether_ai",
+    "name_en": "Untether AI",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "边缘AI推理",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "tenstorrent": {
+    "id": "tenstorrent",
+    "name_en": "Tenstorrent",
+    "name_cn": "",
+    "country": "加拿大",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "开源RISC-V架构AI",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "marvell": {
+    "id": "marvell",
+    "name_en": "Marvell",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "网通芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "数据中心互连芯片",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "broadcom": {
+    "id": "broadcom",
+    "name_en": "Broadcom",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "网通/AI",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "网通芯片龙头/AI ASIC",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "cisco": {
+    "id": "cisco",
+    "name_en": "Cisco",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "网通芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "网络设备集成芯片",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "analog_devices": {
+    "id": "analog_devices",
+    "name_en": "Analog Devices",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "模拟芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "模拟信号处理",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "ti": {
+    "id": "ti",
+    "name_en": "TI",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "模拟芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "模拟芯片龙头",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "skyworks": {
+    "id": "skyworks",
+    "name_en": "Skyworks",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "射频芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "射频前端芯片",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "qorvo": {
+    "id": "qorvo",
+    "name_en": "Qorvo",
+    "name_cn": "",
+    "country": "美国",
+    "region": "",
+    "category": "射频芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "射频前端芯片",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "infineon": {
+    "id": "infineon",
+    "name_en": "Infineon",
+    "name_cn": "",
+    "country": "德国",
+    "region": "",
+    "category": "汽车芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "汽车功率半导体龙头",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "stmicroelectronics": {
+    "id": "stmicroelectronics",
+    "name_en": "STMicroelectronics",
+    "name_cn": "",
+    "country": "意大利/法国",
+    "region": "",
+    "category": "汽车芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "汽车/工业半导体",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "nxp": {
+    "id": "nxp",
+    "name_en": "NXP",
+    "name_cn": "",
+    "country": "荷兰",
+    "region": "",
+    "category": "汽车芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "汽车/工业MCU",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "bosch": {
+    "id": "bosch",
+    "name_en": "Bosch",
+    "name_cn": "",
+    "country": "德国",
+    "region": "",
+    "category": "汽车芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "汽车Tier 1供应商",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "imagination_technologies": {
+    "id": "imagination_technologies",
+    "name_en": "Imagination Technologies",
+    "name_cn": "",
+    "country": "英国",
+    "region": "",
+    "category": "GPU/IP",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "GPU IP授权",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "arm": {
+    "id": "arm",
+    "name_en": "Arm",
+    "name_cn": "",
+    "country": "英国",
+    "region": "",
+    "category": "CPU/IP",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "CPU IP授权龙头",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "mobileye": {
+    "id": "mobileye",
+    "name_en": "Mobileye",
+    "name_cn": "",
+    "country": "以色列",
+    "region": "",
+    "category": "自动驾驶",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "中",
+    "market_position": "ADAS芯片龙头",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "vayyar": {
+    "id": "vayyar",
+    "name_en": "Vayyar",
+    "name_cn": "",
+    "country": "以色列",
+    "region": "",
+    "category": "自动驾驶",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "车内/车外感知",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "hailo": {
+    "id": "hailo",
+    "name_en": "Hailo",
+    "name_cn": "",
+    "country": "以色列",
+    "region": "",
+    "category": "AI芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "边缘AI加速器",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "neureality": {
+    "id": "neureality",
+    "name_en": "NeuReality",
+    "name_cn": "",
+    "country": "以色列",
+    "region": "",
+    "category": "AI芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "数据中心AI推理",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "habana_labs": {
+    "id": "habana_labs",
+    "name_en": "Habana Labs",
+    "name_cn": "",
+    "country": "以色列",
+    "region": "",
+    "category": "AI加速器",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "高",
+    "market_position": "AI训练加速器",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  },
+  "cortica": {
+    "id": "cortica",
+    "name_en": "Cortica",
+    "name_cn": "",
+    "country": "以色列",
+    "region": "",
+    "category": "AI芯片",
+    "headquarters": "",
+    "founded": null,
+    "market_cap": "",
+    "abf_demand": "低",
+    "market_position": "无服务器AI推理",
+    "description": "",
+    "products": [],
+    "roadmap": [],
+    "analysis": {
+      "strengths": [],
+      "weaknesses": [],
+      "opportunities": [],
+      "threats": []
+    }
+  }
+}

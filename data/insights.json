@@ -1,0 +1,121 @@
+{
+  "trends": [
+    {
+      "title": "RISC-V生态爆发",
+      "description": "2025年NVIDIA宣布移植CUDA到RISC-V架构，加速RISC-V在AI领域的应用",
+      "impact": "高",
+      "companies": [
+        "SiFive",
+        "Tenstorrent",
+        "Andes",
+        "Codasip"
+      ]
+    },
+    {
+      "title": "光子计算崛起",
+      "description": "Lightmatter、Celestial AI引领光互连和光子计算革命",
+      "impact": "高",
+      "companies": [
+        "Lightmatter",
+        "Celestial AI"
+      ]
+    },
+    {
+      "title": "云厂商自研加速",
+      "description": "AWS、微软、Meta等降低对NVIDIA依赖，推出自研AI芯片",
+      "impact": "高",
+      "companies": [
+        "AWS Tranium",
+        "Microsoft Maia",
+        "Meta MTIA"
+      ]
+    },
+    {
+      "title": "存内计算突破",
+      "description": "d-Matrix、Mythic等公司重新定义存储与计算的边界",
+      "impact": "中",
+      "companies": [
+        "d-Matrix",
+        "Mythic"
+      ]
+    },
+    {
+      "title": "韩国AI芯片崛起",
+      "description": "Rebellions、FuriosaAI等挑战NVIDIA在韩国的垄断地位",
+      "impact": "中",
+      "companies": [
+        "Rebellions",
+        "FuriosaAI"
+      ]
+    }
+  ],
+  "top_players": [
+    {
+      "name": "NVIDIA",
+      "market_share": "80%+",
+      "strength": "完整CUDA生态+领先性能+产能保障",
+      "weakness": "价格高昂+地缘政治风险",
+      "outlook": "持续领先，但面临多方竞争"
+    },
+    {
+      "name": "AMD",
+      "market_share": "10-15%",
+      "strength": "性价比+CPU+GPU协同",
+      "weakness": "软件生态落后",
+      "outlook": "份额稳步提升，但差距仍大"
+    },
+    {
+      "name": "Intel",
+      "market_share": "<5%",
+      "strength": "x86生态+政府支持",
+      "weakness": "AI芯片落后+制程延迟",
+      "outlook": "Gaudi系列是关键转折点"
+    },
+    {
+      "name": "华为",
+      "market_share": "中国AI芯片>50%",
+      "strength": "中国市场份额+全栈能力",
+      "weakness": "先进制程受限",
+      "outlook": "国内替代趋势明确"
+    }
+  ],
+  "abf_demand_analysis": {
+    "high_demand": {
+      "AI加速器": {
+        "abf_layers": "12-20层",
+        "price_range": "$2000-30000"
+      },
+      "高性能GPU": {
+        "abf_layers": "10-16层",
+        "price_range": "$500-2000"
+      }
+    },
+    "medium_demand": {
+      "服务器CPU": {
+        "abf_layers": "8-14层",
+        "price_range": "$500-5000"
+      },
+      "网络芯片": {
+        "abf_layers": "6-12层",
+        "price_range": "$100-1000"
+      }
+    },
+    "low_demand": {
+      "消费级MCU": {
+        "abf_layers": "2-6层",
+        "price_range": "$1-10"
+      },
+      "物联网芯片": {
+        "abf_layers": "2-4层",
+        "price_range": "$1-5"
+      }
+    }
+  },
+  "key_insights": [
+    "AI芯片需求持续火爆，2025年HBM和先进封装产能仍是瓶颈",
+    "中国厂商在成熟制程AI芯片领域快速崛起，替代趋势明显",
+    "RISC-V架构在边缘AI和低功耗场景加速渗透",
+    "先进封装(CoWoS、InFO)成为AI芯片竞争的关键差异化",
+    "汽车电子成为MCU和SoC增长新引擎，ABF需求稳中有升"
+  ]
+}

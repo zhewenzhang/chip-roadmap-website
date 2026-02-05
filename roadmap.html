@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芯片 Roadmap 时间轴 | Semiconductor Roadmap</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">&#9672;</span>
+                <span class="logo-text">芯片产业分析</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="roadmap.html" class="active">Roadmap</a></li>
+                <li><a href="companies.html">公司分析</a></li>
+                <li><a href="insights.html">行业洞察</a></li>
+            </ul>
+            <div class="search-box">
+                <input type="text" id="globalSearch" placeholder="搜索公司/产品...">
+                <button class="search-btn">&#128269;</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 页面标题 -->
+    <header class="roadmap-header">
+        <h1>芯片 Roadmap 时间轴</h1>
+        <p style="color: var(--text-secondary); margin-top: 16px;">追踪全球主要芯片厂商的产品演进路线图</p>
+        
+        <div class="roadmap-filters">
+            <button class="filter-btn active" data-filter="all">全部公司</button>
+            <button class="filter-btn" data-filter="nvidia">NVIDIA</button>
+            <button class="filter-btn" data-filter="amd">AMD</button>
+            <button class="filter-btn" data-filter="intel">Intel</button>
+            <button class="filter-btn" data-filter="huawei_ascend">华为</button>
+            <button class="filter-btn" data-filter="cambricon">寒武纪</button>
+        </div>
+    </header>
+
+    <!-- 时间轴容器 -->
+    <div class="timeline-container">
+        <div id="timelineContainer">
+            <div class="timeline">
+                <!-- 动态加载 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部说明 -->
+    <section style="max-width: 1200px; margin: 0 auto; padding: 48px 24px;">
+        <div class="insight-card" style="text-align: center;">
+            <h3 style="color: var(--text-primary); margin-bottom: 16px;">数据说明</h3>
+            <p style="color: var(--text-secondary);"> Roadmap 数据来源于各公司官方公告、财报和行业报道。部分产品发布时间可能因各种原因延期，实际发布时间请以官方为准。</p>
+        </div>
+    </section>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
