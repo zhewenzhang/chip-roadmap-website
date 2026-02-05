@@ -240,23 +240,48 @@
   "google_tpu": {
     "id": "google_tpu",
     "name_en": "Google TPU",
-    "name_cn": "",
+    "name_cn": "谷歌TPU",
     "country": "美国",
-    "region": "",
+    "region": "Americas",
     "category": "AI加速器",
-    "headquarters": "",
-    "founded": null,
+    "headquarters": "Mountain View, CA",
+    "founded": 2013,
     "market_cap": "",
-    "abf_demand": "中",
-    "market_position": "云端AI训练市占率约10%",
-    "description": "",
-    "products": [],
-    "roadmap": [],
+    "abf_demand": "高",
+    "market_position": "云端AI训练市占率约10-15%",
+    "description": "Google自研AI加速器，从TPU v1到v7，已部署超过100万颗，支撑Google AI服务和外部云客户",
+    "products": ["TPU v5e", "TPU v5p", "TPU v6e", "TPU v6", "TPU v7", "TPU v7e", "TPU v7p"],
+    "roadmap": [
+      {"year": 2024, "quarter": "Q1", "product": "TPU v5e", "specs": "性价比优化版", "process": "4nm"},
+      {"year": 2024, "quarter": "Q2", "product": "TPU v5p", "specs": "高性能版", "process": "4nm"},
+      {"year": 2025, "quarter": "Q1", "product": "TPU v6e", "specs": "新一代架构", "process": "4nm"},
+      {"year": 2025, "quarter": "Q3", "product": "TPU v6", "specs": "完整版v6", "process": "4nm"},
+      {"year": 2025, "quarter": "Q4", "product": "TPU v7", "specs": "性能暴涨4倍", "process": "3nm"},
+      {"year": 2026, "quarter": "Q1", "product": "TPU v7e", "specs": "v7性价比版", "process": "3nm"},
+      {"year": 2026, "quarter": "Q4", "product": "TPU v7p", "specs": "v7高性能版", "process": "3nm"}
+    ],
     "analysis": {
-      "strengths": [],
-      "weaknesses": [],
-      "opportunities": [],
-      "threats": []
+      "strengths": [
+        "性能/成本比NVIDIA低20-50%",
+        "液冷技术成熟(>1GW)",
+        "大规模部署经验",
+        "开源软件生态(TensorFlow)"
+      ],
+      "weaknesses": [
+        "对外销售策略保守",
+        "软件生态不如CUDA",
+        "产能受限"
+      ],
+      "opportunities": [
+        "Anthropic 100万TPU订单",
+        "Meta潜在数十亿美元订单",
+        "生成式AI推理需求爆发"
+      ],
+      "threats": [
+        "NVIDIA CUDA生态",
+        "AMD MI系列竞争",
+        "云厂商自研趋势"
+      ]
     }
   },
   "qualcomm": {

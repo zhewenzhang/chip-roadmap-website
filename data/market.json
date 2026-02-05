@@ -33,5 +33,39 @@
       "物联网芯片",
       "电源管理"
     ]
+  },
+  "tpu_shipments": {
+    "2021_2024_cumulative": "约790万颗(主要为内部部署)",
+    "2025": {
+      "estimate": "250万片",
+      "growth": "+50% YoY",
+      "key_models": ["TPU v6e", "TPU v7(试产)"],
+      "notes": "v6e放量+v7试产"
+    },
+    "2026": {
+      "estimate": "380-400万片(中性) / 500万片(乐观)",
+      "growth": "+60-100% YoY",
+      "key_models": ["TPU v7", "TPU v7e"],
+      "notes": "v7量产+产能爬坡"
+    },
+    "2027": {
+      "estimate": "500万片以上",
+      "growth": "+25-50% YoY",
+      "key_models": ["TPU v7p", "TPU v8"],
+      "notes": "v7p+v8接力"
+    }
+  },
+  "major_tpu_customers": {
+    "anthropic": {
+      "order": "100万颗TPU",
+      "capacity": "1GW以上",
+      "timeline": "2026年前",
+      "value": "数十亿美元"
+    },
+    "meta": {
+      "status": "洽谈中",
+      "timeline": "2026年起租，2027年起购",
+      "value": "数十亿美元"
+    }
   }
 }
