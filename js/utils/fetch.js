@@ -17,11 +17,12 @@ async function fetchJSON(url) {
 }
 
 async function loadAllData() {
+    const base = import.meta.env.BASE_URL;
     const results = await Promise.allSettled([
-        fetchJSON('data/companies.json'),
-        fetchJSON('data/roadmaps.json'),
-        fetchJSON('data/market.json'),
-        fetchJSON('data/insights.json')
+        fetchJSON(base + 'data/companies.json'),
+        fetchJSON(base + 'data/roadmaps.json'),
+        fetchJSON(base + 'data/market.json'),
+        fetchJSON(base + 'data/insights.json')
     ]);
 
     const [companiesResult, roadmapsResult, marketResult, insightsResult] = results;
