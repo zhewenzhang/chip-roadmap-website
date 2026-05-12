@@ -10,9 +10,22 @@ let insightsData = {};
 
 // ============== 初始化 ==============
 document.addEventListener('DOMContentLoaded', function() {
+    // Intersection Observer 滚动动画
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
     loadAllData();
     initSearch();
     initFilters();
+    initMobileMenu();
 });
 
 // ============== 数据加载 ==============
@@ -201,65 +214,97 @@ function showCompanyDetail(companyId) {
     const company = companiesData[companyId];
     if (!company) return;
 
-    // 创建模态框
-    const modal = document.createElement('div');
-    modal.className = 'modal-overlay';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <button class="modal-close">&times;</button>
-            <h2>${company.name_en || company.name_cn || companyId}</h2>
-            ${company.name_cn ? `<p style="color:var(--text-muted);">${company.name_cn}</p>` : ''}
-            
-            <div class="modal-section">
-                <h4>基本信息</h4>
-                <p><strong>国家/地区:</strong> ${company.country || '未知'}</p>
-                <p><strong>总部:</strong> ${company.headquarters || '未知'}</p>
-                <p><strong>类型:</strong> ${company.category || '未知'}</p>
-                <p><strong>市场地位:</strong> ${company.market_position || '未知'}</p>
-            </div>
-            
-            ${company.products && company.products.length > 0 ? `
-                <div class="modal-section">
-                    <h4>主要产品</h4>
-                    <div class="company-products">
-                        ${company.products.map(p => `<span class="product-tag">${p.trim()}</span>`).join('')}
-                    </div>
-                </div>
-            ` : ''}
-            
-            ${company.roadmap && company.roadmap.length > 0 ? `
-                <div class="modal-section">
-                    <h4>Roadmap</h4>
-                    <ul style="list-style:none;padding:0;">
-                        ${company.roadmap.map(r => `
-                            <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">
-                                <strong>${r.year}</strong> ${r.quarter || ''} - ${r.product}
-                                <br><span style="color:var(--text-muted);font-size:12px;">${r.process || ''}</span>
-                            </li>
-                        `).join('')}
-                    </ul>
-                </div>
-            ` : ''}
-            
-            ${company.analysis && Object.keys(company.analysis).length > 0 ? `
-                <div class="modal-section">
-                    <h4>SWOT 分析</h4>
-                    <p><strong>优势:</strong> ${company.analysis.strengths?.join(', ') || '暂无'}</p>
-                    <p><strong>劣势:</strong> ${company.analysis.weaknesses?.join(', ') || '暂无'}</p>
-                    <p><strong>机会:</strong> ${company.analysis.opportunities?.join(', ') || '暂无'}</p>
-                    <p><strong>威胁:</strong> ${company.analysis.threats?.join(', ') || '暂无'}</p>
-                </div>
-            ` : ''}
+    const modal = getModal();
+    const content = modal.querySelector('.modal-content');
+
+    content.innerHTML = `
+        <button class="modal-close">&times;</button>
+        <h2>${company.name_en || company.name_cn || companyId}</h2>
+        ${company.name_cn ? `<p style="color:var(--text-muted);">${company.name_cn}</p>` : ''}
+
+        <div class="modal-section">
+            <h4>基本信息</h4>
+            <p><strong>国家/地区:</strong> ${company.country || '未知'}</p>
+            <p><strong>总部:</strong> ${company.headquarters || '未知'}</p>
+            <p><strong>类型:</strong> ${company.category || '未知'}</p>
+            <p><strong>市场地位:</strong> ${company.market_position || '未知'}</p>
         </div>
+
+        ${company.products && company.products.length > 0 ? `
+            <div class="modal-section">
+                <h4>主要产品</h4>
+                <div class="company-products">
+                    ${company.products.map(p => `<span class="product-tag">${p.trim()}</span>`).join('')}
+                </div>
+            </div>
+        ` : ''}
+
+        ${company.roadmap && company.roadmap.length > 0 ? `
+            <div class="modal-section">
+                <h4>Roadmap</h4>
+                <ul style="list-style:none;padding:0;">
+                    ${company.roadmap.map(r => `
+                        <li style="padding:8px 0;border-bottom:1px solid var(--border-color);">
+                            <strong>${r.year}</strong> ${r.quarter || ''} - ${r.product}
+                            <br><span style="color:var(--text-muted);font-size:12px;">${r.process || ''}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        ` : ''}
+
+        ${company.analysis && Object.keys(company.analysis).length > 0 ? `
+            <div class="modal-section">
+                <h4>SWOT 分析</h4>
+                <p><strong>优势:</strong> ${company.analysis.strengths?.join(', ') || '暂无'}</p>
+                <p><strong>劣势:</strong> ${company.analysis.weaknesses?.join(', ') || '暂无'}</p>
+                <p><strong>机会:</strong> ${company.analysis.opportunities?.join(', ') || '暂无'}</p>
+                <p><strong>威胁:</strong> ${company.analysis.threats?.join(', ') || '暂无'}</p>
+            </div>
+        ` : ''}
     `;
 
-    document.body.appendChild(modal);
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 
     // 关闭模态框
+    modal.querySelector('.modal-close').addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.remove();
+        if (e.target === modal) closeModal();
     });
-    modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
+}
+
+// ============== Modal 单例模式 ==============
+let modalInstance = null;
+
+function createModal() {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.innerHTML = '<div class="modal-content"></div>';
+    document.body.appendChild(modal);
+
+    // ESC 键关闭
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
+    });
+
+    return modal;
+}
+
+function getModal() {
+    if (!modalInstance) {
+        modalInstance = createModal();
+    }
+    return modalInstance;
+}
+
+function closeModal() {
+    if (modalInstance) {
+        modalInstance.classList.remove('active');
+        document.body.style.overflow = '';
+    }
 }
 
 // ============== 洞察页面初始化 ==============
@@ -388,10 +433,10 @@ function initFilters() {
             // 更新活动状态
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             const filter = btn.dataset.filter;
             const searchTerm = document.getElementById('globalSearch')?.value.trim() || '';
-            
+
             // 重新渲染
             if (window.location.pathname.includes('companies.html')) {
                 renderCompaniesGrid(filter, searchTerm);
@@ -402,94 +447,39 @@ function initFilters() {
     });
 }
 
+// ============== 移动端菜单 ==============
+function initMobileMenu() {
+    const menuToggle = document.getElementById('mobileMenuToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (!menuToggle || !mobileMenu) return;
+
+    menuToggle.addEventListener('click', () => {
+        mobileMenu.classList.toggle('active');
+        menuToggle.classList.toggle('active');
+    });
+
+    // 点击菜单项后关闭菜单
+    mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            menuToggle.classList.remove('active');
+        });
+    });
+}
+
 // ============== 通知提示 ==============
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
-    notification.className = `notification ${type}`;
-    notification.style.cssText = `
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        padding: 16px 24px;
-        background: ${type === 'error' ? 'var(--danger)' : 'var(--accent-blue)'};
-        color: white;
-        border-radius: 8px;
-        box-shadow: var(--shadow-lg);
-        z-index: 9999;
-        animation: slideIn 0.3s ease;
-    `;
+    notification.className = `notification notification-${type}`;
     notification.textContent = message;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
-        notification.style.animation = 'slideOut 0.3s ease';
+        notification.classList.add('notification-hide');
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
-
-// ============== 动画关键帧 ==============
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @keyframes slideOut {
-        from { transform: translateX(0); opacity: 1; }
-        to { transform: translateX(100%); opacity: 0; }
-    }
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.8);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-    }
-    .modal-content {
-        background: var(--bg-secondary);
-        border: 1px solid var(--border-color);
-        border-radius: 16px;
-        padding: 32px;
-        max-width: 600px;
-        max-height: 80vh;
-        overflow-y: auto;
-        position: relative;
-    }
-    .modal-close {
-        position: absolute;
-        top: 16px;
-        right: 16px;
-        background: none;
-        border: none;
-        color: var(--text-muted);
-        font-size: 24px;
-        cursor: pointer;
-    }
-    .modal-close:hover { color: var(--text-primary); }
-    .modal-section {
-        margin-top: 24px;
-        padding-top: 16px;
-        border-top: 1px solid var(--border-color);
-    }
-    .modal-section h4 {
-        font-size: 14px;
-        color: var(--text-muted);
-        margin-bottom: 12px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    .modal-section p {
-        color: var(--text-secondary);
-        margin-bottom: 8px;
-    }
-`;
-document.head.appendChild(style);
 
 // ============== 工具函数 ==============
 function formatNumber(num) {
