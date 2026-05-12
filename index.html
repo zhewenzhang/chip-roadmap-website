@@ -4,30 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>芯片 Roadmap 专业分析平台 | Semiconductor Industry Intelligence</title>
+    <meta name="description" content="Comprehensive semiconductor industry intelligence: track 255+ companies, 67+ chip roadmaps, and market trends across China, US, Taiwan, and global regions.">
+    <meta property="og:title" content="Chip Industry Roadmap Tracker">
+    <meta property="og:description" content="Track chip companies and roadmaps across China, US, Taiwan, and global markets.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://zhewenzhang.github.io/chip-roadmap-website/">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Chip Industry Roadmap Tracker">
+    <meta name="twitter:description" content="Track chip companies and roadmaps across China, US, Taiwan, and global markets.">
+    <link rel="canonical" href="https://zhewenzhang.github.io/chip-roadmap-website/">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; img-src 'self' data:;">
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 導航欄 -->
-    <nav class="navbar">
+    <!-- 导航栏 -->
+    <nav class="navbar" aria-label="主导航">
         <div class="nav-container">
             <div class="logo">
-                <span class="logo-icon">&#9670;</span>
+                <span class="logo-icon" aria-hidden="true">&#9670;</span>
                 <span class="logo-text">芯片產業分析</span>
             </div>
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html" class="active">首頁</a></li>
+                <li><a href="index.html" class="active" aria-current="page">首頁</a></li>
                 <li><a href="roadmap.html">Roadmap</a></li>
                 <li><a href="companies.html">公司分析</a></li>
                 <li><a href="insights.html">行業洞察</a></li>
             </ul>
-            <div class="mobile-menu-btn" id="mobileMenuBtn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
         </div>
     </nav>
 
@@ -35,7 +45,7 @@
     <header class="hero">
         <div class="hero-content">
             <h1>全球晶片產業 <span class="hero-dramatic">Roadmap</span> 分析</h1>
-            <p class="hero-subtitle">深度追蹤 250+ 公司 · 67+ 款核心晶片 · 產業趨勢洞察</p>
+            <p class="hero-subtitle">深度追蹤公司 · 核心晶片 · 產業趨勢洞察</p>
             <div class="hero-stats">
                 <div class="stat-item">
                     <span class="stat-number">255</span>
@@ -60,49 +70,49 @@
     <!-- 主要内容区域 -->
     <main class="main-content">
         <!-- 市场概览 -->
-        <section class="section market-overview">
+        <section class="section market-overview" aria-labelledby="market-overview-heading">
             <div class="section-header">
-                <h2>市場<em>概覽</em></h2>
+                <h2 id="market-overview-heading">市場<em>概覽</em></h2>
                 <span class="section-badge">Market Overview</span>
             </div>
             <div class="stats-grid">
                 <div class="stats-row dark-bg">
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>中国</h3>
-                            <p class="stat-value">180</p>
+                            <p class="stat-value" id="statChina">&nbsp;</p>
                             <p class="stat-note">家公司</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>美国</h3>
-                            <p class="stat-value">45</p>
+                            <p class="stat-value" id="statUsa">&nbsp;</p>
                             <p class="stat-note">家公司</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>台湾</h3>
-                            <p class="stat-value">12</p>
+                            <p class="stat-value" id="statTaiwan">&nbsp;</p>
                             <p class="stat-note">家公司</p>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>其他地区</h3>
-                            <p class="stat-value">18</p>
+                            <p class="stat-value" id="statOther">&nbsp;</p>
                             <p class="stat-note">家公司</p>
                         </div>
                     </div>
                 </div>
                 <div class="stats-row">
                     <div class="stat-card highlight">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>AI 加速器</h3>
                             <p class="stat-value">85</p>
@@ -110,7 +120,7 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>CPU</h3>
                             <p class="stat-value">42</p>
@@ -118,7 +128,7 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>GPU</h3>
                             <p class="stat-value">38</p>
@@ -126,7 +136,7 @@
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon">&#9670;</div>
+                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
                         <div class="stat-info">
                             <h3>MCU</h3>
                             <p class="stat-value">55</p>
@@ -140,13 +150,13 @@
         <hr class="thick">
 
         <!-- 最新动态 -->
-        <section class="section latest-updates">
+        <section class="section latest-updates" aria-labelledby="latest-updates-heading">
             <div class="section-header">
-                <h2>最新<em>動態</em></h2>
+                <h2 id="latest-updates-heading">最新<em>動態</em></h2>
                 <span class="section-badge">Latest Updates</span>
             </div>
             <div class="updates-grid">
-                <div class="update-card">
+                <article class="update-card">
                     <div class="update-header">
                         <span class="update-company nvidia">NVIDIA</span>
                         <span class="update-date">2025 Q1</span>
@@ -155,8 +165,8 @@
                         <h4>Blackwell B200 量产</h4>
                         <p>FP4 45PFLOPS 性能，TSMC 4nm 制程</p>
                     </div>
-                </div>
-                <div class="update-card">
+                </article>
+                <article class="update-card">
                     <div class="update-header">
                         <span class="update-company amd">AMD</span>
                         <span class="update-date">2025 Q2</span>
@@ -165,8 +175,8 @@
                         <h4>MI350X 即将发布</h4>
                         <p>CDNA4 架构，HBM3E 内存</p>
                     </div>
-                </div>
-                <div class="update-card">
+                </article>
+                <article class="update-card">
                     <div class="update-header">
                         <span class="update-company intel">Intel</span>
                         <span class="update-date">2025 Q2</span>
@@ -175,8 +185,8 @@
                         <h4>Falcon Shores 延期</h4>
                         <p>XPU 混合架构，Intel 18A 制程</p>
                     </div>
-                </div>
-                <div class="update-card">
+                </article>
+                <article class="update-card">
                     <div class="update-header">
                         <span class="update-company china">华为</span>
                         <span class="update-date">2025 Q1</span>
@@ -185,63 +195,64 @@
                         <h4>昇腾 910C 发布</h4>
                         <p>性能提升 20%，SMIC 7nm</p>
                     </div>
-                </div>
+                </article>
             </div>
         </section>
 
         <hr class="thick">
 
         <!-- 行业洞察摘要 -->
-        <section class="section insights-summary">
+        <section class="section insights-summary" aria-labelledby="insights-heading">
             <div class="section-header">
-                <h2>行業<em>洞察</em></h2>
+                <h2 id="insights-heading">行業<em>洞察</em></h2>
                 <span class="section-badge">Key Insights</span>
             </div>
             <div class="insights-grid">
-                <div class="insight-card">
-                    <div class="insight-icon">&#9670;</div>
+                <article class="insight-card">
+                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
                     <h4>RISC-V 生态爆发</h4>
                     <p>2025 年 NVIDIA 宣布移植 CUDA 到 RISC-V，加速架构在 AI 领域渗透</p>
                     <span class="insight-impact high">高影响</span>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-icon">&#9670;</div>
+                </article>
+                <article class="insight-card">
+                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
                     <h4>光子计算崛起</h4>
                     <p>Lightmatter、Celestial AI 引领光互连和光子计算革命</p>
                     <span class="insight-impact high">高影响</span>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-icon">&#9670;</div>
+                </article>
+                <article class="insight-card">
+                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
                     <h4>云厂商自研加速</h4>
                     <p>AWS、微软、Meta 降低对 NVIDIA 依赖，推出自研 AI 芯片</p>
                     <span class="insight-impact high">高影响</span>
-                </div>
-                <div class="insight-card">
-                    <div class="insight-icon">&#9670;</div>
+                </article>
+                <article class="insight-card">
+                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
                     <h4>ABF 需求分化</h4>
                     <p>AI 芯片需求 12-20 层 ABF，消费电子维持 2-6 层</p>
                     <span class="insight-impact medium">中影响</span>
-                </div>
+                </article>
             </div>
         </section>
 
         <hr class="thick">
 
         <!-- 头部玩家 -->
-        <section class="section top-players">
+        <section class="section top-players" aria-labelledby="players-heading">
             <div class="section-header">
-                <h2>頭部<em>玩家</em></h2>
+                <h2 id="players-heading">頭部<em>玩家</em></h2>
                 <span class="section-badge">Top Players</span>
             </div>
             <div class="players-table">
                 <table>
+                    <caption>头部芯片公司排名</caption>
                     <thead>
                         <tr>
-                            <th>排名</th>
-                            <th>公司</th>
-                            <th>市场份额</th>
-                            <th>核心优势</th>
-                            <th>主要挑战</th>
+                            <th scope="col">排名</th>
+                            <th scope="col">公司</th>
+                            <th scope="col">市场份额</th>
+                            <th scope="col">核心优势</th>
+                            <th scope="col">主要挑战</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -304,6 +315,6 @@
         </div>
     </footer>
 
-    <script src="js/app.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>
