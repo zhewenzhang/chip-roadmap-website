@@ -1,64 +1,65 @@
-# Chip Roadmap Database 🔬
+# Chip Roadmap — 半導體產業分析
 
-芯片公司 Roadmap 数据库 - 一个用于查询中国和全球芯片公司信息的静态网站。
+A minimalist monochrome static website for semiconductor industry intelligence. Tracks 250+ companies, chip roadmaps, market data, and industry insights.
 
-## 📊 数据概览
+## Design System
 
-- **中国公司**: 50+ 家芯片设计公司
-- **海外公司**: 25+ 家全球芯片巨头
-- **数据维度**: 公司信息、产品线、ABF载板需求、市场地位等
+- **Minimalist Monochrome** — Pure black/white palette, zero border-radius, no shadows
+- **Typography** — Playfair Display (headings), Source Serif 4 (body), JetBrains Mono (labels/meta)
+- **Visual Language** — Line-based decorations, color inversion hovers, instant 100ms transitions
+- **Texture** — SVG noise overlay, repeating-linear-gradient patterns
 
-## 🚀 功能特性
+## Data
 
-- ✅ **实时搜索** - 支持中英文公司名、产品、地区搜索
-- ✅ **多维筛选** - 按地区、类型、ABF需求、上市状态筛选
-- ✅ **详情弹窗** - 点击查看完整公司信息
-- ✅ **响应式设计** - 支持桌面和移动端
-- ✅ **深色主题** - 现代科技风格界面
+- **67 chips** tracked across timelines
+- **255 companies** in database (25 with detailed profiles)
+- **5 companies** with roadmap data (NVIDIA, AMD, Intel, Huawei Ascend, Cambricon)
+- **Market regions**: China, USA, Taiwan, Europe, Japan, Korea, Israel, Canada
 
-## 🛠 技术栈
+## Pages
 
-- **HTML5** - 语义化结构
-- **CSS3** - CSS Grid/Flexbox、CSS变量、动画效果
-- **JavaScript** - 原生ES6+、Fetch API
-- **无构建工具** - 纯静态文件，可直接部署
+| Page | Description |
+|------|-------------|
+| `index.html` | Home — stats overview, latest updates, insights, top players |
+| `roadmap.html` | Timeline visualization with company filters |
+| `companies.html` | Company grid with search and detail modals |
+| `insights.html` | Industry trends, ABF analysis, key insights |
 
-## 📁 项目结构
+## Tech Stack
+
+- **HTML5** — Semantic structure
+- **CSS3** — CSS Grid/Flexbox, custom properties, responsive design
+- **JavaScript** — Native ES6+, Fetch API, modular data loading
+- **Zero build tools** — Static files, deploy anywhere
+
+## Project Structure
 
 ```
 chip-roadmap-website/
-├── index.html          # 主页
+├── index.html              # 首頁
+├── roadmap.html            # 時間軸
+├── companies.html          # 公司分析
+├── insights.html           # 行業洞察
 ├── css/
-│   └── style.css       # 样式文件
+│   └── style.css           # Monochrome design system
 ├── js/
-│   └── app.js          # 应用逻辑
+│   └── app.js              # Application logic
 ├── data/
-│   ├── china_companies.json    # 中国公司数据
-│   └── global_companies.json   # 海外公司数据
-└── README.md
+│   ├── companies.json      # Company profiles
+│   ├── roadmaps.json       # Roadmap timelines
+│   ├── market.json         # Market statistics
+│   └── insights.json       # Industry analysis
+└── .github/workflows/      # GitHub Actions deploy
 ```
 
-## 🌐 部署到 GitHub Pages
+## Deployment
 
-1. 创建 GitHub 仓库
-2. 推送代码到 `main` 分支
-3. 进入仓库 Settings → Pages
-4. Source 选择 `main` 分支，文件夹选择 `/ (root)`
-5. 保存后等待部署完成
+Pushed to `main` → GitHub Actions auto-deploys to Pages.
 
-## 📝 数据来源
+## Disclaimer
 
-- 公司官网
-- 财报披露
-- 公开新闻报道
-- 行业研究报告
-
-> ⚠️ 本站数据仅供参考，不构成投资建议。
-
-## 📄 License
-
-MIT License
+Data sourced from public company filings, official announcements, and industry reports. For reference only; not investment advice.
 
 ---
 
-Built with ❤️ for semiconductor industry research
+2026 Semiconductor Industry Intelligence

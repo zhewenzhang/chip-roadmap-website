@@ -6,7 +6,7 @@
     <title>行业洞察 | Industry Insights</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,20 +14,18 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <span class="logo-icon"><span class="logo-dot"></span></span>
-                <span class="logo-text">芯片产业分析</span>
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">晶片產業分析</span>
             </div>
-            <button id="mobileMenuBtn" class="mobile-menu-btn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
             <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">首页</a></li>
+                <li><a href="index.html">首頁</a></li>
                 <li><a href="roadmap.html">Roadmap</a></li>
                 <li><a href="companies.html">公司分析</a></li>
-                <li><a href="insights.html" class="active">行业洞察</a></li>
+                <li><a href="insights.html" class="active">行業洞察</a></li>
             </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="選單">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
@@ -39,7 +37,7 @@
         </div>
 
         <!-- 关键趋势 -->
-        <section class="insight-section fade-in">
+        <section class="insight-section">
             <h2>关键技术趋势</h2>
             <div class="trend-cards" id="trendsContainer">
                 <!-- 动态加载 -->
@@ -47,7 +45,7 @@
         </section>
 
         <!-- 头部玩家 -->
-        <section class="insight-section fade-in">
+        <section class="insight-section">
             <h2>头部玩家分析</h2>
             <div class="player-cards" id="topPlayersContainer">
                 <!-- 动态加载 -->
@@ -55,7 +53,7 @@
         </section>
 
         <!-- ABF 需求分析 -->
-        <section class="insight-section fade-in">
+        <section class="insight-section">
             <h2>ABF 载板需求分析</h2>
             <div class="abf-analysis" id="abfAnalysisContainer">
                 <!-- 动态加载 -->
@@ -63,7 +61,7 @@
         </section>
 
         <!-- 关键洞察 -->
-        <section class="insight-section fade-in">
+        <section class="insight-section">
             <h2>核心观点</h2>
             <ul class="insights-list" id="keyInsightsList">
                 <!-- 动态加载 -->
@@ -73,7 +71,7 @@
 
     <!-- 页脚 -->
     <footer class="footer">
-        <div class="footer-bottom" style="max-width: 1200px; margin: 0 auto;">
+        <div class="footer-bottom">
             <p>数据最后更新: 2026-02-05 | 数据来源: 公司财报、官网、行业报告</p>
         </div>
     </footer>

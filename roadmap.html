@@ -6,7 +6,7 @@
     <title>芯片 Roadmap 时间轴 | Semiconductor Roadmap</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,28 +14,26 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <span class="logo-icon"><span class="logo-dot"></span></span>
-                <span class="logo-text">芯片產業分析</span>
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">晶片產業分析</span>
             </div>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="菜单">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">首頁</a></li>
                 <li><a href="roadmap.html" class="active">Roadmap</a></li>
                 <li><a href="companies.html">公司分析</a></li>
                 <li><a href="insights.html">行業洞察</a></li>
             </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="選單">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
     <!-- 页面标题 -->
     <header class="roadmap-header">
         <h1>晶片 Roadmap <em>時間軸</em></h1>
-        <p style="color: var(--text-secondary); margin-top: 16px;">追蹤全球主要晶片廠商的產品演進路線圖</p>
-        
+        <p>追蹤全球主要晶片廠商的產品演進路線圖</p>
+
         <div class="roadmap-filters">
             <button class="filter-btn active" data-filter="all">全部公司</button>
             <button class="filter-btn" data-filter="nvidia">NVIDIA</button>
@@ -47,7 +45,7 @@
     </header>
 
     <!-- 时间轴容器 -->
-    <div class="timeline-container fade-in">
+    <div class="timeline-container">
         <div id="timelineContainer">
             <div class="timeline">
                 <!-- 动态加载 -->
@@ -56,10 +54,10 @@
     </div>
 
     <!-- 底部说明 -->
-    <section style="max-width: 1200px; margin: 0 auto; padding: 48px 24px;">
-        <div class="insight-card" style="text-align: center;">
-            <h3 style="color: var(--text-primary); margin-bottom: 16px;">数据说明</h3>
-            <p style="color: var(--text-secondary);"> Roadmap 数据来源于各公司官方公告、财报和行业报道。部分产品发布时间可能因各种原因延期，实际发布时间请以官方为准。</p>
+    <section class="data-disclaimer">
+        <div class="disclaimer-box">
+            <h3>數據說明</h3>
+            <p>Roadmap 數據來源於各公司官方公告、財報和行業報道。部分產品發佈時間可能因各種原因延期，實際發佈時間請以官方為準。</p>
         </div>
     </section>
 

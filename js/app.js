@@ -10,20 +10,7 @@ let insightsData = {};
 
 // ============== 初始化 ==============
 document.addEventListener('DOMContentLoaded', function() {
-    // Intersection Observer 滚动动画
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.1 });
-
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-
     loadAllData();
-    initSearch();
     initFilters();
     initMobileMenu();
 });
@@ -220,7 +207,7 @@ function showCompanyDetail(companyId) {
     content.innerHTML = `
         <button class="modal-close">&times;</button>
         <h2>${company.name_en || company.name_cn || companyId}</h2>
-        ${company.name_cn ? `<p style="color:var(--text-muted);">${company.name_cn}</p>` : ''}
+        ${company.name_cn ? `<p style="color:var(--color-muted-fg);">${company.name_cn}</p>` : ''}
 
         <div class="modal-section">
             <h4>基本信息</h4>
@@ -406,26 +393,6 @@ function renderKeyInsights() {
     `).join('');
 }
 
-// ============== 搜索功能 ==============
-function initSearch() {
-    const searchInput = document.getElementById('globalSearch');
-    if (!searchInput) return;
-
-    let debounceTimer;
-    searchInput.addEventListener('input', (e) => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            const term = e.target.value.trim();
-            
-            // 如果在公司页面，实时过滤
-            if (window.location.pathname.includes('companies.html')) {
-                const activeFilter = document.querySelector('.filter-btn.active')?.dataset.filter || 'all';
-                renderCompaniesGrid(activeFilter, term);
-            }
-        }, 300);
-    });
-}
-
 // ============== 筛选功能 ==============
 function initFilters() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -449,20 +416,19 @@ function initFilters() {
 
 // ============== 移动端菜单 ==============
 function initMobileMenu() {
-    const menuToggle = document.getElementById('mobileMenuToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    if (!menuToggle || !mobileMenu) return;
+    const menuBtn = document.getElementById('mobileMenuBtn');
+    const navLinks = document.getElementById('navLinks');
+    if (!menuBtn || !navLinks) return;
 
-    menuToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('active');
-        menuToggle.classList.toggle('active');
+    menuBtn.addEventListener('click', () => {
+        navLinks.classList.toggle('open');
+        menuBtn.classList.toggle('open');
     });
 
-    // 点击菜单项后关闭菜单
-    mobileMenu.querySelectorAll('a').forEach(link => {
+    navLinks.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
-            mobileMenu.classList.remove('active');
-            menuToggle.classList.remove('active');
+            navLinks.classList.remove('open');
+            menuBtn.classList.remove('open');
         });
     });
 }
@@ -492,11 +458,5 @@ function formatNumber(num) {
 }
 
 function getCompanyColor(companyId) {
-    const colors = {
-        'nvidia': '#4CAF50',
-        'amd': '#FF5722',
-        'intel': '#2196F3',
-        'huawei': '#F44336'
-    };
-    return colors[companyId.toLowerCase()] || '#00D4FF';
+    return '#000000';
 }
