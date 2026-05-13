@@ -5,6 +5,7 @@ import {
     query, orderBy, serverTimestamp
 } from 'firebase/firestore';
 import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, normalizeSignal } from '../js/firebase/db.js';
+import { STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize } from '../js/modules/signals-labels.js';
 
 // ===== STATE =====
 let companiesData = [];
@@ -492,9 +493,10 @@ document.getElementById('tab-signals').addEventListener('click', e => {
     else if (action === 'reset-signal-filters') resetSignalFilters();
 });
 
-function stageLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
-function impactLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
-function statusLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
+function stageLabel(v) { return labelize(STAGE_LABEL, v); }
+function impactLabel(v) { return labelize(IMPACT_LABEL, v); }
+function statusLabel(v) { return labelize(STATUS_LABEL, v); }
+function regionLabel(v) { return labelize(REGION_LABEL, v); }
 
 function statusChipClass(s) {
     switch (s) {
@@ -525,37 +527,37 @@ function renderSignalsTab(filterState = {}) {
             <td>${s.confidence_score}</td>
             <td>${verified}</td>
             <td class="td-actions">
-                <button class="btn-sm" data-action="edit-signal" data-id="${esc(s.id)}">Edit</button>
-                <button class="btn-sm btn-danger" data-action="delete-signal" data-id="${esc(s.id)}">Del</button>
+                <button class="btn-sm" data-action="edit-signal" data-id="${esc(s.id)}">編輯</button>
+                <button class="btn-sm btn-danger" data-action="delete-signal" data-id="${esc(s.id)}">刪除</button>
             </td>
         </tr>`;
     }).join('');
 
     document.getElementById('signals-content').innerHTML = `
         <div class="toolbar">
-            <h2>Signals (${signalsData.length})</h2>
-            <button class="btn-primary" data-action="new-signal" style="width:auto;padding:8px 16px">+ Add Signal</button>
+            <h2>信號 (${signalsData.length})</h2>
+            <button class="btn-primary" data-action="new-signal" style="width:auto;padding:8px 16px">+ 新增信號</button>
         </div>
         <div class="toolbar" style="margin-bottom:12px;flex-wrap:wrap;gap:8px">
             <select id="sig-filter-company" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
-                <option value="">All companies</option>
+                <option value="">全部公司</option>
                 ${companies.map(c => `<option ${filterState.company === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
             </select>
             <select id="sig-filter-stage" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
-                <option value="">All stages</option>
+                <option value="">全部階段</option>
                 ${STAGE_OPTIONS.map(v => `<option value="${v}" ${filterState.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}
             </select>
             <select id="sig-filter-status" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
-                <option value="">All statuses</option>
+                <option value="">全部狀態</option>
                 ${STATUS_OPTIONS.map(v => `<option value="${v}" ${filterState.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}
             </select>
-            <button class="btn-sm" data-action="filter-signals">Apply</button>
-            <button class="btn-sm btn-secondary" data-action="reset-signal-filters">Reset</button>
+            <button class="btn-sm" data-action="filter-signals">套用</button>
+            <button class="btn-sm btn-secondary" data-action="reset-signal-filters">重置</button>
         </div>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>Company</th><th>Chip</th><th>Title</th><th>Stage</th><th>Status</th><th>Confidence</th><th>Verified</th><th>Actions</th></tr></thead>
-                <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">No signals yet</td></tr>'}</tbody>
+                <thead><tr><th>公司</th><th>芯片</th><th>標題</th><th>階段</th><th>狀態</th><th>信度</th><th>最後驗證</th><th>操作</th></tr></thead>
+                <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">尚無信號</td></tr>'}</tbody>
             </table>
         </div>`;
 }
@@ -573,26 +575,26 @@ function resetSignalFilters() {
 
 function buildSignalForm(s = {}) {
     return `
-        <div class="form-group"><label>Title *</label><input id="fs-title" value="${esc(s.title || '')}" required></div>
-        <div class="form-group"><label>Company ID *</label><input id="fs-company_id" value="${esc(s.company_id || '')}" ${s.id ? 'readonly style="opacity:0.5"' : ''} required></div>
-        <div class="form-group"><label>Company Name *</label><input id="fs-company_name" value="${esc(s.company_name || '')}" required></div>
-        <div class="form-group"><label>Chip Name *</label><input id="fs-chip_name" value="${esc(s.chip_name || '')}" required></div>
-        <div class="form-group"><label>Region *</label>
-            <select id="fs-region">${REGION_OPTIONS.map(v => `<option ${s.region === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        <div class="form-group"><label>標題 *</label><input id="fs-title" value="${esc(s.title || '')}" required></div>
+        <div class="form-group"><label>公司 ID *</label><input id="fs-company_id" value="${esc(s.company_id || '')}" ${s.id ? 'readonly style="opacity:0.5"' : ''} required></div>
+        <div class="form-group"><label>公司名稱 *</label><input id="fs-company_name" value="${esc(s.company_name || '')}" required></div>
+        <div class="form-group"><label>芯片名稱 *</label><input id="fs-chip_name" value="${esc(s.chip_name || '')}" required></div>
+        <div class="form-group"><label>地區 *</label>
+            <select id="fs-region">${REGION_OPTIONS.map(v => `<option ${s.region === v ? 'selected' : ''}>${regionLabel(v)}</option>`).join('')}</select>
         </div>
-        <div class="form-group"><label>Stage *</label>
-            <select id="fs-stage">${STAGE_OPTIONS.map(v => `<option ${s.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}</select>
+        <div class="form-group"><label>階段 *</label>
+            <select id="fs-stage">${STAGE_OPTIONS.map(v => `<option value="${v}" ${s.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}</select>
         </div>
-        <div class="form-group"><label>Status *</label>
-            <select id="fs-status">${STATUS_OPTIONS.map(v => `<option ${s.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}</select>
+        <div class="form-group"><label>狀態 *</label>
+            <select id="fs-status">${STATUS_OPTIONS.map(v => `<option value="${v}" ${s.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}</select>
         </div>
-        <div class="form-group"><label>ABF Demand Impact *</label>
-            <select id="fs-abf_demand_impact">${IMPACT_OPTIONS.map(v => `<option ${s.abf_demand_impact === v ? 'selected' : ''}>${impactLabel(v)}</option>`).join('')}</select>
+        <div class="form-group"><label>ABF 需求影響 *</label>
+            <select id="fs-abf_demand_impact">${IMPACT_OPTIONS.map(v => `<option value="${v}" ${s.abf_demand_impact === v ? 'selected' : ''}>${impactLabel(v)}</option>`).join('')}</select>
         </div>
-        <div class="form-group"><label>Confidence Score (0-100) *</label><input id="fs-confidence_score" type="number" min="0" max="100" value="${s.confidence_score ?? 50}"></div>
-        <div class="form-group"><label>Signal Type</label><input id="fs-signal_type" value="${esc(s.signal_type || '')}" placeholder="e.g. product_progress"></div>
-        <div class="form-group"><label>Release Year</label><input id="fs-release_year" type="number" value="${s.release_year ?? ''}" placeholder="e.g. 2026"></div>
-        <div class="form-group"><label>Release Quarter</label>
+        <div class="form-group"><label>信度 (0-100) *</label><input id="fs-confidence_score" type="number" min="0" max="100" value="${s.confidence_score ?? 50}"></div>
+        <div class="form-group"><label>信號類型</label><input id="fs-signal_type" value="${esc(s.signal_type || '')}" placeholder="例如：product_progress"></div>
+        <div class="form-group"><label>量產年份</label><input id="fs-release_year" type="number" value="${s.release_year ?? ''}" placeholder="例如：2026"></div>
+        <div class="form-group"><label>量產季度</label>
             <select id="fs-release_quarter">
                 <option value="" ${!s.release_quarter ? 'selected' : ''}>—</option>
                 <option value="Q1" ${s.release_quarter === 'Q1' ? 'selected' : ''}>Q1</option>
@@ -601,44 +603,44 @@ function buildSignalForm(s = {}) {
                 <option value="Q4" ${s.release_quarter === 'Q4' ? 'selected' : ''}>Q4</option>
             </select>
         </div>
-        <div class="form-group"><label>Package Type</label><input id="fs-package_type" value="${esc(s.package_type || '')}" placeholder="e.g. 2.5D"></div>
-        <div class="form-group"><label>CoWoS Required</label>
+        <div class="form-group"><label>封裝類型</label><input id="fs-package_type" value="${esc(s.package_type || '')}" placeholder="例如：2.5D"></div>
+        <div class="form-group"><label>CoWoS 需求</label>
             <select id="fs-cowos_required">
-                <option value="false" ${!s.cowos_required ? 'selected' : ''}>No</option>
-                <option value="true" ${s.cowos_required ? 'selected' : ''}>Yes</option>
+                <option value="false" ${!s.cowos_required ? 'selected' : ''}>否</option>
+                <option value="true" ${s.cowos_required ? 'selected' : ''}>是</option>
             </select>
         </div>
-        <div class="form-group"><label>ABF Size</label><input id="fs-abf_size" value="${esc(s.abf_size || '')}" placeholder="e.g. 77mm x 77mm"></div>
-        <div class="form-group"><label>ABF Layers</label><input id="fs-abf_layers" type="number" value="${s.abf_layers ?? ''}" placeholder="e.g. 16"></div>
-        <div class="form-group"><label>HBM</label><input id="fs-hbm" value="${esc(s.hbm || '')}" placeholder="e.g. HBM3"></div>
-        <div class="form-group"><label>Expected Volume</label><input id="fs-expected_volume" value="${esc(s.expected_volume || '')}" placeholder="e.g. medium"></div>
-        <div class="form-group"><label>Impact Scope (comma-separated)</label><input id="fs-impact_scope" value="${esc((s.impact_scope || []).join(', '))}"></div>
-        <div class="form-group"><label>Tags (comma-separated)</label><input id="fs-tags" value="${esc((s.tags || []).join(', '))}"></div>
-        <div class="form-section-title">Evidence</div>
-        <div class="form-group"><label>Evidence Summary</label><textarea id="fs-evidence_summary" rows="3">${esc(s.evidence_summary || '')}</textarea></div>
-        <div class="form-group"><label>Conflicting Evidence</label><textarea id="fs-conflicting_evidence" rows="3">${esc(s.conflicting_evidence || '')}</textarea></div>
-        <div class="form-group"><label>Notes</label><textarea id="fs-notes" rows="3">${esc(s.notes || '')}</textarea></div>
-        <div class="form-group"><label>Last Verified At</label><input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}"></div>
-        <div class="form-group"><label>Sources (JSON array)</label><textarea id="fs-sources" rows="4" style="font-family:monospace;font-size:12px">${esc(JSON.stringify(s.sources || [], null, 2))}</textarea></div>`;
+        <div class="form-group"><label>ABF 尺寸</label><input id="fs-abf_size" value="${esc(s.abf_size || '')}" placeholder="例如：77mm x 77mm"></div>
+        <div class="form-group"><label>ABF 層數</label><input id="fs-abf_layers" type="number" value="${s.abf_layers ?? ''}" placeholder="例如：16"></div>
+        <div class="form-group"><label>HBM</label><input id="fs-hbm" value="${esc(s.hbm || '')}" placeholder="例如：HBM3"></div>
+        <div class="form-group"><label>預期出貨量</label><input id="fs-expected_volume" value="${esc(s.expected_volume || '')}" placeholder="例如：medium"></div>
+        <div class="form-group"><label>影響範圍（逗號分隔）</label><input id="fs-impact_scope" value="${esc((s.impact_scope || []).join(', '))}"></div>
+        <div class="form-group"><label>標籤（逗號分隔）</label><input id="fs-tags" value="${esc((s.tags || []).join(', '))}"></div>
+        <div class="form-section-title">證據</div>
+        <div class="form-group"><label>證據摘要</label><textarea id="fs-evidence_summary" rows="3">${esc(s.evidence_summary || '')}</textarea></div>
+        <div class="form-group"><label>矛盾證據</label><textarea id="fs-conflicting_evidence" rows="3">${esc(s.conflicting_evidence || '')}</textarea></div>
+        <div class="form-group"><label>備註</label><textarea id="fs-notes" rows="3">${esc(s.notes || '')}</textarea></div>
+        <div class="form-group"><label>最後驗證日期</label><input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}"></div>
+        <div class="form-group"><label>來源（JSON 陣列）</label><textarea id="fs-sources" rows="4" style="font-family:monospace;font-size:12px">${esc(JSON.stringify(s.sources || [], null, 2))}</textarea></div>`;
 }
 
 function collectSignalForm() {
     const confidenceRaw = document.getElementById('fs-confidence_score').value.trim();
     const confidence = Number(confidenceRaw);
     if (isNaN(confidence) || confidence < 0 || confidence > 100) {
-        showToast('Confidence score must be between 0 and 100', 'error');
+        showToast('信度必須介於 0 到 100', 'error');
         return null;
     }
 
     const stage = document.getElementById('fs-stage').value;
     if (!STAGE_OPTIONS.includes(stage)) {
-        showToast('Invalid stage value', 'error');
+        showToast('階段值無效', 'error');
         return null;
     }
 
     const status = document.getElementById('fs-status').value;
     if (!STATUS_OPTIONS.includes(status)) {
-        showToast('Invalid status value', 'error');
+        showToast('狀態值無效', 'error');
         return null;
     }
 
@@ -647,7 +649,7 @@ function collectSignalForm() {
     if (abf_layers_raw) {
         abf_layers = Number(abf_layers_raw);
         if (isNaN(abf_layers)) {
-            showToast('ABF Layers must be a number', 'error');
+            showToast('ABF 層數必須為數字', 'error');
             return null;
         }
     }
@@ -657,7 +659,7 @@ function collectSignalForm() {
         sources = JSON.parse(document.getElementById('fs-sources').value || '[]');
         if (!Array.isArray(sources)) sources = [];
     } catch {
-        showToast('Sources must be valid JSON array', 'error');
+        showToast('來源必須為有效的 JSON 陣列', 'error');
         return null;
     }
 
@@ -691,15 +693,15 @@ function collectSignalForm() {
 }
 
 function openNewSignalModal() {
-    openModal('New Signal', buildSignalForm({}), async () => {
+    openModal('新增信號', buildSignalForm({}), async () => {
         const data = collectSignalForm();
         if (!data) throw new Error('Validation failed');
         if (!data.title || !data.company_id || !data.company_name || !data.chip_name || !data.region) {
-            showToast('Required fields missing', 'error');
+            showToast('必填欄位未填寫', 'error');
             throw new Error('Required fields missing');
         }
         await createSignal(data);
-        showToast('Created ✓');
+        showToast('已建立 ✓');
         await fetchSignals();
         renderSignalsTab();
     });
@@ -708,11 +710,11 @@ function openNewSignalModal() {
 function openEditSignalModal(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
-    openModal('Edit: ' + signal.title, buildSignalForm(signal), async () => {
+    openModal('編輯：' + signal.title, buildSignalForm(signal), async () => {
         const data = collectSignalForm();
         if (!data) throw new Error('Validation failed');
         await saveSignal(id, data);
-        showToast('Saved ✓');
+        showToast('已儲存 ✓');
         await fetchSignals();
         renderSignalsTab();
     });
@@ -720,9 +722,9 @@ function openEditSignalModal(id) {
 
 async function deleteSignalAction(id) {
     const signal = signalsData.find(s => s.id === id);
-    if (!confirm(`Delete "${signal?.title}"? Cannot be undone.`)) return;
+    if (!confirm(`確定刪除「${signal?.title}」嗎？此動作無法復原。`)) return;
     await deleteSignalDb(id);
-    showToast('Deleted');
+    showToast('已刪除');
     await fetchSignals();
     renderSignalsTab();
 }

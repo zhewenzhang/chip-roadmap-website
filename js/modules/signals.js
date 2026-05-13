@@ -4,6 +4,7 @@
  */
 
 import { loadSignals } from '../firebase/db.js';
+import { STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize } from './signals-labels.js';
 
 // ===== Enums =====
 const STAGE_ENUM = ['rumor', 'announced', 'sampling', 'design_win', 'pilot', 'ramp', 'volume'];
@@ -28,9 +29,10 @@ function esc(v) {
     return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-function stageLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
-function impactLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
-function statusLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
+function stageLabel(v) { return labelize(STAGE_LABEL, v); }
+function impactLabel(v) { return labelize(IMPACT_LABEL, v); }
+function statusLabel(v) { return labelize(STATUS_LABEL, v); }
+function regionLabel(v) { return labelize(REGION_LABEL, v); }
 
 function statusChipClass(s) {
     switch (s) {
@@ -102,7 +104,7 @@ function renderFilters() {
     const impacts = IMPACT_ENUM;
     const statuses = STATUS_ENUM;
 
-    populateSelect('filterRegion', REGION_OPTIONS, '');
+    populateSelect('filterRegion', REGION_OPTIONS.map(v => ({ value: v, label: regionLabel(v) })), '');
     populateSelect('filterCompany', companies, '');
     populateSelect('filterStage', stages.map(v => ({ value: v, label: stageLabel(v) })), '');
     populateSelect('filterImpact', impacts.map(v => ({ value: v, label: impactLabel(v) })), '');
@@ -187,27 +189,27 @@ function renderDesktopTable(signals, wrap) {
         return `<tr class="signal-row" data-id="${esc(s.id)}">
             <td class="col-company">${esc(s.company_name)}</td>
             <td class="col-chip">${esc(s.chip_name)}</td>
-            <td class="col-region">${esc(s.region)}</td>
+            <td class="col-region">${esc(regionLabel(s.region))}</td>
             <td class="col-stage">${esc(stageLabel(s.stage))}</td>
             <td class="col-impact">${impactBadge(s.abf_demand_impact)}</td>
             <td class="col-confidence">${confidenceBar(s.confidence_score)}</td>
             <td class="col-status"><span class="signal-status-chip ${statusChipClass(s.status)}">${esc(statusLabel(s.status))}</span></td>
             <td class="col-verified">${formatDate(s.last_verified_at)}</td>
-            <td class="col-view"><button class="signal-view-btn" data-id="${esc(s.id)}">View</button></td>
+            <td class="col-view"><button class="signal-view-btn" data-id="${esc(s.id)}">查看</button></td>
         </tr>`;
     }).join('');
 
     wrap.innerHTML = `
         <table class="signals-table">
             <thead><tr>
-                <th>Company</th>
-                <th>Chip</th>
-                <th>Region</th>
-                <th>Stage</th>
-                <th>ABF Impact</th>
-                <th>Confidence</th>
-                <th>Status</th>
-                <th>Last Verified</th>
+                <th>公司</th>
+                <th>芯片</th>
+                <th>地區</th>
+                <th>階段</th>
+                <th>ABF 影響</th>
+                <th>信度</th>
+                <th>狀態</th>
+                <th>最後驗證</th>
                 <th></th>
             </tr></thead>
             <tbody>${rows}</tbody>
@@ -265,7 +267,7 @@ function renderLoadingSkeleton() {
     ).join('');
     wrap.innerHTML = `
         <table class="signals-table">
-            <thead><tr><th>Company</th><th>Chip</th><th>Region</th><th>Stage</th><th>ABF Impact</th><th>Confidence</th><th>Status</th><th>Last Verified</th><th></th></tr></thead>
+            <thead><tr><th>公司</th><th>芯片</th><th>地區</th><th>階段</th><th>ABF 影響</th><th>信度</th><th>狀態</th><th>最後驗證</th><th></th></tr></thead>
             <tbody>${rows}</tbody>
         </table>`;
 }
@@ -275,8 +277,8 @@ function renderEmptyState() {
     if (!wrap) return;
     wrap.innerHTML = `
         <div class="signals-empty-state">
-            <p class="empty-title">No signals match the current filters.</p>
-            <p class="empty-sub">Try clearing filters or widening the region and stage selection.</p>
+            <p class="empty-title">沒有符合當前篩選條件的信號</p>
+            <p class="empty-sub">嘗試清除篩選條件，或放寬地區與階段選擇</p>
         </div>`;
 }
 
@@ -285,8 +287,8 @@ function renderErrorState() {
     if (!wrap) return;
     wrap.innerHTML = `
         <div class="signals-error-state">
-            <p class="error-title">Signals could not be loaded.</p>
-            <button id="signalsRetry" class="filter-reset" style="margin-top:12px">Retry</button>
+            <p class="error-title">信號載入失敗</p>
+            <button id="signalsRetry" class="filter-reset" style="margin-top:12px">重試</button>
         </div>`;
     document.getElementById('signalsRetry')?.addEventListener('click', () => init());
 }
@@ -307,28 +309,29 @@ function openDrawer(signal) {
 
     // Section 1: Identity
     html += `<div class="drawer-section">
-        <div class="drawer-field"><span class="drawer-field-label">Company</span><span class="drawer-field-value">${esc(signal.company_name)}</span></div>
-        <div class="drawer-field"><span class="drawer-field-label">Chip</span><span class="drawer-field-value">${esc(signal.chip_name)}</span></div>
-        <div class="drawer-field"><span class="drawer-field-label">Region</span><span class="drawer-field-value">${esc(signal.region)}</span></div>
+        <h3 class="drawer-section-title">識別資訊</h3>
+        <div class="drawer-field"><span class="drawer-field-label">公司</span><span class="drawer-field-value">${esc(signal.company_name)}</span></div>
+        <div class="drawer-field"><span class="drawer-field-label">芯片</span><span class="drawer-field-value">${esc(signal.chip_name)}</span></div>
+        <div class="drawer-field"><span class="drawer-field-label">地區</span><span class="drawer-field-value">${esc(regionLabel(signal.region))}</span></div>
     </div>`;
 
     // Section 2: Signal status
     html += `<div class="drawer-section">
-        <h3 class="drawer-section-title">Signal Status</h3>
-        <div class="drawer-field"><span class="drawer-field-label">Status</span><span class="signal-status-chip ${statusChipClass(signal.status)}">${esc(statusLabel(signal.status))}</span></div>
-        <div class="drawer-field"><span class="drawer-field-label">Confidence</span><span class="drawer-field-value">${confidenceBar(signal.confidence_score)}</span></div>
-        <div class="drawer-field"><span class="drawer-field-label">Last Verified</span><span class="drawer-field-value">${formatDate(signal.last_verified_at)}</span></div>
+        <h3 class="drawer-section-title">信號狀態</h3>
+        <div class="drawer-field"><span class="drawer-field-label">狀態</span><span class="signal-status-chip ${statusChipClass(signal.status)}">${esc(statusLabel(signal.status))}</span></div>
+        <div class="drawer-field"><span class="drawer-field-label">信度</span><span class="drawer-field-value">${confidenceBar(signal.confidence_score)}</span></div>
+        <div class="drawer-field"><span class="drawer-field-label">最後驗證</span><span class="drawer-field-value">${formatDate(signal.last_verified_at)}</span></div>
     </div>`;
 
     // Section 3: Supply chain implication (only show if fields exist)
     const hasSupplyChain = signal.package_type || signal.cowos_required || signal.abf_size || signal.abf_layers || signal.hbm;
     if (hasSupplyChain) {
         html += `<div class="drawer-section">
-            <h3 class="drawer-section-title">Supply Chain Implication</h3>`;
-        if (signal.package_type) html += `<div class="drawer-field"><span class="drawer-field-label">Package</span><span class="drawer-field-value">${esc(signal.package_type)}</span></div>`;
-        if (signal.cowos_required) html += `<div class="drawer-field"><span class="drawer-field-label">CoWoS</span><span class="drawer-field-value">Yes</span></div>`;
-        if (signal.abf_size) html += `<div class="drawer-field"><span class="drawer-field-label">ABF Size</span><span class="drawer-field-value">${esc(signal.abf_size)}</span></div>`;
-        if (signal.abf_layers) html += `<div class="drawer-field"><span class="drawer-field-label">ABF Layers</span><span class="drawer-field-value">${signal.abf_layers}</span></div>`;
+            <h3 class="drawer-section-title">供應鏈影響</h3>`;
+        if (signal.package_type) html += `<div class="drawer-field"><span class="drawer-field-label">封裝</span><span class="drawer-field-value">${esc(signal.package_type)}</span></div>`;
+        if (signal.cowos_required) html += `<div class="drawer-field"><span class="drawer-field-label">CoWoS</span><span class="drawer-field-value">是</span></div>`;
+        if (signal.abf_size) html += `<div class="drawer-field"><span class="drawer-field-label">ABF 尺寸</span><span class="drawer-field-value">${esc(signal.abf_size)}</span></div>`;
+        if (signal.abf_layers) html += `<div class="drawer-field"><span class="drawer-field-label">ABF 層數</span><span class="drawer-field-value">${signal.abf_layers}</span></div>`;
         if (signal.hbm) html += `<div class="drawer-field"><span class="drawer-field-label">HBM</span><span class="drawer-field-value">${esc(signal.hbm)}</span></div>`;
         html += `</div>`;
     }
@@ -336,7 +339,7 @@ function openDrawer(signal) {
     // Section 4: Evidence
     if (signal.evidence_summary) {
         html += `<div class="drawer-section">
-            <h3 class="drawer-section-title">Evidence</h3>
+            <h3 class="drawer-section-title">證據</h3>
             <p class="drawer-text">${esc(signal.evidence_summary)}</p>
         </div>`;
     }
@@ -344,7 +347,7 @@ function openDrawer(signal) {
     // Section 5: Conflicting evidence
     if (signal.conflicting_evidence) {
         html += `<div class="drawer-section">
-            <h3 class="drawer-section-title">Conflicting Evidence</h3>
+            <h3 class="drawer-section-title">矛盾證據</h3>
             <p class="drawer-text">${esc(signal.conflicting_evidence)}</p>
         </div>`;
     }
@@ -352,7 +355,7 @@ function openDrawer(signal) {
     // Section 6: Notes
     if (signal.notes) {
         html += `<div class="drawer-section">
-            <h3 class="drawer-section-title">Notes</h3>
+            <h3 class="drawer-section-title">備註</h3>
             <p class="drawer-text">${esc(signal.notes)}</p>
         </div>`;
     }
@@ -360,10 +363,10 @@ function openDrawer(signal) {
     // Section 7: Sources
     if (signal.sources && signal.sources.length > 0) {
         html += `<div class="drawer-section">
-            <h3 class="drawer-section-title">Sources</h3>
+            <h3 class="drawer-section-title">來源</h3>
             <ul class="drawer-sources">`;
         signal.sources.forEach(src => {
-            const label = src.label || src.type || 'Source';
+            const label = src.label || src.type || '來源';
             const url = src.url || '#';
             html += `<li><a href="${esc(url)}" target="_blank" rel="noreferrer">${esc(label)}</a></li>`;
         });
