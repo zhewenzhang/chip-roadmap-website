@@ -21,6 +21,26 @@ function esc(v) {
     return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+/**
+ * Normalize chip name: trim whitespace, collapse internal spaces,
+ * normalize common variants (e.g., extra spaces, inconsistent casing for known prefixes).
+ */
+function normalizeChipName(raw) {
+    let name = String(raw || '').trim();
+    // Collapse multiple spaces
+    name = name.replace(/\s+/g, ' ');
+    // Normalize known prefix variants
+    const prefixes = ['Ascend', 'Blackwell', 'Rubin', 'MI', 'TPU', 'Trainium', 'Inferentia'];
+    for (const prefix of prefixes) {
+        const regex = new RegExp(`^${prefix.toLowerCase()}\\b`, 'i');
+        if (regex.test(name)) {
+            name = prefix + name.slice(prefix.length);
+            break;
+        }
+    }
+    return name;
+}
+
 function showToast(msg, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
@@ -580,11 +600,22 @@ function resetSignalFilters() {
 }
 
 function buildSignalForm(s = {}) {
+    const chipNames = [...new Set(signalsData.map(sig => sig.chip_name).filter(Boolean))].sort();
     return `
         <div class="form-group"><label>標題 *</label><input id="fs-title" value="${esc(s.title || '')}" required></div>
-        <div class="form-group"><label>公司 ID *</label><input id="fs-company_id" value="${esc(s.company_id || '')}" ${s.id ? 'readonly style="opacity:0.5"' : ''} required></div>
-        <div class="form-group"><label>公司名稱 *</label><input id="fs-company_name" value="${esc(s.company_name || '')}" required></div>
-        <div class="form-group"><label>芯片名稱 *</label><input id="fs-chip_name" value="${esc(s.chip_name || '')}" required></div>
+        <div class="form-group"><label>公司 *</label>
+            <select id="fs-company_id" required>
+                <option value="">選擇公司...</option>
+                ${companiesData.map(c => `<option value="${esc(c.id)}" ${s.company_id === c.id ? 'selected' : ''}>${esc(c.name_en)} (${esc(c.id)})</option>`).join('')}
+            </select>
+        </div>
+        <div class="form-group"><label>公司名稱 * <small>(自動同步)</small></label><input id="fs-company_name" value="${esc(s.company_name || '')}" readonly style="opacity:0.6"></div>
+        <div class="form-group"><label>芯片名稱 *</label>
+            <input id="fs-chip_name" value="${esc(s.chip_name || '')}" list="chip-name-datalist" required>
+            <datalist id="chip-name-datalist">
+                ${chipNames.map(name => `<option value="${esc(name)}">`).join('')}
+            </datalist>
+        </div>
         <div class="form-group"><label>地區 *</label>
             <select id="fs-region">${REGION_OPTIONS.map(v => `<option value="${v}" ${s.region === v ? 'selected' : ''}>${regionLabel(v)}</option>`).join('')}</select>
         </div>
@@ -722,7 +753,7 @@ function collectSignalForm() {
         title: document.getElementById('fs-title').value.trim(),
         company_id: document.getElementById('fs-company_id').value.trim(),
         company_name: document.getElementById('fs-company_name').value.trim(),
-        chip_name: document.getElementById('fs-chip_name').value.trim(),
+        chip_name: normalizeChipName(document.getElementById('fs-chip_name').value),
         region: document.getElementById('fs-region').value,
         stage,
         status,
@@ -751,6 +782,21 @@ function collectSignalForm() {
     };
 }
 
+function initSignalFormEvents() {
+    const idSelect = document.getElementById('fs-company_id');
+    const nameInput = document.getElementById('fs-company_name');
+    if (!idSelect || !nameInput) return;
+    
+    idSelect.addEventListener('change', () => {
+        const company = companiesData.find(c => c.id === idSelect.value);
+        if (company) {
+            nameInput.value = company.name_cn || company.name_en;
+        } else {
+            nameInput.value = '';
+        }
+    });
+}
+
 function openNewSignalModal() {
     openModal('新增信號', buildSignalForm({}), async () => {
         const data = collectSignalForm();
@@ -767,6 +813,7 @@ function openNewSignalModal() {
         await fetchSignals();
         renderSignalsTab();
     });
+    initSignalFormEvents();
 }
 
 function openEditSignalModal(id) {
@@ -787,6 +834,7 @@ function openEditSignalModal(id) {
         await fetchSignals();
         renderSignalsTab();
     });
+    initSignalFormEvents();
 }
 
 async function deleteSignalAction(id) {

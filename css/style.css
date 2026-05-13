@@ -1799,9 +1799,386 @@ tr:hover .td-company { background: #f5f5f5; }
     line-height: 1.4;
 }
 
-/* ============== Signals Page ============== */
+/* Watchlist (Phase 3) */
+.watchlist-panel {
+    background: var(--color-bg);
+    border: 2px solid var(--color-fg);
+    padding: 24px;
+    margin-bottom: 24px;
+}
 
-/* Signal semantic CSS variables */
+.watchlist-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+}
+
+.watchlist-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.watchlist-clear {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    background: none;
+    border: none;
+    color: var(--color-muted-fg);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.watchlist-clear:hover {
+    color: var(--color-fg);
+}
+
+.watchlist-groups {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.watchlist-group-label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-muted-fg);
+    margin-bottom: 8px;
+}
+
+.watchlist-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.watchlist-item {
+    display: flex;
+    align-items: center;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 4px 8px;
+}
+
+.watchlist-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.watchlist-link:hover {
+    text-decoration: underline;
+}
+
+.watchlist-remove {
+    background: none;
+    border: none;
+    color: var(--color-bg);
+    margin-left: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0 2px;
+}
+
+.watchlist-remove:hover {
+    color: #ff4444;
+}
+
+/* Entity Links & Watch Buttons */
+.entity-link-wrap {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.entity-link {
+    text-decoration: none;
+    color: var(--color-fg);
+}
+
+.entity-link:hover {
+    text-decoration: underline;
+}
+
+.watch-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    padding: 0;
+    line-height: 1;
+    color: var(--color-muted-fg);
+    transition: color var(--transition);
+}
+
+.watch-btn:hover {
+    color: var(--color-fg);
+}
+
+.watch-btn.active {
+    color: #ffcc00;
+}
+
+.watch-btn-sm {
+    font-size: 0.9rem;
+}
+
+/* Drawer Adjustments for Watch */
+.drawer-actions-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.drawer-watch-btn {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-fg);
+    padding: 6px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.drawer-watch-btn:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+}
+
+.drawer-watch-btn.active {
+    background: var(--color-muted);
+}
+
+/* Entity Intelligence Pages (Phase 3) */
+.entity-page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 128px 24px 80px;
+}
+
+.entity-header {
+    border-bottom: 8px solid var(--color-fg);
+    padding-bottom: 32px;
+    margin-bottom: 48px;
+}
+
+.entity-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 16px;
+}
+
+.entity-title-row h1 {
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.entity-meta-row {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    color: var(--color-muted-fg);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+}
+
+.watch-btn-large {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border: none;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: opacity var(--transition);
+}
+
+.watch-btn-large:hover {
+    opacity: 0.8;
+}
+
+.watch-btn-large.active {
+    background: var(--color-muted);
+    color: var(--color-fg);
+    border: 1px solid var(--color-fg);
+}
+
+.entity-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 48px;
+}
+
+.section-title {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 24px;
+    border-bottom: 2px solid var(--color-fg);
+    padding-bottom: 8px;
+}
+
+.sidebar-block {
+    margin-bottom: 40px;
+}
+
+.sidebar-block-title {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted-fg);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 4px;
+}
+
+.sidebar-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.sidebar-item {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    background: var(--color-muted);
+    padding: 4px 10px;
+}
+
+.sidebar-item a {
+    color: var(--color-fg);
+    text-decoration: none;
+}
+
+.sidebar-item a:hover {
+    text-decoration: underline;
+}
+
+.status-stat-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+}
+
+.sidebar-list-item {
+    margin-bottom: 16px;
+}
+
+.sidebar-list-item .item-meta {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-muted-fg);
+}
+
+.sidebar-list-item .item-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.sidebar-info {
+    font-size: 0.85rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.timeline-event {
+    border-left: 2px solid var(--color-fg);
+    padding-left: 16px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.timeline-event::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background: var(--color-fg);
+}
+
+.event-date {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-muted-fg);
+}
+
+.event-status {
+    margin: 4px 0;
+}
+
+.event-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* Entity page empty/error states */
+.entity-empty,
+.entity-error {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-muted-fg);
+    padding: 24px 0;
+}
+
+.entity-error {
+    color: var(--signal-invalidated);
+}
+
+.sidebar-empty {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted-fg);
+    font-style: italic;
+}
+
+@media (max-width: 1024px) {
+    .entity-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .entity-sidebar {
+        order: -1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+    }
+}
+
+@media (max-width: 768px) {
+    .entity-title-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .entity-title-row h1 {
+        font-size: 2rem;
+    }
+    
+    .entity-sidebar {
+        grid-template-columns: 1fr;
+    }
+}
 :root {
     --signal-verified: #111111;
     --signal-watch: #8a7d6b;

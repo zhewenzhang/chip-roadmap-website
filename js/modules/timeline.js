@@ -199,6 +199,16 @@ function showChipPopup(chip, companyName, accentColor) {
     title.style.color = '#111111';
     title.textContent = chip.product;
 
+    const intelLink = document.createElement('a');
+    intelLink.href = `chip-signals.html?name=${encodeURIComponent(chip.product)}`;
+    intelLink.className = 'signal-view-btn';
+    intelLink.style.display = 'inline-block';
+    intelLink.style.margin = '4px 0 12px 20px';
+    intelLink.style.fontSize = '11px';
+    intelLink.style.textDecoration = 'none';
+    intelLink.textContent = '查看供應鏈信號 \u2192';
+    popup.appendChild(intelLink);
+
     const divider = document.createElement('div');
     divider.className = 'chip-popup-divider';
 

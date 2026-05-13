@@ -32,6 +32,8 @@ export default defineConfig({
         roadmap: resolve(__dirname, 'roadmap.html'),
         insights: resolve(__dirname, 'insights.html'),
         signals: resolve(__dirname, 'signals.html'),
+        'company-signals': resolve(__dirname, 'company-signals.html'),
+        'chip-signals': resolve(__dirname, 'chip-signals.html'),
         admin: resolve(__dirname, 'admin/index.html'),
       },
       output: {

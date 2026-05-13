@@ -50,6 +50,7 @@
         <div class="signals-view-controls">
             <div class="view-toggles" id="viewToggles">
                 <button class="view-toggle active" data-view="all">全部</button>
+                <button class="view-toggle" data-view="watched">關注中</button>
                 <button class="view-toggle" data-view="new">最新</button>
                 <button class="view-toggle" data-view="changed">變更</button>
                 <button class="view-toggle" data-view="high-impact">高 ABF 影響</button>
@@ -61,6 +62,24 @@
                 <span class="saved-views-label">儲存的視圖：</span>
                 <div class="saved-views-list" id="savedViewsList">
                     <!-- Saved views tokens -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Watchlist Panel (Phase 3) -->
+        <div class="watchlist-panel" id="watchlistPanel" style="display:none">
+            <div class="watchlist-header">
+                <h2 class="watchlist-title">我的關注列表</h2>
+                <button class="watchlist-clear" id="clearWatchlistBtn">清除全部</button>
+            </div>
+            <div class="watchlist-groups">
+                <div class="watchlist-group">
+                    <div class="watchlist-group-label">公司</div>
+                    <div class="watchlist-items" id="watchedCompanies"></div>
+                </div>
+                <div class="watchlist-group">
+                    <div class="watchlist-group-label">芯片</div>
+                    <div class="watchlist-items" id="watchedChips"></div>
                 </div>
             </div>
         </div>

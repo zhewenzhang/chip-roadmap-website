@@ -8,6 +8,11 @@ import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS, IMPACT_SORT,
 } from './signals-schema.js';
+import { 
+    loadWatchlist, isWatchingCompany, isWatchingChip, isWatchingSignal,
+    toggleWatchCompany, toggleWatchChip, toggleWatchSignal, getWatchlist,
+    isEmpty as isWatchlistEmpty
+} from './watchlist.js';
 
 // ===== State =====
 let allSignals = [];
@@ -80,6 +85,7 @@ function calculatePriorityScore(s) {
 export async function init() {
     renderLoadingSkeleton();
     loadSavedViews();
+    loadWatchlist();
     const result = await loadSignals();
     if (!result.ok) {
         console.error('[Signals] Load error:', result.error);
@@ -91,6 +97,7 @@ export async function init() {
         renderSummaryLayer(allSignals);
         renderFilters();
         renderSavedViews();
+        renderWatchlistPanel();
         applyFilters();
     }
     bindEvents();
@@ -102,6 +109,19 @@ function renderSummaryLayer(signals) {
     const layer = document.getElementById('signalsSummaryLayer');
     if (!layer) return;
 
+    const watchlist = getWatchlist();
+    const hasWatchlist = !isWatchlistEmpty();
+
+    // Watchlist-filtered signals for Phase 3 summary
+    const watchedSignals = hasWatchlist
+        ? signals.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        )
+        : [];
+
+    // Global summary blocks
     const recentChanges = [...signals]
         .filter(s => s.last_status_changed_at && isRecent(s.last_status_changed_at, 14))
         .sort((a, b) => new Date(b.last_status_changed_at) - new Date(a.last_status_changed_at))
@@ -111,50 +131,146 @@ function renderSummaryLayer(signals) {
         .sort((a, b) => b._priority - a._priority)
         .slice(0, 4);
 
-    const newest = [...signals]
-        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+    // Watchlist-aware derived lists
+    const watchedChanges = watchedSignals
+        .filter(s => s.last_status_changed_at && isRecent(s.last_status_changed_at, 14))
+        .sort((a, b) => new Date(b.last_status_changed_at) - new Date(a.last_status_changed_at))
         .slice(0, 4);
 
-    layer.innerHTML = `
-        <div class="summary-block">
-            <div class="summary-block-title">最近狀態變更</div>
-            <ul class="summary-list">
-                ${recentChanges.map(s => `
-                    <li class="summary-item" data-id="${s.id}">
-                        <span class="summary-item-meta">${formatDate(s.last_status_changed_at)}</span>
-                        ${esc(s.company_name)}: ${esc(s.chip_name)}
-                    </li>
-                `).join('') || '<li class="summary-item">無最近變更</li>'}
-            </ul>
-        </div>
-        <div class="summary-block">
-            <div class="summary-block-title">最高 ABF 影響</div>
-            <ul class="summary-list">
-                ${highestImpact.map(s => `
-                    <li class="summary-item" data-id="${s.id}">
-                        <span class="summary-item-meta">${impactLabel(s.abf_demand_impact)}</span>
-                        ${esc(s.company_name)}: ${esc(s.chip_name)}
-                    </li>
-                `).join('')}
-            </ul>
-        </div>
-        <div class="summary-block">
-            <div class="summary-block-title">最新收錄</div>
-            <ul class="summary-list">
-                ${newest.map(s => `
-                    <li class="summary-item" data-id="${s.id}">
-                        <span class="summary-item-meta">${formatDate(s.createdAt)}</span>
-                        ${esc(s.company_name)}: ${esc(s.chip_name)}
-                    </li>
-                `).join('')}
-            </ul>
-        </div>
-    `;
+    const watchedHighImpact = watchedSignals
+        .filter(s => s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive')
+        .sort((a, b) => b._priority - a._priority)
+        .slice(0, 4);
+
+    const watchedRecentVerified = watchedSignals
+        .filter(s => isRecent(s.last_verified_at, 14))
+        .sort((a, b) => new Date(b.last_verified_at || 0) - new Date(a.last_verified_at || 0))
+        .slice(0, 4);
+
+    if (hasWatchlist) {
+        // Watchlist-focused summary: 3 blocks tailored to watched entities
+        layer.innerHTML = `
+            <div class="summary-block">
+                <div class="summary-block-title">關注中狀態變更</div>
+                <ul class="summary-list">
+                    ${watchedChanges.map(s => `
+                        <li class="summary-item" data-id="${s.id}">
+                            <span class="summary-item-meta">${formatDate(s.last_status_changed_at)}</span>
+                            ${esc(s.company_name)}: ${esc(s.chip_name)}
+                        </li>
+                    `).join('') || '<li class="summary-item">關注項無最近變更</li>'}
+                </ul>
+            </div>
+            <div class="summary-block">
+                <div class="summary-block-title">關注中高 ABF 影響</div>
+                <ul class="summary-list">
+                    ${watchedHighImpact.map(s => `
+                        <li class="summary-item" data-id="${s.id}">
+                            <span class="summary-item-meta">${impactLabel(s.abf_demand_impact)}</span>
+                            ${esc(s.company_name)}: ${esc(s.chip_name)}
+                        </li>
+                    `).join('') || '<li class="summary-item">關注項無高影響信號</li>'}
+                </ul>
+            </div>
+            <div class="summary-block">
+                <div class="summary-block-title">關注中最近驗證</div>
+                <ul class="summary-list">
+                    ${watchedRecentVerified.map(s => `
+                        <li class="summary-item" data-id="${s.id}">
+                            <span class="summary-item-meta">${formatDate(s.last_verified_at)}</span>
+                            ${esc(s.company_name)}: ${esc(s.chip_name)}
+                        </li>
+                    `).join('') || '<li class="summary-item">關注項無最近驗證</li>'}
+                </ul>
+            </div>
+        `;
+    } else {
+        // Global summary for users without watchlist
+        layer.innerHTML = `
+            <div class="summary-block">
+                <div class="summary-block-title">最近狀態變更</div>
+                <ul class="summary-list">
+                    ${recentChanges.map(s => `
+                        <li class="summary-item" data-id="${s.id}">
+                            <span class="summary-item-meta">${formatDate(s.last_status_changed_at)}</span>
+                            ${esc(s.company_name)}: ${esc(s.chip_name)}
+                        </li>
+                    `).join('') || '<li class="summary-item">無最近變更</li>'}
+                </ul>
+            </div>
+            <div class="summary-block">
+                <div class="summary-block-title">最高 ABF 影響</div>
+                <ul class="summary-list">
+                    ${highestImpact.map(s => `
+                        <li class="summary-item" data-id="${s.id}">
+                            <span class="summary-item-meta">${impactLabel(s.abf_demand_impact)}</span>
+                            ${esc(s.company_name)}: ${esc(s.chip_name)}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+            <div class="summary-block">
+                <div class="summary-block-title">最新收錄</div>
+                <ul class="summary-list">
+                    ${signals.slice(0, 4).sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)).map(s => `
+                        <li class="summary-item" data-id="${s.id}">
+                            <span class="summary-item-meta">${formatDate(s.createdAt)}</span>
+                            ${esc(s.company_name)}: ${esc(s.chip_name)}
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+    }
 
     layer.querySelectorAll('.summary-item').forEach(el => {
         el.addEventListener('click', () => {
             const s = allSignals.find(x => x.id === el.dataset.id);
             if (s) openDrawer(s);
+        });
+    });
+}
+
+// ===== Watchlist Panel (Phase 3) =====
+
+function renderWatchlistPanel() {
+    const panel = document.getElementById('watchlistPanel');
+    const companiesList = document.getElementById('watchedCompanies');
+    const chipsList = document.getElementById('watchedChips');
+    if (!panel || !companiesList || !chipsList) return;
+
+    const watchlist = getWatchlist();
+    if (isWatchlistEmpty()) {
+        panel.style.display = 'none';
+        return;
+    }
+
+    panel.style.display = 'block';
+
+    companiesList.innerHTML = watchlist.companies.map(id => {
+        const s = allSignals.find(x => x.company_id === id);
+        const name = s ? s.company_name : id;
+        return `<div class="watchlist-item" data-type="company" data-id="${esc(id)}">
+            <a href="company-signals.html?id=${esc(id)}" class="watchlist-link">${esc(name)}</a>
+            <button class="watchlist-remove" data-type="company" data-id="${esc(id)}">&times;</button>
+        </div>`;
+    }).join('') || '<div class="watchlist-empty">尚無關注公司</div>';
+
+    chipsList.innerHTML = watchlist.chips.map(name => {
+        return `<div class="watchlist-item" data-type="chip" data-id="${esc(name)}">
+            <a href="chip-signals.html?name=${esc(name)}" class="watchlist-link">${esc(name)}</a>
+            <button class="watchlist-remove" data-type="chip" data-id="${esc(name)}">&times;</button>
+        </div>`;
+    }).join('') || '<div class="watchlist-empty">尚無關注芯片</div>';
+
+    panel.querySelectorAll('.watchlist-remove').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const { type, id } = btn.dataset;
+            if (type === 'company') toggleWatchCompany(id);
+            else if (type === 'chip') toggleWatchChip(id);
+            renderWatchlistPanel();
+            renderSummaryLayer(allSignals);
+            applyFilters();
         });
     });
 }
@@ -298,15 +414,34 @@ function renderSignalsTable(signals) {
     }
 }
 
+// ===== Watch Actions (Phase 3) =====
+
+function watchIcon(active) {
+    return active ? '&#9733;' : '&#9734;';
+}
+
 function renderDesktopTable(signals, wrap) {
     const rows = signals.map(s => {
         const isChecked = compareSelection.includes(s.id);
+        const watchingCompany = isWatchingCompany(s.company_id);
+        const watchingChip = isWatchingChip(s.chip_name);
+        
         return `<tr class="signal-row" data-id="${esc(s.id)}">
             <td class="col-compare">
                 <input type="checkbox" class="compare-checkbox" data-id="${esc(s.id)}" ${isChecked ? 'checked' : ''}>
             </td>
-            <td class="col-company">${esc(s.company_name)}</td>
-            <td class="col-chip">${esc(s.chip_name)}</td>
+            <td class="col-company">
+                <div class="entity-link-wrap">
+                    <button class="watch-btn" data-type="company" data-id="${esc(s.company_id)}" title="關注公司">${watchIcon(watchingCompany)}</button>
+                    <a href="company-signals.html?id=${esc(s.company_id)}" class="entity-link">${esc(s.company_name)}</a>
+                </div>
+            </td>
+            <td class="col-chip">
+                <div class="entity-link-wrap">
+                    <button class="watch-btn" data-type="chip" data-id="${esc(s.chip_name)}" title="關注芯片">${watchIcon(watchingChip)}</button>
+                    <a href="chip-signals.html?name=${esc(s.chip_name)}" class="entity-link">${esc(s.chip_name)}</a>
+                </div>
+            </td>
             <td class="col-region">${esc(regionLabel(s.region))}</td>
             <td class="col-stage">${esc(stageLabel(s.stage))}</td>
             <td class="col-impact">${impactBadge(s.abf_demand_impact)}</td>
@@ -336,7 +471,7 @@ function renderDesktopTable(signals, wrap) {
 
     wrap.querySelectorAll('.signal-row').forEach(row => {
         row.addEventListener('click', (e) => {
-            if (e.target.closest('.compare-checkbox') || e.target.closest('.signal-view-btn')) return;
+            if (e.target.closest('.compare-checkbox') || e.target.closest('.signal-view-btn') || e.target.closest('.watch-btn') || e.target.closest('.entity-link')) return;
             const signal = allSignals.find(s => s.id === row.dataset.id);
             if (signal) openDrawer(signal);
         });
@@ -355,16 +490,36 @@ function renderDesktopTable(signals, wrap) {
             toggleCompare(cb.dataset.id, cb.checked);
         });
     });
+
+    wrap.querySelectorAll('.watch-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const { type, id } = btn.dataset;
+            if (type === 'company') toggleWatchCompany(id);
+            else if (type === 'chip') toggleWatchChip(id);
+            renderWatchlistPanel();
+            renderSummaryLayer(allSignals);
+            applyFilters();
+        });
+    });
 }
 
 function renderMobileList(signals, wrap) {
     const items = signals.map(s => {
+        const watchingCompany = isWatchingCompany(s.company_id);
+        const watchingChip = isWatchingChip(s.chip_name);
         return `<div class="signal-mobile-row" data-id="${esc(s.id)}">
             <div class="mobile-row-top">
-                <span class="mobile-company">${esc(s.company_name)}</span>
+                <span class="mobile-company">
+                    <button class="watch-btn watch-btn-sm" data-type="company" data-id="${esc(s.company_id)}">${watchIcon(watchingCompany)}</button>
+                    <a href="company-signals.html?id=${esc(s.company_id)}" class="entity-link">${esc(s.company_name)}</a>
+                </span>
                 <span class="signal-status-chip ${statusChipClass(s.status)}">${esc(statusLabel(s.status))}</span>
             </div>
-            <div class="mobile-chip">${esc(s.chip_name)}</div>
+            <div class="mobile-chip">
+                <button class="watch-btn watch-btn-sm" data-type="chip" data-id="${esc(s.chip_name)}">${watchIcon(watchingChip)}</button>
+                <a href="chip-signals.html?name=${esc(s.chip_name)}" class="entity-link">${esc(s.chip_name)}</a>
+            </div>
             <div class="mobile-meta">
                 <span class="mobile-stage">${esc(stageLabel(s.stage))}</span>
                 <span class="mobile-impact">${impactLabel(s.abf_demand_impact)}</span>
@@ -377,10 +532,23 @@ function renderMobileList(signals, wrap) {
     wrap.innerHTML = `<div class="signals-mobile-list">${items}</div>`;
 
     wrap.querySelectorAll('.signal-mobile-row').forEach(row => {
-        row.addEventListener('click', () => {
+        row.addEventListener('click', (e) => {
+            if (e.target.closest('.watch-btn') || e.target.closest('.entity-link')) return;
             const signal = allSignals.find(s => s.id === row.dataset.id);
             if (signal) openDrawer(signal);
             else console.warn('[Signals] no signal for id:', row.dataset.id);
+        });
+    });
+
+    wrap.querySelectorAll('.watch-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const { type, id } = btn.dataset;
+            if (type === 'company') toggleWatchCompany(id);
+            else if (type === 'chip') toggleWatchChip(id);
+            renderWatchlistPanel();
+            renderSummaryLayer(allSignals);
+            applyFilters();
         });
     });
 }
@@ -507,11 +675,21 @@ function renderLoadingSkeleton() {
 function renderEmptyState() {
     const wrap = document.getElementById('signalsTableWrap');
     if (!wrap) return;
+
+    const isWatchedView = filterState.view === 'watched';
+    const wlEmpty = isWatchedView && isWatchlistEmpty();
+
     wrap.innerHTML = `
         <div class="signals-empty-state">
-            <p class="empty-title">沒有符合當前篩選條件的信號</p>
-            <p class="empty-sub">嘗試清除篩選條件，或放寬地區與階段選擇</p>
+            <p class="empty-title">${wlEmpty ? '關注列表為空' : '沒有符合當前篩選條件的信號'}</p>
+            <p class="empty-sub">${wlEmpty
+                ? '在信號表格中點擊 ☆ 圖標，將公司或芯片加入關注列表'
+                : '嘗試清除篩選條件，或放寬地區與階段選擇'
+            }</p>
+            ${!wlEmpty ? '<button id="filterReset" class="filter-reset" style="margin-top:12px">清除篩選</button>' : ''}
         </div>`;
+
+    document.getElementById('filterReset')?.addEventListener('click', resetFilters);
 }
 
 function renderErrorState() {
@@ -527,6 +705,8 @@ function renderErrorState() {
 
 // ===== Detail Drawer =====
 
+// ===== Detail Drawer =====
+
 function openDrawer(signal) {
     try {
     const overlay = document.getElementById('drawerOverlay');
@@ -538,13 +718,40 @@ function openDrawer(signal) {
 
     const isMobile = window.innerWidth <= 768;
 
+    const watchingCompany = isWatchingCompany(signal.company_id);
+    const watchingChip = isWatchingChip(signal.chip_name);
+    const watchingSignal = isWatchingSignal(signal.id);
+
     let html = '';
+
+    // Phase 3: Watch Actions
+    html += `<div class="drawer-actions-row">
+        <button class="drawer-watch-btn ${watchingSignal ? 'active' : ''}" data-type="signal" data-id="${esc(signal.id)}">
+            ${watchIcon(watchingSignal)} 關注此信號
+        </button>
+        <button class="drawer-watch-btn ${watchingCompany ? 'active' : ''}" data-type="company" data-id="${esc(signal.company_id)}">
+            ${watchIcon(watchingCompany)} 關注公司
+        </button>
+        <button class="drawer-watch-btn ${watchingChip ? 'active' : ''}" data-type="chip" data-id="${esc(signal.chip_name)}">
+            ${watchIcon(watchingChip)} 關注芯片
+        </button>
+    </div>`;
 
     // Section 1: Identity
     html += `<div class="drawer-section">
         <h3 class="drawer-section-title">識別資訊</h3>
-        <div class="drawer-field"><span class="drawer-field-label">公司</span><span class="drawer-field-value">${esc(signal.company_name)}</span></div>
-        <div class="drawer-field"><span class="drawer-field-label">芯片</span><span class="drawer-field-value">${esc(signal.chip_name)}</span></div>
+        <div class="drawer-field">
+            <span class="drawer-field-label">公司</span>
+            <span class="drawer-field-value">
+                <a href="company-signals.html?id=${esc(signal.company_id)}" class="entity-link">${esc(signal.company_name)}</a>
+            </span>
+        </div>
+        <div class="drawer-field">
+            <span class="drawer-field-label">芯片</span>
+            <span class="drawer-field-value">
+                <a href="chip-signals.html?name=${esc(signal.chip_name)}" class="entity-link">${esc(signal.chip_name)}</a>
+            </span>
+        </div>
         <div class="drawer-field"><span class="drawer-field-label">地區</span><span class="drawer-field-value">${esc(regionLabel(signal.region))}</span></div>
     </div>`;
 
@@ -612,6 +819,23 @@ function openDrawer(signal) {
 
     body.innerHTML = html;
 
+    body.querySelectorAll('.drawer-watch-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const { type, id } = btn.dataset;
+            if (type === 'company') toggleWatchCompany(id);
+            else if (type === 'chip') toggleWatchChip(id);
+            else if (type === 'signal') toggleWatchSignal(id);
+            
+            // Re-render drawer partially
+            btn.classList.toggle('active');
+            btn.innerHTML = `${watchIcon(btn.classList.contains('active'))} ${btn.textContent.trim().slice(2)}`;
+            
+            renderWatchlistPanel();
+            renderSummaryLayer(allSignals);
+            applyFilters();
+        });
+    });
+
     if (isMobile) {
         overlay.classList.add('drawer-mobile');
     } else {
@@ -676,6 +900,20 @@ function bindEvents() {
         });
     }
 
+    // Phase 3: Watchlist Clear
+    const clearWatchBtn = document.getElementById('clearWatchlistBtn');
+    if (clearWatchBtn) {
+        clearWatchBtn.addEventListener('click', () => {
+            if (confirm('確定要清除全部關注項嗎？')) {
+                localStorage.removeItem('chip-roadmap-watchlist');
+                loadWatchlist();
+                renderWatchlistPanel();
+                renderSummaryLayer(allSignals);
+                applyFilters();
+            }
+        });
+    }
+
     // Phase 2: Compare Actions
     const compareClear = document.getElementById('compareClear');
     if (compareClear) compareClear.addEventListener('click', clearCompare);
@@ -708,7 +946,13 @@ function getFilteredSignals() {
     let filtered = [...allSignals];
     const { search, region, company, stage, impact, status, view } = filterState;
 
-    if (view === 'new') {
+    if (view === 'watched') {
+        filtered = filtered.filter(s => 
+            isWatchingCompany(s.company_id) || 
+            isWatchingChip(s.chip_name) || 
+            isWatchingSignal(s.id)
+        );
+    } else if (view === 'new') {
         filtered = filtered.filter(s => isRecent(s.createdAt, 7));
     } else if (view === 'changed') {
         filtered = filtered.filter(s => isRecent(s.last_status_changed_at, 14) || isRecent(s.last_confidence_changed_at, 14) || isRecent(s.last_verified_at, 14));

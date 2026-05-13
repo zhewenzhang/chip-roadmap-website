@@ -129,16 +129,36 @@ function showCompanyDetail(companyId) {
 
     openModalWithContent((content) => {
         // 标题
+        const header = document.createElement('div');
+        header.style.display = 'flex';
+        header.style.justifyContent = 'space-between';
+        header.style.alignItems = 'center';
+        header.style.marginBottom = '24px';
+        header.style.paddingRight = '40px';
+
+        const titleGroup = document.createElement('div');
         const h2 = document.createElement('h2');
         h2.textContent = company.name_en || company.name_cn || companyId;
-        content.appendChild(h2);
+        h2.style.margin = '0';
+        titleGroup.appendChild(h2);
 
         if (company.name_cn) {
             const cnName = document.createElement('p');
             cnName.style.color = 'var(--color-muted-fg, #888)';
+            cnName.style.margin = '4px 0 0';
             cnName.textContent = company.name_cn;
-            content.appendChild(cnName);
+            titleGroup.appendChild(cnName);
         }
+        header.appendChild(titleGroup);
+
+        const intelLink = document.createElement('a');
+        intelLink.href = `company-signals.html?id=${companyId}`;
+        intelLink.className = 'signal-view-btn';
+        intelLink.style.textDecoration = 'none';
+        intelLink.textContent = '查看供應鏈信號 \u2192';
+        header.appendChild(intelLink);
+
+        content.appendChild(header);
 
         // 基本信息
         const infoSection = document.createElement('div');

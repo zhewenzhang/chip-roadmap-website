@@ -63,6 +63,15 @@ export const HISTORY_ACTIONS = {
     CONFIDENCE_CHANGED: 'confidence_changed',
 };
 
+// ===== Navigation Helpers =====
+export function getCompanyIntelUrl(id) {
+    return `company-signals.html?id=${encodeURIComponent(id)}`;
+}
+
+export function getChipIntelUrl(name) {
+    return `chip-signals.html?name=${encodeURIComponent(name)}`;
+}
+
 // ===== Normalization =====
 export function normalizeSignal(raw) {
     if (!raw) return null;

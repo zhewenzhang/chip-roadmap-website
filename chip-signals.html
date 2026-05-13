@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>芯片情報 — 晶片產業 Roadmap</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon" aria-hidden="true">&#9670;</span>
+                <span class="logo-text">芯片產業分析</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+                <li><a href="companies.html">Companies</a></li>
+                <li><a href="insights.html">Insights</a></li>
+                <li><a href="signals.html">信號</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Entity Intelligence Content -->
+    <main class="entity-page" id="entityPage">
+        <header class="entity-header">
+            <div class="entity-title-row">
+                <h1 id="entityName">芯片名稱</h1>
+                <button class="watch-btn-large" id="entityWatchBtn" data-type="chip">&#9734; 關注芯片</button>
+            </div>
+            <div class="entity-meta-row" id="entityMeta">
+                <!-- Company, etc -->
+            </div>
+        </header>
+
+        <div class="entity-grid">
+            <section class="entity-main">
+                <h2 class="section-title">相關信號</h2>
+                <div class="signals-table-wrap" id="signalsTableWrap">
+                    <!-- Table rendered by JS -->
+                </div>
+            </section>
+
+            <aside class="entity-sidebar">
+                <div class="sidebar-block">
+                    <h3 class="sidebar-block-title">基本參數</h3>
+                    <div class="sidebar-info" id="chipInfo">
+                        <!-- Package, CoWoS, etc -->
+                    </div>
+                </div>
+                <div class="sidebar-block">
+                    <h3 class="sidebar-block-title">驗證時間軸</h3>
+                    <div class="sidebar-list" id="verificationTimeline">
+                        <!-- History -->
+                    </div>
+                </div>
+                <div class="sidebar-block">
+                    <h3 class="sidebar-block-title">同公司芯片</h3>
+                    <div class="sidebar-items" id="siblingChips">
+                        <!-- Sibling list -->
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Detail Drawer (Reused from signals.html) -->
+        <div class="drawer-overlay" id="drawerOverlay" style="display:none">
+            <aside class="signal-drawer" id="signalDrawer">
+                <div class="drawer-header">
+                    <h2 id="drawerTitle"></h2>
+                    <button class="drawer-close" id="drawerClose" aria-label="Close">&#215;</button>
+                </div>
+                <div class="drawer-body" id="drawerBody"></div>
+            </aside>
+        </div>
+    </main>
+
+    <script type="module">
+        import { initEntityPage } from './js/modules/entity-signals.js';
+        document.addEventListener('DOMContentLoaded', () => initEntityPage('chip'));
+    </script>
+</body>
+</html>
