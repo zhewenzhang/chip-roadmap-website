@@ -214,6 +214,22 @@ function renderDesktopTable(signals, wrap) {
             </tr></thead>
             <tbody>${rows}</tbody>
         </table>`;
+
+    wrap.querySelectorAll('.signal-view-btn').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            const signal = allSignals.find(s => s.id === btn.dataset.id);
+            if (signal) openDrawer(signal);
+            else console.warn('[Signals] no signal for id:', btn.dataset.id);
+        });
+    });
+    wrap.querySelectorAll('.signal-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const signal = allSignals.find(s => s.id === row.dataset.id);
+            if (signal) openDrawer(signal);
+            else console.warn('[Signals] no signal for id:', row.dataset.id);
+        });
+    });
 }
 
 function renderMobileList(signals, wrap) {
@@ -234,6 +250,14 @@ function renderMobileList(signals, wrap) {
     }).join('');
 
     wrap.innerHTML = `<div class="signals-mobile-list">${items}</div>`;
+
+    wrap.querySelectorAll('.signal-mobile-row').forEach(row => {
+        row.addEventListener('click', () => {
+            const signal = allSignals.find(s => s.id === row.dataset.id);
+            if (signal) openDrawer(signal);
+            else console.warn('[Signals] no signal for id:', row.dataset.id);
+        });
+    });
 }
 
 function impactBadge(impact) {
@@ -296,10 +320,11 @@ function renderErrorState() {
 // ===== Detail Drawer =====
 
 function openDrawer(signal) {
+    try {
     const overlay = document.getElementById('drawerOverlay');
     const title = document.getElementById('drawerTitle');
     const body = document.getElementById('drawerBody');
-    if (!overlay || !title || !body) return;
+    if (!overlay || !title || !body) { console.warn('[Signals] drawer elements missing'); return; }
 
     title.textContent = signal.title || '';
 
@@ -383,6 +408,9 @@ function openDrawer(signal) {
 
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
+    } catch (err) {
+        console.error('[Signals] openDrawer error:', err);
+    }
 }
 
 function closeDrawer() {
@@ -418,19 +446,6 @@ function bindEvents() {
 
     const resetBtn = document.getElementById('filterReset');
     if (resetBtn) resetBtn.addEventListener('click', resetFilters);
-
-    // Table row click / View button
-    const wrap = document.getElementById('signalsTableWrap');
-    if (wrap) {
-        wrap.addEventListener('click', e => {
-            const btn = e.target.closest('.signal-view-btn');
-            const row = e.target.closest('.signal-row, .signal-mobile-row');
-            const id = (btn?.dataset.id) || (row?.dataset.id);
-            if (!id) return;
-            const signal = allSignals.find(s => s.id === id);
-            if (signal) openDrawer(signal);
-        });
-    }
 
     // Drawer close
     const closeBtn = document.getElementById('drawerClose');
