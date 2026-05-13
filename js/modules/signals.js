@@ -4,14 +4,10 @@
  */
 
 import { loadSignals } from '../firebase/db.js';
-import { STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize } from './signals-labels.js';
-
-// ===== Enums =====
-const STAGE_ENUM = ['rumor', 'announced', 'sampling', 'design_win', 'pilot', 'ramp', 'volume'];
-const STATUS_ENUM = ['draft', 'watch', 'verified', 'downgraded', 'invalidated'];
-const IMPACT_ENUM = ['low', 'medium', 'high', 'explosive'];
-const REGION_OPTIONS = ['China', 'Taiwan', 'USA', 'Korea', 'Japan', 'Europe', 'Israel', 'Canada', 'Other', 'Global'];
-const IMPACT_SORT = { explosive: 4, high: 3, medium: 2, low: 1 };
+import {
+    STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
+    STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS, IMPACT_SORT,
+} from './signals-schema.js';
 
 // ===== State =====
 let allSignals = [];
@@ -65,18 +61,17 @@ function isThisWeek(d) {
 
 export async function init() {
     renderLoadingSkeleton();
-    try {
-        allSignals = await loadSignals();
-        if (!Array.isArray(allSignals) || allSignals.length === 0) {
-            renderEmptyState();
-        } else {
-            renderSummaryStrip(allSignals);
-            renderFilters();
-            renderSignalsTable(allSignals);
-        }
-    } catch (err) {
-        console.error('[Signals] Load error:', err);
+    const result = await loadSignals();
+    if (!result.ok) {
+        console.error('[Signals] Load error:', result.error);
         renderErrorState();
+    } else if (result.data.length === 0) {
+        renderEmptyState();
+    } else {
+        allSignals = result.data;
+        renderSummaryStrip(allSignals);
+        renderFilters();
+        renderSignalsTable(allSignals);
     }
     bindEvents();
 }
@@ -345,7 +340,11 @@ function openDrawer(signal) {
         <h3 class="drawer-section-title">信號狀態</h3>
         <div class="drawer-field"><span class="drawer-field-label">狀態</span><span class="signal-status-chip ${statusChipClass(signal.status)}">${esc(statusLabel(signal.status))}</span></div>
         <div class="drawer-field"><span class="drawer-field-label">信度</span><span class="drawer-field-value">${confidenceBar(signal.confidence_score)}</span></div>
+        ${signal.confidence_reason ? `<div class="drawer-field"><span class="drawer-field-label">信度依據</span><span class="drawer-field-value">${esc(signal.confidence_reason)}</span></div>` : ''}
         <div class="drawer-field"><span class="drawer-field-label">最後驗證</span><span class="drawer-field-value">${formatDate(signal.last_verified_at)}</span></div>
+        ${signal.last_verified_by ? `<div class="drawer-field"><span class="drawer-field-label">驗證人</span><span class="drawer-field-value">${esc(signal.last_verified_by)}</span></div>` : ''}
+        ${signal.last_status_changed_at ? `<div class="drawer-field"><span class="drawer-field-label">狀態變更</span><span class="drawer-field-value">${formatDate(signal.last_status_changed_at)}</span></div>` : ''}
+        ${signal.verification_note ? `<div class="drawer-field"><span class="drawer-field-label">驗證備註</span><span class="drawer-field-value">${esc(signal.verification_note)}</span></div>` : ''}
     </div>`;
 
     // Section 3: Supply chain implication (only show if fields exist)

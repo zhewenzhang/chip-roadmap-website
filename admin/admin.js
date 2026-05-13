@@ -5,7 +5,10 @@ import {
     query, orderBy, serverTimestamp
 } from 'firebase/firestore';
 import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, normalizeSignal } from '../js/firebase/db.js';
-import { STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize } from '../js/modules/signals-labels.js';
+import {
+    STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
+    STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS,
+} from '../js/modules/signals-schema.js';
 
 // ===== STATE =====
 let companiesData = [];
@@ -176,11 +179,13 @@ async function fetchInsights() {
 }
 
 async function fetchSignals() {
-    try {
-        signalsData = await loadSignals();
-    } catch (err) {
-        console.error('Error fetching signals:', err);
+    const result = await loadSignals();
+    if (result.ok) {
+        signalsData = result.data;
+    } else {
+        console.error('Error fetching signals:', result.error);
         signalsData = [];
+        showToast('信號載入失敗，請重整頁面', 'error');
     }
 }
 
@@ -477,10 +482,10 @@ async function deleteInsightAction(id) {
 }
 
 // ===== SIGNALS TAB =====
-const STAGE_OPTIONS = ['rumor','announced','sampling','design_win','pilot','ramp','volume'];
-const STATUS_OPTIONS = ['draft','watch','verified','downgraded','invalidated'];
-const IMPACT_OPTIONS = ['low','medium','high','explosive'];
-const REGION_OPTIONS = ['China','Taiwan','USA','Korea','Japan','Europe','Israel','Canada','Other','Global'];
+// Enum arrays imported from signals-schema.js (STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS)
+const STAGE_OPTIONS = STAGE_ENUM;
+const STATUS_OPTIONS = STATUS_ENUM;
+const IMPACT_OPTIONS = IMPACT_ENUM;
 
 document.getElementById('tab-signals').addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
@@ -664,6 +669,16 @@ function buildSignalForm(s = {}) {
             <textarea id="fs-sources" rows="3" placeholder="https://example.com/source-1&#10;https://example.com/source-2"
                       style="font-family:monospace;font-size:12px">${esc((s.sources || []).map(src => src.url || '').filter(Boolean).join('\n'))}</textarea>
             <div style="font-size:11px;color:#888;margin-top:4px">每行貼一個網址即可，留空可省略</div>
+        </div>
+        <div class="form-section-title">信任生命週期</div>
+        <div class="form-group"><label>信度依據</label>
+            <textarea id="fs-confidence_reason" rows="2" placeholder="為何信度是這個分數？例如：供應商確認、媒體引用、推測">${esc(s.confidence_reason || '')}</textarea>
+        </div>
+        <div class="form-group"><label>驗證備註</label>
+            <textarea id="fs-verification_note" rows="2" placeholder="本次驗證說明（可選）">${esc(s.verification_note || '')}</textarea>
+        </div>
+        <div class="form-group"><label>驗證人（email）</label>
+            <input id="fs-last_verified_by" value="${esc(s.last_verified_by || '')}" placeholder="留空自動填入當前用戶">
         </div>`;
 }
 
@@ -728,6 +743,10 @@ function collectSignalForm() {
         notes: document.getElementById('fs-notes').value.trim(),
         last_verified_at: document.getElementById('fs-last_verified_at').value ? new Date(document.getElementById('fs-last_verified_at').value).toISOString() : '',
         sources,
+        // Lifecycle metadata
+        confidence_reason: document.getElementById('fs-confidence_reason').value.trim(),
+        verification_note: document.getElementById('fs-verification_note').value.trim(),
+        last_verified_by: document.getElementById('fs-last_verified_by').value.trim(),
     };
 }
 
@@ -739,7 +758,10 @@ function openNewSignalModal() {
             showToast('必填欄位未填寫（標題 / 公司 ID / 公司名稱 / 芯片名稱 / 地區）', 'error');
             return;
         }
-        await createSignal(data);
+        // Default last_verified_by to current user
+        if (!data.last_verified_by) data.last_verified_by = auth.currentUser?.email || '';
+        const actor = auth.currentUser?.email || '';
+        await createSignal(data, actor);
         showToast('已建立 ✓');
         await fetchSignals();
         renderSignalsTab();
@@ -752,7 +774,14 @@ function openEditSignalModal(id) {
     openModal('編輯：' + signal.title, buildSignalForm(signal), async () => {
         const data = collectSignalForm();
         if (!data) throw new Error('__SILENT__');
-        await saveSignal(id, data);
+        // Default last_verified_by to current user if blank
+        if (!data.last_verified_by) data.last_verified_by = auth.currentUser?.email || '';
+        const actor = auth.currentUser?.email || '';
+        await saveSignal(id, data, {
+            actor,
+            previousStatus: signal.status,
+            previousConfidence: signal.confidence_score,
+        });
         showToast('已儲存 ✓');
         await fetchSignals();
         renderSignalsTab();

@@ -3,6 +3,7 @@ import {
     collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
     query, orderBy, serverTimestamp, where
 } from 'firebase/firestore';
+import { normalizeSignal, IMPACT_SORT, HISTORY_ACTIONS } from '../modules/signals-schema.js';
 
 function showErrorBanner(message) {
     const existing = document.querySelector('.notification-error');
@@ -107,70 +108,17 @@ export async function loadAllData() {
 }
 
 // ===== SIGNALS =====
+// normalizeSignal, IMPACT_SORT imported from signals-schema.js at top of file
+export { normalizeSignal };
 
-const STAGE_ENUM = ['rumor', 'announced', 'sampling', 'design_win', 'pilot', 'ramp', 'volume'];
-const STATUS_ENUM = ['draft', 'watch', 'verified', 'downgraded', 'invalidated'];
-const IMPACT_ENUM = ['low', 'medium', 'high', 'explosive'];
-const IMPACT_SORT = { explosive: 4, high: 3, medium: 2, low: 1 };
-
-export function normalizeSignal(raw) {
-    if (!raw) return null;
-    const stage = STAGE_ENUM.includes(raw.stage) ? raw.stage : 'rumor';
-    const status = STATUS_ENUM.includes(raw.status) ? raw.status : 'draft';
-    const abf_demand_impact = IMPACT_ENUM.includes(raw.abf_demand_impact) ? raw.abf_demand_impact : 'low';
-    let confidence_score = Number(raw.confidence_score) || 0;
-    confidence_score = Math.max(0, Math.min(100, confidence_score));
-
-    let abf_layers = null;
-    if (raw.abf_layers != null) {
-        const n = Number(raw.abf_layers);
-        if (!isNaN(n) && n > 0) abf_layers = n;
-    }
-
-    let release_quarter = '';
-    if (['Q1', 'Q2', 'Q3', 'Q4'].includes(raw.release_quarter)) {
-        release_quarter = raw.release_quarter;
-    }
-
-    const sources = Array.isArray(raw.sources) ? raw.sources : [];
-    const impact_scope = Array.isArray(raw.impact_scope) ? raw.impact_scope : [];
-    const tags = Array.isArray(raw.tags) ? raw.tags : [];
-
-    return {
-        id: raw.id || '',
-        title: raw.title || '',
-        company_id: raw.company_id || '',
-        company_name: raw.company_name || '',
-        chip_name: raw.chip_name || '',
-        region: raw.region || '',
-        signal_type: raw.signal_type || '',
-        stage,
-        release_year: raw.release_year || null,
-        release_quarter,
-        package_type: raw.package_type || '',
-        cowos_required: Boolean(raw.cowos_required),
-        abf_size: raw.abf_size || '',
-        abf_layers,
-        hbm: raw.hbm || '',
-        expected_volume: raw.expected_volume || '',
-        abf_demand_impact,
-        impact_scope,
-        confidence_score,
-        status,
-        evidence_summary: raw.evidence_summary || '',
-        conflicting_evidence: raw.conflicting_evidence || '',
-        last_verified_at: raw.last_verified_at || '',
-        tags,
-        sources,
-        notes: raw.notes || '',
-    };
-}
-
+/**
+ * loadSignals — returns { ok: true, data: Signal[] } or { ok: false, error: Error }
+ * Never collapses a load failure into an empty array.
+ */
 export async function loadSignals() {
     try {
         const snap = await getDocs(collection(db, 'signals'));
-        const signals = snap.docs.map(d => normalizeSignal({ id: d.id, ...d.data() }));
-        // Sort: abf_demand_impact desc → last_verified_at desc → confidence_score desc
+        const signals = snap.docs.map(d => normalizeSignal({ id: d.id, ...d.data() })).filter(Boolean);
         signals.sort((a, b) => {
             const impDiff = (IMPACT_SORT[b.abf_demand_impact] || 0) - (IMPACT_SORT[a.abf_demand_impact] || 0);
             if (impDiff !== 0) return impDiff;
@@ -178,10 +126,10 @@ export async function loadSignals() {
             if (dateDiff !== 0) return dateDiff;
             return b.confidence_score - a.confidence_score;
         });
-        return signals;
+        return { ok: true, data: signals };
     } catch (err) {
         console.error('[Firestore] loadSignals error:', err);
-        return [];
+        return { ok: false, error: err };
     }
 }
 
@@ -191,8 +139,39 @@ export async function getSignal(id) {
     return normalizeSignal({ id: snap.id, ...snap.data() });
 }
 
-export async function createSignal(data) {
-    // Required field validation
+/**
+ * writeSignalHistory — fire-and-forget audit event; never blocks the main operation.
+ */
+async function writeSignalHistory(signalId, action, actor, summary) {
+    try {
+        await addDoc(collection(db, 'signal_history'), {
+            signal_id: signalId,
+            action,
+            actor: actor || 'unknown',
+            summary: summary || '',
+            timestamp: serverTimestamp(),
+        });
+    } catch (err) {
+        console.warn('[Firestore] history write failed:', err);
+    }
+}
+
+export async function loadSignalHistory(signalId, limit = 5) {
+    try {
+        const q = query(
+            collection(db, 'signal_history'),
+            where('signal_id', '==', signalId),
+            orderBy('timestamp', 'desc')
+        );
+        const snap = await getDocs(q);
+        return snap.docs.slice(0, limit).map(d => ({ id: d.id, ...d.data() }));
+    } catch (err) {
+        console.warn('[Firestore] loadSignalHistory error:', err);
+        return [];
+    }
+}
+
+export async function createSignal(data, actor = '') {
     const required = ['title', 'company_id', 'company_name', 'chip_name', 'region', 'stage', 'confidence_score', 'abf_demand_impact', 'status'];
     for (const field of required) {
         if (!data[field] && data[field] !== 0) {
@@ -205,15 +184,36 @@ export async function createSignal(data) {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
     });
+    await writeSignalHistory(ref.id, HISTORY_ACTIONS.CREATED, actor,
+        `Signal created: ${normalized.title}`);
     return ref.id;
 }
 
-export async function saveSignal(id, data) {
+export async function saveSignal(id, data, opts = {}) {
+    const { actor = '', previousStatus = null, previousConfidence = null } = opts;
     const normalized = normalizeSignal(data);
+
+    // Auto-stamp last_status_changed_at when status changes
+    if (previousStatus !== null && previousStatus !== normalized.status) {
+        normalized.last_status_changed_at = new Date().toISOString();
+    }
+
     await updateDoc(doc(db, 'signals', id), {
         ...normalized,
         updatedAt: serverTimestamp(),
     });
+
+    // Determine history action
+    let action = HISTORY_ACTIONS.UPDATED;
+    let summary = `Signal updated: ${normalized.title}`;
+    if (previousStatus !== null && previousStatus !== normalized.status) {
+        action = HISTORY_ACTIONS.STATUS_CHANGED;
+        summary = `Status changed from ${previousStatus} to ${normalized.status}`;
+    } else if (previousConfidence !== null && previousConfidence !== normalized.confidence_score) {
+        action = HISTORY_ACTIONS.CONFIDENCE_CHANGED;
+        summary = `Confidence changed from ${previousConfidence} to ${normalized.confidence_score}`;
+    }
+    await writeSignalHistory(id, action, actor, summary);
 }
 
 export async function deleteSignal(id) {
