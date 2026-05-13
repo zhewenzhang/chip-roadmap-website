@@ -1,6 +1,7 @@
 /**
- * Entity Signals Module
+ * Entity Signals Module — Phase 8 (Entity-Centered Intelligence)
  * Handles the logic for company and chip intelligence pages.
+ * Uses entity-intelligence.js for dossier derivation.
  */
 
 import { loadSignals } from '../firebase/db.js';
@@ -8,10 +9,15 @@ import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     IMPACT_SORT
 } from './signals-schema.js';
-import { 
+import {
     loadWatchlist, isWatchingCompany, isWatchingChip,
     toggleWatchCompany, toggleWatchChip, getWatchlist
 } from './watchlist.js';
+import {
+    buildCompanyDossier, buildChipDossier,
+    getCompanyChipPortfolio, getChipCompanyContext,
+    getSiblingChips, getEntityRiskIndicators, getVerificationTrend
+} from './entity-intelligence.js';
 
 // ===== State =====
 let allSignals = [];
@@ -80,14 +86,15 @@ export async function initEntityPage(type) {
             metaEl.innerHTML = '<span>尚無收錄此芯片的信號</span>';
         }
         document.getElementById('signalsTableWrap').innerHTML = '<p class="entity-empty">尚無相關信號。可在管理後台新增。</p>';
-        renderSidebar(filtered);
+        // Still render sidebar with empty dossier
+        renderSidebar(filtered, allSignals);
         bindEvents();
         return;
     }
 
     renderEntityInfo(filtered);
     renderSignalsTable(filtered);
-    renderSidebar(filtered);
+    renderSidebar(filtered, allSignals);
     bindEvents();
 }
 
@@ -109,6 +116,12 @@ function renderEntityInfo(signals) {
         const active = isWatchingChip(entityId);
         watchBtn.innerHTML = `${active ? '&#9733;' : '&#9734;'} ${active ? '取消關注' : '關注芯片'}`;
         watchBtn.classList.toggle('active', active);
+
+        // Update chip breadcrumb to include company link
+        const breadcrumb = document.getElementById('chipBreadcrumb');
+        if (breadcrumb) {
+            breadcrumb.innerHTML = `<a href="companies.html">← 返回公司目錄</a> &nbsp;/&nbsp; <a href="company-signals.html?id=${esc(first.company_id)}">${esc(first.company_name)}</a>`;
+        }
     }
 }
 
@@ -160,21 +173,149 @@ function renderSignalsTable(signals) {
     });
 }
 
-function renderSidebar(signals) {
+function renderSidebar(signals, allSigs) {
     if (entityType === 'company') {
-        renderRelatedChips(signals);
+        const dossier = buildCompanyDossier(entityId, allSigs);
+        renderCompanyOverview(dossier);
+        renderChipPortfolio(dossier.portfolio);
         renderStatusStats(signals);
+        renderRiskIndicators(dossier.risks);
+        renderVerificationTrend(dossier.trend);
         renderHighImpactItems(signals);
         renderRecentChanges(signals);
     } else {
-        renderChipInfo(signals[0]);
+        const dossier = buildChipDossier(entityId, allSigs);
+        renderChipOverview(dossier);
+        renderCompanyContext(dossier.companyContext);
+        renderSiblingChips(dossier.siblings);
+        renderChipRiskIndicators(dossier.risks);
         renderChipRecentChanges(signals);
         renderVerificationTimeline(signals);
-        renderSiblingChips(signals[0]);
     }
 }
 
-// Company Sidebar Functions
+// ===== Company Dossier Functions (Phase 8) =====
+
+function renderCompanyOverview(dossier) {
+    const el = document.getElementById('companyOverview');
+    if (!el) return;
+    el.innerHTML = `
+        <div class="info-row"><span>地區：</span><strong>${esc(regionLabel(dossier.region))}</strong></div>
+        <div class="info-row"><span>信號總數：</span><strong>${dossier.signalCount}</strong></div>
+        <div class="info-row"><span>最新信號：</span><strong>${formatDate(dossier.latestDate)}</strong></div>
+        <div class="info-row"><span>最高 ABF 影響：</span><strong>${esc(IMPACT_LABEL[dossier.highestImpact] || '—')}</strong></div>
+        <div class="info-row"><span>芯片數量：</span><strong>${dossier.chipCount}</strong></div>
+    `;
+}
+
+function renderChipPortfolio(portfolio) {
+    const el = document.getElementById('chipPortfolio');
+    if (!el) return;
+    if (portfolio.length === 0) {
+        el.innerHTML = '<div class="sidebar-empty">無</div>';
+        return;
+    }
+    el.innerHTML = portfolio.slice(0, 8).map(c => `
+        <div class="sidebar-list-item" data-chip="${esc(c.chipName)}">
+            <div class="item-title"><a href="chip-signals.html?name=${esc(c.chipName)}">${esc(c.chipName)}</a></div>
+            <div class="item-meta">${c.signalCount} 信號 · ${esc(IMPACT_LABEL[c.highestImpact] || '—')}</div>
+        </div>
+    `).join('');
+    el.querySelectorAll('.sidebar-list-item').forEach(el2 => {
+        el2.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            const chip = el2.dataset.chip;
+            window.location.href = `chip-signals.html?name=${encodeURIComponent(chip)}`;
+        });
+    });
+}
+
+function renderRiskIndicators(risks) {
+    const el = document.getElementById('companyRisks');
+    if (!el) return;
+    if (risks.totalRiskSignals === 0) {
+        el.innerHTML = '<div class="sidebar-empty">無風險信號</div>';
+        return;
+    }
+    let html = '';
+    if (risks.conflictingEvidenceCount > 0) {
+        html += `<div class="risk-row"><span class="risk-label">矛盾證據</span><span class="risk-count">${risks.conflictingEvidenceCount}</span></div>`;
+    }
+    if (risks.lowConfHighImpactCount > 0) {
+        html += `<div class="risk-row"><span class="risk-label">低信度高影響</span><span class="risk-count">${risks.lowConfHighImpactCount}</span></div>`;
+    }
+    if (risks.staleVerificationCount > 0) {
+        html += `<div class="risk-row"><span class="risk-label">驗證過期</span><span class="risk-count">${risks.staleVerificationCount}</span></div>`;
+    }
+    el.innerHTML = html;
+}
+
+function renderVerificationTrend(trend) {
+    const el = document.getElementById('verificationTrend');
+    if (!el) return;
+    if (trend.every(t => t.count === 0)) {
+        el.innerHTML = '<div class="sidebar-empty">無驗證趨勢數據</div>';
+        return;
+    }
+    el.innerHTML = trend.map(t => `
+        <div class="trend-row">
+            <span class="trend-month">${t.month}</span>
+            <span class="trend-count">${t.count > 0 ? t.count : '—'}</span>
+        </div>
+    `).join('');
+}
+
+// ===== Chip Dossier Functions (Phase 8) =====
+
+function renderChipOverview(dossier) {
+    const el = document.getElementById('chipOverview');
+    if (!el) return;
+    const specs = dossier.specs;
+    el.innerHTML = `
+        <div class="info-row"><span>公司：</span><strong><a href="company-signals.html?id=${esc(dossier.companyId)}">${esc(dossier.companyName)}</a></strong></div>
+        <div class="info-row"><span>地區：</span><strong>${esc(regionLabel(dossier.region))}</strong></div>
+        <div class="info-row"><span>信號總數：</span><strong>${dossier.signalCount}</strong></div>
+        <div class="info-row"><span>最新信號：</span><strong>${formatDate(dossier.latestDate)}</strong></div>
+        <div class="info-row"><span>最高 ABF 影響：</span><strong>${esc(IMPACT_LABEL[dossier.highestImpact] || '—')}</strong></div>
+        ${specs.package_type ? `<div class="info-row"><span>封裝：</span><strong>${esc(specs.package_type)}</strong></div>` : ''}
+        ${specs.cowos_required ? `<div class="info-row"><span>CoWoS：</span><strong>是</strong></div>` : ''}
+        ${specs.abf_size ? `<div class="info-row"><span>ABF 尺寸：</span><strong>${esc(specs.abf_size)}</strong></div>` : ''}
+        ${specs.abf_layers ? `<div class="info-row"><span>ABF 層數：</span><strong>${specs.abf_layers}</strong></div>` : ''}
+        ${specs.hbm ? `<div class="info-row"><span>HBM：</span><strong>${esc(specs.hbm)}</strong></div>` : ''}
+    `;
+}
+
+function renderCompanyContext(ctx) {
+    const el = document.getElementById('chipCompanyContext');
+    if (!el || !ctx.companyId) return;
+    el.innerHTML = `
+        <div class="info-row"><span>公司信號總數：</span><strong>${ctx.totalCompanySignals}</strong></div>
+        <div class="info-row"><span>其他芯片數：</span><strong>${ctx.otherChipCount}</strong></div>
+        <div class="info-row"><span>返回公司：</span><strong><a href="company-signals.html?id=${esc(ctx.companyId)}">${esc(ctx.companyName)} →</a></strong></div>
+    `;
+}
+
+function renderChipRiskIndicators(risks) {
+    const el = document.getElementById('chipRisks');
+    if (!el) return;
+    if (risks.totalRiskSignals === 0) {
+        el.innerHTML = '<div class="sidebar-empty">無風險信號</div>';
+        return;
+    }
+    let html = '';
+    if (risks.conflictingEvidenceCount > 0) {
+        html += `<div class="risk-row"><span class="risk-label">矛盾證據</span><span class="risk-count">${risks.conflictingEvidenceCount}</span></div>`;
+    }
+    if (risks.lowConfHighImpactCount > 0) {
+        html += `<div class="risk-row"><span class="risk-label">低信度高影響</span><span class="risk-count">${risks.lowConfHighImpactCount}</span></div>`;
+    }
+    if (risks.staleVerificationCount > 0) {
+        html += `<div class="risk-row"><span class="risk-label">驗證過期</span><span class="risk-count">${risks.staleVerificationCount}</span></div>`;
+    }
+    el.innerHTML = html;
+}
+
+// Legacy Company Sidebar Functions (kept for backward compatibility)
 function renderRelatedChips(signals) {
     const chips = [...new Set(signals.map(s => s.chip_name).filter(Boolean))].sort();
     const list = document.getElementById('relatedChips');
@@ -298,15 +439,26 @@ function renderVerificationTimeline(signals) {
     `).join('');
 }
 
-function renderSiblingChips(signal) {
-    const siblings = [...new Set(allSignals.filter(s => s.company_id === signal.company_id && s.chip_name !== signal.chip_name).map(s => s.chip_name))].sort();
+function renderSiblingChips(siblings) {
     const list = document.getElementById('siblingChips');
     if (!list) return;
-    list.innerHTML = siblings.map(name => `
-        <div class="sidebar-item">
-            <a href="chip-signals.html?name=${esc(name)}">${esc(name)}</a>
+    if (!siblings || siblings.length === 0) {
+        list.innerHTML = '<div class="sidebar-empty">無</div>';
+        return;
+    }
+    list.innerHTML = siblings.map(s => `
+        <div class="sidebar-list-item" data-chip="${esc(s.chipName)}">
+            <div class="item-title"><a href="chip-signals.html?name=${esc(s.chipName)}">${esc(s.chipName)}</a></div>
+            <div class="item-meta">${s.signalCount} 信號</div>
         </div>
-    `).join('') || '<div class="sidebar-empty">無</div>';
+    `).join('');
+    list.querySelectorAll('.sidebar-list-item').forEach(el => {
+        el.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            const chip = el.dataset.chip;
+            window.location.href = `chip-signals.html?name=${encodeURIComponent(chip)}`;
+        });
+    });
 }
 
 function impactBadge(impact) {
