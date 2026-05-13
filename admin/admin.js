@@ -4,10 +4,12 @@ import {
     collection, doc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
     query, orderBy, serverTimestamp
 } from 'firebase/firestore';
+import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, normalizeSignal } from '../js/firebase/db.js';
 
 // ===== STATE =====
 let companiesData = [];
 let insightsData = [];
+let signalsData = [];
 let currentSaveFn = null;
 
 // ===== HELPERS =====
@@ -144,9 +146,10 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ===== DATA LOADING =====
 async function loadAllData() {
-    await Promise.all([fetchCompanies(), fetchInsights()]);
+    await Promise.all([fetchCompanies(), fetchInsights(), fetchSignals()]);
     renderCompaniesTab();
     renderInsightsTab();
+    renderSignalsTab();
     renderArticlesTab();
     renderCompletenessTab();
 }
@@ -168,6 +171,15 @@ async function fetchInsights() {
     } catch (err) {
         console.error('Error fetching insights:', err);
         insightsData = [];
+    }
+}
+
+async function fetchSignals() {
+    try {
+        signalsData = await loadSignals();
+    } catch (err) {
+        console.error('Error fetching signals:', err);
+        signalsData = [];
     }
 }
 
@@ -461,6 +473,258 @@ async function deleteInsightAction(id) {
     await fetchInsights();
     renderInsightsTab();
     renderArticlesTab();
+}
+
+// ===== SIGNALS TAB =====
+const STAGE_OPTIONS = ['rumor','announced','sampling','design_win','pilot','ramp','volume'];
+const STATUS_OPTIONS = ['draft','watch','verified','downgraded','invalidated'];
+const IMPACT_OPTIONS = ['low','medium','high','explosive'];
+const REGION_OPTIONS = ['China','Taiwan','USA','Korea','Japan','Europe','Israel','Canada','Other','Global'];
+
+document.getElementById('tab-signals').addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, id } = btn.dataset;
+    if (action === 'edit-signal') openEditSignalModal(id);
+    else if (action === 'delete-signal') deleteSignalAction(id);
+    else if (action === 'new-signal') openNewSignalModal();
+    else if (action === 'filter-signals') applySignalFilters();
+    else if (action === 'reset-signal-filters') resetSignalFilters();
+});
+
+function stageLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
+function impactLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
+function statusLabel(v) { return v.charAt(0).toUpperCase() + v.slice(1); }
+
+function statusChipClass(s) {
+    switch (s) {
+        case 'verified': return 'badge-green';
+        case 'watch': return 'badge-yellow';
+        case 'downgraded': return 'badge-yellow';
+        case 'invalidated': return 'badge-red';
+        default: return 'badge-gray';
+    }
+}
+
+function renderSignalsTab(filterState = {}) {
+    let filtered = [...signalsData];
+    if (filterState.company) filtered = filtered.filter(s => s.company_name === filterState.company);
+    if (filterState.stage) filtered = filtered.filter(s => s.stage === filterState.stage);
+    if (filterState.status) filtered = filtered.filter(s => s.status === filterState.status);
+
+    const companies = [...new Set(signalsData.map(s => s.company_name).filter(Boolean))].sort();
+
+    const rows = filtered.map(s => {
+        const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
+        return `<tr>
+            <td>${esc(s.company_name)}</td>
+            <td>${esc(s.chip_name)}</td>
+            <td>${esc(s.title)}</td>
+            <td><span class="badge badge-gray">${stageLabel(s.stage)}</span></td>
+            <td><span class="badge ${statusChipClass(s.status)}">${statusLabel(s.status)}</span></td>
+            <td>${s.confidence_score}</td>
+            <td>${verified}</td>
+            <td class="td-actions">
+                <button class="btn-sm" data-action="edit-signal" data-id="${esc(s.id)}">Edit</button>
+                <button class="btn-sm btn-danger" data-action="delete-signal" data-id="${esc(s.id)}">Del</button>
+            </td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('signals-content').innerHTML = `
+        <div class="toolbar">
+            <h2>Signals (${signalsData.length})</h2>
+            <button class="btn-primary" data-action="new-signal" style="width:auto;padding:8px 16px">+ Add Signal</button>
+        </div>
+        <div class="toolbar" style="margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <select id="sig-filter-company" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
+                <option value="">All companies</option>
+                ${companies.map(c => `<option ${filterState.company === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+            </select>
+            <select id="sig-filter-stage" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
+                <option value="">All stages</option>
+                ${STAGE_OPTIONS.map(v => `<option value="${v}" ${filterState.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}
+            </select>
+            <select id="sig-filter-status" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
+                <option value="">All statuses</option>
+                ${STATUS_OPTIONS.map(v => `<option value="${v}" ${filterState.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}
+            </select>
+            <button class="btn-sm" data-action="filter-signals">Apply</button>
+            <button class="btn-sm btn-secondary" data-action="reset-signal-filters">Reset</button>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Company</th><th>Chip</th><th>Title</th><th>Stage</th><th>Status</th><th>Confidence</th><th>Verified</th><th>Actions</th></tr></thead>
+                <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">No signals yet</td></tr>'}</tbody>
+            </table>
+        </div>`;
+}
+
+function applySignalFilters() {
+    const company = document.getElementById('sig-filter-company')?.value || '';
+    const stage = document.getElementById('sig-filter-stage')?.value || '';
+    const status = document.getElementById('sig-filter-status')?.value || '';
+    renderSignalsTab({ company, stage, status });
+}
+
+function resetSignalFilters() {
+    renderSignalsTab({});
+}
+
+function buildSignalForm(s = {}) {
+    return `
+        <div class="form-group"><label>Title *</label><input id="fs-title" value="${esc(s.title || '')}" required></div>
+        <div class="form-group"><label>Company ID *</label><input id="fs-company_id" value="${esc(s.company_id || '')}" ${s.id ? 'readonly style="opacity:0.5"' : ''} required></div>
+        <div class="form-group"><label>Company Name *</label><input id="fs-company_name" value="${esc(s.company_name || '')}" required></div>
+        <div class="form-group"><label>Chip Name *</label><input id="fs-chip_name" value="${esc(s.chip_name || '')}" required></div>
+        <div class="form-group"><label>Region *</label>
+            <select id="fs-region">${REGION_OPTIONS.map(v => `<option ${s.region === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Stage *</label>
+            <select id="fs-stage">${STAGE_OPTIONS.map(v => `<option ${s.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Status *</label>
+            <select id="fs-status">${STATUS_OPTIONS.map(v => `<option ${s.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>ABF Demand Impact *</label>
+            <select id="fs-abf_demand_impact">${IMPACT_OPTIONS.map(v => `<option ${s.abf_demand_impact === v ? 'selected' : ''}>${impactLabel(v)}</option>`).join('')}</select>
+        </div>
+        <div class="form-group"><label>Confidence Score (0-100) *</label><input id="fs-confidence_score" type="number" min="0" max="100" value="${s.confidence_score ?? 50}"></div>
+        <div class="form-group"><label>Signal Type</label><input id="fs-signal_type" value="${esc(s.signal_type || '')}" placeholder="e.g. product_progress"></div>
+        <div class="form-group"><label>Release Year</label><input id="fs-release_year" type="number" value="${s.release_year ?? ''}" placeholder="e.g. 2026"></div>
+        <div class="form-group"><label>Release Quarter</label>
+            <select id="fs-release_quarter">
+                <option value="" ${!s.release_quarter ? 'selected' : ''}>—</option>
+                <option value="Q1" ${s.release_quarter === 'Q1' ? 'selected' : ''}>Q1</option>
+                <option value="Q2" ${s.release_quarter === 'Q2' ? 'selected' : ''}>Q2</option>
+                <option value="Q3" ${s.release_quarter === 'Q3' ? 'selected' : ''}>Q3</option>
+                <option value="Q4" ${s.release_quarter === 'Q4' ? 'selected' : ''}>Q4</option>
+            </select>
+        </div>
+        <div class="form-group"><label>Package Type</label><input id="fs-package_type" value="${esc(s.package_type || '')}" placeholder="e.g. 2.5D"></div>
+        <div class="form-group"><label>CoWoS Required</label>
+            <select id="fs-cowos_required">
+                <option value="false" ${!s.cowos_required ? 'selected' : ''}>No</option>
+                <option value="true" ${s.cowos_required ? 'selected' : ''}>Yes</option>
+            </select>
+        </div>
+        <div class="form-group"><label>ABF Size</label><input id="fs-abf_size" value="${esc(s.abf_size || '')}" placeholder="e.g. 77mm x 77mm"></div>
+        <div class="form-group"><label>ABF Layers</label><input id="fs-abf_layers" type="number" value="${s.abf_layers ?? ''}" placeholder="e.g. 16"></div>
+        <div class="form-group"><label>HBM</label><input id="fs-hbm" value="${esc(s.hbm || '')}" placeholder="e.g. HBM3"></div>
+        <div class="form-group"><label>Expected Volume</label><input id="fs-expected_volume" value="${esc(s.expected_volume || '')}" placeholder="e.g. medium"></div>
+        <div class="form-group"><label>Impact Scope (comma-separated)</label><input id="fs-impact_scope" value="${esc((s.impact_scope || []).join(', '))}"></div>
+        <div class="form-group"><label>Tags (comma-separated)</label><input id="fs-tags" value="${esc((s.tags || []).join(', '))}"></div>
+        <div class="form-section-title">Evidence</div>
+        <div class="form-group"><label>Evidence Summary</label><textarea id="fs-evidence_summary" rows="3">${esc(s.evidence_summary || '')}</textarea></div>
+        <div class="form-group"><label>Conflicting Evidence</label><textarea id="fs-conflicting_evidence" rows="3">${esc(s.conflicting_evidence || '')}</textarea></div>
+        <div class="form-group"><label>Notes</label><textarea id="fs-notes" rows="3">${esc(s.notes || '')}</textarea></div>
+        <div class="form-group"><label>Last Verified At</label><input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}"></div>
+        <div class="form-group"><label>Sources (JSON array)</label><textarea id="fs-sources" rows="4" style="font-family:monospace;font-size:12px">${esc(JSON.stringify(s.sources || [], null, 2))}</textarea></div>`;
+}
+
+function collectSignalForm() {
+    const confidenceRaw = document.getElementById('fs-confidence_score').value.trim();
+    const confidence = Number(confidenceRaw);
+    if (isNaN(confidence) || confidence < 0 || confidence > 100) {
+        showToast('Confidence score must be between 0 and 100', 'error');
+        return null;
+    }
+
+    const stage = document.getElementById('fs-stage').value;
+    if (!STAGE_OPTIONS.includes(stage)) {
+        showToast('Invalid stage value', 'error');
+        return null;
+    }
+
+    const status = document.getElementById('fs-status').value;
+    if (!STATUS_OPTIONS.includes(status)) {
+        showToast('Invalid status value', 'error');
+        return null;
+    }
+
+    const abf_layers_raw = document.getElementById('fs-abf_layers').value.trim();
+    let abf_layers = null;
+    if (abf_layers_raw) {
+        abf_layers = Number(abf_layers_raw);
+        if (isNaN(abf_layers)) {
+            showToast('ABF Layers must be a number', 'error');
+            return null;
+        }
+    }
+
+    let sources = [];
+    try {
+        sources = JSON.parse(document.getElementById('fs-sources').value || '[]');
+        if (!Array.isArray(sources)) sources = [];
+    } catch {
+        showToast('Sources must be valid JSON array', 'error');
+        return null;
+    }
+
+    return {
+        title: document.getElementById('fs-title').value.trim(),
+        company_id: document.getElementById('fs-company_id').value.trim(),
+        company_name: document.getElementById('fs-company_name').value.trim(),
+        chip_name: document.getElementById('fs-chip_name').value.trim(),
+        region: document.getElementById('fs-region').value,
+        stage,
+        status,
+        abf_demand_impact: document.getElementById('fs-abf_demand_impact').value,
+        confidence_score: confidence,
+        signal_type: document.getElementById('fs-signal_type').value.trim(),
+        release_year: document.getElementById('fs-release_year').value ? parseInt(document.getElementById('fs-release_year').value) : null,
+        release_quarter: document.getElementById('fs-release_quarter').value,
+        package_type: document.getElementById('fs-package_type').value.trim(),
+        cowos_required: document.getElementById('fs-cowos_required').value === 'true',
+        abf_size: document.getElementById('fs-abf_size').value.trim(),
+        abf_layers,
+        hbm: document.getElementById('fs-hbm').value.trim(),
+        expected_volume: document.getElementById('fs-expected_volume').value.trim(),
+        impact_scope: document.getElementById('fs-impact_scope').value.split(',').map(s => s.trim()).filter(Boolean),
+        tags: document.getElementById('fs-tags').value.split(',').map(s => s.trim()).filter(Boolean),
+        evidence_summary: document.getElementById('fs-evidence_summary').value.trim(),
+        conflicting_evidence: document.getElementById('fs-conflicting_evidence').value.trim(),
+        notes: document.getElementById('fs-notes').value.trim(),
+        last_verified_at: document.getElementById('fs-last_verified_at').value ? new Date(document.getElementById('fs-last_verified_at').value).toISOString() : '',
+        sources,
+    };
+}
+
+function openNewSignalModal() {
+    openModal('New Signal', buildSignalForm({}), async () => {
+        const data = collectSignalForm();
+        if (!data) throw new Error('Validation failed');
+        if (!data.title || !data.company_id || !data.company_name || !data.chip_name || !data.region) {
+            showToast('Required fields missing', 'error');
+            throw new Error('Required fields missing');
+        }
+        await createSignal(data);
+        showToast('Created ✓');
+        await fetchSignals();
+        renderSignalsTab();
+    });
+}
+
+function openEditSignalModal(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!signal) return;
+    openModal('Edit: ' + signal.title, buildSignalForm(signal), async () => {
+        const data = collectSignalForm();
+        if (!data) throw new Error('Validation failed');
+        await saveSignal(id, data);
+        showToast('Saved ✓');
+        await fetchSignals();
+        renderSignalsTab();
+    });
+}
+
+async function deleteSignalAction(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!confirm(`Delete "${signal?.title}"? Cannot be undone.`)) return;
+    await deleteSignalDb(id);
+    showToast('Deleted');
+    await fetchSignals();
+    renderSignalsTab();
 }
 
 // ===== ARTICLES TAB =====
