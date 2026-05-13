@@ -18,7 +18,11 @@ let filterState = {
     stage: '',
     impact: '',
     status: '',
+    view: 'all', // Phase 2
 };
+
+let savedViews = []; // Phase 2
+let compareSelection = []; // Phase 2
 
 // ===== Helpers =====
 function esc(v) {
@@ -47,20 +51,35 @@ function formatDate(d) {
     } catch { return '—'; }
 }
 
-function isThisWeek(d) {
+function isRecent(d, days = 7) {
     if (!d) return false;
     try {
         const now = new Date();
         const then = new Date(d);
         const diff = (now - then) / (1000 * 60 * 60 * 24);
-        return diff <= 7 && diff >= 0;
+        return diff <= days && diff >= 0;
     } catch { return false; }
+}
+
+function calculatePriorityScore(s) {
+    let score = 0;
+    score += (IMPACT_SORT[s.abf_demand_impact] || 0) * 10;
+    score += (s.confidence_score || 0) * 0.3;
+    const lastDate = s.last_verified_at || s.updatedAt || s.createdAt;
+    if (lastDate) {
+        const days = (new Date() - new Date(lastDate)) / (1000 * 60 * 60 * 24);
+        score += Math.max(0, 20 - (days / 7) * 2);
+    }
+    if (s.status === 'verified') score += 10;
+    else if (s.status === 'watch') score += 7;
+    return score;
 }
 
 // ===== Public API =====
 
 export async function init() {
     renderLoadingSkeleton();
+    loadSavedViews();
     const result = await loadSignals();
     if (!result.ok) {
         console.error('[Signals] Load error:', result.error);
@@ -68,27 +87,148 @@ export async function init() {
     } else if (result.data.length === 0) {
         renderEmptyState();
     } else {
-        allSignals = result.data;
-        renderSummaryStrip(allSignals);
+        allSignals = result.data.map(s => ({ ...s, _priority: calculatePriorityScore(s) }));
+        renderSummaryLayer(allSignals);
         renderFilters();
-        renderSignalsTable(allSignals);
+        renderSavedViews();
+        applyFilters();
     }
     bindEvents();
 }
 
-// ===== Summary Strip =====
+// ===== Summary Layer (Phase 2 Upgrade) =====
 
-function renderSummaryStrip(signals) {
-    const active = signals.filter(s => s.status !== 'draft' && s.status !== 'invalidated').length;
-    const verified = signals.filter(s => s.status === 'verified').length;
-    const highImpact = signals.filter(s => s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive').length;
-    const thisWeek = signals.filter(s => isThisWeek(s.last_verified_at)).length;
+function renderSummaryLayer(signals) {
+    const layer = document.getElementById('signalsSummaryLayer');
+    if (!layer) return;
 
-    const el = id => document.getElementById(id);
-    if (el('sumActive')) el('sumActive').textContent = active;
-    if (el('sumVerified')) el('sumVerified').textContent = verified;
-    if (el('sumHighImpact')) el('sumHighImpact').textContent = highImpact;
-    if (el('sumThisWeek')) el('sumThisWeek').textContent = thisWeek;
+    const recentChanges = [...signals]
+        .filter(s => s.last_status_changed_at && isRecent(s.last_status_changed_at, 14))
+        .sort((a, b) => new Date(b.last_status_changed_at) - new Date(a.last_status_changed_at))
+        .slice(0, 4);
+
+    const highestImpact = [...signals]
+        .sort((a, b) => b._priority - a._priority)
+        .slice(0, 4);
+
+    const newest = [...signals]
+        .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
+        .slice(0, 4);
+
+    layer.innerHTML = `
+        <div class="summary-block">
+            <div class="summary-block-title">最近狀態變更</div>
+            <ul class="summary-list">
+                ${recentChanges.map(s => `
+                    <li class="summary-item" data-id="${s.id}">
+                        <span class="summary-item-meta">${formatDate(s.last_status_changed_at)}</span>
+                        ${esc(s.company_name)}: ${esc(s.chip_name)}
+                    </li>
+                `).join('') || '<li class="summary-item">無最近變更</li>'}
+            </ul>
+        </div>
+        <div class="summary-block">
+            <div class="summary-block-title">最高優先級</div>
+            <ul class="summary-list">
+                ${highestImpact.map(s => `
+                    <li class="summary-item" data-id="${s.id}">
+                        <span class="summary-item-meta">${Math.round(s._priority)}</span>
+                        ${esc(s.company_name)}: ${esc(s.chip_name)}
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+        <div class="summary-block">
+            <div class="summary-block-title">最新收錄</div>
+            <ul class="summary-list">
+                ${newest.map(s => `
+                    <li class="summary-item" data-id="${s.id}">
+                        <span class="summary-item-meta">${formatDate(s.createdAt)}</span>
+                        ${esc(s.company_name)}: ${esc(s.chip_name)}
+                    </li>
+                `).join('')}
+            </ul>
+        </div>
+    `;
+
+    layer.querySelectorAll('.summary-item').forEach(el => {
+        el.addEventListener('click', () => {
+            const s = allSignals.find(x => x.id === el.dataset.id);
+            if (s) openDrawer(s);
+        });
+    });
+}
+
+// ===== View Toggles & Saved Views (Phase 2) =====
+
+function loadSavedViews() {
+    try {
+        const stored = localStorage.getItem('chip-roadmap-saved-views');
+        if (stored) savedViews = JSON.parse(stored);
+    } catch (e) { console.error('[Signals] loadSavedViews error:', e); }
+}
+
+function saveSavedViews() {
+    localStorage.setItem('chip-roadmap-saved-views', JSON.stringify(savedViews));
+}
+
+function renderSavedViews() {
+    const list = document.getElementById('savedViewsList');
+    if (!list) return;
+
+    if (savedViews.length === 0) {
+        list.innerHTML = '<span style="color:var(--color-muted-fg);font-style:italic">無儲存的視圖</span>';
+        return;
+    }
+
+    list.innerHTML = savedViews.map((v, i) => `
+        <div class="saved-view-token" data-index="${i}">
+            <span class="saved-view-name">${esc(v.name)}</span>
+            <button class="saved-view-delete" data-index="${i}">&times;</button>
+        </div>
+    `).join('');
+
+    list.querySelectorAll('.saved-view-token').forEach(el => {
+        el.addEventListener('click', (e) => {
+            if (e.target.classList.contains('saved-view-delete')) {
+                const idx = parseInt(e.target.dataset.index);
+                savedViews.splice(idx, 1);
+                saveSavedViews();
+                renderSavedViews();
+                return;
+            }
+            const idx = parseInt(el.dataset.index);
+            const view = savedViews[idx];
+            filterState = { ...filterState, ...view.filters, view: 'all' };
+            syncFilterUI();
+            applyFilters();
+        });
+    });
+}
+
+function saveCurrentView() {
+    const name = prompt('輸入視圖名稱：');
+    if (!name) return;
+    const newView = {
+        name,
+        filters: { ...filterState }
+    };
+    savedViews.push(newView);
+    saveSavedViews();
+    renderSavedViews();
+}
+
+function syncFilterUI() {
+    document.getElementById('filterSearch').value = filterState.search || '';
+    document.getElementById('filterRegion').value = filterState.region || '';
+    document.getElementById('filterCompany').value = filterState.company || '';
+    document.getElementById('filterStage').value = filterState.stage || '';
+    document.getElementById('filterImpact').value = filterState.impact || '';
+    document.getElementById('filterStatus').value = filterState.status || '';
+    
+    document.querySelectorAll('.view-toggle').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === filterState.view);
+    });
 }
 
 // ===== Filters =====
@@ -99,11 +239,11 @@ function renderFilters() {
     const impacts = IMPACT_ENUM;
     const statuses = STATUS_ENUM;
 
-    populateSelect('filterRegion', REGION_OPTIONS.map(v => ({ value: v, label: regionLabel(v) })), '');
-    populateSelect('filterCompany', companies, '');
-    populateSelect('filterStage', stages.map(v => ({ value: v, label: stageLabel(v) })), '');
-    populateSelect('filterImpact', impacts.map(v => ({ value: v, label: impactLabel(v) })), '');
-    populateSelect('filterStatus', statuses.map(v => ({ value: v, label: statusLabel(v) })), '');
+    populateSelect('filterRegion', REGION_OPTIONS.map(v => ({ value: v, label: regionLabel(v) })), '地區');
+    populateSelect('filterCompany', companies, '公司');
+    populateSelect('filterStage', stages.map(v => ({ value: v, label: stageLabel(v) })), '階段');
+    populateSelect('filterImpact', impacts.map(v => ({ value: v, label: impactLabel(v) })), 'ABF 影響');
+    populateSelect('filterStatus', statuses.map(v => ({ value: v, label: statusLabel(v) })), '狀態');
 }
 
 function populateSelect(id, options, placeholder) {
@@ -120,7 +260,21 @@ function populateSelect(id, options, placeholder) {
 
 function applyFilters() {
     let filtered = [...allSignals];
-    const { search, region, company, stage, impact, status } = filterState;
+    const { search, region, company, stage, impact, status, view } = filterState;
+
+    if (view === 'new') {
+        filtered = filtered.filter(s => isRecent(s.createdAt, 7));
+    } else if (view === 'changed') {
+        filtered = filtered.filter(s => isRecent(s.last_status_changed_at, 7) || isRecent(s.last_confidence_changed_at, 7) || isRecent(s.updatedAt, 7));
+    } else if (view === 'high-impact') {
+        filtered = filtered.filter(s => s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive');
+    } else if (view === 'verified') {
+        filtered = filtered.filter(s => s.status === 'verified');
+    } else if (view === 'china') {
+        filtered = filtered.filter(s => s.region === 'China');
+    } else if (view === 'global') {
+        filtered = filtered.filter(s => s.region === 'Global' || s.package_type);
+    }
 
     if (search) {
         const q = search.toLowerCase();
@@ -136,26 +290,14 @@ function applyFilters() {
     if (impact) filtered = filtered.filter(s => s.abf_demand_impact === impact);
     if (status) filtered = filtered.filter(s => s.status === status);
 
-    // Re-sort after filter
-    filtered.sort((a, b) => {
-        const impDiff = (IMPACT_SORT[b.abf_demand_impact] || 0) - (IMPACT_SORT[a.abf_demand_impact] || 0);
-        if (impDiff !== 0) return impDiff;
-        const dateDiff = new Date(b.last_verified_at || 0) - new Date(a.last_verified_at || 0);
-        if (dateDiff !== 0) return dateDiff;
-        return b.confidence_score - a.confidence_score;
-    });
+    filtered.sort((a, b) => b._priority - a._priority);
 
     renderSignalsTable(filtered);
 }
 
 function resetFilters() {
-    filterState = { search: '', region: '', company: '', stage: '', impact: '', status: '' };
-    document.getElementById('filterSearch').value = '';
-    document.getElementById('filterRegion').value = '';
-    document.getElementById('filterCompany').value = '';
-    document.getElementById('filterStage').value = '';
-    document.getElementById('filterImpact').value = '';
-    document.getElementById('filterStatus').value = '';
+    filterState = { search: '', region: '', company: '', stage: '', impact: '', status: '', view: 'all' };
+    syncFilterUI();
     applyFilters();
 }
 
@@ -181,7 +323,11 @@ function renderSignalsTable(signals) {
 
 function renderDesktopTable(signals, wrap) {
     const rows = signals.map(s => {
+        const isChecked = compareSelection.includes(s.id);
         return `<tr class="signal-row" data-id="${esc(s.id)}">
+            <td class="col-compare">
+                <input type="checkbox" class="compare-checkbox" data-id="${esc(s.id)}" ${isChecked ? 'checked' : ''}>
+            </td>
             <td class="col-company">${esc(s.company_name)}</td>
             <td class="col-chip">${esc(s.chip_name)}</td>
             <td class="col-region">${esc(regionLabel(s.region))}</td>
@@ -197,6 +343,7 @@ function renderDesktopTable(signals, wrap) {
     wrap.innerHTML = `
         <table class="signals-table">
             <thead><tr>
+                <th class="col-compare">對比</th>
                 <th>公司</th>
                 <th>芯片</th>
                 <th>地區</th>
@@ -210,19 +357,25 @@ function renderDesktopTable(signals, wrap) {
             <tbody>${rows}</tbody>
         </table>`;
 
+    wrap.querySelectorAll('.signal-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+            if (e.target.closest('.compare-checkbox') || e.target.closest('.signal-view-btn')) return;
+            const signal = allSignals.find(s => s.id === row.dataset.id);
+            if (signal) openDrawer(signal);
+        });
+    });
+
     wrap.querySelectorAll('.signal-view-btn').forEach(btn => {
         btn.addEventListener('click', e => {
             e.stopPropagation();
             const signal = allSignals.find(s => s.id === btn.dataset.id);
             if (signal) openDrawer(signal);
-            else console.warn('[Signals] no signal for id:', btn.dataset.id);
         });
     });
-    wrap.querySelectorAll('.signal-row').forEach(row => {
-        row.addEventListener('click', () => {
-            const signal = allSignals.find(s => s.id === row.dataset.id);
-            if (signal) openDrawer(signal);
-            else console.warn('[Signals] no signal for id:', row.dataset.id);
+
+    wrap.querySelectorAll('.compare-checkbox').forEach(cb => {
+        cb.addEventListener('change', () => {
+            toggleCompare(cb.dataset.id, cb.checked);
         });
     });
 }
@@ -264,6 +417,89 @@ function impactBadge(impact) {
 
 function confidenceBar(score) {
     return `<span class="confidence-meter"><span class="confidence-bar-fill" style="width:${score}%"></span></span><span class="confidence-num">${score}</span>`;
+}
+
+// ===== Compare Mode (Phase 2) =====
+
+function toggleCompare(id, checked) {
+    if (checked) {
+        if (compareSelection.length >= 3) {
+            alert('最多只能選擇 3 個信號進行對比。');
+            renderSignalsTable(getFilteredSignals());
+            return;
+        }
+        if (!compareSelection.includes(id)) compareSelection.push(id);
+    } else {
+        compareSelection = compareSelection.filter(x => x !== id);
+    }
+    renderCompareStrip();
+}
+
+function renderCompareStrip() {
+    const strip = document.getElementById('compareStrip');
+    const count = document.getElementById('compareCount');
+    const items = document.getElementById('compareItems');
+    if (!strip || !count || !items) return;
+
+    if (compareSelection.length === 0) {
+        strip.style.display = 'none';
+        return;
+    }
+
+    strip.style.display = 'flex';
+    count.textContent = compareSelection.length;
+
+    items.innerHTML = compareSelection.map(id => {
+        const s = allSignals.find(x => x.id === id);
+        return s ? `<div class="compare-item-tag">${esc(s.company_name)}: ${esc(s.chip_name)}</div>` : '';
+    }).join('');
+}
+
+function clearCompare() {
+    compareSelection = [];
+    renderCompareStrip();
+    renderSignalsTable(getFilteredSignals());
+}
+
+function openCompareModal() {
+    if (compareSelection.length < 2) {
+        alert('請至少選擇 2 個信號進行對比。');
+        return;
+    }
+
+    const overlay = document.getElementById('drawerOverlay');
+    const title = document.getElementById('drawerTitle');
+    const body = document.getElementById('drawerBody');
+    if (!overlay || !title || !body) return;
+
+    const signals = compareSelection.map(id => allSignals.find(x => x.id === id)).filter(Boolean);
+    title.textContent = '信號對比';
+
+    let html = `<table class="compare-table">
+        <thead>
+            <tr>
+                <th>欄位</th>
+                ${signals.map(s => `<th>${esc(s.company_name)}: ${esc(s.chip_name)}</th>`).join('')}
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td class="field-label">地區</td>${signals.map(s => `<td>${esc(regionLabel(s.region))}</td>`).join('')}</tr>
+            <tr><td class="field-label">階段</td>${signals.map(s => `<td>${esc(stageLabel(s.stage))}</td>`).join('')}</tr>
+            <tr><td class="field-label">ABF 影響</td>${signals.map(s => `<td>${impactBadge(s.abf_demand_impact)}</td>`).join('')}</tr>
+            <tr><td class="field-label">信度</td>${signals.map(s => `<td>${s.confidence_score}</td>`).join('')}</tr>
+            <tr><td class="field-label">狀態</td>${signals.map(s => `<td><span class="signal-status-chip ${statusChipClass(s.status)}">${esc(statusLabel(s.status))}</span></td>`).join('')}</tr>
+            <tr><td class="field-label">封裝</td>${signals.map(s => `<td>${esc(s.package_type)}</td>`).join('')}</tr>
+            <tr><td class="field-label">CoWoS</td>${signals.map(s => `<td>${s.cowos_required ? '是' : '否'}</td>`).join('')}</tr>
+            <tr><td class="field-label">ABF 尺寸</td>${signals.map(s => `<td>${esc(s.abf_size)}</td>`).join('')}</tr>
+            <tr><td class="field-label">ABF 層數</td>${signals.map(s => `<td>${s.abf_layers || ''}</td>`).join('')}</tr>
+            <tr><td class="field-label">最後驗證</td>${signals.map(s => `<td>${formatDate(s.last_verified_at)}</td>`).join('')}</tr>
+        </tbody>
+    </table>`;
+
+    body.innerHTML = html;
+    overlay.classList.remove('drawer-mobile');
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
 }
 
 // ===== States =====
@@ -446,6 +682,29 @@ function bindEvents() {
     const resetBtn = document.getElementById('filterReset');
     if (resetBtn) resetBtn.addEventListener('click', resetFilters);
 
+    // Phase 2: Save View
+    const saveViewBtn = document.getElementById('saveViewBtn');
+    if (saveViewBtn) saveViewBtn.addEventListener('click', saveCurrentView);
+
+    // Phase 2: View Toggles
+    const toggles = document.getElementById('viewToggles');
+    if (toggles) {
+        toggles.addEventListener('click', e => {
+            const btn = e.target.closest('.view-toggle');
+            if (btn) {
+                filterState.view = btn.dataset.view;
+                syncFilterUI();
+                applyFilters();
+            }
+        });
+    }
+
+    // Phase 2: Compare Actions
+    const compareClear = document.getElementById('compareClear');
+    if (compareClear) compareClear.addEventListener('click', clearCompare);
+    const compareBtn = document.getElementById('compareBtn');
+    if (compareBtn) compareBtn.addEventListener('click', openCompareModal);
+
     // Drawer close
     const closeBtn = document.getElementById('drawerClose');
     const overlay = document.getElementById('drawerOverlay');
@@ -470,7 +729,22 @@ function bindEvents() {
 
 function getFilteredSignals() {
     let filtered = [...allSignals];
-    const { search, region, company, stage, impact, status } = filterState;
+    const { search, region, company, stage, impact, status, view } = filterState;
+
+    if (view === 'new') {
+        filtered = filtered.filter(s => isRecent(s.createdAt, 7));
+    } else if (view === 'changed') {
+        filtered = filtered.filter(s => isRecent(s.last_status_changed_at, 7) || isRecent(s.last_confidence_changed_at, 7) || isRecent(s.updatedAt, 7));
+    } else if (view === 'high-impact') {
+        filtered = filtered.filter(s => s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive');
+    } else if (view === 'verified') {
+        filtered = filtered.filter(s => s.status === 'verified');
+    } else if (view === 'china') {
+        filtered = filtered.filter(s => s.region === 'China');
+    } else if (view === 'global') {
+        filtered = filtered.filter(s => s.region === 'Global' || s.package_type);
+    }
+
     if (search) {
         const q = search.toLowerCase();
         filtered = filtered.filter(s =>
@@ -484,12 +758,7 @@ function getFilteredSignals() {
     if (stage) filtered = filtered.filter(s => s.stage === stage);
     if (impact) filtered = filtered.filter(s => s.abf_demand_impact === impact);
     if (status) filtered = filtered.filter(s => s.status === status);
-    filtered.sort((a, b) => {
-        const impDiff = (IMPACT_SORT[b.abf_demand_impact] || 0) - (IMPACT_SORT[a.abf_demand_impact] || 0);
-        if (impDiff !== 0) return impDiff;
-        const dateDiff = new Date(b.last_verified_at || 0) - new Date(a.last_verified_at || 0);
-        if (dateDiff !== 0) return dateDiff;
-        return b.confidence_score - a.confidence_score;
-    });
+
+    filtered.sort((a, b) => b._priority - a._priority);
     return filtered;
 }

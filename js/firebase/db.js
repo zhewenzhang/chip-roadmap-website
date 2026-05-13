@@ -197,6 +197,13 @@ export async function saveSignal(id, data, opts = {}) {
     if (previousStatus !== null && previousStatus !== normalized.status) {
         normalized.last_status_changed_at = new Date().toISOString();
     }
+    // Auto-stamp last_confidence_changed_at when confidence changes (Phase 2)
+    if (previousConfidence !== null && previousConfidence !== normalized.confidence_score) {
+        normalized.last_confidence_changed_at = new Date().toISOString();
+    }
+
+    // Don't overwrite createdAt on save
+    delete normalized.createdAt;
 
     await updateDoc(doc(db, 'signals', id), {
         ...normalized,

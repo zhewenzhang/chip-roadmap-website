@@ -111,10 +111,13 @@ export function normalizeSignal(raw) {
         tags: Array.isArray(raw.tags) ? raw.tags : [],
         sources: Array.isArray(raw.sources) ? raw.sources : [],
         notes: raw.notes || '',
-        // Lifecycle metadata (Phase 1.5)
+        // Lifecycle metadata
+        createdAt: raw.createdAt ? (raw.createdAt.toDate ? raw.createdAt.toDate().toISOString() : raw.createdAt) : null,
+        updatedAt: raw.updatedAt ? (raw.updatedAt.toDate ? raw.updatedAt.toDate().toISOString() : raw.updatedAt) : null,
         confidence_reason: raw.confidence_reason || '',
         last_verified_by: raw.last_verified_by || '',
         last_status_changed_at: raw.last_status_changed_at || null,
+        last_confidence_changed_at: raw.last_confidence_changed_at || null,
         verification_note: raw.verification_note || '',
         source_regions: Array.isArray(raw.source_regions) ? raw.source_regions : [],
     };

@@ -42,11 +42,27 @@
         </header>
 
         <!-- Summary Strip -->
-        <div class="signals-summary" id="signalsSummary">
-            <div class="summary-metric"><span class="summary-value" id="sumActive">—</span><span class="summary-label">活躍信號</span></div>
-            <div class="summary-metric"><span class="summary-value" id="sumVerified">—</span><span class="summary-label">已驗證</span></div>
-            <div class="summary-metric"><span class="summary-value" id="sumHighImpact">—</span><span class="summary-label">高 ABF 影響</span></div>
-            <div class="summary-metric"><span class="summary-value" id="sumThisWeek">—</span><span class="summary-label">本週更新</span></div>
+        <div class="signals-summary-layer" id="signalsSummaryLayer">
+            <!-- Compact intelligence blocks rendered by JS -->
+        </div>
+
+        <!-- View Toggles & Saved Views -->
+        <div class="signals-view-controls">
+            <div class="view-toggles" id="viewToggles">
+                <button class="view-toggle active" data-view="all">全部</button>
+                <button class="view-toggle" data-view="new">最新</button>
+                <button class="view-toggle" data-view="changed">變更</button>
+                <button class="view-toggle" data-view="high-impact">高 ABF 影響</button>
+                <button class="view-toggle" data-view="verified">已驗證</button>
+                <button class="view-toggle" data-view="china">中國觀察</button>
+                <button class="view-toggle" data-view="global">全球封裝</button>
+            </div>
+            <div class="saved-views-wrap">
+                <span class="saved-views-label">儲存的視圖：</span>
+                <div class="saved-views-list" id="savedViewsList">
+                    <!-- Saved views tokens -->
+                </div>
+            </div>
         </div>
 
         <!-- Filter Toolbar -->
@@ -58,11 +74,22 @@
             <select id="filterImpact" class="filter-select"><option value="">ABF 影響</option></select>
             <select id="filterStatus" class="filter-select"><option value="">狀態</option></select>
             <button id="filterReset" class="filter-reset">重置</button>
+            <button id="saveViewBtn" class="filter-save">儲存當前篩選</button>
         </div>
 
         <!-- Signals Table -->
         <div class="signals-table-wrap" id="signalsTableWrap">
             <!-- Loading skeleton rendered by JS -->
+        </div>
+
+        <!-- Compare Strip (Sticky Bottom) -->
+        <div class="compare-strip" id="compareStrip" style="display:none">
+            <div class="compare-count"><span id="compareCount">0</span> 個信號已選擇</div>
+            <div class="compare-items" id="compareItems"></div>
+            <div class="compare-actions">
+                <button id="compareBtn" class="compare-run-btn">進入對比</button>
+                <button id="compareClear" class="compare-clear-btn">清除</button>
+            </div>
         </div>
 
         <!-- Detail Drawer (Desktop) / Modal (Mobile) -->

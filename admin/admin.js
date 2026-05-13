@@ -523,6 +523,7 @@ function renderSignalsTab(filterState = {}) {
 
     const rows = filtered.map(s => {
         const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
+        const updated = s.updatedAt ? new Date(s.updatedAt).toISOString().slice(0, 16).replace('T', ' ') : '—';
         return `<tr>
             <td>${esc(s.company_name)}</td>
             <td>${esc(s.chip_name)}</td>
@@ -530,7 +531,7 @@ function renderSignalsTab(filterState = {}) {
             <td><span class="badge badge-gray">${stageLabel(s.stage)}</span></td>
             <td><span class="badge ${statusChipClass(s.status)}">${statusLabel(s.status)}</span></td>
             <td>${s.confidence_score}</td>
-            <td>${verified}</td>
+            <td>${verified}<br><small style="color:#888">${updated}</small></td>
             <td class="td-actions">
                 <button class="btn-sm" data-action="edit-signal" data-id="${esc(s.id)}">編輯</button>
                 <button class="btn-sm btn-danger" data-action="delete-signal" data-id="${esc(s.id)}">刪除</button>
