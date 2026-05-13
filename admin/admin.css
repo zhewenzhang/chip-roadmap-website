@@ -398,3 +398,143 @@ tr:hover td { background: var(--surface); }
     color: var(--text-muted);
     flex-shrink: 0;
 }
+
+/* Phase 5: Data Quality Workspace */
+.dq-summary-strip {
+    display: flex;
+    gap: 8px;
+    padding: 12px 0;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+}
+
+.dq-summary-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.1s, border-color 0.1s;
+    min-width: 80px;
+}
+
+.dq-summary-block:hover {
+    background: var(--surface2);
+}
+
+.dq-summary-block.active {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+}
+
+.dq-summary-block.active .dq-summary-label {
+    color: var(--bg);
+}
+
+.dq-summary-count {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.dq-summary-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dq-filter-bar {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 8px 0;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.dq-filter-bar select,
+.dq-filter-bar input[type="text"] {
+    padding: 4px 8px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.dq-issue-summary {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Quick Fix Modal */
+.quick-fix-header {
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.quick-fix-signal-info {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.quick-fix-issues {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.quick-fix-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.dq-field label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.dq-field input,
+.dq-field textarea,
+.dq-field select {
+    width: 100%;
+    padding: 6px 8px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 13px;
+    font-family: inherit;
+}
+
+.dq-field input:focus,
+.dq-field textarea:focus,
+.dq-field select:focus {
+    outline: none;
+    border-color: var(--text);
+}
+
+.quick-fix-footer {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 12px;
+    margin-top: 16px;
+    border-top: 1px solid var(--border);
+}

@@ -10,11 +10,16 @@ import {
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS,
     HISTORY_ACTION_LABELS,
 } from '../js/modules/signals-schema.js';
+import {
+    buildQualityQueue, getQualitySummary, sortQualityQueue,
+    QUEUE_TYPES,
+} from '../js/modules/data-quality.js';
 
 // ===== STATE =====
 let companiesData = [];
 let insightsData = [];
 let signalsData = [];
+let qualityQueue = [];
 let currentSaveFn = null;
 
 // ===== HELPERS =====
@@ -172,11 +177,18 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 // ===== DATA LOADING =====
 async function loadAllData() {
     await Promise.all([fetchCompanies(), fetchInsights(), fetchSignals()]);
+    buildQualityQueueFromData();
     renderCompaniesTab();
     renderInsightsTab();
     renderSignalsTab();
     renderArticlesTab();
     renderCompletenessTab();
+    renderDataQualityTab();
+}
+
+function buildQualityQueueFromData() {
+    const allChipNames = new Set(signalsData.map(s => s.chip_name).filter(Boolean));
+    qualityQueue = buildQualityQueue(signalsData, { companies: companiesData, allChipNames });
 }
 
 async function fetchCompanies() {
@@ -203,6 +215,7 @@ async function fetchSignals() {
     const result = await loadSignals();
     if (result.ok) {
         signalsData = result.data;
+        buildQualityQueueFromData();
     } else {
         console.error('Error fetching signals:', result.error);
         signalsData = [];
@@ -1019,6 +1032,368 @@ function renderCompletenessTab() {
         </div>
         <p style="color:#888;font-size:12px;margin-bottom:16px">Sorted by completeness (least complete first). Run migration first to see data.</p>
         <div class="completeness-grid">${cards || '<p style="color:#888">No companies loaded. Run migration first.</p>'}</div>`;
+}
+
+// ===== DATA QUALITY TAB (Phase 5) =====
+
+let dqFilterState = { queueType: '', priority: '', company: '', highImpact: false, search: '' };
+let dqSortMode = 'priority';
+
+function renderDataQualityTab() {
+    const summary = getQualitySummary(qualityQueue);
+    const total = qualityQueue.length;
+
+    // Build company list for filter
+    const companies = [...new Set(signalsData.map(s => s.company_name).filter(Boolean))].sort();
+
+    let html = `
+        <div class="toolbar">
+            <h2>數據品質 (${total} 項)</h2>
+            <button class="btn-sm btn-secondary" data-action="refresh-quality">重新評估</button>
+        </div>
+
+        <!-- Summary Strip -->
+        <div class="dq-summary-strip">
+            ${Object.entries(summary).map(([type, count]) => `
+                <div class="dq-summary-block ${dqFilterState.queueType === type ? 'active' : ''}" data-queue="${esc(type)}">
+                    <span class="dq-summary-count">${count}</span>
+                    <span class="dq-summary-label">${esc(type)}</span>
+                </div>
+            `).join('')}
+            <div class="dq-summary-block ${dqFilterState.queueType === '' ? 'active' : ''}" data-queue="">
+                <span class="dq-summary-count">${total}</span>
+                <span class="dq-summary-label">全部</span>
+            </div>
+        </div>
+
+        <!-- Queue Filter Bar -->
+        <div class="dq-filter-bar">
+            <select id="dq-priority" style="width:auto">
+                <option value="">全部優先級</option>
+                <option value="高" ${dqFilterState.priority === '高' ? 'selected' : ''}>高</option>
+                <option value="中" ${dqFilterState.priority === '中' ? 'selected' : ''}>中</option>
+                <option value="低" ${dqFilterState.priority === '低' ? 'selected' : ''}>低</option>
+            </select>
+            <select id="dq-company" style="width:auto">
+                <option value="">全部公司</option>
+                ${companies.map(c => `<option ${dqFilterState.company === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}
+            </select>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer">
+                <input type="checkbox" id="dq-high-impact" ${dqFilterState.highImpact ? 'checked' : ''}>
+                高影響 only
+            </label>
+            <input type="text" id="dq-search" placeholder="搜尋..." value="${esc(dqFilterState.search)}" style="width:120px;font-size:12px">
+            <select id="dq-sort" style="width:auto">
+                <option value="priority" ${dqSortMode === 'priority' ? 'selected' : ''}>Priority</option>
+                <option value="recent" ${dqSortMode === 'recent' ? 'selected' : ''}>最近更新</option>
+                <option value="oldest" ${dqSortMode === 'oldest' ? 'selected' : ''}>最久未處理</option>
+            </select>
+            <button class="btn-sm" data-action="dq-apply-filter">套用</button>
+            <button class="btn-sm btn-secondary" data-action="dq-reset-filter">重置</button>
+        </div>
+
+        <!-- Queue Table -->
+        <div class="table-wrap">
+            <table>
+                <thead><tr>
+                    <th>問題類型</th>
+                    <th>優先級</th>
+                    <th>信號</th>
+                    <th>公司 / 芯片</th>
+                    <th>問題摘要</th>
+                    <th>狀態</th>
+                    <th>最後驗證</th>
+                    <th>操作</th>
+                </tr></thead>
+                <tbody id="dq-table-body">
+                </tbody>
+            </table>
+        </div>`;
+
+    document.getElementById('data-quality-content').innerHTML = html;
+
+    // Summary block click
+    document.querySelectorAll('.dq-summary-block').forEach(block => {
+        block.addEventListener('click', () => {
+            dqFilterState.queueType = block.dataset.queue;
+            dqFilterState.priority = '';
+            dqFilterState.company = '';
+            dqFilterState.highImpact = false;
+            dqFilterState.search = '';
+            renderDataQualityTab();
+        });
+    });
+
+    // Filter event delegation
+    document.getElementById('data-quality-content').addEventListener('click', e => {
+        const btn = e.target.closest('[data-action]');
+        if (!btn) return;
+        const action = btn.dataset.action;
+        if (action === 'refresh-quality') {
+            buildQualityQueueFromData();
+            renderDataQualityTab();
+            return;
+        }
+        if (action === 'dq-apply-filter') applyDQFilters();
+        if (action === 'dq-reset-filter') {
+            dqFilterState = { queueType: '', priority: '', company: '', highImpact: false, search: '' };
+            dqSortMode = 'priority';
+            renderDataQualityTab();
+            return;
+        }
+        if (action === 'dq-quick-fix') openQuickFixModal(btn.dataset.id);
+        if (action === 'dq-full-edit') openEditSignalModal(btn.dataset.id);
+    });
+
+    renderDQTable();
+}
+
+function applyDQFilters() {
+    dqFilterState.priority = document.getElementById('dq-priority')?.value || '';
+    dqFilterState.company = document.getElementById('dq-company')?.value || '';
+    dqFilterState.highImpact = document.getElementById('dq-high-impact')?.checked || false;
+    dqFilterState.search = document.getElementById('dq-search')?.value.trim() || '';
+    dqSortMode = document.getElementById('dq-sort')?.value || 'priority';
+    renderDQTable();
+}
+
+function renderDQTable() {
+    const tbody = document.getElementById('dq-table-body');
+    if (!tbody) return;
+
+    // Sort
+    sortQualityQueue(qualityQueue, dqSortMode);
+
+    // Filter
+    let filtered = [...qualityQueue];
+    if (dqFilterState.queueType) {
+        filtered = filtered.filter(item => item.queueType === dqFilterState.queueType);
+    }
+    if (dqFilterState.priority) {
+        filtered = filtered.filter(item => item.priorityLabel === dqFilterState.priority);
+    }
+    if (dqFilterState.company) {
+        filtered = filtered.filter(item => item.signal.company_name === dqFilterState.company);
+    }
+    if (dqFilterState.highImpact) {
+        filtered = filtered.filter(item =>
+            item.signal.abf_demand_impact === 'high' || item.signal.abf_demand_impact === 'explosive'
+        );
+    }
+    if (dqFilterState.search) {
+        const q = dqFilterState.search.toLowerCase();
+        filtered = filtered.filter(item =>
+            (item.signal.company_name || '').toLowerCase().includes(q) ||
+            (item.signal.chip_name || '').toLowerCase().includes(q) ||
+            (item.signal.title || '').toLowerCase().includes(q) ||
+            item.summary.toLowerCase().includes(q)
+        );
+    }
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="color:#888;text-align:center">無符合條件的數據品質問題</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = filtered.map(item => {
+        const s = item.signal;
+        const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
+        const priorityBadgeClass = item.priorityLabel === '高' ? 'badge-red' : item.priorityLabel === '中' ? 'badge-yellow' : 'badge-gray';
+
+        return `<tr>
+            <td><span class="badge badge-gray">${esc(item.queueType)}</span></td>
+            <td><span class="badge ${priorityBadgeClass}">${item.priorityLabel} (${item.priorityScore})</span></td>
+            <td>${esc(s.title)}</td>
+            <td>${esc(s.company_name)} / ${esc(s.chip_name)}</td>
+            <td class="dq-issue-summary">${esc(item.summary)}</td>
+            <td><span class="badge ${statusChipClass(s.status)}">${statusLabel(s.status)}</span></td>
+            <td>${verified}</td>
+            <td class="td-actions">
+                ${item.quickFixEligible ? `<button class="btn-sm" data-action="dq-quick-fix" data-id="${esc(s.id)}">快速修正</button>` : ''}
+                <button class="btn-sm" data-action="dq-full-edit" data-id="${esc(s.id)}">完整編輯</button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+// ===== QUICK-FIX MODAL (Phase 5) =====
+
+function openQuickFixModal(signalId) {
+    const signal = signalsData.find(s => s.id === signalId);
+    if (!signal) return;
+
+    const item = qualityQueue.find(q => q.signalId === signalId);
+    if (!item) return;
+
+    const fixableFields = item.fixableFields;
+    if (fixableFields.length === 0) {
+        // No quick-fix available, fall back to full edit
+        openEditSignalModal(signalId);
+        return;
+    }
+
+    const title = `快速修正：${esc(signal.title)}`;
+    let formHtml = `<div class="quick-fix-header">
+        <div class="quick-fix-signal-info">
+            <span>${esc(signal.company_name)}</span> / <span>${esc(signal.chip_name)}</span>
+        </div>
+        <div class="quick-fix-issues">${esc(item.summary)}</div>
+    </div>`;
+
+    formHtml += '<div class="quick-fix-fields">';
+
+    for (const field of fixableFields) {
+        switch (field) {
+            case 'evidence_summary':
+                formHtml += `<div class="dq-field">
+                    <label>證據摘要</label>
+                    <textarea id="qf-evidence_summary" rows="3">${esc(signal.evidence_summary || '')}</textarea>
+                </div>`;
+                break;
+            case 'confidence_reason':
+                formHtml += `<div class="dq-field">
+                    <label>信度依據</label>
+                    <textarea id="qf-confidence_reason" rows="2">${esc(signal.confidence_reason || '')}</textarea>
+                </div>`;
+                break;
+            case 'package_type':
+                formHtml += `<div class="dq-field">
+                    <label>封裝類型</label>
+                    <input id="qf-package_type" value="${esc(signal.package_type || '')}" list="qf-package-list" placeholder="例如：CoWoS-L">
+                    <datalist id="qf-package-list">
+                        <option value="CoWoS-L"><option value="CoWoS-S"><option value="EMIB"><option value="2.5D"><option value="3D"><option value="flip-chip">
+                    </datalist>
+                </div>`;
+                break;
+            case 'abf_size':
+                formHtml += `<div class="dq-field">
+                    <label>ABF 尺寸</label>
+                    <input id="qf-abf_size" value="${esc(signal.abf_size || '')}" placeholder="例如：77mm x 77mm">
+                </div>`;
+                break;
+            case 'abf_layers':
+                formHtml += `<div class="dq-field">
+                    <label>ABF 層數</label>
+                    <input id="qf-abf_layers" type="number" value="${signal.abf_layers ?? ''}" placeholder="例如：16">
+                </div>`;
+                break;
+            case 'last_verified_by':
+                formHtml += `<div class="dq-field">
+                    <label>驗證人</label>
+                    <input id="qf-last_verified_by" value="${esc(signal.last_verified_by || auth.currentUser?.email || '')}" placeholder="email">
+                </div>`;
+                break;
+            case 'chip_name':
+                formHtml += `<div class="dq-field">
+                    <label>芯片名稱</label>
+                    <input id="qf-chip_name" value="${esc(signal.chip_name || '')}">
+                </div>`;
+                break;
+            case 'company_id':
+                formHtml += `<div class="dq-field">
+                    <label>公司</label>
+                    <select id="qf-company_id">
+                        <option value="">選擇公司...</option>
+                        ${companiesData.map(c => `<option value="${esc(c.id)}" ${signal.company_id === c.id ? 'selected' : ''}>${esc(c.name_en)} (${esc(c.id)})</option>`).join('')}
+                    </select>
+                </div>`;
+                break;
+            case 'company_name':
+                // Auto-fill from selected company
+                const currentCompany = companiesData.find(c => c.id === signal.company_id);
+                const suggestedName = currentCompany ? (currentCompany.name_cn || currentCompany.name_en) : signal.company_name;
+                formHtml += `<div class="dq-field">
+                    <label>公司名稱（建議：${esc(suggestedName)}）</label>
+                    <input id="qf-company_name" value="${esc(suggestedName)}">
+                </div>`;
+                break;
+            case 'status':
+                formHtml += `<div class="dq-field">
+                    <label>狀態</label>
+                    <select id="qf-status">
+                        ${STATUS_ENUM.map(v => `<option value="${v}" ${signal.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}
+                    </select>
+                </div>`;
+                break;
+            case 'confidence_score':
+                formHtml += `<div class="dq-field">
+                    <label>信度 (0-100)</label>
+                    <input id="qf-confidence_score" type="number" min="0" max="100" value="${signal.confidence_score ?? 50}">
+                </div>`;
+                break;
+            case 'last_verified_at':
+                formHtml += `<div class="dq-field">
+                    <label>驗證日期</label>
+                    <input id="qf-last_verified_at" type="date" value="${signal.last_verified_at ? new Date(signal.last_verified_at).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)}">
+                </div>`;
+                break;
+            case 'verification_note':
+                formHtml += `<div class="dq-field">
+                    <label>驗證備註</label>
+                    <textarea id="qf-verification_note" rows="2">${esc(signal.verification_note || '')}</textarea>
+                </div>`;
+                break;
+        }
+    }
+
+    formHtml += '</div>'; // close quick-fix-fields
+    formHtml += `<div class="quick-fix-footer">
+        <button class="btn-sm btn-secondary" data-action="qf-full-edit" data-id="${esc(signalId)}">打開完整編輯</button>
+        <button class="btn-sm btn-primary" data-action="qf-save" data-id="${esc(signalId)}">儲存</button>
+    </div>`;
+
+    openModal(title, formHtml, async () => {
+        // Collect data
+        const updates = {};
+        for (const field of fixableFields) {
+            const elId = 'qf-' + field;
+            const el = document.getElementById(elId);
+            if (!el) continue;
+            if (field === 'confidence_score') {
+                const val = Number(el.value);
+                if (isNaN(val) || val < 0 || val > 100) {
+                    showToast('信度必須介於 0 到 100', 'error');
+                    throw new Error('__SILENT__');
+                }
+                updates[field] = val;
+            } else if (field === 'abf_layers') {
+                const val = el.value.trim();
+                updates[field] = val ? Number(val) : null;
+            } else if (field === 'cowos_required') {
+                updates[field] = el.value === 'true';
+            } else {
+                updates[field] = el.value.trim();
+            }
+        }
+
+        // Auto-fill company_name when company_id changes
+        if (updates.company_id) {
+            const company = companiesData.find(c => c.id === updates.company_id);
+            if (company) updates.company_name = company.name_cn || company.name_en;
+        }
+
+        // Apply verification date
+        if (updates.last_verified_at) {
+            updates.last_verified_at = new Date(updates.last_verified_at).toISOString();
+        }
+
+        const actor = auth.currentUser?.email || '';
+        await saveSignal(signalId, { ...signal, ...updates }, {
+            actor,
+            previousStatus: signal.status,
+            previousConfidence: signal.confidence_score,
+        });
+        showToast('已儲存 ✓');
+        await fetchSignals();
+        buildQualityQueueFromData();
+        renderDataQualityTab();
+    }, false);
+
+    // Handle full-edit fallback from within quick-fix
+    document.querySelector('[data-action="qf-full-edit"]')?.addEventListener('click', () => {
+        closeModal();
+        setTimeout(() => openEditSignalModal(signalId), 100);
+    });
 }
 
 // ===== MODAL SYSTEM =====
