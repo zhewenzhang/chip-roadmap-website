@@ -330,12 +330,27 @@ function checkLinking(signal, companies) {
 export function buildQualityQueue(signals, context = {}) {
     const queueItems = [];
 
+    // Severity ranks for issues (higher = more severe).
+    // Primary queue type is determined by the highest-severity issue, not by detection order.
+    const ISSUE_SEVERITY_RANK = {
+        [QUEUE_TYPES.LINKING_ISSUE]: 5,
+        [QUEUE_TYPES.NEEDS_REVIEW]: 4,
+        [QUEUE_TYPES.NEEDS_VERIFICATION]: 3,
+        [QUEUE_TYPES.NAMING_ISSUE]: 2,
+        [QUEUE_TYPES.MISSING_FIELDS]: 1,
+    };
+
     for (const signal of signals) {
         const issues = evaluateSignalQuality(signal, context);
         if (issues.length === 0) continue;
 
-        // Deduplicate: one queue item per signal, carrying all issues
-        const primaryIssue = issues[0]; // first issue determines queueType
+        // Pick the highest-severity issue as the primary one
+        const primaryIssue = issues.reduce((best, issue) => {
+            const rank = ISSUE_SEVERITY_RANK[issue.queueType] || 0;
+            const bestRank = ISSUE_SEVERITY_RANK[best.queueType] || 0;
+            return rank > bestRank ? issue : best;
+        }, issues[0]);
+
         const impactBonus = IMPACT_PRIORITY_BONUS[signal.abf_demand_impact] || 0;
         const basePriority = QUEUE_PRIORITY_BASE[primaryIssue.queueType] || 20;
         const priorityScore = Math.min(100, basePriority + impactBonus);

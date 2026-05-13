@@ -1036,7 +1036,7 @@ function renderCompletenessTab() {
 
 // ===== DATA QUALITY TAB (Phase 5) =====
 
-let dqFilterState = { queueType: '', priority: '', company: '', highImpact: false, search: '' };
+let dqFilterState = { queueType: '', priority: '', status: '', company: '', highImpact: false, search: '' };
 let dqSortMode = 'priority';
 
 function renderDataQualityTab() {
@@ -1073,6 +1073,10 @@ function renderDataQualityTab() {
                 <option value="高" ${dqFilterState.priority === '高' ? 'selected' : ''}>高</option>
                 <option value="中" ${dqFilterState.priority === '中' ? 'selected' : ''}>中</option>
                 <option value="低" ${dqFilterState.priority === '低' ? 'selected' : ''}>低</option>
+            </select>
+            <select id="dq-status" style="width:auto">
+                <option value="">全部狀態</option>
+                ${STATUS_ENUM.map(v => `<option value="${v}" ${dqFilterState.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}
             </select>
             <select id="dq-company" style="width:auto">
                 <option value="">全部公司</option>
@@ -1117,6 +1121,7 @@ function renderDataQualityTab() {
         block.addEventListener('click', () => {
             dqFilterState.queueType = block.dataset.queue;
             dqFilterState.priority = '';
+            dqFilterState.status = '';
             dqFilterState.company = '';
             dqFilterState.highImpact = false;
             dqFilterState.search = '';
@@ -1136,7 +1141,7 @@ function renderDataQualityTab() {
         }
         if (action === 'dq-apply-filter') applyDQFilters();
         if (action === 'dq-reset-filter') {
-            dqFilterState = { queueType: '', priority: '', company: '', highImpact: false, search: '' };
+            dqFilterState = { queueType: '', priority: '', status: '', company: '', highImpact: false, search: '' };
             dqSortMode = 'priority';
             renderDataQualityTab();
             return;
@@ -1150,6 +1155,7 @@ function renderDataQualityTab() {
 
 function applyDQFilters() {
     dqFilterState.priority = document.getElementById('dq-priority')?.value || '';
+    dqFilterState.status = document.getElementById('dq-status')?.value || '';
     dqFilterState.company = document.getElementById('dq-company')?.value || '';
     dqFilterState.highImpact = document.getElementById('dq-high-impact')?.checked || false;
     dqFilterState.search = document.getElementById('dq-search')?.value.trim() || '';
@@ -1171,6 +1177,9 @@ function renderDQTable() {
     }
     if (dqFilterState.priority) {
         filtered = filtered.filter(item => item.priorityLabel === dqFilterState.priority);
+    }
+    if (dqFilterState.status) {
+        filtered = filtered.filter(item => item.signal.status === dqFilterState.status);
     }
     if (dqFilterState.company) {
         filtered = filtered.filter(item => item.signal.company_name === dqFilterState.company);
@@ -1338,8 +1347,8 @@ function openQuickFixModal(signalId) {
 
     formHtml += '</div>'; // close quick-fix-fields
     formHtml += `<div class="quick-fix-footer">
+        <div class="quick-fix-hint">請使用下方「Save」按鈕儲存變更</div>
         <button class="btn-sm btn-secondary" data-action="qf-full-edit" data-id="${esc(signalId)}">打開完整編輯</button>
-        <button class="btn-sm btn-primary" data-action="qf-save" data-id="${esc(signalId)}">儲存</button>
     </div>`;
 
     openModal(title, formHtml, async () => {

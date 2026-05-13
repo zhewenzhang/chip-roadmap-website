@@ -534,7 +534,14 @@ tr:hover td { background: var(--surface); }
 .quick-fix-footer {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding-top: 12px;
     margin-top: 16px;
     border-top: 1px solid var(--border);
+}
+
+.quick-fix-hint {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-style: italic;
 }
