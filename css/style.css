@@ -1545,155 +1545,198 @@ hr.thick {
 }
 
 /* ===== Roadmap Matrix Table ===== */
-.roadmap-year-tabs {
-    display: flex;
-    gap: 8px;
-    margin: 24px 0 16px;
-    flex-wrap: wrap;
-}
-
-.year-tab {
-    padding: 8px 20px;
-    border: 1px solid var(--border-color, #2a2a2a);
-    border-radius: 4px;
-    background: transparent;
-    color: var(--text-secondary, #aaa);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    letter-spacing: 0.05em;
-}
-
-.year-tab:hover {
-    border-color: var(--accent, #c9a84c);
-    color: var(--accent, #c9a84c);
-}
-
-.year-tab.active {
-    background: var(--accent, #c9a84c);
-    border-color: var(--accent, #c9a84c);
-    color: #000;
-}
 
 .roadmap-matrix-wrap {
     overflow-x: auto;
-    margin-bottom: 32px;
+    background: var(--bg, #0a0a0a);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    margin: 24px 0 40px;
 }
 
 .roadmap-matrix {
     width: 100%;
     border-collapse: collapse;
     font-size: 14px;
-    min-width: 560px;
+    min-width: 600px;
+    background: var(--bg, #0a0a0a);
+}
+
+/* 表頭 */
+.roadmap-matrix thead {
+    position: sticky;
+    top: 0;
+    z-index: 2;
 }
 
 .roadmap-matrix thead th {
-    padding: 12px 16px;
+    background: var(--surface, #141414);
+    padding: 13px 20px;
     text-align: left;
-    color: var(--text-muted, #666);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
+    color: #666;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    border-bottom: 1px solid var(--border-color, #2a2a2a);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
     white-space: nowrap;
 }
 
-.roadmap-matrix thead th:first-child {
-    width: 140px;
+.roadmap-matrix thead th.col-company {
+    width: 160px;
+    min-width: 140px;
 }
 
-.roadmap-matrix tbody tr {
-    border-bottom: 1px solid var(--border-color, #1e1e1e);
+/* 年份分節行 */
+.year-section-row td {
+    background: rgba(201,168,76,0.05);
+    border-top: 1px solid rgba(201,168,76,0.25);
+    border-bottom: 1px solid rgba(201,168,76,0.1);
+    padding: 9px 20px;
 }
 
-.roadmap-matrix tbody tr:hover {
+.year-section-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #c9a84c;
+}
+
+/* 公司行 */
+.company-row {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: background 0.1s ease;
+}
+
+.company-row:hover {
     background: rgba(255,255,255,0.02);
 }
 
 .company-name-cell {
-    padding: 14px 16px;
+    padding: 14px 20px;
     white-space: nowrap;
+    vertical-align: middle;
 }
 
 .company-label {
     font-size: 13px;
-    font-weight: 600;
-    color: var(--text-primary, #e8e8e8);
+    font-weight: 700;
+    color: #aaa;
 }
 
-.company-label.nvidia   { color: #76b900; }
-.company-label.amd      { color: #ed1c24; }
-.company-label.intel    { color: #0071c5; }
-.company-label.huawei_ascend { color: #cf0a2c; }
-.company-label.cambricon { color: #6c5ce7; }
-.company-label.google_tpu { color: #4285f4; }
+.company-label.nvidia        { color: #76b900; }
+.company-label.amd           { color: #ef4444; }
+.company-label.intel         { color: #3b82f6; }
+.company-label.huawei_ascend { color: #f87171; }
+.company-label.cambricon     { color: #a78bfa; }
+.company-label.google_tpu   { color: #60a5fa; }
 
+/* 芯片格 */
 .chip-cell {
-    padding: 12px 16px;
+    padding: 10px 20px;
+    vertical-align: middle;
     cursor: pointer;
     transition: background 0.15s ease;
-    vertical-align: middle;
 }
 
 .chip-cell:hover {
-    background: rgba(201, 168, 76, 0.08);
+    background: rgba(255,255,255,0.04);
 }
 
 .chip-cell:focus {
-    outline: 2px solid var(--accent, #c9a84c);
+    outline: 2px solid rgba(201,168,76,0.5);
     outline-offset: -2px;
 }
 
-.chip-name {
+/* 芯片標籤 — 依公司顏色 */
+.chip-tag {
     display: inline-block;
-    padding: 4px 10px;
-    background: var(--surface, #141414);
-    border: 1px solid var(--border-color, #2a2a2a);
+    padding: 4px 11px;
     border-radius: 4px;
     font-size: 12px;
-    font-weight: 500;
-    color: var(--text-primary, #e8e8e8);
+    font-weight: 600;
     white-space: nowrap;
-    transition: border-color 0.15s ease;
+    border: 1px solid;
+    transition: opacity 0.15s ease;
 }
 
-.chip-cell:hover .chip-name {
-    border-color: var(--accent, #c9a84c);
-    color: var(--accent, #c9a84c);
+.chip-cell:hover .chip-tag {
+    opacity: 0.85;
 }
 
+.company-chip-nvidia {
+    color: #76b900;
+    border-color: rgba(118,185,0,0.35);
+    background: rgba(118,185,0,0.08);
+}
+
+.company-chip-amd {
+    color: #ef4444;
+    border-color: rgba(239,68,68,0.35);
+    background: rgba(239,68,68,0.08);
+}
+
+.company-chip-intel {
+    color: #3b82f6;
+    border-color: rgba(59,130,246,0.35);
+    background: rgba(59,130,246,0.08);
+}
+
+.company-chip-huawei_ascend {
+    color: #f87171;
+    border-color: rgba(248,113,113,0.35);
+    background: rgba(248,113,113,0.08);
+}
+
+.company-chip-cambricon {
+    color: #a78bfa;
+    border-color: rgba(167,139,250,0.35);
+    background: rgba(167,139,250,0.08);
+}
+
+.company-chip-google_tpu {
+    color: #60a5fa;
+    border-color: rgba(96,165,250,0.35);
+    background: rgba(96,165,250,0.08);
+}
+
+/* 默認（未知公司） */
+.chip-tag:not([class*="company-chip-"]),
+.chip-tag.company-chip-unknown {
+    color: #c9a84c;
+    border-color: rgba(201,168,76,0.35);
+    background: rgba(201,168,76,0.08);
+}
+
+/* 空格子 — 無內容 */
 .empty-cell {
-    padding: 12px 16px;
-    color: var(--text-muted, #444);
-    font-size: 13px;
-    text-align: center;
-    letter-spacing: 0.05em;
+    padding: 10px 20px;
+    vertical-align: middle;
 }
 
 /* ===== Chip Detail Popup ===== */
 .chip-popup-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.75);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
-    padding: 16px;
+    padding: 20px;
 }
 
 .chip-popup {
     position: relative;
-    background: var(--surface, #141414);
-    border: 1px solid var(--border-color, #2a2a2a);
-    border-radius: 8px;
-    padding: 28px 28px 24px;
-    min-width: 300px;
-    max-width: 460px;
+    background: #181818;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 32px 28px 24px;
+    min-width: 320px;
+    max-width: 480px;
     width: 100%;
-    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
 }
 
 .chip-popup-close {
@@ -1702,22 +1745,21 @@ hr.thick {
     right: 16px;
     background: none;
     border: none;
-    font-size: 22px;
-    color: var(--text-muted, #666);
+    font-size: 24px;
+    color: #555;
     cursor: pointer;
     line-height: 1;
-    padding: 4px;
+    padding: 4px 6px;
     transition: color 0.15s ease;
 }
 
-.chip-popup-close:hover {
-    color: var(--text-primary, #e8e8e8);
-}
+.chip-popup-close:hover { color: #e8e8e8; }
 
 .chip-popup-header {
-    font-size: 12px;
-    color: var(--text-muted, #888);
-    letter-spacing: 0.06em;
+    font-size: 11px;
+    font-weight: 600;
+    color: #666;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     margin-bottom: 8px;
 }
@@ -1725,40 +1767,39 @@ hr.thick {
 .chip-popup-title {
     font-size: 22px;
     font-weight: 700;
-    color: var(--text-primary, #e8e8e8);
-    margin-bottom: 16px;
+    color: #e8e8e8;
+    margin-bottom: 18px;
     font-family: 'Playfair Display', serif;
+    line-height: 1.2;
 }
 
 .chip-popup-divider {
     height: 1px;
-    background: var(--border-color, #2a2a2a);
+    background: rgba(255,255,255,0.08);
     margin-bottom: 16px;
 }
 
 .chip-popup-field {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: baseline;
     gap: 16px;
-    padding: 6px 0;
+    padding: 7px 0;
     border-bottom: 1px solid rgba(255,255,255,0.04);
 }
 
-.chip-popup-field:last-child {
-    border-bottom: none;
-}
+.chip-popup-field:last-child { border-bottom: none; }
 
 .chip-popup-field-label {
     font-size: 12px;
-    color: var(--text-muted, #888);
+    color: #666;
     white-space: nowrap;
-    min-width: 80px;
+    min-width: 72px;
 }
 
 .chip-popup-field-value {
     font-size: 13px;
-    color: var(--text-primary, #e8e8e8);
+    color: #e8e8e8;
     text-align: right;
     line-height: 1.4;
 }
