@@ -7,9 +7,9 @@ import { loadAllData, loadSignals } from './firebase/db.js';
 import { renderCompaniesGrid, resetPagination, buildSignalMetrics } from './modules/companies.js';
 import { renderTimeline } from './modules/timeline.js';
 import { showCompanyDetail, setModalData } from './modules/modal.js';
-import { renderTrends, renderTopPlayers, renderABFAnalysis, renderKeyInsights } from './modules/insights.js';
 import { init as initSignals } from './modules/signals.js';
 import { buildRoadmapMatrixFromSignals, getRoadmapYears, getRoadmapCompanies } from './modules/roadmap-derived.js';
+import { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate } from './modules/insights-derived.js';
 
 // ============== 全局数据 ==============
 let companiesData = {};
@@ -167,12 +167,213 @@ async function initCompaniesPage() {
     });
 }
 
-// ============== 洞察页面初始化 ==============
-function initInsightsPage() {
-    renderTrends(insightsData);
-    renderTopPlayers(insightsData);
-    renderABFAnalysis(insightsData);
-    renderKeyInsights(insightsData);
+// ============== 洞察页面初始化 (V2: signals-derived) ==============
+async function initInsightsPage() {
+    const result = await loadSignals();
+    if (!result.ok) {
+        console.error('[Insights] Signals load error:', result.error);
+        renderInsightsError();
+        return;
+    }
+
+    const signals = result.data;
+    renderRecentSignalCountsModule(signals);
+    renderRecentUpgradesModule(signals);
+    renderHighImpactModule(signals);
+    renderRiskSignalsModule(signals);
+}
+
+function renderInsightsError() {
+    ['recentCounts', 'recentUpgrades', 'highImpactSignals', 'riskSignals'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">數據載入失敗，請稍後重試。</p>';
+    });
+}
+
+function renderRecentSignalCountsModule(signals) {
+    const container = document.getElementById('recentCounts');
+    if (!container) return;
+
+    const counts = buildRecentSignalCounts(signals, 30);
+
+    if (counts.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無信號更新。</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    counts.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'summary-card';
+
+        const countNum = document.createElement('div');
+        countNum.className = 'summary-card-count';
+        countNum.textContent = item.count;
+
+        const companyName = document.createElement('div');
+        companyName.className = 'summary-card-title';
+        companyName.textContent = item.companyName;
+
+        const chips = document.createElement('div');
+        chips.className = 'summary-card-chips';
+        chips.textContent = item.chips.slice(0, 3).join('、') + (item.chips.length > 3 ? ` +${item.chips.length - 3}` : '');
+
+        const link = document.createElement('a');
+        link.className = 'summary-card-link';
+        link.href = `company-signals.html?id=${encodeURIComponent(item.companyId)}`;
+        link.textContent = '查看 →';
+
+        card.appendChild(countNum);
+        card.appendChild(companyName);
+        card.appendChild(chips);
+        card.appendChild(link);
+        container.appendChild(card);
+    });
+}
+
+function renderRecentUpgradesModule(signals) {
+    const container = document.getElementById('recentUpgrades');
+    if (!container) return;
+
+    const upgrades = buildRecentUpgrades(signals, 30);
+
+    if (upgrades.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無狀態升級。</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    upgrades.slice(0, 8).forEach(({ signal, toStatus, date }) => {
+        const row = document.createElement('div');
+        row.className = 'upgrade-row';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'upgrade-date';
+        dateSpan.textContent = formatDate(date);
+
+        const companySpan = document.createElement('span');
+        companySpan.className = 'upgrade-company';
+        companySpan.textContent = signal.company_name;
+
+        const chipSpan = document.createElement('span');
+        chipSpan.className = 'upgrade-chip';
+        chipSpan.textContent = signal.chip_name;
+
+        const toSpan = document.createElement('span');
+        toSpan.className = 'upgrade-to';
+        toSpan.textContent = STATUS_LABELS[toStatus] || toStatus;
+
+        row.appendChild(dateSpan);
+        row.appendChild(companySpan);
+        row.appendChild(chipSpan);
+        row.appendChild(toSpan);
+
+        row.addEventListener('click', () => {
+            window.location.href = `company-signals.html?id=${encodeURIComponent(signal.company_id)}`;
+        });
+
+        container.appendChild(row);
+    });
+}
+
+function renderHighImpactModule(signals) {
+    const container = document.getElementById('highImpactSignals');
+    if (!container) return;
+
+    const items = buildHighImpactRecentSignals(signals, 30);
+
+    if (items.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無高 ABF 影響信號。</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    items.slice(0, 8).forEach(({ signal }) => {
+        const card = document.createElement('div');
+        card.className = 'summary-card';
+
+        const impactBadge = document.createElement('div');
+        impactBadge.className = 'summary-card-impact';
+        impactBadge.textContent = IMPACT_LABELS[signal.abf_demand_impact] || signal.abf_demand_impact;
+
+        const chipName = document.createElement('div');
+        chipName.className = 'summary-card-title';
+        chipName.textContent = signal.chip_name;
+
+        const companyName = document.createElement('div');
+        companyName.className = 'summary-card-company';
+        companyName.textContent = signal.company_name;
+
+        const metaLine = document.createElement('div');
+        metaLine.className = 'summary-card-meta';
+        metaLine.textContent = `信度 ${signal.confidence_score} · ${formatDate(signal.last_verified_at)}`;
+
+        const link = document.createElement('a');
+        link.className = 'summary-card-link';
+        link.href = `company-signals.html?id=${encodeURIComponent(signal.company_id)}`;
+        link.textContent = '查看 →';
+
+        card.appendChild(impactBadge);
+        card.appendChild(chipName);
+        card.appendChild(companyName);
+        card.appendChild(metaLine);
+        card.appendChild(link);
+        container.appendChild(card);
+    });
+}
+
+function renderRiskSignalsModule(signals) {
+    const container = document.getElementById('riskSignals');
+    if (!container) return;
+
+    const risks = buildRiskSignals(signals);
+
+    if (risks.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">無風險信號。</p>';
+        return;
+    }
+
+    container.innerHTML = '';
+
+    const RISK_LABELS = {
+        conflicting: '矛盾證據',
+        recent_change: '近期變更',
+        low_conf_high_impact: '低信度高影響',
+    };
+
+    risks.slice(0, 12).forEach(({ signal, riskType, reason }) => {
+        const row = document.createElement('div');
+        row.className = 'risk-row';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+
+        const riskLabel = document.createElement('span');
+        riskLabel.className = 'risk-label';
+        riskLabel.textContent = RISK_LABELS[riskType] || riskType;
+
+        const companyChip = document.createElement('span');
+        companyChip.className = 'risk-company';
+        companyChip.textContent = `${signal.company_name} · ${signal.chip_name}`;
+
+        const reasonSpan = document.createElement('span');
+        reasonSpan.className = 'risk-reason';
+        reasonSpan.textContent = reason;
+
+        row.appendChild(riskLabel);
+        row.appendChild(companyChip);
+        row.appendChild(reasonSpan);
+
+        row.addEventListener('click', () => {
+            window.location.href = `company-signals.html?id=${encodeURIComponent(signal.company_id)}`;
+        });
+
+        container.appendChild(row);
+    });
 }
 
 // ============== 筛选功能 ==============

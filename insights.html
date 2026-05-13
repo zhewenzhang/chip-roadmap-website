@@ -45,40 +45,45 @@
     <!-- 页面标题 -->
     <main class="insights-page" role="main">
         <section class="insights-hero">
-            <h1>行业<em>洞察</em></h1>
-            <p>深度分析全球半導體產業趨勢、技術演進和市場變化</p>
+            <h1>產業<em>情報摘要</em></h1>
+            <p>由 signals 系統驅動的情報摘要 — 即時掌握近期變更、高影響信號和風險項目</p>
         </section>
 
-        <!-- 关键趋势 -->
-        <section class="insight-section" aria-labelledby="trends-heading">
-            <h2 id="trends-heading">关键技术趋势</h2>
-            <div class="trend-cards" id="trendsContainer" aria-live="polite">
-                <!-- 动态加载 -->
+        <!-- Module 1: Recent Signal Counts by Company -->
+        <section class="insight-section" aria-labelledby="counts-heading">
+            <h2 id="counts-heading">近 30 天信號統計（按公司）</h2>
+            <div class="summary-grid" id="recentCounts" aria-live="polite">
+                <!-- Dynamic -->
             </div>
         </section>
 
-        <!-- 头部玩家 -->
-        <section class="insight-section" aria-labelledby="players-heading">
-            <h2 id="players-heading">头部玩家分析</h2>
-            <div class="player-cards" id="topPlayersContainer" aria-live="polite">
-                <!-- 动态加载 -->
+        <!-- Module 2: Recent Status Upgrades -->
+        <section class="insight-section" aria-labelledby="upgrades-heading">
+            <h2 id="upgrades-heading">近期狀態升級</h2>
+            <div class="upgrade-list" id="recentUpgrades" aria-live="polite">
+                <!-- Dynamic -->
             </div>
         </section>
 
-        <!-- ABF 需求分析 -->
-        <section class="insight-section" aria-labelledby="abf-heading">
-            <h2 id="abf-heading">ABF 载板需求分析</h2>
-            <div class="abf-analysis" id="abfAnalysisContainer" aria-live="polite">
-                <!-- 动态加载 -->
+        <!-- Module 3: High ABF Impact Recent Signals -->
+        <section class="insight-section" aria-labelledby="high-impact-heading">
+            <h2 id="high-impact-heading">近期高 ABF 影響信號</h2>
+            <div class="summary-grid" id="highImpactSignals" aria-live="polite">
+                <!-- Dynamic -->
             </div>
         </section>
 
-        <!-- 关键洞察 -->
-        <section class="insight-section" aria-labelledby="insights-heading">
-            <h2 id="insights-heading">核心观点</h2>
-            <ul class="insights-list" id="keyInsightsList" aria-live="polite">
-                <!-- 动态加载 -->
-            </ul>
+        <!-- Module 4: Risk-Oriented Signals -->
+        <section class="insight-section" aria-labelledby="risk-heading">
+            <h2 id="risk-heading">風險信號</h2>
+            <div class="risk-list" id="riskSignals" aria-live="polite">
+                <!-- Dynamic -->
+            </div>
+        </section>
+
+        <!-- Footer note -->
+        <section class="insights-footer-note">
+            <p>本頁面由 signals 系統自動派生，不含人工撰寫的趨勢文章。詳細數據請前往 <a href="signals.html">Signals 頁面</a>。</p>
         </section>
     </main>
 
