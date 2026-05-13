@@ -580,7 +580,7 @@ function buildSignalForm(s = {}) {
         <div class="form-group"><label>公司名稱 *</label><input id="fs-company_name" value="${esc(s.company_name || '')}" required></div>
         <div class="form-group"><label>芯片名稱 *</label><input id="fs-chip_name" value="${esc(s.chip_name || '')}" required></div>
         <div class="form-group"><label>地區 *</label>
-            <select id="fs-region">${REGION_OPTIONS.map(v => `<option ${s.region === v ? 'selected' : ''}>${regionLabel(v)}</option>`).join('')}</select>
+            <select id="fs-region">${REGION_OPTIONS.map(v => `<option value="${v}" ${s.region === v ? 'selected' : ''}>${regionLabel(v)}</option>`).join('')}</select>
         </div>
         <div class="form-group"><label>階段 *</label>
             <select id="fs-stage">${STAGE_OPTIONS.map(v => `<option value="${v}" ${s.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}</select>
@@ -592,7 +592,16 @@ function buildSignalForm(s = {}) {
             <select id="fs-abf_demand_impact">${IMPACT_OPTIONS.map(v => `<option value="${v}" ${s.abf_demand_impact === v ? 'selected' : ''}>${impactLabel(v)}</option>`).join('')}</select>
         </div>
         <div class="form-group"><label>信度 (0-100) *</label><input id="fs-confidence_score" type="number" min="0" max="100" value="${s.confidence_score ?? 50}"></div>
-        <div class="form-group"><label>信號類型</label><input id="fs-signal_type" value="${esc(s.signal_type || '')}" placeholder="例如：product_progress"></div>
+        <div class="form-group"><label>信號類型</label>
+            <input id="fs-signal_type" value="${esc(s.signal_type || '')}" list="signal-type-options" placeholder="例如：product_progress">
+            <datalist id="signal-type-options">
+                <option value="product_progress">
+                <option value="supply_chain">
+                <option value="capacity">
+                <option value="customer_win">
+                <option value="roadmap_change">
+            </datalist>
+        </div>
         <div class="form-group"><label>量產年份</label><input id="fs-release_year" type="number" value="${s.release_year ?? ''}" placeholder="例如：2026"></div>
         <div class="form-group"><label>量產季度</label>
             <select id="fs-release_quarter">
@@ -603,7 +612,17 @@ function buildSignalForm(s = {}) {
                 <option value="Q4" ${s.release_quarter === 'Q4' ? 'selected' : ''}>Q4</option>
             </select>
         </div>
-        <div class="form-group"><label>封裝類型</label><input id="fs-package_type" value="${esc(s.package_type || '')}" placeholder="例如：2.5D"></div>
+        <div class="form-group"><label>封裝類型</label>
+            <input id="fs-package_type" value="${esc(s.package_type || '')}" list="package-type-options" placeholder="例如：CoWoS-L">
+            <datalist id="package-type-options">
+                <option value="CoWoS-L">
+                <option value="CoWoS-S">
+                <option value="EMIB">
+                <option value="2.5D">
+                <option value="3D">
+                <option value="flip-chip">
+            </datalist>
+        </div>
         <div class="form-group"><label>CoWoS 需求</label>
             <select id="fs-cowos_required">
                 <option value="false" ${!s.cowos_required ? 'selected' : ''}>否</option>
@@ -612,16 +631,40 @@ function buildSignalForm(s = {}) {
         </div>
         <div class="form-group"><label>ABF 尺寸</label><input id="fs-abf_size" value="${esc(s.abf_size || '')}" placeholder="例如：77mm x 77mm"></div>
         <div class="form-group"><label>ABF 層數</label><input id="fs-abf_layers" type="number" value="${s.abf_layers ?? ''}" placeholder="例如：16"></div>
-        <div class="form-group"><label>HBM</label><input id="fs-hbm" value="${esc(s.hbm || '')}" placeholder="例如：HBM3"></div>
-        <div class="form-group"><label>預期出貨量</label><input id="fs-expected_volume" value="${esc(s.expected_volume || '')}" placeholder="例如：medium"></div>
+        <div class="form-group"><label>HBM</label>
+            <input id="fs-hbm" value="${esc(s.hbm || '')}" list="hbm-options" placeholder="例如：HBM3">
+            <datalist id="hbm-options">
+                <option value="HBM3">
+                <option value="HBM3E">
+                <option value="HBM4">
+            </datalist>
+        </div>
+        <div class="form-group"><label>預期出貨量</label>
+            <select id="fs-expected_volume">
+                <option value="" ${!s.expected_volume ? 'selected' : ''}>—</option>
+                <option value="low" ${s.expected_volume === 'low' ? 'selected' : ''}>低</option>
+                <option value="medium" ${s.expected_volume === 'medium' ? 'selected' : ''}>中</option>
+                <option value="high" ${s.expected_volume === 'high' ? 'selected' : ''}>高</option>
+            </select>
+        </div>
         <div class="form-group"><label>影響範圍（逗號分隔）</label><input id="fs-impact_scope" value="${esc((s.impact_scope || []).join(', '))}"></div>
         <div class="form-group"><label>標籤（逗號分隔）</label><input id="fs-tags" value="${esc((s.tags || []).join(', '))}"></div>
         <div class="form-section-title">證據</div>
         <div class="form-group"><label>證據摘要</label><textarea id="fs-evidence_summary" rows="3">${esc(s.evidence_summary || '')}</textarea></div>
         <div class="form-group"><label>矛盾證據</label><textarea id="fs-conflicting_evidence" rows="3">${esc(s.conflicting_evidence || '')}</textarea></div>
         <div class="form-group"><label>備註</label><textarea id="fs-notes" rows="3">${esc(s.notes || '')}</textarea></div>
-        <div class="form-group"><label>最後驗證日期</label><input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}"></div>
-        <div class="form-group"><label>來源（JSON 陣列）</label><textarea id="fs-sources" rows="4" style="font-family:monospace;font-size:12px">${esc(JSON.stringify(s.sources || [], null, 2))}</textarea></div>`;
+        <div class="form-group">
+            <label>最後驗證日期</label>
+            <div style="display:flex;gap:8px;align-items:center">
+                <input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}" style="flex:1">
+                <button type="button" class="btn-secondary" style="padding:6px 12px;font-size:12px" onclick="document.getElementById('fs-last_verified_at').value=new Date().toISOString().slice(0,10)">今天</button>
+            </div>
+        </div>
+        <div class="form-group"><label>來源 URL（每行一個）</label>
+            <textarea id="fs-sources" rows="3" placeholder="https://example.com/source-1&#10;https://example.com/source-2"
+                      style="font-family:monospace;font-size:12px">${esc((s.sources || []).map(src => src.url || '').filter(Boolean).join('\n'))}</textarea>
+            <div style="font-size:11px;color:#888;margin-top:4px">每行貼一個網址即可，留空可省略</div>
+        </div>`;
 }
 
 function collectSignalForm() {
@@ -654,14 +697,10 @@ function collectSignalForm() {
         }
     }
 
-    let sources = [];
-    try {
-        sources = JSON.parse(document.getElementById('fs-sources').value || '[]');
-        if (!Array.isArray(sources)) sources = [];
-    } catch {
-        showToast('來源必須為有效的 JSON 陣列', 'error');
-        return null;
-    }
+    const sourcesRaw = document.getElementById('fs-sources').value.trim();
+    const sources = sourcesRaw
+        ? sourcesRaw.split('\n').map(line => line.trim()).filter(Boolean).map(url => ({ type: 'link', label: '', url }))
+        : [];
 
     return {
         title: document.getElementById('fs-title').value.trim(),
@@ -695,10 +734,10 @@ function collectSignalForm() {
 function openNewSignalModal() {
     openModal('新增信號', buildSignalForm({}), async () => {
         const data = collectSignalForm();
-        if (!data) throw new Error('Validation failed');
+        if (!data) throw new Error('__SILENT__');
         if (!data.title || !data.company_id || !data.company_name || !data.chip_name || !data.region) {
-            showToast('必填欄位未填寫', 'error');
-            throw new Error('Required fields missing');
+            showToast('必填欄位未填寫（標題 / 公司 ID / 公司名稱 / 芯片名稱 / 地區）', 'error');
+            return;
         }
         await createSignal(data);
         showToast('已建立 ✓');
@@ -712,7 +751,7 @@ function openEditSignalModal(id) {
     if (!signal) return;
     openModal('編輯：' + signal.title, buildSignalForm(signal), async () => {
         const data = collectSignalForm();
-        if (!data) throw new Error('Validation failed');
+        if (!data) throw new Error('__SILENT__');
         await saveSignal(id, data);
         showToast('已儲存 ✓');
         await fetchSignals();
@@ -906,7 +945,8 @@ modalSave.addEventListener('click', async () => {
         await currentSaveFn();
         closeModal();
     } catch (err) {
-        if (err.message !== 'ID required' && err.message !== 'Duplicate ID') {
+        const silent = ['ID required', 'Duplicate ID', '__SILENT__'];
+        if (!silent.includes(err.message)) {
             showToast('Error: ' + err.message, 'error');
         }
     } finally {
