@@ -6,18 +6,18 @@
 const COMPANY_ORDER = ['nvidia', 'amd', 'intel', 'huawei_ascend', 'cambricon', 'google_tpu'];
 
 const COMPANY_STYLE = {
-    nvidia:        { label: 'NVIDIA',     color: '#4ade80', bg: 'rgba(74,222,128,0.08)',   border: 'rgba(74,222,128,0.3)' },
-    amd:           { label: 'AMD',        color: '#f87171', bg: 'rgba(248,113,113,0.08)',  border: 'rgba(248,113,113,0.3)' },
-    intel:         { label: 'Intel',      color: '#60a5fa', bg: 'rgba(96,165,250,0.08)',   border: 'rgba(96,165,250,0.3)' },
-    huawei_ascend: { label: '華為昇騰',  color: '#fb923c', bg: 'rgba(251,146,60,0.08)',   border: 'rgba(251,146,60,0.3)' },
-    cambricon:     { label: '寒武紀',     color: '#c084fc', bg: 'rgba(192,132,252,0.08)',  border: 'rgba(192,132,252,0.3)' },
-    google_tpu:    { label: 'Google TPU', color: '#38bdf8', bg: 'rgba(56,189,248,0.08)',   border: 'rgba(56,189,248,0.3)' },
+    nvidia:        { label: 'NVIDIA',     color: '#ffffff', bg: '#111111', border: '#111111' },
+    amd:           { label: 'AMD',        color: '#ffffff', bg: '#111111', border: '#111111' },
+    intel:         { label: 'Intel',      color: '#ffffff', bg: '#111111', border: '#111111' },
+    huawei_ascend: { label: '華為昇騰',  color: '#ffffff', bg: '#111111', border: '#111111' },
+    cambricon:     { label: '寒武紀',     color: '#ffffff', bg: '#111111', border: '#111111' },
+    google_tpu:    { label: 'Google TPU', color: '#ffffff', bg: '#111111', border: '#111111' },
 };
 
 const YEAR_COLORS = [
-    { year: 2024, header: 'rgba(255,255,255,0.02)', border: 'rgba(255,255,255,0.06)', label: '#6b7280' },
-    { year: 2025, header: 'rgba(201,168,76,0.04)',  border: 'rgba(201,168,76,0.2)',   label: '#c9a84c' },
-    { year: 2026, header: 'rgba(74,222,128,0.03)',  border: 'rgba(74,222,128,0.15)',  label: '#4ade80' },
+    { year: 2024, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
+    { year: 2025, header: '#f3f4f6', border: '#d1d5db', label: '#111827' },
+    { year: 2026, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
 ];
 
 function renderTimeline(roadmapsData, filterCompany = null) {
@@ -196,7 +196,7 @@ function showChipPopup(chip, companyName, accentColor) {
 
     const title = document.createElement('div');
     title.className = 'chip-popup-title';
-    title.style.color = accentColor;
+    title.style.color = '#111111';
     title.textContent = chip.product;
 
     const divider = document.createElement('div');

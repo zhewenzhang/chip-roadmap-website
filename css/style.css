@@ -1547,10 +1547,10 @@ hr.thick {
 /* ===== Roadmap Matrix Table ===== */
 
 .roadmap-card {
-    background: #111111;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     margin: 24px 0 48px;
     overflow: hidden;
 }
@@ -1565,21 +1565,19 @@ hr.thick {
     border-collapse: collapse;
     font-size: 13px;
     min-width: 760px;
-    background: #0d0d0d;
+    background: #ffffff;
 }
 
-/* 表頭：公司列 */
+/* 表頭：公司列 (rowspan=2) */
 .th-company {
-    background: #181818;
-    color: #6b7280;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    background: #111111;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
     padding: 14px 20px;
     text-align: left;
-    border-right: 1px solid rgba(255,255,255,0.08);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #e5e7eb;
     vertical-align: middle;
     white-space: nowrap;
     min-width: 130px;
@@ -1593,41 +1591,41 @@ hr.thick {
     padding: 10px 12px;
     text-align: center;
     font-size: 12px;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    border-left: 1px solid rgba(255,255,255,0.05);
-    border-bottom: none;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    border-left: 1px solid #e5e7eb;
+    border-bottom: 1px solid #d1d5db;
     white-space: nowrap;
 }
 
 /* 季度標題行 */
 .th-quarter {
-    padding: 6px 8px;
+    padding: 7px 8px;
     text-align: center;
     font-size: 11px;
     font-weight: 600;
-    color: #4b5563;
+    color: #9ca3af;
     letter-spacing: 0.06em;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    border-left: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid #e5e7eb;
+    border-left: 1px solid #f3f4f6;
     white-space: nowrap;
     min-width: 100px;
 }
 
 /* 表身行 */
-.tr-even { background: #0d0d0d; }
-.tr-odd  { background: #101010; }
+.tr-even { background: #ffffff; }
+.tr-odd  { background: #fafafa; }
 
 .tr-even:hover,
 .tr-odd:hover {
-    background: #161616;
+    background: #f5f5f5;
 }
 
-/* 公司名格（sticky） */
+/* 公司名格 (sticky) */
 .td-company {
     padding: 14px 20px;
-    border-right: 1px solid rgba(255,255,255,0.08);
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-right: 1px solid #e5e7eb;
+    border-bottom: 1px solid #f3f4f6;
     vertical-align: middle;
     white-space: nowrap;
     position: sticky;
@@ -1635,13 +1633,20 @@ hr.thick {
     z-index: 2;
 }
 
-.tr-even .td-company { background: #0d0d0d; }
-.tr-odd  .td-company { background: #101010; }
-tr:hover .td-company { background: #161616; }
+.tr-even .td-company { background: #ffffff; }
+.tr-odd  .td-company { background: #fafafa; }
+tr:hover .td-company { background: #f5f5f5; }
 
 .company-name-tag {
-    font-size: 13px;
+    display: inline-block;
+    padding: 3px 10px;
+    background: #111111;
+    color: #ffffff;
+    font-size: 11px;
     font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    text-transform: uppercase;
 }
 
 /* 有芯片的格子 */
@@ -1649,18 +1654,18 @@ tr:hover .td-company { background: #161616; }
     padding: 10px 10px;
     text-align: center;
     vertical-align: middle;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    border-left: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid #f3f4f6;
+    border-left: 1px solid #f3f4f6;
     cursor: pointer;
-    transition: background 0.15s ease;
+    transition: background 0.12s ease;
 }
 
 .td-chip:hover {
-    background: rgba(255,255,255,0.04) !important;
+    background: #f0f0f0 !important;
 }
 
 .td-chip:focus {
-    outline: 2px solid rgba(201,168,76,0.5);
+    outline: 2px solid #111111;
     outline-offset: -2px;
 }
 
@@ -1668,53 +1673,53 @@ tr:hover .td-company { background: #161616; }
 .chip-tag {
     display: inline-block;
     padding: 4px 10px;
-    border-radius: 5px;
+    border-radius: 4px;
     border: 1px solid;
     font-size: 12px;
     font-weight: 600;
     white-space: nowrap;
     line-height: 1.4;
-    transition: box-shadow 0.15s ease;
+    transition: box-shadow 0.12s ease;
 }
 
 .td-chip:hover .chip-tag {
-    box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 /* 空格子 */
 .td-empty {
     padding: 10px 8px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-    border-left: 1px solid rgba(255,255,255,0.03);
+    border-bottom: 1px solid #f3f4f6;
+    border-left: 1px solid #f3f4f6;
 }
 
 /* ===== Chip Detail Popup ===== */
 .chip-popup-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,0.75);
+    background: rgba(0,0,0,0.45);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
     padding: 20px;
-    backdrop-filter: blur(3px);
 }
 
 .chip-popup {
     position: relative;
-    background: #181818;
-    border: 1px solid rgba(255,255,255,0.1);
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     overflow: hidden;
     min-width: 320px;
     max-width: 460px;
     width: 100%;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.7);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
 }
 
 .chip-popup-colorbar {
     height: 3px;
+    background: #111111;
     width: 100%;
 }
 
@@ -1722,7 +1727,7 @@ tr:hover .td-company { background: #161616; }
     position: absolute;
     top: 14px;
     right: 16px;
-    background: rgba(255,255,255,0.08);
+    background: #f3f4f6;
     border: none;
     border-radius: 50%;
     width: 28px;
@@ -1730,22 +1735,22 @@ tr:hover .td-company { background: #161616; }
     font-size: 18px;
     line-height: 28px;
     text-align: center;
-    color: #9ca3af;
+    color: #6b7280;
     cursor: pointer;
-    transition: background 0.15s ease;
     padding: 0;
+    transition: background 0.12s ease;
 }
 
 .chip-popup-close:hover {
-    background: rgba(255,255,255,0.15);
-    color: #f3f4f6;
+    background: #e5e7eb;
+    color: #111111;
 }
 
 .chip-popup-header {
     padding: 18px 24px 4px;
     font-size: 11px;
     font-weight: 600;
-    color: #4b5563;
+    color: #9ca3af;
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
@@ -1760,7 +1765,7 @@ tr:hover .td-company { background: #161616; }
 
 .chip-popup-divider {
     height: 1px;
-    background: rgba(255,255,255,0.06);
+    background: #f3f4f6;
     margin: 0 24px 12px;
 }
 
@@ -1770,7 +1775,7 @@ tr:hover .td-company { background: #161616; }
     align-items: baseline;
     gap: 16px;
     padding: 8px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
+    border-bottom: 1px solid #f9fafb;
 }
 
 .chip-popup-field:last-child {
@@ -1780,7 +1785,7 @@ tr:hover .td-company { background: #161616; }
 
 .chip-popup-field-label {
     font-size: 12px;
-    color: #6b7280;
+    color: #9ca3af;
     white-space: nowrap;
     min-width: 72px;
     font-weight: 500;
@@ -1788,7 +1793,7 @@ tr:hover .td-company { background: #161616; }
 
 .chip-popup-field-value {
     font-size: 13px;
-    color: #e5e7eb;
+    color: #111827;
     text-align: right;
     font-weight: 600;
     line-height: 1.4;
