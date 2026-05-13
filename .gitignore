@@ -1,19 +1,5 @@
-# Dependencies
-node_modules/
-
-# Build output
+﻿node_modules/
 dist/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/
-.idea/
-
-# Logs
-*.log
-
-# Package lock (keep for reproducible builds)
-# package-lock.json
+scripts/service-account-key.json
+*.local
+.env

@@ -3,7 +3,7 @@
  * 模块化架构：导入各功能模块并初始化
  */
 
-import { loadAllData } from './utils/fetch.js';
+import { loadAllData } from './firebase/db.js';
 import { renderCompaniesGrid, resetPagination } from './modules/companies.js';
 import { renderTimeline } from './modules/timeline.js';
 import { showCompanyDetail, setModalData } from './modules/modal.js';
