@@ -1,7 +1,7 @@
 ﻿import { db } from './config.js';
 import {
     collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-    serverTimestamp
+    query, orderBy, serverTimestamp, where
 } from 'firebase/firestore';
 
 function showErrorBanner(message) {
@@ -104,6 +104,120 @@ export async function loadAllData() {
             insights: { trends: [], top_players: [], abf_demand_analysis: null, key_insights: [] }
         };
     }
+}
+
+// ===== SIGNALS =====
+
+const STAGE_ENUM = ['rumor', 'announced', 'sampling', 'design_win', 'pilot', 'ramp', 'volume'];
+const STATUS_ENUM = ['draft', 'watch', 'verified', 'downgraded', 'invalidated'];
+const IMPACT_ENUM = ['low', 'medium', 'high', 'explosive'];
+const IMPACT_SORT = { explosive: 4, high: 3, medium: 2, low: 1 };
+
+export function normalizeSignal(raw) {
+    if (!raw) return null;
+    const stage = STAGE_ENUM.includes(raw.stage) ? raw.stage : 'rumor';
+    const status = STATUS_ENUM.includes(raw.status) ? raw.status : 'draft';
+    const abf_demand_impact = IMPACT_ENUM.includes(raw.abf_demand_impact) ? raw.abf_demand_impact : 'low';
+    let confidence_score = Number(raw.confidence_score) || 0;
+    confidence_score = Math.max(0, Math.min(100, confidence_score));
+
+    let abf_layers = null;
+    if (raw.abf_layers != null) {
+        const n = Number(raw.abf_layers);
+        if (!isNaN(n) && n > 0) abf_layers = n;
+    }
+
+    let release_quarter = '';
+    if (['Q1', 'Q2', 'Q3', 'Q4'].includes(raw.release_quarter)) {
+        release_quarter = raw.release_quarter;
+    }
+
+    const sources = Array.isArray(raw.sources) ? raw.sources : [];
+    const impact_scope = Array.isArray(raw.impact_scope) ? raw.impact_scope : [];
+    const tags = Array.isArray(raw.tags) ? raw.tags : [];
+
+    return {
+        id: raw.id || '',
+        title: raw.title || '',
+        company_id: raw.company_id || '',
+        company_name: raw.company_name || '',
+        chip_name: raw.chip_name || '',
+        region: raw.region || '',
+        signal_type: raw.signal_type || '',
+        stage,
+        release_year: raw.release_year || null,
+        release_quarter,
+        package_type: raw.package_type || '',
+        cowos_required: Boolean(raw.cowos_required),
+        abf_size: raw.abf_size || '',
+        abf_layers,
+        hbm: raw.hbm || '',
+        expected_volume: raw.expected_volume || '',
+        abf_demand_impact,
+        impact_scope,
+        confidence_score,
+        status,
+        evidence_summary: raw.evidence_summary || '',
+        conflicting_evidence: raw.conflicting_evidence || '',
+        last_verified_at: raw.last_verified_at || '',
+        tags,
+        sources,
+        notes: raw.notes || '',
+    };
+}
+
+export async function loadSignals() {
+    try {
+        const snap = await getDocs(collection(db, 'signals'));
+        const signals = snap.docs.map(d => normalizeSignal({ id: d.id, ...d.data() }));
+        // Sort: abf_demand_impact desc → last_verified_at desc → confidence_score desc
+        signals.sort((a, b) => {
+            const impDiff = (IMPACT_SORT[b.abf_demand_impact] || 0) - (IMPACT_SORT[a.abf_demand_impact] || 0);
+            if (impDiff !== 0) return impDiff;
+            const dateDiff = new Date(b.last_verified_at || 0) - new Date(a.last_verified_at || 0);
+            if (dateDiff !== 0) return dateDiff;
+            return b.confidence_score - a.confidence_score;
+        });
+        return signals;
+    } catch (err) {
+        console.error('[Firestore] loadSignals error:', err);
+        return [];
+    }
+}
+
+export async function getSignal(id) {
+    const snap = await getDoc(doc(db, 'signals', id));
+    if (!snap.exists()) return null;
+    return normalizeSignal({ id: snap.id, ...snap.data() });
+}
+
+export async function createSignal(data) {
+    // Required field validation
+    const required = ['title', 'company_id', 'company_name', 'chip_name', 'region', 'stage', 'confidence_score', 'abf_demand_impact', 'status'];
+    for (const field of required) {
+        if (!data[field] && data[field] !== 0) {
+            throw new Error(`Missing required field: ${field}`);
+        }
+    }
+    const normalized = normalizeSignal(data);
+    const ref = await addDoc(collection(db, 'signals'), {
+        ...normalized,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+    });
+    return ref.id;
+}
+
+export async function saveSignal(id, data) {
+    const normalized = normalizeSignal(data);
+    await updateDoc(doc(db, 'signals', id), {
+        ...normalized,
+        updatedAt: serverTimestamp(),
+    });
+}
+
+export async function deleteSignal(id) {
+    await deleteDoc(doc(db, 'signals', id));
 }
 
 // ===== WRITE FUNCTIONS (admin only) =====
