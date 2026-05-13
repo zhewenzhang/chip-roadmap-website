@@ -6,18 +6,18 @@
 const COMPANY_ORDER = ['nvidia', 'amd', 'intel', 'huawei_ascend', 'cambricon', 'google_tpu'];
 
 const COMPANY_STYLE = {
-    nvidia:        { label: 'NVIDIA',     color: '#16a34a', bg: '#f0fdf4', border: '#86efac' },
-    amd:           { label: 'AMD',        color: '#dc2626', bg: '#fef2f2', border: '#fca5a5' },
-    intel:         { label: 'Intel',      color: '#2563eb', bg: '#eff6ff', border: '#93c5fd' },
-    huawei_ascend: { label: '華為昇騰',  color: '#be123c', bg: '#fff1f2', border: '#fda4af' },
-    cambricon:     { label: '寒武紀',     color: '#7c3aed', bg: '#f5f3ff', border: '#c4b5fd' },
-    google_tpu:    { label: 'Google TPU', color: '#1d4ed8', bg: '#eff6ff', border: '#93c5fd' },
+    nvidia:        { label: 'NVIDIA',     color: '#4ade80', bg: 'rgba(74,222,128,0.08)',   border: 'rgba(74,222,128,0.3)' },
+    amd:           { label: 'AMD',        color: '#f87171', bg: 'rgba(248,113,113,0.08)',  border: 'rgba(248,113,113,0.3)' },
+    intel:         { label: 'Intel',      color: '#60a5fa', bg: 'rgba(96,165,250,0.08)',   border: 'rgba(96,165,250,0.3)' },
+    huawei_ascend: { label: '華為昇騰',  color: '#fb923c', bg: 'rgba(251,146,60,0.08)',   border: 'rgba(251,146,60,0.3)' },
+    cambricon:     { label: '寒武紀',     color: '#c084fc', bg: 'rgba(192,132,252,0.08)',  border: 'rgba(192,132,252,0.3)' },
+    google_tpu:    { label: 'Google TPU', color: '#38bdf8', bg: 'rgba(56,189,248,0.08)',   border: 'rgba(56,189,248,0.3)' },
 };
 
 const YEAR_COLORS = [
-    { year: 2024, header: '#f8fafc', border: '#e2e8f0', label: '#64748b' },
-    { year: 2025, header: '#fefce8', border: '#fde68a', label: '#92400e' },
-    { year: 2026, header: '#f0fdf4', border: '#bbf7d0', label: '#065f46' },
+    { year: 2024, header: 'rgba(255,255,255,0.02)', border: 'rgba(255,255,255,0.06)', label: '#6b7280' },
+    { year: 2025, header: 'rgba(201,168,76,0.04)',  border: 'rgba(201,168,76,0.2)',   label: '#c9a84c' },
+    { year: 2026, header: 'rgba(74,222,128,0.03)',  border: 'rgba(74,222,128,0.15)',  label: '#4ade80' },
 ];
 
 function renderTimeline(roadmapsData, filterCompany = null) {
