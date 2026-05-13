@@ -79,7 +79,15 @@ export function isWatchingSignal(id) { return watchlist.signals.includes(id); }
 
 export function getWatchlist() { return watchlist; }
 export function isEmpty() {
-    return watchlist.companies.length === 0 && 
-           watchlist.chips.length === 0 && 
+    return watchlist.companies.length === 0 &&
+           watchlist.chips.length === 0 &&
            watchlist.signals.length === 0;
+}
+
+// Clear the entire watchlist (in-memory + persisted)
+export function clearWatchlist() {
+    watchlist.companies = [];
+    watchlist.chips = [];
+    watchlist.signals = [];
+    saveWatchlist();
 }

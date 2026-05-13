@@ -168,6 +168,7 @@ function renderSidebar(signals) {
         renderRecentChanges(signals);
     } else {
         renderChipInfo(signals[0]);
+        renderChipRecentChanges(signals);
         renderVerificationTimeline(signals);
         renderSiblingChips(signals[0]);
     }
@@ -252,6 +253,36 @@ function renderChipInfo(signal) {
         <div class="info-row"><span>ABF 尺寸：</span><strong>${esc(signal.abf_size || '—')}</strong></div>
         <div class="info-row"><span>ABF 層數：</span><strong>${signal.abf_layers || '—'}</strong></div>
     `;
+}
+
+function renderChipRecentChanges(signals) {
+    // Sort by last_status_changed_at when present, fall back to last_verified_at
+    const sorted = [...signals].sort((a, b) => {
+        const dateA = a.last_status_changed_at || a.last_verified_at || '';
+        const dateB = b.last_status_changed_at || b.last_verified_at || '';
+        return new Date(dateB || 0) - new Date(dateA || 0);
+    }).slice(0, 5);
+    const list = document.getElementById('chipRecentChanges');
+    if (!list) return;
+    if (sorted.length === 0) {
+        list.innerHTML = '<div class="sidebar-empty">尚無最近變更</div>';
+        return;
+    }
+    list.innerHTML = sorted.map(s => {
+        const changeDate = s.last_status_changed_at || s.last_verified_at;
+        return `
+            <div class="sidebar-list-item" data-id="${esc(s.id)}">
+                <div class="item-meta">${formatDate(changeDate)}</div>
+                <div class="item-title">${esc(s.title)}</div>
+            </div>
+        `;
+    }).join('');
+    list.querySelectorAll('.sidebar-list-item').forEach(el => {
+        el.addEventListener('click', () => {
+            const signal = allSignals.find(s => s.id === el.dataset.id);
+            if (signal) openDrawer(signal);
+        });
+    });
 }
 
 function renderVerificationTimeline(signals) {

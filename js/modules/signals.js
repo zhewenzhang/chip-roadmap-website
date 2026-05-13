@@ -8,10 +8,10 @@ import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS, IMPACT_SORT,
 } from './signals-schema.js';
-import { 
+import {
     loadWatchlist, isWatchingCompany, isWatchingChip, isWatchingSignal,
     toggleWatchCompany, toggleWatchChip, toggleWatchSignal, getWatchlist,
-    isEmpty as isWatchlistEmpty
+    isEmpty as isWatchlistEmpty, clearWatchlist
 } from './watchlist.js';
 
 // ===== State =====
@@ -905,8 +905,7 @@ function bindEvents() {
     if (clearWatchBtn) {
         clearWatchBtn.addEventListener('click', () => {
             if (confirm('確定要清除全部關注項嗎？')) {
-                localStorage.removeItem('chip-roadmap-watchlist');
-                loadWatchlist();
+                clearWatchlist();
                 renderWatchlistPanel();
                 renderSummaryLayer(allSignals);
                 applyFilters();
