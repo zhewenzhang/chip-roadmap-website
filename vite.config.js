@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { readdirSync, copyFileSync, mkdirSync, existsSync } from 'fs';
+import { copyFileSync, existsSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -11,14 +11,6 @@ function copyStaticAssets() {
     closeBundle() {
       const root = process.cwd();
       const distDir = resolve(root, 'dist');
-
-      // Copy data/ directory
-      const srcData = resolve(root, 'data');
-      const destData = resolve(distDir, 'data');
-      if (!existsSync(destData)) mkdirSync(destData, { recursive: true });
-      readdirSync(srcData).forEach(file => {
-        copyFileSync(resolve(srcData, file), resolve(destData, file));
-      });
 
       // Copy sitemap.xml and robots.txt
       ['sitemap.xml', 'robots.txt'].forEach(file => {

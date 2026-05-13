@@ -1,7 +1,7 @@
 ﻿import { db } from './config.js';
 import {
     collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
-    query, orderBy, serverTimestamp
+    serverTimestamp
 } from 'firebase/firestore';
 
 function showErrorBanner(message) {
