@@ -128,11 +128,11 @@ function renderSummaryLayer(signals) {
             </ul>
         </div>
         <div class="summary-block">
-            <div class="summary-block-title">最高優先級</div>
+            <div class="summary-block-title">最高 ABF 影響</div>
             <ul class="summary-list">
                 ${highestImpact.map(s => `
                     <li class="summary-item" data-id="${s.id}">
-                        <span class="summary-item-meta">${Math.round(s._priority)}</span>
+                        <span class="summary-item-meta">${impactLabel(s.abf_demand_impact)}</span>
                         ${esc(s.company_name)}: ${esc(s.chip_name)}
                     </li>
                 `).join('')}
@@ -184,17 +184,21 @@ function renderSavedViews() {
     list.innerHTML = savedViews.map((v, i) => `
         <div class="saved-view-token" data-index="${i}">
             <span class="saved-view-name">${esc(v.name)}</span>
-            <button class="saved-view-delete" data-index="${i}">&times;</button>
+            <button class="saved-view-delete" data-index="${i}" title="刪除">&times;</button>
         </div>
     `).join('');
 
     list.querySelectorAll('.saved-view-token').forEach(el => {
         el.addEventListener('click', (e) => {
+            // Check if delete button was clicked
             if (e.target.classList.contains('saved-view-delete')) {
+                e.stopPropagation();
                 const idx = parseInt(e.target.dataset.index);
-                savedViews.splice(idx, 1);
-                saveSavedViews();
-                renderSavedViews();
+                if (confirm(`確定要刪除視圖「${savedViews[idx].name}」嗎？`)) {
+                    savedViews.splice(idx, 1);
+                    saveSavedViews();
+                    renderSavedViews();
+                }
                 return;
             }
             const idx = parseInt(el.dataset.index);
@@ -259,39 +263,7 @@ function populateSelect(id, options, placeholder) {
 }
 
 function applyFilters() {
-    let filtered = [...allSignals];
-    const { search, region, company, stage, impact, status, view } = filterState;
-
-    if (view === 'new') {
-        filtered = filtered.filter(s => isRecent(s.createdAt, 7));
-    } else if (view === 'changed') {
-        filtered = filtered.filter(s => isRecent(s.last_status_changed_at, 7) || isRecent(s.last_confidence_changed_at, 7) || isRecent(s.updatedAt, 7));
-    } else if (view === 'high-impact') {
-        filtered = filtered.filter(s => s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive');
-    } else if (view === 'verified') {
-        filtered = filtered.filter(s => s.status === 'verified');
-    } else if (view === 'china') {
-        filtered = filtered.filter(s => s.region === 'China');
-    } else if (view === 'global') {
-        filtered = filtered.filter(s => s.region === 'Global' || s.package_type);
-    }
-
-    if (search) {
-        const q = search.toLowerCase();
-        filtered = filtered.filter(s =>
-            (s.company_name || '').toLowerCase().includes(q) ||
-            (s.chip_name || '').toLowerCase().includes(q) ||
-            (s.title || '').toLowerCase().includes(q)
-        );
-    }
-    if (region) filtered = filtered.filter(s => s.region === region);
-    if (company) filtered = filtered.filter(s => s.company_name === company);
-    if (stage) filtered = filtered.filter(s => s.stage === stage);
-    if (impact) filtered = filtered.filter(s => s.abf_demand_impact === impact);
-    if (status) filtered = filtered.filter(s => s.status === status);
-
-    filtered.sort((a, b) => b._priority - a._priority);
-
+    const filtered = getFilteredSignals();
     renderSignalsTable(filtered);
 }
 
@@ -316,8 +288,13 @@ function renderSignalsTable(signals) {
 
     if (isMobile) {
         renderMobileList(signals, wrap);
+        // Explicitly hide compare strip on mobile
+        const strip = document.getElementById('compareStrip');
+        if (strip) strip.style.display = 'none';
     } else {
         renderDesktopTable(signals, wrap);
+        // Compare strip display is handled by renderCompareStrip() on desktop
+        renderCompareStrip();
     }
 }
 
@@ -734,7 +711,7 @@ function getFilteredSignals() {
     if (view === 'new') {
         filtered = filtered.filter(s => isRecent(s.createdAt, 7));
     } else if (view === 'changed') {
-        filtered = filtered.filter(s => isRecent(s.last_status_changed_at, 7) || isRecent(s.last_confidence_changed_at, 7) || isRecent(s.updatedAt, 7));
+        filtered = filtered.filter(s => isRecent(s.last_status_changed_at, 14) || isRecent(s.last_confidence_changed_at, 14) || isRecent(s.last_verified_at, 14));
     } else if (view === 'high-impact') {
         filtered = filtered.filter(s => s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive');
     } else if (view === 'verified') {
@@ -742,7 +719,7 @@ function getFilteredSignals() {
     } else if (view === 'china') {
         filtered = filtered.filter(s => s.region === 'China');
     } else if (view === 'global') {
-        filtered = filtered.filter(s => s.region === 'Global' || s.package_type);
+        filtered = filtered.filter(s => s.region === 'Global');
     }
 
     if (search) {

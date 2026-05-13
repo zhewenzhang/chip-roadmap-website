@@ -1,65 +1,69 @@
-# Chip Roadmap — 半導體產業分析
+# 晶片產業分析平台 (Chip Roadmap)
 
-A minimalist monochrome static website for semiconductor industry intelligence. Tracks 250+ companies, chip roadmaps, market data, and industry insights.
+一個專為半導體產業情報設計的極簡主義單色風格靜態網站。追蹤 250 多家公司、晶片路線圖、市場數據和行業洞察。
 
-## Design System
+## 核心設計系統
 
-- **Minimalist Monochrome** — Pure black/white palette, zero border-radius, no shadows
-- **Typography** — Playfair Display (headings), Source Serif 4 (body), JetBrains Mono (labels/meta)
-- **Visual Language** — Line-based decorations, color inversion hovers, instant 100ms transitions
-- **Texture** — SVG noise overlay, repeating-linear-gradient patterns
+- **極簡單色 (Minimalist Monochrome)** — 純黑白配色，零圓角設計，無陰影，強調專業與冷靜的分析感。
+- **字體系統** — Playfair Display (標題), Source Serif 4 (正文), JetBrains Mono (標籤與元數據)。
+- **視覺語言** — 基於線條的裝飾，顏色反轉的懸停效果，瞬間 (100ms) 過渡。
+- **質感細節** — SVG 噪點紋理疊加，重複線性漸變紋理。
 
-## Data
+## 數據覆蓋
 
-- **67 chips** tracked across timelines
-- **255 companies** in database (25 with detailed profiles)
-- **5 companies** with roadmap data (NVIDIA, AMD, Intel, Huawei Ascend, Cambricon)
-- **Market regions**: China, USA, Taiwan, Europe, Japan, Korea, Israel, Canada
+- **信號追蹤** — 實時追蹤 AI 晶片與先進封裝的供應鏈驗證信號。
+- **路線圖** — 追蹤 60+ 款核心晶片的發布進程。
+- **公司數據** — 數據庫包含 250+ 家半導體相關企業（25+ 家深度剖析）。
+- **重點廠商** — NVIDIA, AMD, Intel, 華為昇騰 (Huawei Ascend), 寒武紀 (Cambricon) 等。
+- **市場區域** — 中國、美國、台灣、歐洲、日本、韓國、以色列、加拿大等。
 
-## Pages
+## 主要頁面
 
-| Page | Description |
+| 頁面 | 描述 |
 |------|-------------|
-| `index.html` | Home — stats overview, latest updates, insights, top players |
-| `roadmap.html` | Timeline visualization with company filters |
-| `companies.html` | Company grid with search and detail modals |
-| `insights.html` | Industry trends, ABF analysis, key insights |
+| `index.html` | 首頁 — 數據概覽、最新動態、核心洞察與頂級廠商。 |
+| `signals.html` | **信號 (新增)** — 跨境供應鏈情報、信度驗證、ABF 影響分析與對比模式。 |
+| `roadmap.html` | 路線圖 — 交互式時間軸視覺化，支持公司與類別篩選。 |
+| `companies.html` | 公司庫 — 網格化列表，支持搜索與深度剖析彈窗。 |
+| `insights.html` | 行業洞察 — 趨勢分析、ABF 需求專題、關鍵情報。 |
 
-## Tech Stack
+## 技術棧
 
-- **HTML5** — Semantic structure
-- **CSS3** — CSS Grid/Flexbox, custom properties, responsive design
-- **JavaScript** — Native ES6+, Fetch API, modular data loading
-- **Zero build tools** — Static files, deploy anywhere
+- **HTML5 & CSS3** — 語義化結構，CSS Grid/Flexbox 佈局，原生 CSS 變量。
+- **JavaScript (ES6+)** — 模塊化架構，原生 Fetch API，無繁重框架依賴。
+- **Vite** — 構建工具，優化生產環境資源。
+- **Firebase** — 後端數據庫支持 (Cloud Firestore) 與身份驗證。
+- **GitHub Actions** — 自動化部署流程。
 
-## Project Structure
+## 項目結構
 
 ```
 chip-roadmap-website/
 ├── index.html              # 首頁
-├── roadmap.html            # 時間軸
-├── companies.html          # 公司分析
-├── insights.html           # 行業洞察
+├── signals.html            # 供應鏈信號 (Phase 2.1 升級)
+├── roadmap.html            # 晶片路線圖
+├── companies.html          # 公司數據
+├── insights.html           # 行業分析
+├── admin/                  # 管理後台 (Firebase 驅動)
 ├── css/
-│   └── style.css           # Monochrome design system
+│   └── style.css           # 單色設計系統主樣式
 ├── js/
-│   └── app.js              # Application logic
-├── data/
-│   ├── companies.json      # Company profiles
-│   ├── roadmaps.json       # Roadmap timelines
-│   ├── market.json         # Market statistics
-│   └── insights.json       # Industry analysis
-└── .github/workflows/      # GitHub Actions deploy
+│   ├── app.js              # 應用程序入口
+│   └── modules/            # 模塊化功能 (信號、路線圖、公司等)
+├── data/                   # 本地數據備份
+└── .github/workflows/      # GitHub Actions 自動部署腳本
 ```
 
-## Deployment
+## 部署與開發
 
-Pushed to `main` → GitHub Actions auto-deploys to Pages.
+- **本地開發**: `npm run dev`
+- **生產構建**: `npm run build`
+- **自動部署**: 推送到 `main` 分支後，GitHub Actions 會自動構建並部署至 GitHub Pages。
 
-## Disclaimer
+## 免責聲明
 
-Data sourced from public company filings, official announcements, and industry reports. For reference only; not investment advice.
+本站點數據來源於上市公司財報、官方公告及行業調研報告。僅供參考，不構成任何投資建議。
 
 ---
 
-2026 Semiconductor Industry Intelligence
+2026 半導體產業情報平台 | 跨境供應鏈驗證

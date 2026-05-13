@@ -3,3 +3,4 @@ dist/
 scripts/service-account-key.json
 *.local
 .env
+.gstack/
