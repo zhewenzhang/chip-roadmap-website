@@ -8,6 +8,7 @@ import { renderCompaniesGrid, resetPagination } from './modules/companies.js';
 import { renderTimeline } from './modules/timeline.js';
 import { showCompanyDetail, setModalData } from './modules/modal.js';
 import { renderTrends, renderTopPlayers, renderABFAnalysis, renderKeyInsights } from './modules/insights.js';
+import { init as initSignals } from './modules/signals.js';
 
 // ============== 全局数据 ==============
 let companiesData = {};
@@ -39,7 +40,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 function initPageSpecific() {
     const path = window.location.pathname;
 
-    if (path.includes('roadmap.html')) {
+    if (path.includes('signals.html')) {
+        initSignals();
+    } else if (path.includes('roadmap.html')) {
         initRoadmapPage();
     } else if (path.includes('companies.html')) {
         initCompaniesPage();

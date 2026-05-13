@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signals — Chip Roadmap</title>
+    <meta name="description" content="Verified AI chip and advanced packaging signals across China, Taiwan, and global supply chains.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" aria-label="Main navigation">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon" aria-hidden="true">&#9670;</span>
+                <span class="logo-text">芯片產業分析</span>
+            </div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+                <li><a href="companies.html">Companies</a></li>
+                <li><a href="insights.html">Insights</a></li>
+                <li><a href="signals.html" class="active" aria-current="page">Signals</a></li>
+            </ul>
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Signals Page Content -->
+    <main class="signals-page" id="signalsPage">
+        <!-- Page Header -->
+        <header class="signals-header">
+            <h1>Signals</h1>
+            <p class="signals-subhead">Verified AI chip and advanced packaging signals across China, Taiwan, and global supply chains.</p>
+        </header>
+
+        <!-- Summary Strip -->
+        <div class="signals-summary" id="signalsSummary">
+            <div class="summary-metric"><span class="summary-value" id="sumActive">—</span><span class="summary-label">Active Signals</span></div>
+            <div class="summary-metric"><span class="summary-value" id="sumVerified">—</span><span class="summary-label">Verified</span></div>
+            <div class="summary-metric"><span class="summary-value" id="sumHighImpact">—</span><span class="summary-label">High ABF Impact</span></div>
+            <div class="summary-metric"><span class="summary-value" id="sumThisWeek">—</span><span class="summary-label">Updated This Week</span></div>
+        </div>
+
+        <!-- Filter Toolbar -->
+        <div class="signals-toolbar" id="signalsToolbar">
+            <input type="text" id="filterSearch" placeholder="Search…" class="filter-input">
+            <select id="filterRegion" class="filter-select"><option value="">Region</option></select>
+            <select id="filterCompany" class="filter-select"><option value="">Company</option></select>
+            <select id="filterStage" class="filter-select"><option value="">Stage</option></select>
+            <select id="filterImpact" class="filter-select"><option value="">Impact</option></select>
+            <select id="filterStatus" class="filter-select"><option value="">Status</option></select>
+            <button id="filterReset" class="filter-reset">Reset</button>
+        </div>
+
+        <!-- Signals Table -->
+        <div class="signals-table-wrap" id="signalsTableWrap">
+            <!-- Loading skeleton rendered by JS -->
+        </div>
+
+        <!-- Detail Drawer (Desktop) / Modal (Mobile) -->
+        <div class="drawer-overlay" id="drawerOverlay" style="display:none">
+            <aside class="signal-drawer" id="signalDrawer">
+                <div class="drawer-header">
+                    <h2 id="drawerTitle"></h2>
+                    <button class="drawer-close" id="drawerClose" aria-label="Close">&#215;</button>
+                </div>
+                <div class="drawer-body" id="drawerBody">
+                    <!-- Sections rendered by JS -->
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Data Source</h4>
+                <ul>
+                    <li>Supply chain verification</li>
+                    <li>Cross-border intelligence</li>
+                    <li>Industry analysts</li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Update Frequency</h4>
+                <ul>
+                    <li>Daily: Signal updates</li>
+                    <li>Weekly: Verification pass</li>
+                    <li>Monthly: Deep review</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Chip Industry Analysis Platform | Semiconductor Intelligence</p>
+        </div>
+    </footer>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
