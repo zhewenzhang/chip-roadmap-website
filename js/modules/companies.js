@@ -1,25 +1,78 @@
 /**
- * 公司分析模块 - 渲染、筛选、分页
- * 使用安全的 DOM 方法（textContent + createElement），避免 innerHTML XSS
+ * Company Intelligence Directory — V2 (Signals-derived)
+ *
+ * Shows company master list enriched with live signal metadata:
+ *   - signal count
+ *   - latest signal date
+ *   - highest ABF impact
+ *   - primary chip count
+ *
+ * Click-through goes to company-signals.html?id=<company_id>.
+ * The old static detail modal is no longer the primary path.
  */
 
 const COMPANIES_PAGE_SIZE = 15;
 let currentPage = 0;
 let allFilteredCompanies = [];
 
-function renderCompaniesGrid(companiesData, filter = 'all', searchTerm = '') {
+/**
+ * Build a map of company_id → signal summary metrics.
+ *
+ * @param {Array} signals — normalized signal array
+ * @returns {Object} { [companyId]: { count, latestDate, highestImpact, chips } }
+ */
+function buildSignalMetrics(signals) {
+    const IMPACT_RANK = { explosive: 4, high: 3, medium: 2, low: 1 };
+    const IMPACT_REVERSE = { 4: 'explosive', 3: 'high', 2: 'medium', 1: 'low' };
+    const metrics = {};
+
+    for (const s of signals) {
+        const cid = s.company_id;
+        if (!cid) continue;
+        if (!metrics[cid]) {
+            metrics[cid] = { count: 0, latestDate: '', highestImpact: 0, chips: new Set() };
+        }
+        const m = metrics[cid];
+        m.count++;
+        const chipName = s.chip_name || '';
+        if (chipName) m.chips.add(chipName);
+
+        // Latest date: prefer last_verified_at, fall back to updatedAt/createdAt
+        const d = s.last_verified_at || s.updatedAt || s.createdAt || '';
+        if (d > m.latestDate) m.latestDate = d;
+
+        // Highest ABF impact
+        const rank = IMPACT_RANK[s.abf_demand_impact] || 0;
+        if (rank > m.highestImpact) m.highestImpact = rank;
+    }
+
+    // Convert Set to count and rank back to label
+    for (const cid of Object.keys(metrics)) {
+        metrics[cid].chipCount = metrics[cid].chips.size;
+        metrics[cid].highestImpactLabel = IMPACT_REVERSE[metrics[cid].highestImpact] || '';
+        delete metrics[cid].chips;
+    }
+
+    return metrics;
+}
+
+function renderCompaniesGrid(companiesData, filter = 'all', searchTerm = '', signalMetrics = {}) {
     const container = document.getElementById('companiesGrid');
     if (!container) return;
 
-    // 清空容器
     container.innerHTML = '';
     currentPage = 0;
 
     const companies = Array.isArray(companiesData) ? companiesData : Object.values(companiesData);
 
-    // 按筛选条件过滤
-    allFilteredCompanies = companies.filter(company => {
-        // 区域筛选
+    // Attach signal metrics to each company
+    const enriched = companies.map(c => ({
+        ...c,
+        _signalMetrics: signalMetrics[c.id] || { count: 0, latestDate: '', highestImpact: 0, highestImpactLabel: '', chipCount: 0 },
+    }));
+
+    // Filter
+    allFilteredCompanies = enriched.filter(company => {
         if (filter !== 'all') {
             if (filter === 'china') {
                 if (company.region !== 'China' && company.country !== '中国') return false;
@@ -28,7 +81,6 @@ function renderCompaniesGrid(companiesData, filter = 'all', searchTerm = '') {
             }
         }
 
-        // 搜索过滤
         if (searchTerm) {
             const term = searchTerm.toLowerCase();
             const nameMatch = (company.name_en || '').toLowerCase().includes(term) ||
@@ -42,11 +94,11 @@ function renderCompaniesGrid(companiesData, filter = 'all', searchTerm = '') {
         return true;
     });
 
-    renderCurrentPage(container, companiesData);
-    updateLoadMoreButton(container, companiesData);
+    renderCurrentPage(container, signalMetrics);
+    updateLoadMoreButton(container);
 }
 
-function renderCurrentPage(container, companiesData) {
+function renderCurrentPage(container, signalMetrics) {
     const start = currentPage * COMPANIES_PAGE_SIZE;
     const end = start + COMPANIES_PAGE_SIZE;
     const pageCompanies = allFilteredCompanies.slice(start, end);
@@ -57,13 +109,26 @@ function renderCurrentPage(container, companiesData) {
     });
 }
 
+function formatDateShort(d) {
+    if (!d) return '—';
+    try { return new Date(d).toISOString().slice(0, 10); } catch { return '—'; }
+}
+
+const IMPACT_LABELS = { explosive: '爆炸性', high: '高', medium: '中', low: '低' };
+
 function buildCompanyCard(company) {
     const card = document.createElement('div');
     card.className = 'company-card';
     card.setAttribute('data-company', company.id);
     card.setAttribute('role', 'button');
     card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', `查看 ${company.name_en || company.name_cn || company.id} 的详细信息`);
+    card.setAttribute('aria-label', `查看 ${company.name_en || company.name_cn || company.id} 的信號`);
+
+    const metrics = company._signalMetrics || {};
+    const signalCount = metrics.count || 0;
+    const latestDate = metrics.latestDate || '';
+    const highestImpact = metrics.highestImpactLabel || '';
+    const chipCount = metrics.chipCount || 0;
 
     // Header
     const header = document.createElement('div');
@@ -79,7 +144,7 @@ function buildCompanyCard(company) {
     if (company.name_cn) {
         const subName = document.createElement('p');
         subName.style.fontSize = '12px';
-        subName.style.color = 'var(--text-muted, #888)';
+        subName.style.color = 'var(--text-secondary, #888)';
         subName.textContent = company.name_cn;
         nameGroup.appendChild(subName);
     }
@@ -101,84 +166,87 @@ function buildCompanyCard(company) {
         card.appendChild(category);
     }
 
-    // Description
+    // Description (short)
     const desc = document.createElement('p');
     desc.className = 'company-description';
-    desc.textContent = company.description || company.market_position || '暂无描述';
+    const descText = company.description || company.market_position || '';
+    desc.textContent = descText.length > 120 ? descText.substring(0, 120) + '…' : descText || '暫無描述';
     card.appendChild(desc);
 
-    // Metrics
-    const metrics = document.createElement('div');
-    metrics.className = 'company-metrics';
+    // Signal-driven metrics
+    const metricsDiv = document.createElement('div');
+    metricsDiv.className = 'company-metrics';
 
-    const metric1 = document.createElement('div');
-    metric1.className = 'metric';
-    const label1 = document.createElement('span');
-    label1.className = 'metric-label';
-    label1.textContent = 'ABF需求';
-    const value1 = document.createElement('span');
-    value1.className = 'metric-value';
-    value1.textContent = company.abf_demand || '未知';
-    metric1.appendChild(label1);
-    metric1.appendChild(value1);
-    metrics.appendChild(metric1);
+    // Metric 1: Signal count
+    const m1 = document.createElement('div');
+    m1.className = 'metric';
+    const l1 = document.createElement('span');
+    l1.className = 'metric-label';
+    l1.textContent = '信號';
+    const v1 = document.createElement('span');
+    v1.className = 'metric-value';
+    v1.textContent = signalCount > 0 ? signalCount : '—';
+    m1.appendChild(l1);
+    m1.appendChild(v1);
+    metricsDiv.appendChild(m1);
 
-    const metric2 = document.createElement('div');
-    metric2.className = 'metric';
-    const label2 = document.createElement('span');
-    label2.className = 'metric-label';
-    label2.textContent = '市场地位';
-    const value2 = document.createElement('span');
-    value2.className = 'metric-value';
-    const marketPos = company.market_position || '未知';
-    value2.textContent = marketPos.length > 15 ? marketPos.substring(0, 15) + '...' : marketPos;
-    metric2.appendChild(label2);
-    metric2.appendChild(value2);
-    metrics.appendChild(metric2);
+    // Metric 2: Latest signal date
+    const m2 = document.createElement('div');
+    m2.className = 'metric';
+    const l2 = document.createElement('span');
+    l2.className = 'metric-label';
+    l2.textContent = '最新信號';
+    const v2 = document.createElement('span');
+    v2.className = 'metric-value';
+    v2.textContent = signalCount > 0 ? formatDateShort(latestDate) : '—';
+    m2.appendChild(l2);
+    m2.appendChild(v2);
+    metricsDiv.appendChild(m2);
 
-    card.appendChild(metrics);
+    // Metric 3: Highest ABF impact
+    const m3 = document.createElement('div');
+    m3.className = 'metric';
+    const l3 = document.createElement('span');
+    l3.className = 'metric-label';
+    l3.textContent = '最高 ABF';
+    const v3 = document.createElement('span');
+    v3.className = 'metric-value';
+    v3.textContent = highestImpact ? IMPACT_LABELS[highestImpact] : '—';
+    m3.appendChild(l3);
+    m3.appendChild(v3);
+    metricsDiv.appendChild(m3);
 
-    // Products
-    const productsDiv = document.createElement('div');
-    productsDiv.className = 'company-products';
+    // Metric 4: Chip count
+    const m4 = document.createElement('div');
+    m4.className = 'metric';
+    const l4 = document.createElement('span');
+    l4.className = 'metric-label';
+    l4.textContent = '芯片';
+    const v4 = document.createElement('span');
+    v4.className = 'metric-value';
+    v4.textContent = chipCount > 0 ? chipCount : '—';
+    m4.appendChild(l4);
+    m4.appendChild(v4);
+    metricsDiv.appendChild(m4);
 
-    const products = (company.products || []).slice(0, 4);
-    if (products.length > 0) {
-        products.forEach(p => {
-            const tag = document.createElement('span');
-            tag.className = 'product-tag';
-            tag.textContent = p.trim();
-            productsDiv.appendChild(tag);
-        });
-    } else {
-        const tag = document.createElement('span');
-        tag.className = 'product-tag';
-        tag.textContent = '暂无产品';
-        productsDiv.appendChild(tag);
-    }
+    card.appendChild(metricsDiv);
 
-    card.appendChild(productsDiv);
-
-    // Click handler
+    // Click-through to company intelligence page
     card.addEventListener('click', () => {
-        if (window.showCompanyDetail) {
-            window.showCompanyDetail(company.id);
-        }
+        window.location.href = `company-signals.html?id=${encodeURIComponent(company.id)}`;
     });
 
     card.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            if (window.showCompanyDetail) {
-                window.showCompanyDetail(company.id);
-            }
+            window.location.href = `company-signals.html?id=${encodeURIComponent(company.id)}`;
         }
     });
 
     return card;
 }
 
-function updateLoadMoreButton(container, companiesData) {
+function updateLoadMoreButton(container) {
     const existingBtn = document.getElementById('loadMoreBtn');
     const hasMore = (currentPage + 1) * COMPANIES_PAGE_SIZE < allFilteredCompanies.length;
 
@@ -191,8 +259,8 @@ function updateLoadMoreButton(container, companiesData) {
             btn.setAttribute('aria-label', '加载更多公司');
             btn.addEventListener('click', () => {
                 currentPage++;
-                renderCurrentPage(container, companiesData);
-                updateLoadMoreButton(container, companiesData);
+                renderCurrentPage(container);
+                updateLoadMoreButton(container);
             });
             container.after(btn);
         }
@@ -202,12 +270,11 @@ function updateLoadMoreButton(container, companiesData) {
         }
     }
 
-    // Show message if no data
     if (allFilteredCompanies.length === 0) {
         const msg = document.createElement('p');
         msg.style.textAlign = 'center';
         msg.style.color = 'var(--text-muted, #888)';
-        msg.textContent = '暂无匹配的公司数据';
+        msg.textContent = '暫無匹配的公司';
         container.appendChild(msg);
     }
 }
@@ -221,4 +288,4 @@ function resetPagination() {
     }
 }
 
-export { renderCompaniesGrid, resetPagination, COMPANIES_PAGE_SIZE };
+export { renderCompaniesGrid, resetPagination, COMPANIES_PAGE_SIZE, buildSignalMetrics };

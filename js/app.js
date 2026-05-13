@@ -4,7 +4,7 @@
  */
 
 import { loadAllData, loadSignals } from './firebase/db.js';
-import { renderCompaniesGrid, resetPagination } from './modules/companies.js';
+import { renderCompaniesGrid, resetPagination, buildSignalMetrics } from './modules/companies.js';
 import { renderTimeline } from './modules/timeline.js';
 import { showCompanyDetail, setModalData } from './modules/modal.js';
 import { renderTrends, renderTopPlayers, renderABFAnalysis, renderKeyInsights } from './modules/insights.js';
@@ -143,9 +143,28 @@ function initRoadmapFilters() {
     });
 }
 
-// ============== 公司页面初始化 ==============
-function initCompaniesPage() {
-    renderCompaniesGrid(companiesData);
+// ============== 公司页面初始化 (V2: signals-enriched) ==============
+async function initCompaniesPage() {
+    // Load signals to enrich company cards with live metrics
+    const result = await loadSignals();
+    const signalMetrics = result.ok ? buildSignalMetrics(result.data) : {};
+
+    renderCompaniesGrid(companiesData, 'all', '', signalMetrics);
+
+    // Update filter handlers to pass signalMetrics
+    document.querySelectorAll('.companies-header .filter-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            document.querySelectorAll('.companies-header .filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-pressed', 'false');
+            });
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
+
+            const filter = btn.dataset.filter;
+            renderCompaniesGrid(companiesData, filter, '', signalMetrics);
+        });
+    });
 }
 
 // ============== 洞察页面初始化 ==============
@@ -177,7 +196,7 @@ function initFilters() {
             // 重新渲染
             const path = window.location.pathname;
             if (path.includes('companies.html')) {
-                renderCompaniesGrid(companiesData, filter, searchTerm);
+                // Companies page has its own signal-enriched filter handler
             }
             // Roadmap page has its own filter handler (initRoadmapFilters)
         });
