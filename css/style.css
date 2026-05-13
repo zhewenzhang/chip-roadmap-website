@@ -1543,3 +1543,222 @@ hr.thick {
         padding: 48px 16px;
     }
 }
+
+/* ===== Roadmap Matrix Table ===== */
+.roadmap-year-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 24px 0 16px;
+    flex-wrap: wrap;
+}
+
+.year-tab {
+    padding: 8px 20px;
+    border: 1px solid var(--border-color, #2a2a2a);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--text-secondary, #aaa);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.05em;
+}
+
+.year-tab:hover {
+    border-color: var(--accent, #c9a84c);
+    color: var(--accent, #c9a84c);
+}
+
+.year-tab.active {
+    background: var(--accent, #c9a84c);
+    border-color: var(--accent, #c9a84c);
+    color: #000;
+}
+
+.roadmap-matrix-wrap {
+    overflow-x: auto;
+    margin-bottom: 32px;
+}
+
+.roadmap-matrix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 560px;
+}
+
+.roadmap-matrix thead th {
+    padding: 12px 16px;
+    text-align: left;
+    color: var(--text-muted, #666);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-color, #2a2a2a);
+    white-space: nowrap;
+}
+
+.roadmap-matrix thead th:first-child {
+    width: 140px;
+}
+
+.roadmap-matrix tbody tr {
+    border-bottom: 1px solid var(--border-color, #1e1e1e);
+}
+
+.roadmap-matrix tbody tr:hover {
+    background: rgba(255,255,255,0.02);
+}
+
+.company-name-cell {
+    padding: 14px 16px;
+    white-space: nowrap;
+}
+
+.company-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary, #e8e8e8);
+}
+
+.company-label.nvidia   { color: #76b900; }
+.company-label.amd      { color: #ed1c24; }
+.company-label.intel    { color: #0071c5; }
+.company-label.huawei_ascend { color: #cf0a2c; }
+.company-label.cambricon { color: #6c5ce7; }
+.company-label.google_tpu { color: #4285f4; }
+
+.chip-cell {
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    vertical-align: middle;
+}
+
+.chip-cell:hover {
+    background: rgba(201, 168, 76, 0.08);
+}
+
+.chip-cell:focus {
+    outline: 2px solid var(--accent, #c9a84c);
+    outline-offset: -2px;
+}
+
+.chip-name {
+    display: inline-block;
+    padding: 4px 10px;
+    background: var(--surface, #141414);
+    border: 1px solid var(--border-color, #2a2a2a);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary, #e8e8e8);
+    white-space: nowrap;
+    transition: border-color 0.15s ease;
+}
+
+.chip-cell:hover .chip-name {
+    border-color: var(--accent, #c9a84c);
+    color: var(--accent, #c9a84c);
+}
+
+.empty-cell {
+    padding: 12px 16px;
+    color: var(--text-muted, #444);
+    font-size: 13px;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+/* ===== Chip Detail Popup ===== */
+.chip-popup-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+}
+
+.chip-popup {
+    position: relative;
+    background: var(--surface, #141414);
+    border: 1px solid var(--border-color, #2a2a2a);
+    border-radius: 8px;
+    padding: 28px 28px 24px;
+    min-width: 300px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+}
+
+.chip-popup-close {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    color: var(--text-muted, #666);
+    cursor: pointer;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.15s ease;
+}
+
+.chip-popup-close:hover {
+    color: var(--text-primary, #e8e8e8);
+}
+
+.chip-popup-header {
+    font-size: 12px;
+    color: var(--text-muted, #888);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.chip-popup-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-primary, #e8e8e8);
+    margin-bottom: 16px;
+    font-family: 'Playfair Display', serif;
+}
+
+.chip-popup-divider {
+    height: 1px;
+    background: var(--border-color, #2a2a2a);
+    margin-bottom: 16px;
+}
+
+.chip-popup-field {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.chip-popup-field:last-child {
+    border-bottom: none;
+}
+
+.chip-popup-field-label {
+    font-size: 12px;
+    color: var(--text-muted, #888);
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+.chip-popup-field-value {
+    font-size: 13px;
+    color: var(--text-primary, #e8e8e8);
+    text-align: right;
+    line-height: 1.4;
+}

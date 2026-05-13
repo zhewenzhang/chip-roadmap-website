@@ -237,7 +237,7 @@ function buildCompanyForm(company = {}) {
         <div class="form-group"><label>Market Cap</label><input id="f-market_cap" value="${esc(r.market_cap || '')}"></div>
         <div class="form-group"><label>Description</label><textarea id="f-description" rows="4">${esc(r.description || '')}</textarea></div>
         <div class="form-group"><label>Products (one per line)</label><textarea id="f-products" rows="3">${esc(arrToText(r.products))}</textarea></div>
-        <div class="form-section-title">Roadmap (JSON array)</div>
+        <div class="form-section-title">Roadmap (JSON array) — 支持欄位: product, year, quarter, process, specs, purpose, cowos(boolean), abf_size, abf_layers(number)</div>
         <div class="form-group"><textarea id="f-roadmap" rows="5" style="font-family:monospace;font-size:12px">${esc(JSON.stringify(r.roadmap || [], null, 2))}</textarea></div>
         <div class="form-section-title">SWOT Analysis</div>
         <div class="form-group"><label>Strengths (one per line)</label><textarea id="f-strengths" rows="3">${esc(arrToText(r.analysis?.strengths))}</textarea></div>

@@ -57,42 +57,21 @@ function initHomePage() {
 }
 
 function updateRegionStats() {
-    // 动态计算地区统计
-    const companies = Array.isArray(companiesData) ? companiesData : Object.values(companiesData);
-    const regionCounts = companies.reduce((acc, c) => {
-        const region = c.country || c.region || 'Unknown';
-        acc[region] = (acc[region] || 0) + 1;
-        return acc;
-    }, {});
+    const companies = Object.values(companiesData);
 
-    // 更新首页统计卡片 (market overview section)
-    const statCards = document.querySelectorAll('.stats-row .stat-card .stat-info');
-    statCards.forEach((infoEl) => {
-        const h3 = infoEl.querySelector('h3');
-        const valueP = infoEl.querySelector('.stat-value');
-        if (!h3 || !valueP) return;
+    const china  = companies.filter(c => c.region === 'China').length;
+    const usa    = companies.filter(c => c.region === 'USA').length;
+    const taiwan = companies.filter(c => c.region === 'Taiwan').length;
+    const other  = Math.max(0, companies.length - china - usa - taiwan);
 
-        const label = h3.textContent.trim();
-        // 匹配地区名称
-        const regionKeys = Object.keys(regionCounts);
-        for (const key of regionKeys) {
-            if (label.includes(key) || key.includes(label)) {
-                valueP.textContent = regionCounts[key];
-                return;
-            }
-        }
-        // 对于"其他地区"，计算剩余
-        if (label.includes('其他') || label.includes('Other')) {
-            const knownCount = Object.values(regionCounts).reduce((sum, c) => sum + c, 0);
-            valueP.textContent = Math.max(0, companies.length - knownCount);
-        }
-    });
+    const el = id => document.getElementById(id);
+    if (el('statChina'))  el('statChina').textContent  = china;
+    if (el('statUsa'))    el('statUsa').textContent    = usa;
+    if (el('statTaiwan')) el('statTaiwan').textContent = taiwan;
+    if (el('statOther'))  el('statOther').textContent  = other;
 
-    // 更新 hero 统计
     const heroNumbers = document.querySelectorAll('.hero-stats .stat-number');
-    if (heroNumbers.length >= 1) {
-        heroNumbers[0].textContent = companies.length;
-    }
+    if (heroNumbers[0]) heroNumbers[0].textContent = companies.length;
 }
 
 // ============== Roadmap 页面初始化 ==============
