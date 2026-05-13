@@ -609,7 +609,6 @@ hr.thick {
 
 .company-card:hover .company-name,
 .company-card:hover .company-category,
-.company-card:hover .company-description,
 .company-card:hover .metric-label,
 .company-card:hover .metric-value {
     color: var(--color-bg);
@@ -650,14 +649,6 @@ hr.thick {
     margin-bottom: 12px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    transition: color var(--transition);
-}
-
-.company-description {
-    font-size: 0.85rem;
-    color: var(--color-muted-fg);
-    line-height: 1.6;
-    margin-bottom: 16px;
     transition: color var(--transition);
 }
 

@@ -158,7 +158,7 @@ function buildCompanyCard(company) {
 
     card.appendChild(header);
 
-    // Category
+    // Category tag (operational, not editorial)
     if (company.category) {
         const category = document.createElement('p');
         category.className = 'company-category';
@@ -166,14 +166,7 @@ function buildCompanyCard(company) {
         card.appendChild(category);
     }
 
-    // Description (short)
-    const desc = document.createElement('p');
-    desc.className = 'company-description';
-    const descText = company.description || company.market_position || '';
-    desc.textContent = descText.length > 120 ? descText.substring(0, 120) + '…' : descText || '暫無描述';
-    card.appendChild(desc);
-
-    // Signal-driven metrics
+    // Signal-driven metrics (replaces V1 description/market_position prose)
     const metricsDiv = document.createElement('div');
     metricsDiv.className = 'company-metrics';
 
