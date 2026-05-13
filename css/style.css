@@ -1887,6 +1887,11 @@ tr:hover .td-company { background: #f5f5f5; }
     color: var(--color-bg);
 }
 
+.wl-quick-btn.active {
+    background: var(--color-fg);
+    color: var(--color-bg);
+}
+
 .wl-quick-btn-primary {
     background: var(--color-fg);
     color: var(--color-bg);

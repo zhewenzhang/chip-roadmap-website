@@ -25,6 +25,7 @@ let filterState = {
     impact: '',
     status: '',
     view: 'all', // Phase 2
+    quickView: '', // Phase 4.1: watchlist quick-view override
 };
 
 let savedViews = []; // Phase 2
@@ -370,9 +371,16 @@ function syncFilterUI() {
     document.getElementById('filterStage').value = filterState.stage || '';
     document.getElementById('filterImpact').value = filterState.impact || '';
     document.getElementById('filterStatus').value = filterState.status || '';
-    
+
     document.querySelectorAll('.view-toggle').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.view === filterState.view);
+    });
+}
+
+function syncQuickViewButtons() {
+    document.querySelectorAll('.wl-quick-btn').forEach(btn => {
+        const qv = btn.dataset.quick;
+        btn.classList.toggle('active', qv === filterState.quickView);
     });
 }
 
@@ -409,12 +417,13 @@ function applyFilters() {
 }
 
 function resetFilters() {
-    filterState = { search: '', region: '', company: '', stage: '', impact: '', status: '', view: 'all' };
+    filterState = { search: '', region: '', company: '', stage: '', impact: '', status: '', view: 'all', quickView: '' };
     syncFilterUI();
+    syncQuickViewButtons();
     applyFilters();
 }
 
-// ===== Quick Views (Phase 4) =====
+// ===== Quick Views (Phase 4 / 4.1) =====
 
 function applyQuickView(quick) {
     // Reset all filter fields first
@@ -425,54 +434,26 @@ function applyQuickView(quick) {
     filterState.impact = '';
     filterState.status = '';
 
-    if (quick === 'wl-changed') {
-        // Watched signals with recent status/confidence changes
-        filterState.view = 'watched';
-        // Post-filter in getFilteredSignals for watched + changed
-        const watched = allSignals.filter(s =>
-            isWatchingCompany(s.company_id) ||
-            isWatchingChip(s.chip_name) ||
-            isWatchingSignal(s.id)
-        );
-        const changed = watched.filter(s =>
-            isRecent(s.last_status_changed_at, 14) ||
-            isRecent(s.last_confidence_changed_at, 14)
-        );
-        changed.sort((a, b) => {
-            const dateA = a.last_status_changed_at || a.last_confidence_changed_at || '';
-            const dateB = b.last_status_changed_at || b.last_confidence_changed_at || '';
-            return new Date(dateB || 0) - new Date(dateA || 0);
-        });
-        renderSignalsTable(changed);
-    } else if (quick === 'wl-high') {
-        // Watched signals with high/explosive ABF impact
-        const watched = allSignals.filter(s =>
-            isWatchingCompany(s.company_id) ||
-            isWatchingChip(s.chip_name) ||
-            isWatchingSignal(s.id)
-        );
-        const high = watched.filter(s =>
-            s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive'
-        );
-        high.sort((a, b) => b._priority - a._priority);
-        renderSignalsTable(high);
-    } else if (quick === 'wl-watch') {
-        // Watched signals with status 'watch' or 'draft' that need verification
-        const watched = allSignals.filter(s =>
-            isWatchingCompany(s.company_id) ||
-            isWatchingChip(s.chip_name) ||
-            isWatchingSignal(s.id)
-        );
-        const needsVerify = watched.filter(s =>
-            s.status === 'watch' || s.status === 'draft'
-        );
-        needsVerify.sort((a, b) => b._priority - a._priority);
-        renderSignalsTable(needsVerify);
-    } else if (quick === 'all') {
+    if (quick === 'wl-all') {
+        filterState.quickView = 'wl-all';
         filterState.view = 'all';
-        syncFilterUI();
-        applyFilters();
+    } else if (quick === 'wl-changed') {
+        filterState.quickView = 'wl-changed';
+        filterState.view = 'all';
+    } else if (quick === 'wl-high') {
+        filterState.quickView = 'wl-high';
+        filterState.view = 'all';
+    } else if (quick === 'wl-watch') {
+        filterState.quickView = 'wl-watch';
+        filterState.view = 'all';
+    } else if (quick === 'all') {
+        filterState.quickView = '';
+        filterState.view = 'all';
     }
+
+    syncFilterUI();
+    syncQuickViewButtons();
+    applyFilters();
 
     // Scroll to table
     document.getElementById('signalsTableWrap')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -766,15 +747,31 @@ function renderEmptyState() {
     if (!wrap) return;
 
     const isWatchedView = filterState.view === 'watched';
-    const wlEmpty = isWatchedView && isWatchlistEmpty();
+    const isQuickView = !!filterState.quickView;
+    const wlEmpty = (isWatchedView || isQuickView) && isWatchlistEmpty();
+
+    let title, sub;
+    if (wlEmpty) {
+        title = '關注列表為空';
+        sub = '在信號表格中點擊 ☆ 圖標，將公司或芯片加入關注列表';
+    } else if (isQuickView) {
+        const quickLabels = {
+            'wl-all': '只看關注',
+            'wl-changed': '關注中變更',
+            'wl-high': '關注中高影響',
+            'wl-watch': '關注中待驗證',
+        };
+        title = `「${quickLabels[filterState.quickView] || filterState.quickView}」無結果`;
+        sub = '嘗試清除篩選條件，或切換到其他視圖';
+    } else {
+        title = '沒有符合當前篩選條件的信號';
+        sub = '嘗試清除篩選條件，或放寬地區與階段選擇';
+    }
 
     wrap.innerHTML = `
         <div class="signals-empty-state">
-            <p class="empty-title">${wlEmpty ? '關注列表為空' : '沒有符合當前篩選條件的信號'}</p>
-            <p class="empty-sub">${wlEmpty
-                ? '在信號表格中點擊 ☆ 圖標，將公司或芯片加入關注列表'
-                : '嘗試清除篩選條件，或放寬地區與階段選擇'
-            }</p>
+            <p class="empty-title">${title}</p>
+            <p class="empty-sub">${sub}</p>
             ${!wlEmpty ? '<button id="filterReset" class="filter-reset" style="margin-top:12px">清除篩選</button>' : ''}
         </div>`;
 
@@ -1039,8 +1036,10 @@ function bindEvents() {
         clearWatchBtn.addEventListener('click', () => {
             if (confirm('確定要清除全部關注項嗎？')) {
                 clearWatchlist();
+                filterState.quickView = '';
                 renderWatchlistPanel();
                 renderWatchlistFocusStrip();
+                syncQuickViewButtons();
                 renderSummaryLayer(allSignals);
                 applyFilters();
             }
@@ -1088,12 +1087,57 @@ function bindEvents() {
 
 function getFilteredSignals() {
     let filtered = [...allSignals];
-    const { search, region, company, stage, impact, status, view } = filterState;
+    const { search, region, company, stage, impact, status, view, quickView } = filterState;
 
-    if (view === 'watched') {
-        filtered = filtered.filter(s => 
-            isWatchingCompany(s.company_id) || 
-            isWatchingChip(s.chip_name) || 
+    // Phase 4.1: Quick views take precedence over regular view
+    if (quickView === 'wl-all') {
+        filtered = filtered.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+    } else if (quickView === 'wl-changed') {
+        filtered = filtered.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+        filtered = filtered.filter(s =>
+            isRecent(s.last_status_changed_at, 14) ||
+            isRecent(s.last_confidence_changed_at, 14)
+        );
+        filtered.sort((a, b) => {
+            const dateA = a.last_status_changed_at || a.last_confidence_changed_at || '';
+            const dateB = b.last_status_changed_at || b.last_confidence_changed_at || '';
+            return new Date(dateB || 0) - new Date(dateA || 0);
+        });
+        return applyTextAndDropdownFilters(filtered, search, region, company, stage, impact, status);
+    } else if (quickView === 'wl-high') {
+        filtered = filtered.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+        filtered = filtered.filter(s =>
+            s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive'
+        );
+        filtered.sort((a, b) => b._priority - a._priority);
+        return applyTextAndDropdownFilters(filtered, search, region, company, stage, impact, status);
+    } else if (quickView === 'wl-watch') {
+        filtered = filtered.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+        filtered = filtered.filter(s =>
+            s.status === 'watch' || s.status === 'draft'
+        );
+        filtered.sort((a, b) => b._priority - a._priority);
+        return applyTextAndDropdownFilters(filtered, search, region, company, stage, impact, status);
+    } else if (view === 'watched') {
+        filtered = filtered.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
             isWatchingSignal(s.id)
         );
     } else if (view === 'new') {
@@ -1110,6 +1154,12 @@ function getFilteredSignals() {
         filtered = filtered.filter(s => s.region === 'Global');
     }
 
+    filtered.sort((a, b) => b._priority - a._priority);
+    return applyTextAndDropdownFilters(filtered, search, region, company, stage, impact, status);
+}
+
+// Extract text search + dropdown filtering to avoid duplication
+function applyTextAndDropdownFilters(filtered, search, region, company, stage, impact, status) {
     if (search) {
         const q = search.toLowerCase();
         filtered = filtered.filter(s =>
@@ -1123,7 +1173,5 @@ function getFilteredSignals() {
     if (stage) filtered = filtered.filter(s => s.stage === stage);
     if (impact) filtered = filtered.filter(s => s.abf_demand_impact === impact);
     if (status) filtered = filtered.filter(s => s.status === status);
-
-    filtered.sort((a, b) => b._priority - a._priority);
     return filtered;
 }
