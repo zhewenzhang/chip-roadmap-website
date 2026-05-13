@@ -4,10 +4,11 @@ import {
     collection, doc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
     query, orderBy, serverTimestamp
 } from 'firebase/firestore';
-import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, normalizeSignal } from '../js/firebase/db.js';
+import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, normalizeSignal, loadSignalHistory } from '../js/firebase/db.js';
 import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS,
+    HISTORY_ACTION_LABELS,
 } from '../js/modules/signals-schema.js';
 
 // ===== STATE =====
@@ -835,6 +836,42 @@ function openEditSignalModal(id) {
         renderSignalsTab();
     });
     initSignalFormEvents();
+
+    // Phase 4: Append lightweight history context (read-only)
+    renderAdminSignalHistory(id);
+}
+
+async function renderAdminSignalHistory(signalId) {
+    const history = await loadSignalHistory(signalId, 10);
+    if (!history || history.length === 0) return;
+
+    // Append a read-only history summary to the modal body
+    const modalBody = document.querySelector('.modal-body');
+    if (!modalBody) return;
+
+    const historyHtml = `
+        <div class="admin-history-section">
+            <h4 class="admin-history-title">最近變更記錄（最近 ${history.length} 筆）</h4>
+            <div class="admin-history-list">
+                ${history.map(h => {
+                    const ts = h.timestamp?.toDate ? h.timestamp.toDate() : new Date(h.timestamp || 0);
+                    const dateStr = ts.toISOString().slice(0, 10);
+                    const timeStr = ts.toISOString().slice(11, 16);
+                    const actionLabel = HISTORY_ACTION_LABELS[h.action] || h.action || '更新';
+                    const actorStr = h.actor ? esc(h.actor) : '—';
+                    const summaryStr = h.summary ? esc(h.summary) : '';
+                    return `<div class="admin-history-item">
+                        <span class="admin-history-badge">${esc(actionLabel)}</span>
+                        <span class="admin-history-time">${esc(dateStr)} ${esc(timeStr)}</span>
+                        ${summaryStr ? `<span class="admin-history-summary">${summaryStr}</span>` : ''}
+                        <span class="admin-history-actor">${actorStr}</span>
+                    </div>`;
+                }).join('')}
+            </div>
+        </div>
+    `;
+
+    modalBody.insertAdjacentHTML('beforeend', historyHtml);
 }
 
 async function deleteSignalAction(id) {

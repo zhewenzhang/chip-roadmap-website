@@ -63,6 +63,13 @@ export const HISTORY_ACTIONS = {
     CONFIDENCE_CHANGED: 'confidence_changed',
 };
 
+export const HISTORY_ACTION_LABELS = {
+    created: '已建立',
+    updated: '已更新',
+    status_changed: '狀態變更',
+    confidence_changed: '信度變更',
+};
+
 // ===== Navigation Helpers =====
 export function getCompanyIntelUrl(id) {
     return `company-signals.html?id=${encodeURIComponent(id)}`;

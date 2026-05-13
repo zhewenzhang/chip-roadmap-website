@@ -3,10 +3,11 @@
  * Table-first, analyst-friendly interface for verified AI chip signals.
  */
 
-import { loadSignals } from '../firebase/db.js';
+import { loadSignals, loadSignalHistory } from '../firebase/db.js';
 import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS, IMPACT_SORT,
+    HISTORY_ACTIONS,
 } from './signals-schema.js';
 import {
     loadWatchlist, isWatchingCompany, isWatchingChip, isWatchingSignal,
@@ -98,6 +99,7 @@ export async function init() {
         renderFilters();
         renderSavedViews();
         renderWatchlistPanel();
+        renderWatchlistFocusStrip();
         applyFilters();
     }
     bindEvents();
@@ -269,10 +271,33 @@ function renderWatchlistPanel() {
             if (type === 'company') toggleWatchCompany(id);
             else if (type === 'chip') toggleWatchChip(id);
             renderWatchlistPanel();
+            renderWatchlistFocusStrip();
             renderSummaryLayer(allSignals);
             applyFilters();
         });
     });
+}
+
+// ===== Watchlist Focus Strip (Phase 4) =====
+
+function renderWatchlistFocusStrip() {
+    const strip = document.getElementById('watchlistFocusStrip');
+    if (!strip) return;
+
+    const watchlist = getWatchlist();
+    if (isWatchlistEmpty()) {
+        strip.style.display = 'none';
+        return;
+    }
+
+    strip.style.display = 'flex';
+
+    const companiesEl = document.getElementById('wlStripCompanies');
+    const chipsEl = document.getElementById('wlStripChips');
+    const signalsEl = document.getElementById('wlStripSignals');
+    if (companiesEl) companiesEl.textContent = `${watchlist.companies.length} 公司`;
+    if (chipsEl) chipsEl.textContent = `${watchlist.chips.length} 芯片`;
+    if (signalsEl) signalsEl.textContent = `${watchlist.signals.length} 信號`;
 }
 
 // ===== View Toggles & Saved Views (Phase 2) =====
@@ -387,6 +412,70 @@ function resetFilters() {
     filterState = { search: '', region: '', company: '', stage: '', impact: '', status: '', view: 'all' };
     syncFilterUI();
     applyFilters();
+}
+
+// ===== Quick Views (Phase 4) =====
+
+function applyQuickView(quick) {
+    // Reset all filter fields first
+    filterState.search = '';
+    filterState.region = '';
+    filterState.company = '';
+    filterState.stage = '';
+    filterState.impact = '';
+    filterState.status = '';
+
+    if (quick === 'wl-changed') {
+        // Watched signals with recent status/confidence changes
+        filterState.view = 'watched';
+        // Post-filter in getFilteredSignals for watched + changed
+        const watched = allSignals.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+        const changed = watched.filter(s =>
+            isRecent(s.last_status_changed_at, 14) ||
+            isRecent(s.last_confidence_changed_at, 14)
+        );
+        changed.sort((a, b) => {
+            const dateA = a.last_status_changed_at || a.last_confidence_changed_at || '';
+            const dateB = b.last_status_changed_at || b.last_confidence_changed_at || '';
+            return new Date(dateB || 0) - new Date(dateA || 0);
+        });
+        renderSignalsTable(changed);
+    } else if (quick === 'wl-high') {
+        // Watched signals with high/explosive ABF impact
+        const watched = allSignals.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+        const high = watched.filter(s =>
+            s.abf_demand_impact === 'high' || s.abf_demand_impact === 'explosive'
+        );
+        high.sort((a, b) => b._priority - a._priority);
+        renderSignalsTable(high);
+    } else if (quick === 'wl-watch') {
+        // Watched signals with status 'watch' or 'draft' that need verification
+        const watched = allSignals.filter(s =>
+            isWatchingCompany(s.company_id) ||
+            isWatchingChip(s.chip_name) ||
+            isWatchingSignal(s.id)
+        );
+        const needsVerify = watched.filter(s =>
+            s.status === 'watch' || s.status === 'draft'
+        );
+        needsVerify.sort((a, b) => b._priority - a._priority);
+        renderSignalsTable(needsVerify);
+    } else if (quick === 'all') {
+        filterState.view = 'all';
+        syncFilterUI();
+        applyFilters();
+    }
+
+    // Scroll to table
+    document.getElementById('signalsTableWrap')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 // ===== Table =====
@@ -817,6 +906,14 @@ function openDrawer(signal) {
         html += `</ul></div>`;
     }
 
+    // Section 8: History (Phase 4)
+    html += `<div class="drawer-section">
+        <h3 class="drawer-section-title">變更歷史</h3>
+        <div class="drawer-history" id="drawerHistory">
+            <div class="history-loading">載入中...</div>
+        </div>
+    </div>`;
+
     body.innerHTML = html;
 
     body.querySelectorAll('.drawer-watch-btn').forEach(btn => {
@@ -825,16 +922,19 @@ function openDrawer(signal) {
             if (type === 'company') toggleWatchCompany(id);
             else if (type === 'chip') toggleWatchChip(id);
             else if (type === 'signal') toggleWatchSignal(id);
-            
+
             // Re-render drawer partially
             btn.classList.toggle('active');
             btn.innerHTML = `${watchIcon(btn.classList.contains('active'))} ${btn.textContent.trim().slice(2)}`;
-            
+
             renderWatchlistPanel();
             renderSummaryLayer(allSignals);
             applyFilters();
         });
     });
+
+    // Load and render history (Phase 4)
+    loadDrawerHistory(signal.id);
 
     if (isMobile) {
         overlay.classList.add('drawer-mobile');
@@ -854,6 +954,39 @@ function closeDrawer() {
     if (!overlay) return;
     overlay.style.display = 'none';
     document.body.style.overflow = '';
+}
+
+// ===== Drawer History (Phase 4) =====
+
+async function loadDrawerHistory(signalId) {
+    const container = document.getElementById('drawerHistory');
+    if (!container) return;
+
+    const history = await loadSignalHistory(signalId, 20);
+
+    if (!history || history.length === 0) {
+        container.innerHTML = '<div class="history-empty">尚無變更記錄</div>';
+        return;
+    }
+
+    const items = history.map(h => {
+        const ts = h.timestamp?.toDate ? h.timestamp.toDate() : new Date(h.timestamp || 0);
+        const dateStr = ts.toISOString().slice(0, 10);
+        const timeStr = ts.toISOString().slice(11, 16);
+        const actionLabel = HISTORY_ACTION_LABELS[h.action] || h.action || '更新';
+        const actorStr = h.actor ? ` — ${esc(h.actor)}` : '';
+        const summaryStr = h.summary ? esc(h.summary) : '';
+
+        return `<div class="history-row">
+            <div class="history-meta">
+                <span class="history-action-badge">${esc(actionLabel)}</span>
+                <span class="history-time">${esc(dateStr)} ${esc(timeStr)}</span>
+            </div>
+            ${summaryStr ? `<div class="history-summary">${summaryStr}${actorStr}</div>` : `<div class="history-actor">${actorStr ? actorStr.slice(2) : '—'}</div>`}
+        </div>`;
+    }).join('');
+
+    container.innerHTML = items;
 }
 
 // ===== Event Binding =====
@@ -907,9 +1040,21 @@ function bindEvents() {
             if (confirm('確定要清除全部關注項嗎？')) {
                 clearWatchlist();
                 renderWatchlistPanel();
+                renderWatchlistFocusStrip();
                 renderSummaryLayer(allSignals);
                 applyFilters();
             }
+        });
+    }
+
+    // Phase 4: Watchlist Quick Actions
+    const wlStrip = document.getElementById('watchlistFocusStrip');
+    if (wlStrip) {
+        wlStrip.addEventListener('click', e => {
+            const btn = e.target.closest('.wl-quick-btn');
+            if (!btn) return;
+            const quick = btn.dataset.quick;
+            applyQuickView(quick);
         });
     }
 

@@ -1837,6 +1837,66 @@ tr:hover .td-company { background: #f5f5f5; }
     color: var(--color-fg);
 }
 
+/* Watchlist Focus Strip (Phase 4) */
+.watchlist-strip {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 0;
+    border-top: 2px solid var(--color-fg);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.watchlist-strip-stats {
+    display: flex;
+    gap: 12px;
+}
+
+.watchlist-strip-count {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-fg);
+    padding: 4px 10px;
+    border: 1px solid var(--color-fg);
+}
+
+.watchlist-strip-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.wl-quick-btn {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 6px 14px;
+    border: 1px solid var(--color-fg);
+    background: var(--color-bg);
+    color: var(--color-fg);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: background 0.15s, color 0.15s;
+}
+
+.wl-quick-btn:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+}
+
+.wl-quick-btn-primary {
+    background: var(--color-fg);
+    color: var(--color-bg);
+}
+
+.wl-quick-btn-primary:hover {
+    background: var(--color-bg);
+    color: var(--color-fg);
+}
+
 .watchlist-groups {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -2901,6 +2961,66 @@ tr:hover .td-company { background: #f5f5f5; }
     color: var(--color-fg);
     text-decoration: underline;
     text-underline-offset: 2px;
+}
+
+/* Drawer history (Phase 4) */
+.drawer-history {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 320px;
+    overflow-y: auto;
+}
+
+.history-loading,
+.history-empty {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted-fg);
+    font-style: italic;
+}
+
+.history-row {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.history-row:last-child {
+    border-bottom: none;
+}
+
+.history-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.history-action-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border: 1px solid var(--color-fg);
+    letter-spacing: 0.03em;
+}
+
+.history-time {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-muted-fg);
+}
+
+.history-summary {
+    font-size: 0.8rem;
+    color: var(--color-fg);
+    line-height: 1.5;
+}
+
+.history-actor {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-muted-fg);
 }
 
 /* Mobile drawer */
