@@ -721,6 +721,19 @@ hr.thick {
     font-style: italic;
 }
 
+.roadmap-header > p {
+    font-size: 1rem;
+    color: var(--color-muted-fg);
+    margin-top: 8px;
+}
+
+.roadmap-subtext {
+    font-size: 0.85rem;
+    color: var(--color-muted-fg);
+    font-style: italic;
+    margin-top: 4px;
+}
+
 .roadmap-filters {
     display: flex;
     justify-content: center;

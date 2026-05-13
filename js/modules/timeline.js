@@ -1,9 +1,16 @@
 /**
- * Roadmap 橫向時間軸矩陣
- * 行 = 公司，列 = 年份×季度（2024 Q1~Q4 | 2025 Q1~Q4 | 2026 Q1~Q4）
+ * Roadmap Horizontal Timeline Matrix — V2 (Signals-derived)
+ *
+ * Rows = companies, Columns = year × quarter
+ * Data source: derived from signals via roadmap-derived.js
+ *
+ * This module only handles DOM rendering.
+ * All derivation logic lives in js/modules/roadmap-derived.js.
  */
 
-const COMPANY_ORDER = ['nvidia', 'amd', 'intel', 'huawei_ascend', 'cambricon', 'google_tpu'];
+import { isRoadmapEligibleSignal } from './roadmap-derived.js';
+
+const COMPANY_ORDER = ['nvidia', 'amd', 'intel', 'huawei_ascend', 'cambricon', 'google_tpu', 'tsmc', 'samsung', 'sk_hynix'];
 
 const COMPANY_STYLE = {
     nvidia:        { label: 'NVIDIA',     color: '#ffffff', bg: '#111111', border: '#111111' },
@@ -12,49 +19,55 @@ const COMPANY_STYLE = {
     huawei_ascend: { label: '華為昇騰',  color: '#ffffff', bg: '#111111', border: '#111111' },
     cambricon:     { label: '寒武紀',     color: '#ffffff', bg: '#111111', border: '#111111' },
     google_tpu:    { label: 'Google TPU', color: '#ffffff', bg: '#111111', border: '#111111' },
+    tsmc:          { label: '台積電',     color: '#ffffff', bg: '#111111', border: '#111111' },
+    samsung:       { label: 'Samsung',    color: '#ffffff', bg: '#111111', border: '#111111' },
+    sk_hynix:      { label: 'SK Hynix',   color: '#ffffff', bg: '#111111', border: '#111111' },
 };
 
 const YEAR_COLORS = [
     { year: 2024, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
     { year: 2025, header: '#f3f4f6', border: '#d1d5db', label: '#111827' },
     { year: 2026, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
+    { year: 2027, header: '#f3f4f6', border: '#d1d5db', label: '#111827' },
+    { year: 2028, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
 ];
 
-function renderTimeline(roadmapsData, filterCompany = null) {
+const IMPACT_SORT = { explosive: 4, high: 3, medium: 2, low: 1 };
+
+/**
+ * Render the roadmap timeline matrix.
+ *
+ * @param {Object} matrix — derived matrix from buildRoadmapMatrixFromSignals()
+ * @param {string|null} filterCompany — company ID filter or null for all
+ * @param {Function} onSignalClick — callback(signal) when a cell is clicked
+ */
+function renderTimeline(matrix, filterCompany = null, onSignalClick = null) {
     const container = document.getElementById('timelineContainer');
     if (!container) return;
     container.innerHTML = '';
 
-    // 收集所有條目
-    const entries = [];
-    Object.entries(roadmapsData).forEach(([companyId, data]) => {
-        if (!data.timeline) return;
-        data.timeline.forEach(item => {
-            entries.push({ companyId, companyName: data.company, ...item });
-        });
-    });
-
-    if (entries.length === 0) {
-        const msg = document.createElement('p');
-        msg.style.cssText = 'text-align:center;color:#9ca3af;padding:60px 0;font-size:15px';
-        msg.textContent = '暫無數據';
-        container.appendChild(msg);
-        return;
-    }
-
-    const years = [...new Set(entries.map(e => e.year))].sort((a, b) => a - b);
+    // Extract years and company IDs from the matrix
+    const years = getMatrixYears(matrix);
     const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
 
-    // 公司列表，套用篩選
-    let companyIds = COMPANY_ORDER.filter(id => roadmapsData[id]);
-    Object.keys(roadmapsData).forEach(id => {
+    let companyIds = COMPANY_ORDER.filter(id => matrix[id]);
+    Object.keys(matrix).forEach(id => {
         if (!companyIds.includes(id)) companyIds.push(id);
     });
+
     if (filterCompany && filterCompany !== 'all') {
         companyIds = companyIds.filter(id => id === filterCompany);
     }
 
-    // 外層容器（白色卡片）
+    if (companyIds.length === 0) {
+        const msg = document.createElement('p');
+        msg.style.cssText = 'text-align:center;color:#9ca3af;padding:60px 0;font-size:15px';
+        msg.textContent = '暫無已驗證 Roadmap 數據';
+        container.appendChild(msg);
+        return;
+    }
+
+    // Outer card
     const card = document.createElement('div');
     card.className = 'roadmap-card';
 
@@ -64,12 +77,11 @@ function renderTimeline(roadmapsData, filterCompany = null) {
     const table = document.createElement('table');
     table.className = 'roadmap-matrix';
 
-    // ── 表頭：兩行 ──────────────────────────────────────
+    // ── Header: two rows ──────────────────────────────────────
     const thead = document.createElement('thead');
 
-    // 行 1：公司(rowspan=2) + 年份(colspan=4 each)
+    // Row 1: Company (rowspan=2) + Year headers (colspan=4 each)
     const row1 = document.createElement('tr');
-
     const thCompany = document.createElement('th');
     thCompany.rowSpan = 2;
     thCompany.className = 'th-company';
@@ -87,7 +99,7 @@ function renderTimeline(roadmapsData, filterCompany = null) {
     });
     thead.appendChild(row1);
 
-    // 行 2：Q1 Q2 Q3 Q4（每個年份重複一次）
+    // Row 2: Q1 Q2 Q3 Q4 repeated per year
     const row2 = document.createElement('tr');
     years.forEach(year => {
         const yc = YEAR_COLORS.find(y => y.year === year) || YEAR_COLORS[0];
@@ -102,18 +114,18 @@ function renderTimeline(roadmapsData, filterCompany = null) {
     thead.appendChild(row2);
     table.appendChild(thead);
 
-    // ── 表身 ───────────────────────────────────────────
+    // ── Body ───────────────────────────────────────────────────
     const tbody = document.createElement('tbody');
 
     companyIds.forEach((companyId, rowIndex) => {
-        const companyData = roadmapsData[companyId];
+        const companyData = matrix[companyId];
         if (!companyData) return;
-        const style = COMPANY_STYLE[companyId] || { label: companyData.company, color: '#374151', bg: '#f9fafb', border: '#e5e7eb' };
+        const style = COMPANY_STYLE[companyId] || { label: companyData.companyName, color: '#374151', bg: '#f9fafb', border: '#e5e7eb' };
 
         const tr = document.createElement('tr');
         tr.className = rowIndex % 2 === 0 ? 'tr-even' : 'tr-odd';
 
-        // 公司名格
+        // Company name cell
         const tdName = document.createElement('td');
         tdName.className = 'td-company';
         const nameTag = document.createElement('span');
@@ -123,33 +135,53 @@ function renderTimeline(roadmapsData, filterCompany = null) {
         tdName.appendChild(nameTag);
         tr.appendChild(tdName);
 
-        // 年份 × 季度格
+        // Year × Quarter cells
         years.forEach(year => {
             const yc = YEAR_COLORS.find(y => y.year === year) || YEAR_COLORS[0];
             quarters.forEach(q => {
                 const td = document.createElement('td');
-                const chip = entries.find(
-                    e => e.companyId === companyId && e.year === year && e.quarter === q
-                );
+                const cellSignals = companyData?.cells?.[year]?.[q] || [];
 
-                if (chip) {
+                if (cellSignals.length > 0) {
                     td.className = 'td-chip';
                     td.style.cssText = `background:${yc.header}`;
                     td.setAttribute('role', 'button');
                     td.setAttribute('tabindex', '0');
-                    td.setAttribute('aria-label', `${chip.product} — ${style.label} ${year} ${q}`);
+                    td.setAttribute('aria-label', `${cellSignals.map(s => s.chip_name).join(', ')} — ${style.label} ${year} ${q}`);
 
-                    const tag = document.createElement('span');
-                    tag.className = 'chip-tag';
-                    tag.style.cssText = `color:${style.color};background:${style.bg};border-color:${style.border}`;
-                    tag.textContent = chip.product;
-                    td.appendChild(tag);
+                    if (cellSignals.length === 1) {
+                        // Single signal: show chip name
+                        const sig = cellSignals[0];
+                        const tag = document.createElement('span');
+                        tag.className = 'chip-tag';
+                        tag.style.cssText = `color:${style.color};background:${style.bg};border-color:${style.border}`;
+                        tag.textContent = sig.chip_name;
+                        td.appendChild(tag);
 
-                    const open = () => showChipPopup(chip, style.label, style.color);
-                    td.addEventListener('click', open);
-                    td.addEventListener('keydown', e => {
-                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
-                    });
+                        const open = () => {
+                            if (onSignalClick) onSignalClick(sig);
+                            else showSignalDetail(sig, style);
+                        };
+                        td.addEventListener('click', open);
+                        td.addEventListener('keydown', e => {
+                            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+                        });
+                    } else {
+                        // Multiple signals: compact stacked list
+                        cellSignals.forEach(sig => {
+                            const tag = document.createElement('span');
+                            tag.className = 'chip-tag';
+                            tag.style.cssText = `color:${style.color};background:${style.bg};border-color:${style.border};display:block;margin-bottom:2px`;
+                            tag.textContent = sig.chip_name;
+                            td.appendChild(tag);
+
+                            const open = () => {
+                                if (onSignalClick) onSignalClick(sig);
+                                else showSignalDetail(sig, style);
+                            };
+                            tag.addEventListener('click', e => { e.stopPropagation(); open(); });
+                        });
+                    }
                 } else {
                     td.className = 'td-empty';
                     td.style.cssText = `background:${yc.header}`;
@@ -168,92 +200,26 @@ function renderTimeline(roadmapsData, filterCompany = null) {
     container.appendChild(card);
 }
 
-function showChipPopup(chip, companyName, accentColor) {
-    document.querySelector('.chip-popup-overlay')?.remove();
+/**
+ * Extract sorted years from the derived matrix.
+ */
+function getMatrixYears(matrix) {
+    const years = new Set();
+    for (const company of Object.values(matrix)) {
+        for (const year of Object.keys(company.cells || {})) {
+            years.add(Number(year));
+        }
+    }
+    return [...years].sort((a, b) => a - b);
+}
 
-    const overlay = document.createElement('div');
-    overlay.className = 'chip-popup-overlay';
-
-    const popup = document.createElement('div');
-    popup.className = 'chip-popup';
-    popup.setAttribute('role', 'dialog');
-    popup.setAttribute('aria-modal', 'true');
-
-    // 頂部色條
-    const colorBar = document.createElement('div');
-    colorBar.className = 'chip-popup-colorbar';
-    colorBar.style.background = accentColor;
-
-    const closeBtn = document.createElement('button');
-    closeBtn.className = 'chip-popup-close';
-    closeBtn.setAttribute('aria-label', '關閉');
-    closeBtn.textContent = '×';
-    closeBtn.addEventListener('click', () => overlay.remove());
-
-    const header = document.createElement('div');
-    header.className = 'chip-popup-header';
-    header.textContent = `${companyName}  ·  ${chip.year}${chip.quarter ? ' ' + chip.quarter : ''}`;
-
-    const title = document.createElement('div');
-    title.className = 'chip-popup-title';
-    title.style.color = '#111111';
-    title.textContent = chip.product;
-
-    const intelLink = document.createElement('a');
-    intelLink.href = `chip-signals.html?name=${encodeURIComponent(chip.product)}`;
-    intelLink.className = 'signal-view-btn';
-    intelLink.style.display = 'inline-block';
-    intelLink.style.margin = '4px 0 12px 20px';
-    intelLink.style.fontSize = '11px';
-    intelLink.style.textDecoration = 'none';
-    intelLink.textContent = '查看供應鏈信號 \u2192';
-    popup.appendChild(intelLink);
-
-    const divider = document.createElement('div');
-    divider.className = 'chip-popup-divider';
-
-    popup.appendChild(colorBar);
-    popup.appendChild(closeBtn);
-    popup.appendChild(header);
-    popup.appendChild(title);
-    popup.appendChild(divider);
-
-    const fields = [
-        { label: '用途',      value: chip.purpose },
-        { label: '製程',      value: chip.process },
-        { label: '規格',      value: chip.specs },
-        { label: 'CoWoS封裝', value: chip.cowos === true ? '是' : chip.cowos === false ? '否' : null },
-        { label: 'ABF尺寸',   value: chip.abf_size },
-        { label: 'ABF層數',   value: chip.abf_layers != null ? chip.abf_layers + ' 層' : null },
-    ];
-
-    fields.forEach(({ label, value }) => {
-        if (!value) return;
-        const row = document.createElement('div');
-        row.className = 'chip-popup-field';
-
-        const lEl = document.createElement('span');
-        lEl.className = 'chip-popup-field-label';
-        lEl.textContent = label;
-
-        const vEl = document.createElement('span');
-        vEl.className = 'chip-popup-field-value';
-        vEl.textContent = value;
-
-        row.appendChild(lEl);
-        row.appendChild(vEl);
-        popup.appendChild(row);
-    });
-
-    overlay.appendChild(popup);
-    document.body.appendChild(overlay);
-
-    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
-    const onKey = e => {
-        if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onKey); }
-    };
-    document.addEventListener('keydown', onKey);
-    closeBtn.focus();
+/**
+ * Show signal detail in a compact popup (legacy behavior, updated to use signal fields).
+ * Falls back to navigating to the chip intelligence page.
+ */
+function showSignalDetail(signal, style) {
+    // Navigate to chip intelligence page as primary action
+    window.location.href = `chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`;
 }
 
 export { renderTimeline };

@@ -3,12 +3,13 @@
  * 模块化架构：导入各功能模块并初始化
  */
 
-import { loadAllData } from './firebase/db.js';
+import { loadAllData, loadSignals } from './firebase/db.js';
 import { renderCompaniesGrid, resetPagination } from './modules/companies.js';
 import { renderTimeline } from './modules/timeline.js';
 import { showCompanyDetail, setModalData } from './modules/modal.js';
 import { renderTrends, renderTopPlayers, renderABFAnalysis, renderKeyInsights } from './modules/insights.js';
 import { init as initSignals } from './modules/signals.js';
+import { buildRoadmapMatrixFromSignals, getRoadmapYears, getRoadmapCompanies } from './modules/roadmap-derived.js';
 
 // ============== 全局数据 ==============
 let companiesData = {};
@@ -77,9 +78,69 @@ function updateRegionStats() {
     if (heroNumbers[0]) heroNumbers[0].textContent = companies.length;
 }
 
-// ============== Roadmap 页面初始化 ==============
-function initRoadmapPage() {
-    renderTimeline(roadmapsData);
+// ============== Roadmap 页面初始化 (Phase 6: signals-derived) ==============
+async function initRoadmapPage() {
+    const result = await loadSignals();
+    if (!result.ok) {
+        console.error('[Roadmap] Signals load error:', result.error);
+        const container = document.getElementById('timelineContainer');
+        if (container) {
+            container.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:60px 0;font-size:15px">Roadmap 數據載入失敗，請稍後重試。</p>';
+        }
+        return;
+    }
+
+    const matrix = buildRoadmapMatrixFromSignals(result.data);
+    const companies = getRoadmapCompanies(matrix);
+
+    // Dynamically render company filter buttons
+    const filterContainer = document.querySelector('.roadmap-filters');
+    if (filterContainer) {
+        // Keep the "all" button, replace the rest
+        const allBtn = filterContainer.querySelector('[data-filter="all"]');
+        filterContainer.innerHTML = '';
+        if (allBtn) filterContainer.appendChild(allBtn);
+
+        companies.forEach(companyId => {
+            const btn = document.createElement('button');
+            btn.className = 'filter-btn';
+            btn.dataset.filter = companyId;
+            btn.setAttribute('aria-pressed', 'false');
+            const companyData = matrix[companyId];
+            btn.textContent = companyData?.companyName || companyId;
+            filterContainer.appendChild(btn);
+        });
+
+        // Re-initialize filter event listeners
+        initRoadmapFilters();
+    }
+
+    renderTimeline(matrix);
+}
+
+// Roadmap-specific filter initialization (separate from global initFilters)
+function initRoadmapFilters() {
+    document.querySelectorAll('.roadmap-filters .filter-btn').forEach(btn => {
+        // Remove old listeners by cloning
+        const newBtn = btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn, btn);
+
+        newBtn.addEventListener('click', async () => {
+            document.querySelectorAll('.roadmap-filters .filter-btn').forEach(b => {
+                b.classList.remove('active');
+                b.setAttribute('aria-pressed', 'false');
+            });
+            newBtn.classList.add('active');
+            newBtn.setAttribute('aria-pressed', 'true');
+
+            const filter = newBtn.dataset.filter;
+            const result = await loadSignals();
+            if (result.ok) {
+                const matrix = buildRoadmapMatrixFromSignals(result.data);
+                renderTimeline(matrix, filter === 'all' ? null : filter);
+            }
+        });
+    });
 }
 
 // ============== 公司页面初始化 ==============
@@ -98,7 +159,7 @@ function initInsightsPage() {
 // ============== 筛选功能 ==============
 function initFilters() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
+        btn.addEventListener('click', async () => {
             // 更新活动状态
             document.querySelectorAll('.filter-btn').forEach(b => {
                 b.classList.remove('active');
@@ -117,9 +178,8 @@ function initFilters() {
             const path = window.location.pathname;
             if (path.includes('companies.html')) {
                 renderCompaniesGrid(companiesData, filter, searchTerm);
-            } else if (path.includes('roadmap.html')) {
-                renderTimeline(roadmapsData, filter === 'all' ? null : filter);
             }
+            // Roadmap page has its own filter handler (initRoadmapFilters)
         });
     });
 

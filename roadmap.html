@@ -45,15 +45,12 @@
     <!-- 页面标题 -->
     <header class="roadmap-header">
         <h1>晶片 Roadmap <em>時間軸</em></h1>
-        <p>追蹤全球主要晶片廠商的產品演進路線圖</p>
+        <p>僅顯示已驗證的產品進度信號 — 來自 signals 系統的確認層</p>
+        <p class="roadmap-subtext">草稿、觀望和謠傳信號僅在 Signals 頁面可見</p>
 
         <div class="roadmap-filters" role="group" aria-label="公司篩選">
             <button class="filter-btn active" data-filter="all" aria-pressed="true">全部公司</button>
-            <button class="filter-btn" data-filter="nvidia" aria-pressed="false">NVIDIA</button>
-            <button class="filter-btn" data-filter="amd" aria-pressed="false">AMD</button>
-            <button class="filter-btn" data-filter="intel" aria-pressed="false">Intel</button>
-            <button class="filter-btn" data-filter="huawei_ascend" aria-pressed="false">华为</button>
-            <button class="filter-btn" data-filter="cambricon" aria-pressed="false">寒武纪</button>
+            <!-- 動態載入公司過濾按鈕 -->
         </div>
     </header>
 
