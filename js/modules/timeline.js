@@ -323,7 +323,7 @@ function showSignalDetail(signal, style) {
         return a;
     };
 
-    navDiv.appendChild(makeLink(`chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`, '查看芯片信號 →'));
+    navDiv.appendChild(makeLink(`chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`, '查看芯片影響 →'));
     if (signal.company_id) {
         navDiv.appendChild(makeLink(`company-signals.html?id=${encodeURIComponent(signal.company_id)}`, '查看公司信號 →'));
     }

@@ -1,7 +1,8 @@
 /**
- * Entity Signals Module — Phase 8 (Entity-Centered Intelligence)
+ * Entity Signals Module — Phase 9 (Impact Engine + Entity-Centered Intelligence)
  * Handles the logic for company and chip intelligence pages.
  * Uses entity-intelligence.js for dossier derivation.
+ * Uses impact-engine.js for chip-to-ABF impact derivation.
  */
 
 import { loadSignals } from '../firebase/db.js';
@@ -18,6 +19,10 @@ import {
     getCompanyChipPortfolio, getChipCompanyContext,
     getSiblingChips, getEntityRiskIndicators, getVerificationTrend
 } from './entity-intelligence.js';
+import {
+    deriveChipImpact, deriveCompanyAbfOutlook,
+    isImpactDerivable
+} from './impact-engine.js';
 
 // ===== State =====
 let allSignals = [];
@@ -86,13 +91,20 @@ export async function initEntityPage(type) {
             metaEl.innerHTML = '<span>尚無收錄此芯片的信號</span>';
         }
         document.getElementById('signalsTableWrap').innerHTML = '<p class="entity-empty">尚無相關信號。可在管理後台新增。</p>';
-        // Still render sidebar with empty dossier
+        // Render impact headers even for empty entities
+        if (type === 'company') renderCompanyAbfHeader([], allSignals);
+        else renderChipImpactHeader([], allSignals);
         renderSidebar(filtered, allSignals);
         bindEvents();
         return;
     }
 
     renderEntityInfo(filtered);
+
+    // Phase 9: Render impact headers
+    if (type === 'company') renderCompanyAbfHeader(filtered, allSignals);
+    else renderChipImpactHeader(filtered, allSignals);
+
     renderSignalsTable(filtered);
     renderSidebar(filtered, allSignals);
     bindEvents();
@@ -171,6 +183,180 @@ function renderSignalsTable(signals) {
             if (signal) openDrawer(signal);
         });
     });
+}
+
+// ===== Phase 9: Impact Header Rendering =====
+
+const STAGE_LABELS_MAP = { pilot: '試產', ramp: '爬坡', volume: '量產', design_win: '設計獲勝', sampling: '送樣', announced: '宣布', rumor: '傳聞' };
+const VOLUME_LABELS_MAP = { low: '低', medium: '中', high: '高' };
+
+/**
+ * Render chip-level impact header on chip-signals.html
+ */
+function renderChipImpactHeader(signals, allSigs) {
+    const container = document.getElementById('chipImpactHeader');
+    if (!container) return;
+
+    const impact = deriveChipImpact(entityId, allSigs);
+
+    if (impact.insufficientData) {
+        container.style.display = 'block';
+        container.innerHTML = `<div class="impact-header-title">Impact 摘要</div>
+            <p style="color:var(--color-muted-fg);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導影響</p>`;
+        return;
+    }
+
+    // Build impact badge class
+    const impactCls = impact.abfDemandImpact === 'explosive' ? 'impact-explosive'
+        : impact.abfDemandImpact === 'high' ? 'impact-high'
+        : impact.abfDemandImpact === 'medium' ? 'impact-medium' : 'impact-low';
+
+    let html = `<div class="impact-header-title">Impact 摘要 — ${esc(impact.chipName)}</div>`;
+
+    // Main row: badge + confidence
+    html += `<div class="impact-main-row">
+        <span class="impact-badge ${impactCls}">${esc(IMPACT_LABEL[impact.abfDemandImpact] || impact.abfDemandImpact)}</span>
+        <span class="impact-confidence">推導信度: ${impact.derivedConfidence ?? '—'}</span>
+    </div>`;
+
+    // Fields grid
+    html += '<div class="impact-fields-grid">';
+
+    // ABF Size
+    if (impact.abfSize.value) {
+        const conflictNote = impact.abfSize.conflicting ? `<span class="field-conflict">（信號間不一致）</span>` : '';
+        html += `<div class="impact-field-row"><span class="field-label">ABF Size</span><span class="field-value">${esc(impact.abfSize.value)}${conflictNote}</span></div>`;
+    }
+
+    // ABF Layers
+    if (impact.abfLayers.value != null) {
+        const conflictNote = impact.abfLayers.range ? `<span class="field-conflict">（${impact.abfLayers.range[0]} ~ ${impact.abfLayers.range[1]}）</span>` : '';
+        html += `<div class="impact-field-row"><span class="field-label">ABF Layers</span><span class="field-value">${impact.abfLayers.value}${conflictNote}</span></div>`;
+    }
+
+    // CoWoS
+    html += `<div class="impact-field-row"><span class="field-label">CoWoS</span><span class="field-value">${impact.cowosDependency}</span></div>`;
+
+    // HBM
+    if (impact.hbm.value) html += `<div class="impact-field-row"><span class="field-label">HBM</span><span class="field-value">${esc(impact.hbm.value)}</span></div>`;
+
+    // Volume
+    if (impact.volumeOutlook.value) html += `<div class="impact-field-row"><span class="field-label">Volume</span><span class="field-value">${esc(VOLUME_LABELS_MAP[impact.volumeOutlook.value] || impact.volumeOutlook.value)}</span></div>`;
+
+    // Stage
+    html += `<div class="impact-field-row"><span class="field-label">Stage</span><span class="field-value">${esc(STAGE_LABELS_MAP[impact.stageOutlook] || impact.stageOutlook)}</span></div>`;
+
+    html += '</div>'; // end fields grid
+
+    // Source line
+    html += `<div class="impact-source-line">推導依據: ${impact.verifiedCount} 條 verified、${impact.watchCount} 條 watch</div>`;
+
+    // Driving evidence panel
+    html += renderEvidencePanel(impact.drivingSignals, impact.conflictingSignals);
+
+    container.innerHTML = html;
+    container.style.display = 'block';
+
+    // Bind evidence item clicks
+    container.querySelectorAll('.evidence-item, .evidence-conflict-item').forEach(el => {
+        el.addEventListener('click', () => {
+            const signal = allSigs.find(s => s.id === el.dataset.signalId);
+            if (signal) openDrawer(signal);
+        });
+    });
+}
+
+/**
+ * Render company-level ABF outlook header on company-signals.html
+ */
+function renderCompanyAbfHeader(signals, allSigs) {
+    const container = document.getElementById('companyAbfHeader');
+    if (!container) return;
+
+    const outlook = deriveCompanyAbfOutlook(entityId, allSigs);
+
+    if (outlook.insufficientData) {
+        container.style.display = 'block';
+        container.innerHTML = `<div class="impact-header-title">公司 ABF 展望</div>
+            <p style="color:var(--color-muted-fg);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導 ABF 展望</p>`;
+        return;
+    }
+
+    const impactCls = outlook.overallImpact === 'explosive' ? 'impact-explosive'
+        : outlook.overallImpact === 'high' ? 'impact-high'
+        : outlook.overallImpact === 'medium' ? 'impact-medium' : 'impact-low';
+
+    let html = `<div class="impact-header-title">${esc(outlook.companyName)} — ABF Demand Outlook</div>`;
+
+    // Main row
+    html += `<div class="impact-main-row">
+        <span class="impact-badge ${impactCls}">${esc(IMPACT_LABEL[outlook.overallImpact] || outlook.overallImpact)}</span>
+    </div>`;
+
+    // Fields grid
+    html += '<div class="impact-fields-grid">';
+
+    html += `<div class="impact-field-row"><span class="field-label">CoWoS 依賴芯片</span><span class="field-value">${outlook.cowosChipCount}</span></div>`;
+    html += `<div class="impact-field-row"><span class="field-label">進階階段芯片</span><span class="field-value">${outlook.advancedChipCount}</span></div>`;
+
+    if (outlook.abfLayerRange) {
+        html += `<div class="impact-field-row"><span class="field-label">ABF Layers 範圍</span><span class="field-value">${outlook.abfLayerRange[0]} ~ ${outlook.abfLayerRange[1]}</span></div>`;
+    }
+
+    html += '</div>';
+
+    // Top chips
+    if (outlook.topChips.length > 0) {
+        html += `<div class="impact-source-line">Top 影響芯片: ${outlook.topChips.map(c =>
+            `<a href="chip-signals.html?name=${encodeURIComponent(c.chipName)}">${esc(c.chipName)}</a>`
+        ).join(' / ')}</div>`;
+    }
+
+    container.innerHTML = html;
+    container.style.display = 'block';
+}
+
+/**
+ * Render driving evidence panel (shared between chip and company)
+ */
+function renderEvidencePanel(drivingSignals, conflictingSignals) {
+    if (!drivingSignals || drivingSignals.length === 0) return '';
+
+    let html = '<div class="impact-evidence-panel">';
+
+    // Driving signals section
+    html += `<div class="evidence-section-title">驅動信號 (${drivingSignals.length})</div>`;
+    html += '<div class="evidence-list">';
+
+    for (const ds of drivingSignals) {
+        const statusCls = ds.status === 'verified' ? 'signal-status-verified'
+            : ds.status === 'watch' ? 'signal-status-watch' : '';
+        html += `<div class="evidence-item" data-signal-id="${esc(ds.id)}">
+            <span class="evidence-date">${formatDate(ds.last_verified_at)}</span>
+            <span class="evidence-status ${statusCls}">${esc(statusLabel(ds.status))}</span>
+            <span class="evidence-confidence">${ds.confidence}</span>
+            <span class="evidence-reason">${esc(stageLabel(ds.stage))} · 貢獻 ${ds.contribution > 0 ? ds.contribution.toFixed(1) : '0'}</span>
+        </div>`;
+    }
+
+    html += '</div>';
+
+    // Conflicting signals section
+    if (conflictingSignals && conflictingSignals.length > 0) {
+        html += `<div class="evidence-section-title" style="margin-top:16px">矛盾信號 (${conflictingSignals.length})</div>`;
+        html += '<div class="evidence-list">';
+
+        for (const cs of conflictingSignals) {
+            html += `<div class="evidence-conflict-item" data-signal-id="${esc(cs.id)}">
+                <span class="evidence-reason">${esc(cs.reason)}</span>
+            </div>`;
+        }
+
+        html += '</div>';
+    }
+
+    html += '</div>';
+    return html;
 }
 
 function renderSidebar(signals, allSigs) {

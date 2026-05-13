@@ -30,6 +30,7 @@ let filterState = {
 
 let savedViews = []; // Phase 2
 let compareSelection = []; // Phase 2
+let drawerScrollLock = null;
 
 // ===== Helpers =====
 function esc(v) {
@@ -714,7 +715,7 @@ function openCompareModal() {
     body.innerHTML = html;
     overlay.classList.remove('drawer-mobile');
     overlay.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
 }
 
 // ===== States =====
@@ -793,6 +794,28 @@ function renderErrorState() {
 
 // ===== Detail Drawer =====
 
+function lockBodyScroll() {
+    if (drawerScrollLock) return;
+    const body = document.body;
+    const scrollBarGap = Math.max(0, window.innerWidth - document.documentElement.clientWidth);
+    drawerScrollLock = {
+        overflow: body.style.overflow,
+        paddingRight: body.style.paddingRight,
+    };
+    body.style.overflow = 'hidden';
+    if (scrollBarGap > 0) {
+        body.style.paddingRight = `${scrollBarGap}px`;
+    }
+}
+
+function unlockBodyScroll() {
+    if (!drawerScrollLock) return;
+    const body = document.body;
+    body.style.overflow = drawerScrollLock.overflow;
+    body.style.paddingRight = drawerScrollLock.paddingRight;
+    drawerScrollLock = null;
+}
+
 function openDrawer(signal) {
     try {
     const overlay = document.getElementById('drawerOverlay');
@@ -836,6 +859,7 @@ function openDrawer(signal) {
             <span class="drawer-field-label">芯片</span>
             <span class="drawer-field-value">
                 <a href="chip-signals.html?name=${esc(signal.chip_name)}" class="entity-link">${esc(signal.chip_name)}</a>
+                <a href="chip-signals.html?name=${esc(signal.chip_name)}" class="drawer-impact-link">查看芯片影響 →</a>
             </span>
         </div>
         <div class="drawer-field"><span class="drawer-field-label">地區</span><span class="drawer-field-value">${esc(regionLabel(signal.region))}</span></div>
@@ -940,7 +964,7 @@ function openDrawer(signal) {
     }
 
     overlay.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    lockBodyScroll();
     } catch (err) {
         console.error('[Signals] openDrawer error:', err);
     }
@@ -950,7 +974,7 @@ function closeDrawer() {
     const overlay = document.getElementById('drawerOverlay');
     if (!overlay) return;
     overlay.style.display = 'none';
-    document.body.style.overflow = '';
+    unlockBodyScroll();
 }
 
 // ===== Drawer History (Phase 4) =====
