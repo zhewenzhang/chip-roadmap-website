@@ -8,8 +8,6 @@
  * All derivation logic lives in js/modules/roadmap-derived.js.
  */
 
-import { isRoadmapEligibleSignal } from './roadmap-derived.js';
-
 const COMPANY_ORDER = ['nvidia', 'amd', 'intel', 'huawei_ascend', 'cambricon', 'google_tpu', 'tsmc', 'samsung', 'sk_hynix'];
 
 const COMPANY_STYLE = {
@@ -214,12 +212,131 @@ function getMatrixYears(matrix) {
 }
 
 /**
- * Show signal detail in a compact popup (legacy behavior, updated to use signal fields).
- * Falls back to navigating to the chip intelligence page.
+ * Show signal detail in a compact overlay driven by the signal record.
+ * Displays identity, status, confidence, ABF impact, and evidence summary.
+ * Provides onward navigation to chip and company intelligence pages.
  */
 function showSignalDetail(signal, style) {
-    // Navigate to chip intelligence page as primary action
-    window.location.href = `chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`;
+    document.querySelector('.roadmap-signal-detail')?.remove();
+
+    const IMPACT_LABELS = { explosive: '爆炸性', high: '高', medium: '中', low: '低' };
+    const STAGE_LABELS = { pilot: '試產', ramp: '爬坡', volume: '量產' };
+    const STATUS_LABELS = { verified: '已驗證', watch: '觀望', draft: '草稿', downgraded: '降級', invalidated: '失效' };
+
+    const overlay = document.createElement('div');
+    overlay.className = 'roadmap-signal-detail';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:10000;';
+
+    const modal = document.createElement('div');
+    modal.style.cssText = 'background:#fff;border:2px solid #111;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;padding:24px;position:relative;';
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '×';
+    closeBtn.style.cssText = 'position:absolute;top:8px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:#333;';
+    closeBtn.addEventListener('click', () => overlay.remove());
+    modal.appendChild(closeBtn);
+
+    // Header: company + chip
+    const header = document.createElement('div');
+    header.style.cssText = 'margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;';
+
+    const companyLine = document.createElement('div');
+    companyLine.style.cssText = 'font-size:12px;color:#6b7280;font-family:monospace;';
+    companyLine.textContent = style.label || signal.company_name;
+
+    const chipLine = document.createElement('div');
+    chipLine.style.cssText = 'font-size:20px;font-weight:700;margin-top:4px;';
+    chipLine.textContent = signal.chip_name;
+
+    const titleLine = document.createElement('div');
+    titleLine.style.cssText = 'font-size:13px;color:#6b7280;margin-top:4px;';
+    titleLine.textContent = signal.title || '';
+
+    header.appendChild(companyLine);
+    header.appendChild(chipLine);
+    header.appendChild(titleLine);
+    modal.appendChild(header);
+
+    // Meta badges
+    const metaRow = document.createElement('div');
+    metaRow.style.cssText = 'display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;';
+
+    const addBadge = (label, color) => {
+        const b = document.createElement('span');
+        b.style.cssText = `font-size:11px;padding:3px 8px;border:1px solid ${color};color:${color};font-family:monospace;text-transform:uppercase;`;
+        b.textContent = label;
+        metaRow.appendChild(b);
+    };
+
+    addBadge(STAGE_LABELS[signal.stage] || signal.stage, '#111');
+    addBadge(STATUS_LABELS[signal.status] || signal.status, '#111');
+    addBadge(`信度 ${signal.confidence_score}`, '#111');
+    addBadge(`ABF ${IMPACT_LABELS[signal.abf_demand_impact] || signal.abf_demand_impact}`, '#111');
+    modal.appendChild(metaRow);
+
+    // Fields
+    const fields = [];
+    if (signal.package_type) fields.push({ label: '封裝', value: signal.package_type });
+    if (signal.cowos_required) fields.push({ label: 'CoWoS', value: '是' });
+    if (signal.abf_size) fields.push({ label: 'ABF 尺寸', value: signal.abf_size });
+    if (signal.abf_layers) fields.push({ label: 'ABF 層數', value: signal.abf_layers + ' 層' });
+    if (signal.hbm) fields.push({ label: 'HBM', value: signal.hbm });
+    if (signal.release_year) fields.push({ label: '量產', value: `${signal.release_year} ${signal.release_quarter || ''}` });
+
+    if (fields.length > 0) {
+        const fieldsDiv = document.createElement('div');
+        fieldsDiv.style.cssText = 'margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;';
+        fields.forEach(f => {
+            const row = document.createElement('div');
+            row.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;padding:3px 0;';
+            row.innerHTML = `<span style="color:#6b7280">${f.label}</span><span style="font-weight:500">${f.value}</span>`;
+            fieldsDiv.appendChild(row);
+        });
+        modal.appendChild(fieldsDiv);
+    }
+
+    // Evidence summary
+    if (signal.evidence_summary) {
+        const evidenceDiv = document.createElement('div');
+        evidenceDiv.style.cssText = 'margin-bottom:16px;';
+        const evidenceTitle = document.createElement('div');
+        evidenceTitle.style.cssText = 'font-size:11px;text-transform:uppercase;color:#6b7280;font-family:monospace;margin-bottom:4px;';
+        evidenceTitle.textContent = '證據摘要';
+        const evidenceText = document.createElement('div');
+        evidenceText.style.cssText = 'font-size:13px;line-height:1.6;color:#374151;';
+        evidenceText.textContent = signal.evidence_summary;
+        evidenceDiv.appendChild(evidenceTitle);
+        evidenceDiv.appendChild(evidenceText);
+        modal.appendChild(evidenceDiv);
+    }
+
+    // Onward navigation
+    const navDiv = document.createElement('div');
+    navDiv.style.cssText = 'display:flex;gap:8px;padding-top:12px;border-top:1px solid #e5e7eb;flex-wrap:wrap;';
+
+    const makeLink = (href, text) => {
+        const a = document.createElement('a');
+        a.href = href;
+        a.style.cssText = 'font-size:12px;font-family:monospace;color:#111;text-decoration:none;padding:6px 12px;border:1px solid #111;';
+        a.textContent = text;
+        return a;
+    };
+
+    navDiv.appendChild(makeLink(`chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`, '查看芯片信號 →'));
+    if (signal.company_id) {
+        navDiv.appendChild(makeLink(`company-signals.html?id=${encodeURIComponent(signal.company_id)}`, '查看公司信號 →'));
+    }
+    modal.appendChild(navDiv);
+
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+
+    // Event handlers
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+    const onKey = e => { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onKey); } };
+    document.addEventListener('keydown', onKey);
+    closeBtn.focus();
 }
 
 export { renderTimeline };
