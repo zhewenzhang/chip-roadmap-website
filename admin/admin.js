@@ -12,7 +12,7 @@ import {
 } from '../js/modules/signals-schema.js';
 import {
     buildQualityQueue, getQualitySummary, sortQualityQueue,
-    QUEUE_TYPES,
+    evaluateSignalQuality, QUEUE_TYPES,
 } from '../js/modules/data-quality.js';
 import {
     downloadTemplate, parseExcelFile, validateRow, classifyImportRow,
@@ -2050,56 +2050,125 @@ function openQuickFixModal(signalId) {
     });
 }
 
-// ===== MARK REVIEWED MODAL (Phase 14.2) =====
+// ===== MARK REVIEWED MODAL (Phase 14.3 — Guided Resolution) =====
+
+function getRemainingIssues(updatedSignal) {
+    const companies = companiesData || [];
+    const allChipNames = new Set(signalsData.map(s => s.chip_name).filter(Boolean));
+    return evaluateSignalQuality(updatedSignal, { companies, allChipNames });
+}
 
 function openMarkReviewedModal(signalId) {
     const signal = signalsData.find(s => s.id === signalId);
     if (!signal) return;
 
-    // Find the quality item to show current issues
     const qualityItem = qualityQueue.find(q => q.signalId === signalId);
-    const issuesHtml = qualityItem ? qualityItem.issues.map(i => `<span class="badge badge-red">${esc(i.reason)}</span>`).join(' ') : '';
+    const currentIssuesHtml = qualityItem
+        ? qualityItem.issues.map(i => `<span class="badge badge-red">${esc(i.reason)}</span>`).join(' ')
+        : '—';
 
-    const hasConflicting = signal.conflicting_evidence ? true : false;
+    const hasConflicting = !!signal.conflicting_evidence;
+
+    // Check if signal has remaining NEEDS_VERIFICATION or MISSING_FIELDS issues
+    const tempSignal = { ...signal, reviewed_at: new Date().toISOString() };
+    if (hasConflicting) tempSignal.conflicting_evidence = '';
+    const remainingAfterReview = getRemainingIssues(tempSignal);
+    const hasRemainingIssues = remainingAfterReview.length > 0;
 
     const formHtml = `
         <div class="dq-review-form">
             <div class="dq-review-signal">
                 <strong>${esc(signal.title)}</strong>
-                <div style="margin-top:4px">${issuesHtml}</div>
+                <div style="margin-top:4px">${currentIssuesHtml}</div>
             </div>
-            <div class="dq-field">
-                <label>複核備註</label>
-                <textarea id="dq-review-note" rows="3" placeholder="記錄複核結論...">${esc(signal.review_note || '')}</textarea>
+
+            <!-- Core review section -->
+            <div class="dq-section">
+                <h4 class="dq-section-title">複核</h4>
+                <div class="dq-field">
+                    <label>複核備註</label>
+                    <textarea id="dq-review-note" rows="3" placeholder="記錄複核結論...">${esc(signal.review_note || '')}</textarea>
+                </div>
+                ${hasConflicting ? `
+                <div class="dq-field">
+                    <label>
+                        <input type="checkbox" id="dq-clear-conflicting">
+                        清除矛盾證據（當前：${esc(signal.conflicting_evidence.slice(0, 60))}${signal.conflicting_evidence.length > 60 ? '...' : ''}）
+                    </label>
+                </div>
+                ` : ''}
             </div>
-            ${hasConflicting ? `
-            <div class="dq-field">
-                <label>
-                    <input type="checkbox" id="dq-clear-conflicting">
-                    清除矛盾證據（當前：${esc(signal.conflicting_evidence.slice(0, 60))}${signal.conflicting_evidence.length > 60 ? '...' : ''}）
-                </label>
+
+            <!-- Guided resolution: complete verification -->
+            ${hasRemainingIssues ? `
+            <div class="dq-section dq-optional-section">
+                <h4 class="dq-section-title">
+                    <label style="cursor:pointer;display:flex;align-items:center;gap:6px">
+                        <input type="checkbox" id="dq-complete-verification">
+                        同時完成驗證
+                    </label>
+                </h4>
+                <div id="dq-verification-fields" style="display:none">
+                    <div class="dq-field">
+                        <label>狀態</label>
+                        <select id="dq-verify-status">
+                            <option value="watch" ${signal.status === 'watch' ? 'selected' : ''}>${STATUS_LABEL.watch}</option>
+                            <option value="verified">${STATUS_LABEL.verified}</option>
+                        </select>
+                    </div>
+                    <div class="dq-field">
+                        <label>信度 (0-100)</label>
+                        <input id="dq-verify-confidence" type="number" min="0" max="100" value="${signal.confidence_score ?? 50}" />
+                    </div>
+                    <div class="dq-field">
+                        <label>驗證日期</label>
+                        <input id="dq-verify-date" type="date" value="${new Date().toISOString().slice(0, 10)}" />
+                    </div>
+                    <div class="dq-field">
+                        <label>驗證人</label>
+                        <input id="dq-verify-by" value="${esc(auth.currentUser?.email || '')}" />
+                    </div>
+                    <div class="dq-field">
+                        <label>驗證備註</label>
+                        <textarea id="dq-verify-note" rows="2" placeholder="記錄驗證依據..."></textarea>
+                    </div>
+                </div>
             </div>
-            ` : ''}
+            <div class="dq-review-info">
+                數據品質需多步驟完成：複核 → 驗證 → 完整性 → 關聯。標記複核後，可在此繼續完成驗證。
+            </div>
+            ` : `
             <div class="dq-review-info">
                 複核人：${esc(auth.currentUser?.email || 'unknown')}<br>
                 複核時間：${new Date().toISOString().slice(0, 19).replace('T', ' ')}
             </div>
+            `}
         </div>
         <style>
             .dq-review-form .dq-field { margin-bottom: 10px; }
             .dq-review-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
-            .dq-review-form textarea {
+            .dq-review-form textarea, .dq-review-form input[type="text"], .dq-review-form input[type="date"],
+            .dq-review-form input[type="number"], .dq-review-form select {
                 width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
                 font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
             }
             .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
             .dq-review-info { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+            .dq-section { margin-bottom: 14px; padding: 10px; border: 1px solid #eee; border-radius: 4px; }
+            .dq-section-title { margin: 0 0 8px; font-size: 13px; font-weight: 600; color: var(--text); }
+            .dq-optional-section { border-color: #cde6ff; background: #f9fbff; }
         </style>
     `;
 
     openModal('標記已複核', formHtml, async () => {
+        // --- Core review fields ---
         const reviewNote = document.getElementById('dq-review-note').value.trim();
         const clearConflicting = document.getElementById('dq-clear-conflicting')?.checked || false;
+
+        // Validation: conflicting evidence requires review_note if not cleared
+        if (hasConflicting && !clearConflicting && !reviewNote) {
+            throw new Error('矛盾證據未清除時，必須填寫複核備註');
+        }
 
         const updatedData = {
             ...signal,
@@ -2112,6 +2181,34 @@ function openMarkReviewedModal(signalId) {
             updatedData.conflicting_evidence = '';
         }
 
+        // --- Guided verification fields (if enabled) ---
+        const completeVerification = document.getElementById('dq-complete-verification')?.checked || false;
+        if (completeVerification) {
+            const verifyStatus = document.getElementById('dq-verify-status').value;
+            const verifyConfidence = Number(document.getElementById('dq-verify-confidence').value);
+            const verifyDate = document.getElementById('dq-verify-date').value;
+            const verifyBy = document.getElementById('dq-verify-by').value.trim();
+            const verifyNote = document.getElementById('dq-verify-note').value.trim();
+
+            // Validation for verified status
+            if (verifyStatus === 'verified') {
+                if (!verifyDate) throw new Error('驗證為 verified 時，必須填寫驗證日期');
+                if (!verifyBy) throw new Error('驗證為 verified 時，必須填寫驗證人');
+                if (!updatedData.evidence_summary && !signal.evidence_summary) {
+                    throw new Error('驗證為 verified 時，必須填寫證據摘要');
+                }
+                if (!updatedData.confidence_reason && !signal.confidence_reason) {
+                    throw new Error('驗證為 verified 時，必須填寫信度依據');
+                }
+            }
+
+            updatedData.status = verifyStatus;
+            updatedData.confidence_score = verifyConfidence;
+            updatedData.last_verified_at = verifyDate;
+            updatedData.last_verified_by = verifyBy;
+            updatedData.verification_note = verifyNote;
+        }
+
         const actor = auth.currentUser?.email || '';
         await saveSignal(signalId, updatedData, {
             actor,
@@ -2119,11 +2216,25 @@ function openMarkReviewedModal(signalId) {
             previousConfidence: signal.confidence_score,
         });
 
-        showToast('已標記複核 ✓');
+        // Re-evaluate remaining issues after save
+        const remaining = getRemainingIssues(updatedData);
+        if (remaining.length === 0) {
+            showToast('已完成，沒有剩餘數據品質問題');
+        } else {
+            const reasons = remaining.map(i => i.reason).join('；');
+            showToast(`複核已完成，但仍有 ${remaining.length} 個問題需要處理：${reasons}`);
+        }
+
         await fetchSignals();
         buildQualityQueueFromData();
         renderDataQualityTab();
     }, false);
+
+    // Toggle verification fields visibility
+    document.getElementById('dq-complete-verification')?.addEventListener('change', e => {
+        const fields = document.getElementById('dq-verification-fields');
+        fields.style.display = e.target.checked ? 'block' : 'none';
+    });
 }
 
 // ===== MODAL SYSTEM =====

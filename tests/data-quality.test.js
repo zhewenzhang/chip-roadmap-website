@@ -166,3 +166,40 @@ test('buildQualityQueue: unreviewed signal with recent change appears in NEEDS_R
     const reviewItems = queue.filter(q => q.queueType === QUEUE_TYPES.NEEDS_REVIEW);
     assert.ok(reviewItems.length > 0, 'unreviewed signal should be in NEEDS_REVIEW queue');
 });
+
+// ===== Guided Resolution (Phase 14.3) =====
+
+test('mark-reviewed suppresses NEEDS_REVIEW but leaves NEEDS_VERIFICATION if status is draft', () => {
+    const signal = {
+        ...baseSignal,
+        status: 'draft',
+        last_status_changed_at: daysAgo(5),
+        reviewed_at: daysAgo(1),
+        review_note: 'Reviewed',
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const reviewIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_REVIEW);
+    const verIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_VERIFICATION);
+    assert.equal(reviewIssues.length, 0, 'NEEDS_REVIEW should be suppressed');
+    assert.ok(verIssues.length > 0, 'NEEDS_VERIFICATION should still exist for draft status');
+});
+
+test('mark-reviewed + verified fields removes NEEDS_VERIFICATION', () => {
+    const signal = {
+        ...baseSignal,
+        status: 'verified',
+        last_status_changed_at: daysAgo(5),
+        reviewed_at: daysAgo(1),
+        review_note: 'Reviewed',
+        last_verified_at: daysAgo(1),
+        last_verified_by: 'admin@test.com',
+        confidence_score: 80,
+        evidence_summary: 'Evidence',
+        confidence_reason: 'Reason',
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const reviewIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_REVIEW);
+    const verIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_VERIFICATION);
+    assert.equal(reviewIssues.length, 0, 'NEEDS_REVIEW should be suppressed');
+    assert.equal(verIssues.length, 0, 'NEEDS_VERIFICATION should be suppressed after verification');
+});
