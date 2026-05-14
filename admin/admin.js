@@ -14,6 +14,9 @@ import {
     buildQualityQueue, getQualitySummary, sortQualityQueue,
     QUEUE_TYPES,
 } from '../js/modules/data-quality.js';
+import {
+    downloadTemplate, parseExcelFile, validateRow, importSignals,
+} from './import-signals.js';
 
 // ===== STATE =====
 let companiesData = [];
@@ -181,6 +184,7 @@ async function loadAllData() {
     renderCompaniesTab();
     renderInsightsTab();
     renderSignalsTab();
+    renderImportTab();
     renderArticlesTab();
     renderCompletenessTab();
     renderDataQualityTab();
@@ -894,6 +898,148 @@ async function deleteSignalAction(id) {
     showToast('已刪除');
     await fetchSignals();
     renderSignalsTab();
+}
+
+// ===== IMPORT TAB =====
+function renderImportTab() {
+    document.getElementById('import-content').innerHTML = `
+        <div class="import-workflow">
+            <h2>Signals Excel Import</h2>
+            <div class="import-step">
+                <h3>1. 下載模板</h3>
+                <button class="btn-sm" id="import-download-template">下載 Signals Excel 模板</button>
+            </div>
+            <div class="import-step">
+                <h3>2. 上傳 Excel</h3>
+                <input type="file" id="import-file-input" accept=".xlsx,.xls" style="margin-top:8px">
+            </div>
+            <div id="import-preview" style="display:none">
+                <h3>3. 預覽</h3>
+                <div id="import-summary" class="import-summary"></div>
+                <div id="import-table-wrap" class="import-table-wrap"></div>
+                <button class="btn-primary" id="import-confirm-btn" disabled style="margin-top:16px">確認匯入</button>
+            </div>
+            <div id="import-result" style="display:none">
+                <h3>匯入結果</h3>
+                <div id="import-result-summary"></div>
+            </div>
+        </div>
+    `;
+
+    // Bind download button
+    document.getElementById('import-download-template').addEventListener('click', () => {
+        downloadTemplate();
+    });
+
+    // Bind file input
+    document.getElementById('import-file-input').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        await handleImportFile(file);
+    });
+
+    // Bind confirm import button
+    document.getElementById('import-confirm-btn').addEventListener('click', async () => {
+        await handleConfirmImport();
+    });
+}
+
+// Parsed/import state
+let importParsedRows = [];
+
+async function handleImportFile(file) {
+    try {
+        const rawRows = await parseExcelFile(file);
+        importParsedRows = rawRows.map((row, idx) => {
+            const result = validateRow(row, signalsData);
+            return { rowNumber: idx + 1, ...result };
+        });
+
+        renderImportPreview();
+    } catch (err) {
+        console.error('Import parse error:', err);
+        alert('檔案解析失敗：' + err.message);
+    }
+}
+
+function renderImportPreview() {
+    const preview = document.getElementById('import-preview');
+    const summary = document.getElementById('import-summary');
+    const tableWrap = document.getElementById('import-table-wrap');
+    const confirmBtn = document.getElementById('import-confirm-btn');
+
+    preview.style.display = 'block';
+    document.getElementById('import-result').style.display = 'none';
+
+    const counts = { ready: 0, warning: 0, error: 0, duplicate: 0 };
+    for (const r of importParsedRows) counts[r.status]++;
+
+    summary.innerHTML = `
+        <span class="badge badge-green">${counts.ready} ready</span>&nbsp;
+        <span class="badge badge-yellow">${counts.warning} warning</span>&nbsp;
+        <span class="badge badge-red">${counts.error} error</span>&nbsp;
+        <span class="badge badge-gray">${counts.duplicate} duplicate</span>&nbsp;
+        <span style="margin-left:8px">共 ${importParsedRows.length} 筆</span>
+    `;
+
+    const importable = importParsedRows.filter(r => r.status === 'ready' || r.status === 'warning');
+    confirmBtn.disabled = importable.length === 0;
+
+    // Build compact preview table
+    const statusLabels = { ready: '可匯入', warning: '警告', error: '錯誤', duplicate: '重複' };
+    const statusClasses = { ready: 'badge-green', warning: 'badge-yellow', error: 'badge-red', duplicate: 'badge-gray' };
+
+    const rows = importParsedRows.map(r => {
+        const d = r.data;
+        return `<tr class="import-row-${r.status}">
+            <td>${r.rowNumber}</td>
+            <td><span class="badge ${statusClasses[r.status]}">${statusLabels[r.status]}</span></td>
+            <td class="td-truncate" title="${esc(d.title)}">${esc(d.title?.slice(0, 30) || '')}</td>
+            <td>${esc(d.company_name)}</td>
+            <td>${esc(d.chip_name)}</td>
+            <td>${esc(STAGE_LABEL[d.stage] || d.stage)}</td>
+            <td>${esc(STATUS_LABEL[d.status] || d.status)}</td>
+            <td>${esc(IMPACT_LABEL[d.abf_demand_impact] || d.abf_demand_impact)}</td>
+            <td class="td-truncate" title="${r.issues.join('; ')}">${esc(r.issues.slice(0, 2).join('; ') || '')}</td>
+        </tr>`;
+    }).join('');
+
+    tableWrap.innerHTML = `
+        <table class="import-table">
+            <thead>
+                <tr>
+                    <th>#</th><th>狀態</th><th>標題</th><th>公司</th><th>芯片</th>
+                    <th>階段</th><th>信號狀態</th><th>ABF 影響</th><th>問題</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+async function handleConfirmImport() {
+    const importable = importParsedRows.filter(r => r.status === 'ready' || r.status === 'warning');
+    if (importable.length === 0) return;
+
+    const actor = auth.currentUser?.email || 'bulk-import';
+    const results = await importSignals(importable, actor);
+
+    // Show result
+    const resultDiv = document.getElementById('import-result');
+    const resultSummary = document.getElementById('import-result-summary');
+    resultDiv.style.display = 'block';
+    resultSummary.innerHTML = `
+        <p>匯入完成：${results.imported} 筆成功 / ${results.skipped} 筆跳過 / ${results.errors} 筆失敗</p>
+    `;
+
+    // Refresh data
+    await fetchSignals();
+    buildQualityQueueFromData();
+    renderDataQualityTab();
+    renderSignalsTab();
+    renderImportTab();
+
+    showToast(`匯入完成：${results.imported} 筆信號`);
 }
 
 // ===== ARTICLES TAB =====
