@@ -18,6 +18,13 @@ import {
     downloadTemplate, parseExcelFile, validateRow, classifyImportRow,
     importSignals, logImportBatch,
 } from './import-signals.js';
+import {
+    AI_SETTINGS_KEYS, DEFAULT_EXTRACTION_PROMPT,
+    loadAiSettings, saveAiSettings,
+    loadExtractionPrompt, saveExtractionPrompt, resetExtractionPrompt,
+    testDeepSeekConnection, extractSignalsWithDeepSeek,
+    parseModelJson, normalizeAiCandidates, classifyAiCandidates,
+} from './ai-extract.js';
 
 // ===== STATE =====
 let companiesData = [];
@@ -187,6 +194,7 @@ async function loadAllData() {
     renderInsightsTab();
     renderSignalsTab();
     renderImportTab();
+    renderAiExtractTab();
     renderArticlesTab();
     renderCompletenessTab();
     renderDataQualityTab();
@@ -1072,6 +1080,302 @@ async function handleConfirmImport() {
     document.getElementById('import-confirm-btn').disabled = true;
 
     showToast(`匯入完成：${results.created} 建立 / ${results.updated} 更新`);
+}
+
+// ===== AI EXTRACT TAB =====
+let aiExtractSettings = loadAiSettings();
+let aiExtractCandidates = [];
+
+function renderAiExtractTab() {
+    aiExtractSettings = loadAiSettings();
+    const prompt = loadExtractionPrompt();
+    const hasImageUpload = typeof FileReader !== 'undefined';
+
+    document.getElementById('ai-extract-content').innerHTML = `
+        <div class="ai-extract-workflow">
+            <h2>AI 情報抽取</h2>
+
+            <!-- Settings -->
+            <div class="ai-section">
+                <h3>DeepSeek 設定</h3>
+                <div class="ai-form-row">
+                    <div class="ai-field">
+                        <label>API Key</label>
+                        <input type="password" id="ai-api-key" value="${esc(aiExtractSettings.apiKey)}" placeholder="sk-...">
+                    </div>
+                    <div class="ai-field">
+                        <label>Base URL</label>
+                        <input type="text" id="ai-base-url" value="${esc(aiExtractSettings.baseUrl)}" placeholder="https://api.deepseek.com">
+                    </div>
+                    <div class="ai-field">
+                        <label>Model</label>
+                        <input type="text" id="ai-model" value="${esc(aiExtractSettings.model)}" placeholder="deepseek-v4-flash">
+                    </div>
+                </div>
+                <div class="ai-actions">
+                    <button class="btn-sm" id="ai-save-settings">儲存設定</button>
+                    <button class="btn-sm btn-secondary" id="ai-test-connection">測試連線</button>
+                    <span id="ai-connection-status" style="margin-left:8px;font-size:12px"></span>
+                </div>
+                <div class="ai-warning">API key 僅儲存在此瀏覽器的 localStorage 中，請勿在共用電腦上使用。</div>
+            </div>
+
+            <!-- Prompt -->
+            <div class="ai-section">
+                <h3>抽取提示詞</h3>
+                <textarea id="ai-prompt" rows="12" style="font-family:monospace;font-size:12px;width:100%">${esc(prompt)}</textarea>
+                <div class="ai-actions" style="margin-top:8px">
+                    <button class="btn-sm" id="ai-save-prompt">儲存提示詞</button>
+                    <button class="btn-sm btn-secondary" id="ai-reset-prompt">恢復預設</button>
+                </div>
+            </div>
+
+            <!-- Source Input -->
+            <div class="ai-section">
+                <h3>情報來源輸入</h3>
+                <textarea id="ai-source-text" rows="6" placeholder="貼上原始情報文字..." style="width:100%"></textarea>
+                <div class="ai-form-row" style="margin-top:8px">
+                    <div class="ai-field">
+                        <label>上傳圖片（可選）</label>
+                        <input type="file" id="ai-image-input" accept=".png,.jpg,.jpeg,.webp">
+                    </div>
+                </div>
+                <div class="ai-actions" style="margin-top:8px">
+                    <button class="btn-primary" id="ai-extract-btn">抽取信號</button>
+                </div>
+            </div>
+
+            <!-- Candidates -->
+            <div id="ai-candidates-section" style="display:none">
+                <div class="ai-section">
+                    <h3>候選信號</h3>
+                    <div id="ai-candidates-summary" class="import-summary"></div>
+                    <div id="ai-candidates-table" class="import-table-wrap"></div>
+                    <div class="ai-actions" style="margin-top:12px">
+                        <button class="btn-primary" id="ai-confirm-import" disabled>確認匯入候選信號</button>
+                        <button class="btn-sm btn-secondary" id="ai-clear-candidates">清除候選</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div id="ai-result-section" style="display:none">
+                <div class="ai-section">
+                    <h3>匯入結果</h3>
+                    <div id="ai-result-summary"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Bind settings
+    document.getElementById('ai-save-settings').addEventListener('click', () => {
+        aiExtractSettings = {
+            apiKey: document.getElementById('ai-api-key').value.trim(),
+            baseUrl: document.getElementById('ai-base-url').value.trim(),
+            model: document.getElementById('ai-model').value.trim(),
+        };
+        saveAiSettings(aiExtractSettings);
+        showToast('設定已儲存');
+    });
+
+    document.getElementById('ai-test-connection').addEventListener('click', async () => {
+        const statusEl = document.getElementById('ai-connection-status');
+        statusEl.textContent = '測試中...';
+        statusEl.style.color = 'var(--text-muted)';
+        try {
+            const settings = {
+                apiKey: document.getElementById('ai-api-key').value.trim(),
+                baseUrl: document.getElementById('ai-base-url').value.trim(),
+                model: document.getElementById('ai-model').value.trim(),
+            };
+            const result = await testDeepSeekConnection(settings);
+            statusEl.textContent = `✓ 連線成功 (${result.model})`;
+            statusEl.style.color = 'var(--success)';
+        } catch (err) {
+            statusEl.textContent = `✗ ${err.message}`;
+            statusEl.style.color = 'var(--danger)';
+        }
+    });
+
+    // Bind prompt
+    document.getElementById('ai-save-prompt').addEventListener('click', () => {
+        saveExtractionPrompt(document.getElementById('ai-prompt').value);
+        showToast('提示詞已儲存');
+    });
+
+    document.getElementById('ai-reset-prompt').addEventListener('click', () => {
+        document.getElementById('ai-prompt').value = resetExtractionPrompt();
+        showToast('提示詞已恢復預設');
+    });
+
+    // Bind extract
+    document.getElementById('ai-extract-btn').addEventListener('click', async () => {
+        await handleAiExtract();
+    });
+
+    // Bind confirm import
+    document.getElementById('ai-confirm-import').addEventListener('click', async () => {
+        await handleAiConfirmImport();
+    });
+
+    // Bind clear candidates
+    document.getElementById('ai-clear-candidates').addEventListener('click', () => {
+        aiExtractCandidates = [];
+        document.getElementById('ai-candidates-section').style.display = 'none';
+        document.getElementById('ai-result-section').style.display = 'none';
+    });
+}
+
+let aiImageFile = null;
+
+async function handleAiExtract() {
+    const sourceText = document.getElementById('ai-source-text').value.trim();
+    const imageInput = document.getElementById('ai-image-input');
+
+    // Read image if uploaded
+    let imageDataUrl = null;
+    if (imageInput.files && imageInput.files[0]) {
+        aiImageFile = imageInput.files[0];
+        imageDataUrl = await readFileAsDataURL(aiImageFile);
+    }
+
+    if (!sourceText && !imageDataUrl) {
+        showToast('請輸入文字或上傳圖片', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('ai-extract-btn');
+    btn.disabled = true;
+    btn.textContent = '抽取中...';
+
+    try {
+        const prompt = document.getElementById('ai-prompt').value;
+        const rawText = await extractSignalsWithDeepSeek({
+            settings: aiExtractSettings,
+            prompt,
+            sourceText,
+            imageDataUrl,
+        });
+
+        // Parse JSON
+        const payload = parseModelJson(rawText);
+
+        // Normalize candidates
+        const candidates = normalizeAiCandidates(payload, aiExtractSettings);
+
+        if (candidates.length === 0) {
+            showToast('模型未回傳任何信號', 'error');
+            return;
+        }
+
+        // Classify using Phase 13 helpers
+        aiExtractCandidates = classifyAiCandidates(candidates, signalsData);
+
+        renderAiCandidates();
+    } catch (err) {
+        console.error('AI extract error:', err);
+        showToast(err.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '抽取信號';
+    }
+}
+
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+function renderAiCandidates() {
+    const section = document.getElementById('ai-candidates-section');
+    const summary = document.getElementById('ai-candidates-summary');
+    const tableWrap = document.getElementById('ai-candidates-table');
+    const confirmBtn = document.getElementById('ai-confirm-import');
+
+    section.style.display = 'block';
+    document.getElementById('ai-result-section').style.display = 'none';
+
+    const counts = { create: 0, update: 0, skip: 0, error: 0 };
+    for (const r of aiExtractCandidates) {
+        if (r.action === 'error') counts.error++;
+        else if (r.action === 'skip') counts.skip++;
+        else if (r.action === 'update') counts.update++;
+        else counts.create++;
+    }
+
+    summary.innerHTML = `
+        <span class="badge badge-green">${counts.create} create</span>&nbsp;
+        <span class="badge badge-blue">${counts.update} update</span>&nbsp;
+        <span class="badge badge-gray">${counts.skip} skip</span>&nbsp;
+        <span class="badge badge-red">${counts.error} error</span>&nbsp;
+        <span style="margin-left:8px">共 ${aiExtractCandidates.length} 筆</span>
+    `;
+
+    const actionable = aiExtractCandidates.filter(r => r.action === 'create' || r.action === 'update');
+    confirmBtn.disabled = actionable.length === 0;
+
+    const actionLabels = { create: '建立', update: '更新', skip: '跳過', error: '錯誤' };
+    const actionClasses = { create: 'badge-green', update: 'badge-blue', skip: 'badge-gray', error: 'badge-red' };
+
+    const rows = aiExtractCandidates.map(r => {
+        const d = r.data;
+        const aiBadge = d.ai_generated ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">AI</span>' : '';
+        const changedInfo = r.changedFields && r.changedFields.length > 0 ? `${r.changedFields.length} 欄位` : '';
+        return `<tr class="import-row-${r.action}">
+            <td>${r.rowNumber}</td>
+            <td><span class="badge ${actionClasses[r.action]}">${actionLabels[r.action]}</span></td>
+            <td class="td-truncate" title="${esc(d.title)}">${esc(d.title?.slice(0, 25) || '')}${aiBadge}</td>
+            <td>${esc(d.company_name)}</td>
+            <td>${esc(d.chip_name)}</td>
+            <td>${esc(STAGE_LABEL[d.stage] || d.stage)}</td>
+            <td><span class="badge ${statusChipClass(d.status)}">${statusLabel(d.status)}</span></td>
+            <td>${d.confidence_score}</td>
+            <td>${esc(IMPACT_LABEL[d.abf_demand_impact] || d.abf_demand_impact)}</td>
+            <td class="td-truncate">${esc(changedInfo || r.issues.slice(0, 1).join('; ') || '')}</td>
+        </tr>`;
+    }).join('');
+
+    tableWrap.innerHTML = `
+        <table class="import-table">
+            <thead>
+                <tr>
+                    <th>#</th><th>動作</th><th>標題</th><th>公司</th><th>芯片</th>
+                    <th>階段</th><th>狀態</th><th>信度</th><th>ABF</th><th>變更</th>
+                </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+        </table>
+    `;
+}
+
+async function handleAiConfirmImport() {
+    const actionable = aiExtractCandidates.filter(r => r.action === 'create' || r.action === 'update');
+    if (actionable.length === 0) return;
+
+    const actor = auth.currentUser?.email || 'ai-extract';
+    const results = await importSignals(aiExtractCandidates, actor);
+    await logImportBatch(actor, results);
+
+    const resultSection = document.getElementById('ai-result-section');
+    const resultSummary = document.getElementById('ai-result-summary');
+    resultSection.style.display = 'block';
+    resultSummary.innerHTML = `
+        <p>匯入完成：${results.created} 建立 / ${results.updated} 更新 / ${results.skipped} 跳過 / ${results.errors} 錯誤</p>
+    `;
+
+    await fetchSignals();
+    buildQualityQueueFromData();
+    renderDataQualityTab();
+    renderSignalsTab();
+    aiExtractCandidates = [];
+    document.getElementById('ai-confirm-import').disabled = true;
+
+    showToast(`AI 匯入完成：${results.created} 建立 / ${results.updated} 更新`);
 }
 
 // ===== ARTICLES TAB =====

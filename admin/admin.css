@@ -642,3 +642,70 @@ tr:hover td { background: var(--surface); }
 #import-result h3 {
     margin-bottom: 8px;
 }
+
+/* ===== AI Extract Tab (Phase 14) ===== */
+
+.ai-extract-workflow {
+    max-width: 100%;
+}
+
+.ai-extract-workflow h2 {
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.ai-section {
+    margin-bottom: 20px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.ai-section h3 {
+    font-size: 14px;
+    margin-bottom: 12px;
+    color: var(--text);
+}
+
+.ai-form-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ai-field {
+    flex: 1;
+    min-width: 200px;
+}
+
+.ai-field label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.ai-field input,
+.ai-field select {
+    width: 100%;
+    padding: 6px 8px;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.ai-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.ai-warning {
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--warning);
+    font-style: italic;
+}
