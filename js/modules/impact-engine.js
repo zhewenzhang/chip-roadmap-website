@@ -45,9 +45,15 @@ function pickHighestStage(signals) {
 function pickHighestImpact(signals) {
     let bestImpact = '';
     let bestOrder = 0;
+    let bestDate = '';
     for (const s of signals) {
         const o = IMPACT_ORDER[s.abf_demand_impact] || 0;
-        if (o > bestOrder) { bestOrder = o; bestImpact = s.abf_demand_impact; }
+        const d = s.last_verified_at || s.updatedAt || s.createdAt || '';
+        if (o > bestOrder || (o === bestOrder && o > 0 && d > bestDate)) {
+            bestOrder = o;
+            bestImpact = s.abf_demand_impact;
+            bestDate = d;
+        }
     }
     return bestImpact;
 }

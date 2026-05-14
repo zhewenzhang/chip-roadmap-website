@@ -313,6 +313,10 @@ function renderCompanyAbfHeader(signals, allSigs) {
         ).join(' / ')}</div>`;
     }
 
+    // Derivation basis line
+    const chipCount = outlook.chipImpacts ? outlook.chipImpacts.filter(c => !c.insufficientData).length : 0;
+    html += `<div class="impact-source-line">推導依據: ${chipCount} 款芯片可推導影響</div>`;
+
     container.innerHTML = html;
     container.style.display = 'block';
 }
@@ -321,30 +325,34 @@ function renderCompanyAbfHeader(signals, allSigs) {
  * Render driving evidence panel (shared between chip and company)
  */
 function renderEvidencePanel(drivingSignals, conflictingSignals) {
-    if (!drivingSignals || drivingSignals.length === 0) return '';
+    const hasDriving = drivingSignals && drivingSignals.length > 0;
+    const hasConflicts = conflictingSignals && conflictingSignals.length > 0;
+    if (!hasDriving && !hasConflicts) return '';
 
     let html = '<div class="impact-evidence-panel">';
 
     // Driving signals section
-    html += `<div class="evidence-section-title">驅動信號 (${drivingSignals.length})</div>`;
-    html += '<div class="evidence-list">';
+    if (hasDriving) {
+        html += `<div class="evidence-section-title">驅動信號 (${drivingSignals.length})</div>`;
+        html += '<div class="evidence-list">';
 
-    for (const ds of drivingSignals) {
-        const statusCls = ds.status === 'verified' ? 'signal-status-verified'
-            : ds.status === 'watch' ? 'signal-status-watch' : '';
-        html += `<div class="evidence-item" data-signal-id="${esc(ds.id)}">
-            <span class="evidence-date">${formatDate(ds.last_verified_at)}</span>
-            <span class="evidence-status ${statusCls}">${esc(statusLabel(ds.status))}</span>
-            <span class="evidence-confidence">${ds.confidence}</span>
-            <span class="evidence-reason">${esc(stageLabel(ds.stage))} · 貢獻 ${ds.contribution > 0 ? ds.contribution.toFixed(1) : '0'}</span>
-        </div>`;
+        for (const ds of drivingSignals) {
+            const statusCls = ds.status === 'verified' ? 'signal-status-verified'
+                : ds.status === 'watch' ? 'signal-status-watch' : '';
+            html += `<div class="evidence-item" data-signal-id="${esc(ds.id)}">
+                <span class="evidence-date">${formatDate(ds.last_verified_at)}</span>
+                <span class="evidence-status ${statusCls}">${esc(statusLabel(ds.status))}</span>
+                <span class="evidence-confidence">${ds.confidence}</span>
+                <span class="evidence-reason">${esc(stageLabel(ds.stage))} · 貢獻 ${ds.contribution > 0 ? ds.contribution.toFixed(1) : '0'}</span>
+            </div>`;
+        }
+
+        html += '</div>';
     }
 
-    html += '</div>';
-
-    // Conflicting signals section
-    if (conflictingSignals && conflictingSignals.length > 0) {
-        html += `<div class="evidence-section-title" style="margin-top:16px">矛盾信號 (${conflictingSignals.length})</div>`;
+    // Conflicting signals section — render even if no driving signals
+    if (hasConflicts) {
+        html += `<div class="evidence-section-title"${hasDriving ? ' style="margin-top:16px"' : ''}>矛盾信號 (${conflictingSignals.length})</div>`;
         html += '<div class="evidence-list">';
 
         for (const cs of conflictingSignals) {
