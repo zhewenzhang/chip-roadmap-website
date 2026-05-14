@@ -14,7 +14,7 @@
  * - write to Firestore directly
  */
 
-import { classifyImportRow } from './import-signals.js';
+import { classifyImportRow, validateRow } from './import-signals.js';
 
 // ===== Settings =====
 
@@ -295,32 +295,55 @@ export function normalizeAiCandidates(payload, settings) {
 
 /**
  * Classify AI candidate signals using Phase 13 import helpers.
+ *
+ * Each candidate goes through validateRow() → classifyImportRow(),
+ * so missing required fields are caught before they ever reach createSignal().
+ *
+ * @param {Array} candidates — normalized AI candidate objects (from normalizeAiCandidates)
+ * @param {Array} existingSignals — current signals from Firestore
+ * @returns {Array} classified rows with rowNumber, action, issues, data
  */
 export function classifyAiCandidates(candidates, existingSignals) {
     return candidates.map((candidate, idx) => {
-        // Build a minimal "row" object that validateRow/classifyImportRow expect
-        const validated = {
-            status: 'ready',
-            action: '',
-            issues: [],
-            data: {
-                ...candidate,
-                // Ensure required fields are present for classification
-                title: candidate.title || '',
-                company_id: candidate.company_id || '',
-                company_name: candidate.company_name || '',
-                chip_name: candidate.chip_name || '',
-                region: candidate.region || '',
-                stage: candidate.stage || '',
-                confidence_score: candidate.confidence_score || 0,
-                abf_demand_impact: candidate.abf_demand_impact || '',
-                evidence_summary: candidate.evidence_summary || '',
-                confidence_reason: candidate.confidence_reason || '',
-                last_verified_at: candidate.last_verified_at || '',
-                import_key: candidate.import_key || '',
-            },
+        // Build a plain row object that validateRow expects (like an Excel row)
+        const rawRow = {
+            title: candidate.title || '',
+            company_id: candidate.company_id || '',
+            company_name: candidate.company_name || '',
+            chip_name: candidate.chip_name || '',
+            region: candidate.region || '',
+            stage: candidate.stage || '',
+            status: candidate.status || 'draft',
+            confidence_score: candidate.confidence_score ?? 0,
+            abf_demand_impact: candidate.abf_demand_impact || '',
+            evidence_summary: candidate.evidence_summary || '',
+            confidence_reason: candidate.confidence_reason || '',
+            last_verified_at: candidate.last_verified_at || '',
+            import_key: candidate.import_key || '',
+            signal_type: candidate.signal_type || '',
+            release_year: candidate.release_year || '',
+            release_quarter: candidate.release_quarter || '',
+            package_type: candidate.package_type || '',
+            cowos_required: candidate.cowos_required || '',
+            abf_size: candidate.abf_size || '',
+            abf_layers: candidate.abf_layers || '',
+            hbm: candidate.hbm || '',
+            expected_volume: candidate.expected_volume || '',
+            impact_scope: candidate.impact_scope || '',
+            conflicting_evidence: candidate.conflicting_evidence || '',
+            last_verified_by: candidate.last_verified_by || '',
+            tags: Array.isArray(candidate.tags) ? candidate.tags.join(',') : (candidate.tags || ''),
+            source_regions: Array.isArray(candidate.source_regions) ? candidate.source_regions.join(',') : (candidate.source_regions || ''),
+            sources: Array.isArray(candidate.sources) ? JSON.stringify(candidate.sources) : (candidate.sources || ''),
+            notes: candidate.notes || '',
         };
+
+        // Step 1: validate (catches missing required fields, enum errors, etc.)
+        const validated = validateRow(rawRow, existingSignals);
+
+        // Step 2: classify (create / update / skip / error)
         const classified = classifyImportRow(validated, existingSignals);
+
         return {
             rowNumber: idx + 1,
             ...classified,

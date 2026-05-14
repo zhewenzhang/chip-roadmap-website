@@ -22,7 +22,7 @@ import {
 const REQUIRED_COLS = [
     'title', 'company_id', 'company_name', 'chip_name',
     'region', 'stage', 'status', 'confidence_score', 'abf_demand_impact',
-    'evidence_summary', 'confidence_reason', 'last_verified_at',
+    'evidence_summary', 'confidence_reason',
 ];
 
 const OPTIONAL_COLS = [
@@ -30,7 +30,7 @@ const OPTIONAL_COLS = [
     'signal_type', 'release_year', 'release_quarter',
     'package_type', 'cowos_required', 'abf_size', 'abf_layers',
     'hbm', 'expected_volume', 'impact_scope', 'conflicting_evidence',
-    'last_verified_by', 'tags', 'source_regions', 'sources',
+    'last_verified_by', 'last_verified_at', 'tags', 'source_regions', 'sources',
     'notes', 'verification_note',
 ];
 

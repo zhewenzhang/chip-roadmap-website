@@ -4,6 +4,7 @@
  * Tests pure functions from admin/ai-extract.js:
  * - parseModelJson (plain JSON, fenced JSON, missing signals)
  * - normalizeAiCandidates (forces draft/watch, stamps AI metadata)
+ * - classifyAiCandidates (validates through validateRow, catches missing fields)
  */
 
 import test from 'node:test';
@@ -16,7 +17,7 @@ try {
     mod = {};
 }
 
-const { parseModelJson, normalizeAiCandidates } = mod;
+const { parseModelJson, normalizeAiCandidates, classifyAiCandidates } = mod;
 
 // ===== parseModelJson =====
 
@@ -195,4 +196,123 @@ test('normalizeAiCandidates: converts comma-separated tags to arrays', () => {
     assert.ok(Array.isArray(result[0].tags));
     assert.equal(result[0].tags.length, 3);
     assert.equal(result[0].tags[0], 'ai-accelerator');
+});
+
+// ===== classifyAiCandidates =====
+
+test('classifyAiCandidates: missing company_id returns action=error', () => {
+    const candidates = normalizeAiCandidates({
+        signals: [
+            {
+                title: 'No company',
+                company_id: '',
+                company_name: '',
+                chip_name: 'TestChip',
+                region: 'USA',
+                stage: 'ramp',
+                status: 'draft',
+                confidence_score: 40,
+                abf_demand_impact: 'low',
+                evidence_summary: 'Some evidence',
+                confidence_reason: 'Some reason',
+            },
+        ],
+    }, mockSettings);
+
+    const results = classifyAiCandidates(candidates, []);
+    assert.equal(results[0].action, 'error');
+    assert.ok(results[0].issues.some(i => i.includes('company_id')), 'should mention missing company_id');
+});
+
+test('classifyAiCandidates: missing multiple required fields returns action=error', () => {
+    const candidates = normalizeAiCandidates({
+        signals: [
+            {
+                title: '',
+                company_id: '',
+                company_name: '',
+                chip_name: '',
+                region: '',
+                stage: '',
+                status: 'draft',
+                confidence_score: 0,
+                abf_demand_impact: '',
+            },
+        ],
+    }, mockSettings);
+
+    const results = classifyAiCandidates(candidates, []);
+    assert.equal(results[0].action, 'error');
+    assert.ok(results[0].issues.length > 0, 'should have error messages');
+});
+
+test('classifyAiCandidates: valid candidate still becomes action=create', () => {
+    const candidates = normalizeAiCandidates({
+        signals: [
+            {
+                title: 'Valid AI signal',
+                company_id: 'nvidia',
+                company_name: 'NVIDIA',
+                chip_name: 'B200',
+                region: 'USA',
+                stage: 'ramp',
+                status: 'draft',
+                confidence_score: 50,
+                abf_demand_impact: 'high',
+                evidence_summary: 'Evidence summary with enough text',
+                confidence_reason: 'Reason for confidence',
+            },
+        ],
+    }, mockSettings);
+
+    const results = classifyAiCandidates(candidates, []);
+    assert.equal(results[0].action, 'create');
+    assert.equal(results[0].data.company_id, 'nvidia');
+    assert.equal(results[0].data.title, 'Valid AI signal');
+});
+
+test('classifyAiCandidates: missing region returns action=error', () => {
+    const candidates = normalizeAiCandidates({
+        signals: [
+            {
+                title: 'No region',
+                company_id: 'amd',
+                company_name: 'AMD',
+                chip_name: 'MI350',
+                region: '',
+                stage: 'pilot',
+                status: 'draft',
+                confidence_score: 40,
+                abf_demand_impact: 'medium',
+                evidence_summary: 'Some evidence text here',
+                confidence_reason: 'Some reason',
+            },
+        ],
+    }, mockSettings);
+
+    const results = classifyAiCandidates(candidates, []);
+    assert.equal(results[0].action, 'error');
+});
+
+test('classifyAiCandidates: invalid stage enum returns action=error', () => {
+    const candidates = normalizeAiCandidates({
+        signals: [
+            {
+                title: 'Bad stage',
+                company_id: 'intel',
+                company_name: 'Intel',
+                chip_name: 'Gaudi4',
+                region: 'USA',
+                stage: 'unknown_stage',
+                status: 'draft',
+                confidence_score: 40,
+                abf_demand_impact: 'low',
+                evidence_summary: 'Some evidence text here',
+                confidence_reason: 'Some reason',
+            },
+        ],
+    }, mockSettings);
+
+    const results = classifyAiCandidates(candidates, []);
+    assert.equal(results[0].action, 'error');
 });
