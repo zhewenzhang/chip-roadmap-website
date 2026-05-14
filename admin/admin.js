@@ -2213,10 +2213,23 @@ async function handleInboxAdopt(id) {
         previousStatus: signal.status,
     });
 
-    // Show transition result
-    const placement = describeSignalPlacement({ ...signal, status: 'draft' }, qualityQueue);
-    showToast(`已採用為草稿，${placement.message}`, 'success', 4000);
+    // Fetch fresh data and check if item left inbox
     await fetchSignals();
+    const refreshed = signalsData.find(s => s.id === id);
+    const stillInInbox = refreshed && refreshed.status === 'draft' && !refreshed.last_reviewed_at;
+
+    if (stillInInbox) {
+        // Should not happen normally; show placement info
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        showToast(`已採用為草稿，${placement?.message || '已記錄操作'}`, 'success', 4000);
+    } else {
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        if (placement && placement.queueType !== '無') {
+            showToast(`已採用為草稿，已從新信號待辦移除；仍有數據品質問題：${placement.queueType}`, 'success', 4000);
+        } else {
+            showToast('已採用為草稿，已從新信號待辦移除；仍可在全部信號中查看', 'success', 4000);
+        }
+    }
     renderInboxTab();
 }
 
@@ -2229,10 +2242,15 @@ async function handleInboxPromote(id) {
         previousStatus: signal.status,
     });
 
-    // Show transition result
-    const placement = describeSignalPlacement({ ...signal, status: 'watch' }, qualityQueue);
-    showToast(`已升級為觀察中，${placement.message}`, 'success', 4000);
+    // Fetch fresh data and show placement
     await fetchSignals();
+    const refreshed = signalsData.find(s => s.id === id);
+    const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+    if (placement && placement.queueType !== '無') {
+        showToast(`已升級為觀察中，${placement.message}`, 'success', 4000);
+    } else {
+        showToast('已升級為觀察中，現在進入「待驗證」', 'success', 4000);
+    }
     renderInboxTab();
     renderReviewTab();
 }
@@ -2275,8 +2293,10 @@ async function handleInboxReject(id) {
         });
 
         // Show transition result
-        showToast(`已拒絕，狀態為 invalidated`, 'success', 4000);
         await fetchSignals();
+        const refreshed = signalsData.find(s => s.id === id);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        showToast(`已拒絕，${placement?.message || '狀態為 invalidated'}`, 'success', 4000);
         renderInboxTab();
     }, false);
 }
@@ -2348,11 +2368,11 @@ async function handleReviewVerify(id) {
             previousStatus: signal.status,
             previousConfidence: signal.confidence_score,
         });
-
-        // Show transition result
-        const placement = describeSignalPlacement({ ...signal, status: 'verified' }, qualityQueue);
-        showToast(`已升級為觀察中，現在進入「待驗證」`, 'success', 4000);
+        // Show transition result — use refreshed signal, not stale closure
         await fetchSignals();
+        const refreshed = signalsData.find(s => s.id === id);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        showToast(`已驗證，${placement?.message || '狀態已更新為 verified'}`, 'success', 4000);
         renderReviewTab();
     }, false);
 }
@@ -2393,9 +2413,10 @@ async function handleReviewDowngrade(id) {
             actor,
             previousStatus: signal.status,
         });
-        const placement = describeSignalPlacement({ ...signal, status: 'downgraded' }, qualityQueue);
-        showToast(`已降級，${placement.message}`, 'success', 4000);
         await fetchSignals();
+        const refreshed = signalsData.find(s => s.id === id);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        showToast(`已降級，${placement?.message || '狀態已更新為 downgraded'}`, 'success', 4000);
         renderReviewTab();
     }, false);
 }
@@ -2969,9 +2990,12 @@ function openModal(title, bodyHtml, onSave, wide = false) {
     const box = modal.querySelector('.modal-box');
     if (wide === 'signal-edit') {
         box.classList.add('signal-edit-modal');
+        box.style.maxWidth = '';
+        box.style.width = '';
     } else {
         box.classList.remove('signal-edit-modal');
         box.style.maxWidth = wide ? '900px' : '680px';
+        box.style.width = '';
     }
     currentSaveFn = onSave;
     setTimeout(() => {
@@ -2983,6 +3007,10 @@ function openModal(title, bodyHtml, onSave, wide = false) {
 function closeModal() {
     modal.style.display = 'none';
     modalBody.innerHTML = '';
+    const box = modal.querySelector('.modal-box');
+    box.classList.remove('signal-edit-modal');
+    box.style.maxWidth = '680px';
+    box.style.width = '';
     currentSaveFn = null;
 }
 
