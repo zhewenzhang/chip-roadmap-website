@@ -1,17 +1,17 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>芯片 Roadmap 专业分析平台 | Semiconductor Industry Intelligence</title>
-    <meta name="description" content="Comprehensive semiconductor industry intelligence: track 255+ companies, 67+ chip roadmaps, and market trends across China, US, Taiwan, and global regions.">
-    <meta property="og:title" content="Chip Industry Roadmap Tracker">
-    <meta property="og:description" content="Track chip companies and roadmaps across China, US, Taiwan, and global markets.">
+    <title>AI 芯片供應鏈驗證情報層 — Chip Industry Intelligence</title>
+    <meta name="description" content="追蹤、驗證、推導每顆關鍵 AI 芯片對 ABF / 先進封裝供應鏈的真實影響。跨境信號可追溯、信度可量化、結論可驗證。">
+    <meta property="og:title" content="AI 芯片供應鏈驗證情報層">
+    <meta property="og:description" content="追蹤、驗證、推導每顆關鍵 AI 芯片對 ABF / 先進封裝供應鏈的真實影響。信號可追溯、信度可量化、結論可驗證。">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://zhewenzhang.github.io/chip-roadmap-website/">
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Chip Industry Roadmap Tracker">
-    <meta name="twitter:description" content="Track chip companies and roadmaps across China, US, Taiwan, and global markets.">
+    <meta name="twitter:title" content="AI 芯片供應鏈驗證情報層">
+    <meta name="twitter:description" content="追蹤、驗證、推導每顆關鍵 AI 芯片對 ABF / 先進封裝供應鏈的真實影響。">
     <link rel="canonical" href="https://zhewenzhang.github.io/chip-roadmap-website/">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; script-src 'self'; img-src 'self' data: https:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com;">
     <link rel="stylesheet" href="css/style.css">
@@ -20,8 +20,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600;1,700&family=Source+Serif+4:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar" aria-label="主导航">
+    <!-- Navbar -->
+    <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="logo">
                 <span class="logo-icon" aria-hidden="true">&#9670;</span>
@@ -34,7 +34,7 @@
                 <li><a href="insights.html">行業洞察</a></li>
                 <li><a href="signals.html">Signals</a></li>
             </ul>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="打开菜单" aria-expanded="false">
+            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu" aria-expanded="false">
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
                 <span aria-hidden="true"></span>
@@ -42,277 +42,71 @@
         </div>
     </nav>
 
-    <!-- Hero 区域 -->
-    <header class="hero">
-        <div class="hero-content">
-            <h1>全球晶片產業 <span class="hero-dramatic">Roadmap</span> 分析</h1>
-            <p class="hero-subtitle">深度追蹤公司 · 核心晶片 · 產業趨勢洞察</p>
-            <div class="hero-stats">
-                <div class="stat-item">
-                    <span class="stat-number">255</span>
-                    <span class="stat-label">家公司</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">67</span>
-                    <span class="stat-label">款芯片</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">12</span>
-                    <span class="stat-label">个国家/地区</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number">2026</span>
-                    <span class="stat-label">年 Roadmap</span>
-                </div>
+    <!-- Hero (V2: Signal-Centric Landing) -->
+    <header class="hero hero-v2">
+        <div class="hero-v2-content">
+            <h1>AI 芯片供應鏈<span class="hero-dramatic">驗證情報層</span></h1>
+            <p class="hero-v2-subtitle">追蹤、驗證、推導每顆關鍵 AI 芯片對 ABF / 先進封裝供應鏈的真實影響。信號可追溯、信度可量化、結論可驗證。</p>
+            <div class="hero-v2-ctas">
+                <a href="signals.html" class="hero-v2-cta hero-v2-cta-primary">瀏覽信號工作台 →</a>
+                <a href="roadmap.html" class="hero-v2-cta hero-v2-cta-secondary">查看已驗證進度時間軸</a>
             </div>
         </div>
     </header>
 
-    <!-- 主要内容区域 -->
-    <main class="main-content">
-        <!-- 市场概览 -->
-        <section class="section market-overview" aria-labelledby="market-overview-heading">
-            <div class="section-header">
-                <h2 id="market-overview-heading">市場<em>概覽</em></h2>
-                <span class="section-badge">Market Overview</span>
+    <!-- System Status Panel (replaces vanity counters) -->
+    <section class="system-status" id="systemStatus">
+        <div class="system-status-content">
+            <span class="status-label">系統狀態</span>
+            <span class="status-metrics" id="statusMetrics">載入中…</span>
+        </div>
+    </section>
+
+    <!-- Latest Verified Signals -->
+    <main class="home-dynamic">
+        <section class="home-section" id="latestVerifiedSection">
+            <div class="home-section-header">
+                <h2>最新驗證信號</h2>
+                <span class="home-section-sub">近期通過驗證的產業進度信號</span>
             </div>
-            <div class="stats-grid">
-                <div class="stats-row dark-bg">
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>中国</h3>
-                            <p class="stat-value" id="statChina">&nbsp;</p>
-                            <p class="stat-note">家公司</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>美国</h3>
-                            <p class="stat-value" id="statUsa">&nbsp;</p>
-                            <p class="stat-note">家公司</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>台湾</h3>
-                            <p class="stat-value" id="statTaiwan">&nbsp;</p>
-                            <p class="stat-note">家公司</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>其他地区</h3>
-                            <p class="stat-value" id="statOther">&nbsp;</p>
-                            <p class="stat-note">家公司</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="stats-row">
-                    <div class="stat-card highlight">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>AI 加速器</h3>
-                            <p class="stat-value">85</p>
-                            <p class="stat-note">占比 33%</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>CPU</h3>
-                            <p class="stat-value">42</p>
-                            <p class="stat-note">占比 16%</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>GPU</h3>
-                            <p class="stat-value">38</p>
-                            <p class="stat-note">占比 15%</p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" aria-hidden="true">&#9670;</div>
-                        <div class="stat-info">
-                            <h3>MCU</h3>
-                            <p class="stat-value">55</p>
-                            <p class="stat-note">占比 22%</p>
-                        </div>
-                    </div>
-                </div>
+            <div id="latestVerified" class="latest-verified-list">
+                <p class="home-loading">載入中…</p>
             </div>
         </section>
 
-        <hr class="thick">
-
-        <!-- 最新动态 -->
-        <section class="section latest-updates" aria-labelledby="latest-updates-heading">
-            <div class="section-header">
-                <h2 id="latest-updates-heading">最新<em>動態</em></h2>
-                <span class="section-badge">Latest Updates</span>
+        <!-- Top Impact Chips -->
+        <section class="home-section" id="topImpactSection">
+            <div class="home-section-header">
+                <h2>高影響芯片 — ABF / 封裝供應鏈</h2>
             </div>
-            <div class="updates-grid">
-                <article class="update-card">
-                    <div class="update-header">
-                        <span class="update-company nvidia">NVIDIA</span>
-                        <span class="update-date">2025 Q1</span>
-                    </div>
-                    <div class="update-content">
-                        <h4>Blackwell B200 量产</h4>
-                        <p>FP4 45PFLOPS 性能，TSMC 4nm 制程</p>
-                    </div>
-                </article>
-                <article class="update-card">
-                    <div class="update-header">
-                        <span class="update-company amd">AMD</span>
-                        <span class="update-date">2025 Q2</span>
-                    </div>
-                    <div class="update-content">
-                        <h4>MI350X 即将发布</h4>
-                        <p>CDNA4 架构，HBM3E 内存</p>
-                    </div>
-                </article>
-                <article class="update-card">
-                    <div class="update-header">
-                        <span class="update-company intel">Intel</span>
-                        <span class="update-date">2025 Q2</span>
-                    </div>
-                    <div class="update-content">
-                        <h4>Falcon Shores 延期</h4>
-                        <p>XPU 混合架构，Intel 18A 制程</p>
-                    </div>
-                </article>
-                <article class="update-card">
-                    <div class="update-header">
-                        <span class="update-company china">华为</span>
-                        <span class="update-date">2025 Q1</span>
-                    </div>
-                    <div class="update-content">
-                        <h4>昇腾 910C 发布</h4>
-                        <p>性能提升 20%，SMIC 7nm</p>
-                    </div>
-                </article>
-            </div>
-        </section>
-
-        <hr class="thick">
-
-        <!-- 行业洞察摘要 -->
-        <section class="section insights-summary" aria-labelledby="insights-heading">
-            <div class="section-header">
-                <h2 id="insights-heading">行業<em>洞察</em></h2>
-                <span class="section-badge">Key Insights</span>
-            </div>
-            <div class="insights-grid">
-                <article class="insight-card">
-                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
-                    <h4>RISC-V 生态爆发</h4>
-                    <p>2025 年 NVIDIA 宣布移植 CUDA 到 RISC-V，加速架构在 AI 领域渗透</p>
-                    <span class="insight-impact high">高影响</span>
-                </article>
-                <article class="insight-card">
-                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
-                    <h4>光子计算崛起</h4>
-                    <p>Lightmatter、Celestial AI 引领光互连和光子计算革命</p>
-                    <span class="insight-impact high">高影响</span>
-                </article>
-                <article class="insight-card">
-                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
-                    <h4>云厂商自研加速</h4>
-                    <p>AWS、微软、Meta 降低对 NVIDIA 依赖，推出自研 AI 芯片</p>
-                    <span class="insight-impact high">高影响</span>
-                </article>
-                <article class="insight-card">
-                    <div class="insight-icon" aria-hidden="true">&#9670;</div>
-                    <h4>ABF 需求分化</h4>
-                    <p>AI 芯片需求 12-20 层 ABF，消费电子维持 2-6 层</p>
-                    <span class="insight-impact medium">中影响</span>
-                </article>
-            </div>
-        </section>
-
-        <hr class="thick">
-
-        <!-- 头部玩家 -->
-        <section class="section top-players" aria-labelledby="players-heading">
-            <div class="section-header">
-                <h2 id="players-heading">頭部<em>玩家</em></h2>
-                <span class="section-badge">Top Players</span>
-            </div>
-            <div class="players-table">
-                <table>
-                    <caption>头部芯片公司排名</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col">排名</th>
-                            <th scope="col">公司</th>
-                            <th scope="col">市场份额</th>
-                            <th scope="col">核心优势</th>
-                            <th scope="col">主要挑战</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td><span class="company-tag nvidia">NVIDIA</span></td>
-                            <td>80%+</td>
-                            <td>CUDA 生态完善</td>
-                            <td>地缘政治风险</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td><span class="company-tag amd">AMD</span></td>
-                            <td>10-15%</td>
-                            <td>性价比优势</td>
-                            <td>软件生态落后</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td><span class="company-tag intel">Intel</span></td>
-                            <td>&lt;5%</td>
-                            <td>x86 生态</td>
-                            <td>AI 芯片落后</td>
-                        </tr>
-                        <tr>
-                            <td>4</td>
-                            <td><span class="company-tag china">华为</span></td>
-                            <td>中国&gt;50%</td>
-                            <td>全栈能力</td>
-                            <td>先进制程受限</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div id="topImpactChips" class="top-impact-list">
+                <p class="home-loading">載入中…</p>
             </div>
         </section>
     </main>
 
-    <!-- 页脚 -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h4>数据来源</h4>
+                <h4>數據來源</h4>
                 <ul>
-                    <li>公司财报 & 官网</li>
-                    <li>行业研究报告</li>
-                    <li>公开新闻 & 招股书</li>
+                    <li>供應鏈驗證</li>
+                    <li>跨境情報</li>
+                    <li>產業分析師</li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h4>更新频率</h4>
+                <h4>更新頻率</h4>
                 <ul>
-                    <li>每周: 行业快讯</li>
-                    <li>每月: 深度扫描</li>
-                    <li>每季度: Roadmap 更新</li>
+                    <li>每日：信號更新</li>
+                    <li>每週：驗證通過</li>
+                    <li>每月：深度檢討</li>
                 </ul>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 芯片产业分析平台 | Semiconductor Industry Intelligence</p>
+            <p>&copy; 2026 晶片產業分析平台 | 半導體情報</p>
         </div>
     </footer>
 

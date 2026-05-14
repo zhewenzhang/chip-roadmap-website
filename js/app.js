@@ -12,6 +12,8 @@ import { buildRoadmapMatrixFromSignals, getRoadmapYears, getRoadmapCompanies } f
 import { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate } from './modules/insights-derived.js';
 import { buildPriorityQueue, buildSignalChangeFeed, CHANGE_TYPES, PRIORITY_LABELS } from './modules/change-intelligence.js';
 import { loadWatchlist, getWatchlist, isEmpty as isWatchlistEmpty } from './modules/watchlist.js';
+import { deriveChipImpact } from './modules/impact-engine.js';
+import { STAGE_LABEL, IMPACT_LABEL as SIG_IMPACT_LABEL, STATUS_LABEL as SIG_STATUS_LABEL } from './modules/signals-schema.js';
 
 // ============== 全局数据 ==============
 let companiesData = {};
@@ -56,28 +58,180 @@ function initPageSpecific() {
     }
 }
 
-// ============== 首页初始化 ==============
-function initHomePage() {
-    updateRegionStats();
-    console.log('首页初始化完成');
+// ============== 首页初始化 (V2: Signal-Centric Landing) ==============
+async function initHomePage() {
+    const result = await loadSignals();
+    if (!result.ok) {
+        console.error('[Home] Signals load error:', result.error);
+        renderSystemStatusEmpty();
+        renderLatestVerifiedEmpty();
+        renderTopImpactEmpty();
+        return;
+    }
+    const signals = result.data;
+    renderSystemStatus(signals);
+    renderLatestVerifiedSignals(signals);
+    renderTopImpactChips(signals);
 }
 
-function updateRegionStats() {
-    const companies = Object.values(companiesData);
+// ===== V2 Homepage Rendering =====
 
-    const china  = companies.filter(c => c.region === 'China').length;
-    const usa    = companies.filter(c => c.region === 'USA').length;
-    const taiwan = companies.filter(c => c.region === 'Taiwan').length;
-    const other  = Math.max(0, companies.length - china - usa - taiwan);
+/**
+ * System Status Panel — operational health, not vanity metrics.
+ */
+function renderSystemStatus(signals) {
+    const el = document.getElementById('statusMetrics');
+    if (!el) return;
 
-    const el = id => document.getElementById(id);
-    if (el('statChina'))  el('statChina').textContent  = china;
-    if (el('statUsa'))    el('statUsa').textContent    = usa;
-    if (el('statTaiwan')) el('statTaiwan').textContent = taiwan;
-    if (el('statOther'))  el('statOther').textContent  = other;
+    const verified = signals.filter(s => s.status === 'verified');
+    const draftWatch = signals.filter(s => s.status === 'draft' || s.status === 'watch');
+    const verifiedChips = new Set(verified.map(s => s.chip_name).filter(Boolean));
+    const verifiedCompanies = new Set(verified.map(s => s.company_id).filter(Boolean));
 
-    const heroNumbers = document.querySelectorAll('.hero-stats .stat-number');
-    if (heroNumbers[0]) heroNumbers[0].textContent = companies.length;
+    // Most recent verification
+    let lastVerified = '';
+    for (const s of verified) {
+        const d = s.last_verified_at || '';
+        if (d > lastVerified) lastVerified = d;
+    }
+    const agoStr = lastVerified ? relativeTime(lastVerified) : '—';
+
+    el.innerHTML = [
+        `驗證信號 <strong>${verified.length}</strong> 條`,
+        `追蹤芯片 <strong>${verifiedChips.size}</strong> 顆`,
+        `追蹤公司 <strong>${verifiedCompanies.size}</strong> 家`,
+        `最近驗證 <strong>${agoStr}</strong>`,
+        `待驗證信號 <strong>${draftWatch.length}</strong> 條`,
+    ].join('&nbsp;&nbsp;|&nbsp;&nbsp;');
+}
+
+function renderSystemStatusEmpty() {
+    const el = document.getElementById('statusMetrics');
+    if (!el) return;
+    el.innerHTML = '驗證信號 <strong>0</strong> 條&nbsp;&nbsp;|&nbsp;&nbsp;追蹤芯片 <strong>0</strong> 顆&nbsp;&nbsp;|&nbsp;&nbsp;待驗證信號 <strong>0</strong> 條';
+}
+
+/**
+ * Latest Verified Signals — up to 8 rows, status === 'verified'.
+ */
+function renderLatestVerifiedSignals(signals) {
+    const container = document.getElementById('latestVerified');
+    if (!container) return;
+
+    const verified = signals
+        .filter(s => s.status === 'verified')
+        .sort((a, b) => {
+            const da = a.last_verified_at || a.updatedAt || '';
+            const db = b.last_verified_at || b.updatedAt || '';
+            if (db !== da) return db.localeCompare(da);
+            return b.confidence_score - a.confidence_score;
+        })
+        .slice(0, 8);
+
+    if (verified.length < 3) {
+        container.innerHTML = '<p class="home-empty">驗證信號累積中，請稍後再回來</p>';
+        return;
+    }
+
+    container.innerHTML = verified.map(s => {
+        const dateStr = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '';
+        return `<div class="home-signal-row" data-id="${esc(s.id)}">
+            <a href="chip-signals.html?name=${encodeURIComponent(s.chip_name)}" class="home-signal-chip">${esc(s.chip_name)}</a>
+            <span class="home-signal-company"><a href="company-signals.html?id=${encodeURIComponent(s.company_id)}">${esc(s.company_name)}</a></span>
+            <span class="home-badge home-stage">${esc(STAGE_LABEL[s.stage] || s.stage)}</span>
+            <span class="home-badge home-impact-${s.abf_demand_impact}">${esc(SIG_IMPACT_LABEL[s.abf_demand_impact] || s.abf_demand_impact)}</span>
+            <span class="home-confidence">${s.confidence_score}</span>
+            <span class="home-date">${dateStr}</span>
+        </div>`;
+    }).join('');
+
+    container.querySelectorAll('.home-signal-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            window.location.href = `chip-signals.html?name=${encodeURIComponent(signals.find(s2 => s2.id === row.dataset.id)?.chip_name || '')}`;
+        });
+    });
+}
+
+function renderLatestVerifiedEmpty() {
+    const container = document.getElementById('latestVerified');
+    if (!container) return;
+    container.innerHTML = '<p class="home-empty">驗證信號累積中，請稍後再回來</p>';
+}
+
+/**
+ * Top Impact Chips — derived via impact-engine.js, top 5.
+ */
+function renderTopImpactChips(signals) {
+    const container = document.getElementById('topImpactChips');
+    if (!container) return;
+
+    // Collect unique chips
+    const chipSet = new Set(signals.map(s => s.chip_name).filter(Boolean));
+    const chips = [...chipSet];
+
+    // Derive impact for each chip
+    const derived = chips.map(name => {
+        const result = deriveChipImpact(name, signals);
+        return { name, ...result };
+    });
+
+    // Filter out insufficient data
+    const qualifying = derived.filter(d => !d.insufficientData && d.abfDemandImpact);
+
+    if (qualifying.length === 0) {
+        container.innerHTML = '<p class="home-empty">推導引擎需要更多驗證信號才能給出可靠排序</p>';
+        return;
+    }
+
+    // Sort by impact then confidence
+    const IMPACT_ORDER = { explosive: 4, high: 3, medium: 2, low: 1 };
+    qualifying.sort((a, b) => {
+        const impDiff = (IMPACT_ORDER[b.abfDemandImpact] || 0) - (IMPACT_ORDER[a.abfDemandImpact] || 0);
+        if (impDiff !== 0) return impDiff;
+        return (b.derivedConfidence || 0) - (a.derivedConfidence || 0);
+    });
+
+    const top5 = qualifying.slice(0, 5);
+
+    container.innerHTML = top5.map(d => {
+        const firstSignal = signals.find(s => s.chip_name === d.name);
+        const cowosLabel = d.cowosDependency === 'Yes' ? 'Yes' : d.cowosDependency === 'Likely' ? 'Likely' : 'No';
+        const reason = (d.reasonsByField?.abf_demand_impact || '').slice(0, 60);
+        return `<div class="home-impact-row">
+            <a href="chip-signals.html?name=${encodeURIComponent(d.name)}" class="home-signal-chip">${esc(d.name)}</a>
+            <span class="home-signal-company">${firstSignal ? esc(firstSignal.company_name) : ''}</span>
+            <span class="home-badge home-impact-${d.abfDemandImpact}">${esc(SIG_IMPACT_LABEL[d.abfDemandImpact] || d.abfDemandImpact)}</span>
+            <span class="home-cowos">CoWoS: ${cowosLabel}</span>
+            <span class="home-confidence">信度 ${d.derivedConfidence ?? '—'}</span>
+            <span class="home-reason">${esc(reason)}</span>
+        </div>`;
+    }).join('');
+}
+
+function renderTopImpactEmpty() {
+    const container = document.getElementById('topImpactChips');
+    if (!container) return;
+    container.innerHTML = '<p class="home-empty">推導引擎需要更多驗證信號才能給出可靠排序</p>';
+}
+
+function esc(v) {
+    return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function relativeTime(dateStr) {
+    if (!dateStr) return '—';
+    try {
+        const now = new Date();
+        const then = new Date(dateStr);
+        const diffMs = now - then;
+        const diffMin = Math.round(diffMs / (1000 * 60));
+        const diffHr = Math.round(diffMs / (1000 * 60 * 60));
+        const diffDay = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        if (diffMin < 60) return `${diffMin} 分鐘前`;
+        if (diffHr < 24) return `${diffHr} 小時前`;
+        return `${diffDay} 天前`;
+    } catch { return '—'; }
 }
 
 // ============== Roadmap 页面初始化 (Phase 6: signals-derived) ==============
