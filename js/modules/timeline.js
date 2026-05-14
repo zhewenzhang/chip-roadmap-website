@@ -118,7 +118,7 @@ function renderTimeline(matrix, filterCompany = null, onSignalClick = null) {
     companyIds.forEach((companyId, rowIndex) => {
         const companyData = matrix[companyId];
         if (!companyData) return;
-        const style = COMPANY_STYLE[companyId] || { label: companyData.companyName, color: '#374151', bg: '#f9fafb', border: '#e5e7eb' };
+        const style = COMPANY_STYLE[companyId] || { label: companyData.companyName, color: '#ffffff', bg: '#111111', border: '#1f521f' };
 
         const tr = document.createElement('tr');
         tr.className = rowIndex % 2 === 0 ? 'tr-even' : 'tr-odd';
@@ -233,16 +233,16 @@ function showSignalDetail(signal, style) {
     // Close button
     const closeBtn = document.createElement('button');
     closeBtn.textContent = '×';
-    closeBtn.style.cssText = 'position:absolute;top:8px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:#333;';
+    closeBtn.style.cssText = 'position:absolute;top:8px;right:12px;background:none;border:none;font-size:20px;cursor:pointer;color:#33ff00;';
     closeBtn.addEventListener('click', () => overlay.remove());
     modal.appendChild(closeBtn);
 
     // Header: company + chip
     const header = document.createElement('div');
-    header.style.cssText = 'margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;';
+    header.style.cssText = 'margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #1f521f;';
 
     const companyLine = document.createElement('div');
-    companyLine.style.cssText = 'font-size:12px;color:#6b7280;font-family:monospace;';
+    companyLine.style.cssText = 'font-size:12px;color:rgba(51,255,0,0.55);font-family:monospace;';
     companyLine.textContent = style.label || signal.company_name;
 
     const chipLine = document.createElement('div');
@@ -250,7 +250,7 @@ function showSignalDetail(signal, style) {
     chipLine.textContent = signal.chip_name;
 
     const titleLine = document.createElement('div');
-    titleLine.style.cssText = 'font-size:13px;color:#6b7280;margin-top:4px;';
+    titleLine.style.cssText = 'font-size:13px;color:rgba(51,255,0,0.55);margin-top:4px;';
     titleLine.textContent = signal.title || '';
 
     header.appendChild(companyLine);
@@ -269,10 +269,10 @@ function showSignalDetail(signal, style) {
         metaRow.appendChild(b);
     };
 
-    addBadge(STAGE_LABELS[signal.stage] || signal.stage, '#111');
-    addBadge(STATUS_LABELS[signal.status] || signal.status, '#111');
-    addBadge(`信度 ${signal.confidence_score}`, '#111');
-    addBadge(`ABF ${IMPACT_LABELS[signal.abf_demand_impact] || signal.abf_demand_impact}`, '#111');
+    addBadge(STAGE_LABELS[signal.stage] || signal.stage, '#33ff00');
+    addBadge(STATUS_LABELS[signal.status] || signal.status, '#33ff00');
+    addBadge(`信度 ${signal.confidence_score}`, '#33ff00');
+    addBadge(`ABF ${IMPACT_LABELS[signal.abf_demand_impact] || signal.abf_demand_impact}`, '#33ff00');
     modal.appendChild(metaRow);
 
     // Fields
@@ -286,11 +286,11 @@ function showSignalDetail(signal, style) {
 
     if (fields.length > 0) {
         const fieldsDiv = document.createElement('div');
-        fieldsDiv.style.cssText = 'margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #e5e7eb;';
+        fieldsDiv.style.cssText = 'margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #1f521f;';
         fields.forEach(f => {
             const row = document.createElement('div');
             row.style.cssText = 'display:flex;justify-content:space-between;font-size:13px;padding:3px 0;';
-            row.innerHTML = `<span style="color:#6b7280">${f.label}</span><span style="font-weight:500">${f.value}</span>`;
+            row.innerHTML = `<span style="color:rgba(51,255,0,0.55)">${f.label}</span><span style="font-weight:500">${f.value}</span>`;
             fieldsDiv.appendChild(row);
         });
         modal.appendChild(fieldsDiv);
@@ -301,10 +301,10 @@ function showSignalDetail(signal, style) {
         const evidenceDiv = document.createElement('div');
         evidenceDiv.style.cssText = 'margin-bottom:16px;';
         const evidenceTitle = document.createElement('div');
-        evidenceTitle.style.cssText = 'font-size:11px;text-transform:uppercase;color:#6b7280;font-family:monospace;margin-bottom:4px;';
+        evidenceTitle.style.cssText = 'font-size:11px;text-transform:uppercase;color:rgba(51,255,0,0.55);font-family:monospace;margin-bottom:4px;';
         evidenceTitle.textContent = '證據摘要';
         const evidenceText = document.createElement('div');
-        evidenceText.style.cssText = 'font-size:13px;line-height:1.6;color:#374151;';
+        evidenceText.style.cssText = 'font-size:13px;line-height:1.6;color:#33ff00;';
         evidenceText.textContent = signal.evidence_summary;
         evidenceDiv.appendChild(evidenceTitle);
         evidenceDiv.appendChild(evidenceText);
@@ -313,12 +313,12 @@ function showSignalDetail(signal, style) {
 
     // Onward navigation
     const navDiv = document.createElement('div');
-    navDiv.style.cssText = 'display:flex;gap:8px;padding-top:12px;border-top:1px solid #e5e7eb;flex-wrap:wrap;';
+    navDiv.style.cssText = 'display:flex;gap:8px;padding-top:12px;border-top:1px solid #1f521f;flex-wrap:wrap;';
 
     const makeLink = (href, text) => {
         const a = document.createElement('a');
         a.href = href;
-        a.style.cssText = 'font-size:12px;font-family:monospace;color:#111;text-decoration:none;padding:6px 12px;border:1px solid #111;';
+        a.style.cssText = 'font-size:12px;font-family:monospace;color:#33ff00;text-decoration:none;padding:6px 12px;border:1px solid #33ff00;';
         a.textContent = text;
         return a;
     };
