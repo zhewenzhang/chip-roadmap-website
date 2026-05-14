@@ -1225,6 +1225,14 @@ function renderAiExtractTab() {
         document.getElementById('ai-candidates-section').style.display = 'none';
         document.getElementById('ai-result-section').style.display = 'none';
     });
+
+    // Delegate edit-ai-candidate clicks from the candidate table
+    document.getElementById('ai-candidates-table').addEventListener('click', e => {
+        const btn = e.target.closest('[data-action="edit-ai-candidate"]');
+        if (!btn) return;
+        const rowNum = Number(btn.dataset.row);
+        openEditAiCandidateModal(rowNum);
+    });
 }
 
 let aiImageFile = null;
@@ -1326,6 +1334,7 @@ function renderAiCandidates() {
         const d = r.data;
         const aiBadge = d.ai_generated ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">AI</span>' : '';
         const changedInfo = r.changedFields && r.changedFields.length > 0 ? `${r.changedFields.length} 欄位` : '';
+        const issuesText = r.issues.length > 0 ? r.issues.join('; ') : (changedInfo || '—');
         return `<tr class="import-row-${r.action}">
             <td>${r.rowNumber}</td>
             <td><span class="badge ${actionClasses[r.action]}">${actionLabels[r.action]}</span></td>
@@ -1336,7 +1345,8 @@ function renderAiCandidates() {
             <td><span class="badge ${statusChipClass(d.status)}">${statusLabel(d.status)}</span></td>
             <td>${d.confidence_score}</td>
             <td>${esc(IMPACT_LABEL[d.abf_demand_impact] || d.abf_demand_impact)}</td>
-            <td class="td-truncate">${esc(changedInfo || r.issues.slice(0, 1).join('; ') || '')}</td>
+            <td class="td-truncate" title="${esc(issuesText)}">${esc(issuesText.slice(0, 30))}</td>
+            <td><button class="btn-sm btn-secondary" data-action="edit-ai-candidate" data-row="${r.rowNumber}">編輯</button></td>
         </tr>`;
     }).join('');
 
@@ -1345,7 +1355,7 @@ function renderAiCandidates() {
             <thead>
                 <tr>
                     <th>#</th><th>動作</th><th>標題</th><th>公司</th><th>芯片</th>
-                    <th>階段</th><th>狀態</th><th>信度</th><th>ABF</th><th>變更</th>
+                    <th>階段</th><th>狀態</th><th>信度</th><th>ABF</th><th>問題</th><th>操作</th>
                 </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -1376,6 +1386,157 @@ async function handleAiConfirmImport() {
     document.getElementById('ai-confirm-import').disabled = true;
 
     showToast(`AI 匯入完成：${results.created} 建立 / ${results.updated} 更新`);
+}
+
+// ===== AI CANDIDATE INLINE EDIT =====
+
+function openEditAiCandidateModal(rowNumber) {
+    const idx = aiExtractCandidates.findIndex(r => r.rowNumber === rowNumber);
+    if (idx === -1) return;
+    const candidate = aiExtractCandidates[idx];
+    const d = candidate.data;
+
+    // Build company options
+    const companyOptions = companiesData.map(c => {
+        const selected = c.id === d.company_id ? ' selected' : '';
+        return `<option value="${esc(c.id)}"${selected}>${esc(c.name)} (${esc(c.id)})</option>`;
+    }).join('');
+
+    const regionOptions = REGION_OPTIONS.map(r => {
+        const selected = d.region === r ? ' selected' : '';
+        return `<option value="${r}"${selected}>${REGION_LABEL[r]}</option>`;
+    }).join('');
+
+    const stageOptions = STAGE_ENUM.map(s => {
+        const selected = d.stage === s ? ' selected' : '';
+        return `<option value="${s}"${selected}>${STAGE_LABEL[s]}</option>`;
+    }).join('');
+
+    // AI candidates: only draft/watch
+    const aiStatusOptions = ['draft', 'watch'].map(s => {
+        const selected = d.status === s ? ' selected' : '';
+        return `<option value="${s}"${selected}>${STATUS_LABEL[s]}</option>`;
+    }).join('');
+
+    const impactOptions = IMPACT_ENUM.map(i => {
+        const selected = d.abf_demand_impact === i ? ' selected' : '';
+        return `<option value="${i}"${selected}>${IMPACT_LABEL[i]}</option>`;
+    }).join('');
+
+    const formHtml = `
+        <div class="ai-edit-form">
+            <div class="form-row">
+                <label>標題</label>
+                <input id="edit-ai-title" value="${esc(d.title || '')}" />
+            </div>
+            <div class="form-row">
+                <label>公司 ID</label>
+                <select id="edit-ai-company-id">
+                    <option value="">— 選擇公司 —</option>
+                    ${companyOptions}
+                </select>
+            </div>
+            <div class="form-row">
+                <label>公司名稱</label>
+                <input id="edit-ai-company-name" value="${esc(d.company_name || '')}" readonly style="opacity:0.7" />
+            </div>
+            <div class="form-row">
+                <label>芯片名稱</label>
+                <input id="edit-ai-chip-name" value="${esc(d.chip_name || '')}" />
+            </div>
+            <div class="form-row">
+                <label>地區</label>
+                <select id="edit-ai-region">${regionOptions}</select>
+            </div>
+            <div class="form-row">
+                <label>階段</label>
+                <select id="edit-ai-stage">${stageOptions}</select>
+            </div>
+            <div class="form-row">
+                <label>狀態</label>
+                <select id="edit-ai-status">${aiStatusOptions}</select>
+            </div>
+            <div class="form-row">
+                <label>信度 (0-100)</label>
+                <input id="edit-ai-confidence" type="number" min="0" max="100" value="${d.confidence_score ?? 0}" />
+            </div>
+            <div class="form-row">
+                <label>ABF 需求影響</label>
+                <select id="edit-ai-impact">${impactOptions}</select>
+            </div>
+            <div class="form-row">
+                <label>證據摘要</label>
+                <textarea id="edit-ai-evidence" rows="3">${esc(d.evidence_summary || '')}</textarea>
+            </div>
+            <div class="form-row">
+                <label>信度原因</label>
+                <textarea id="edit-ai-confidence-reason" rows="2">${esc(d.confidence_reason || '')}</textarea>
+            </div>
+            <div class="form-row">
+                <label>最後驗證時間</label>
+                <input id="edit-ai-verified-at" type="date" value="${esc(d.last_verified_at || '')}" />
+            </div>
+        </div>
+        <style>
+            .ai-edit-form .form-row { margin-bottom: 10px; }
+            .ai-edit-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+            .ai-edit-form input, .ai-edit-form select, .ai-edit-form textarea {
+                width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
+            }
+        </style>
+    `;
+
+    openModal('編輯 AI 候選信號', formHtml, async () => {
+        const title = document.getElementById('edit-ai-title').value.trim();
+        const companyId = document.getElementById('edit-ai-company-id').value.trim();
+        const companyName = document.getElementById('edit-ai-company-name').value.trim();
+        const chipName = document.getElementById('edit-ai-chip-name').value.trim();
+        const region = document.getElementById('edit-ai-region').value;
+        const stage = document.getElementById('edit-ai-stage').value;
+        const status = document.getElementById('edit-ai-status').value;
+        const confidenceScore = Number(document.getElementById('edit-ai-confidence').value);
+        const abfDemandImpact = document.getElementById('edit-ai-impact').value;
+        const evidenceSummary = document.getElementById('edit-ai-evidence').value.trim();
+        const confidenceReason = document.getElementById('edit-ai-confidence-reason').value.trim();
+        const lastVerifiedAt = document.getElementById('edit-ai-verified-at').value;
+
+        // Rebuild candidate data, preserving AI metadata and optional fields
+        const updatedData = {
+            ...d,
+            title, company_id: companyId, company_name: companyName, chip_name: chipName,
+            region, stage, status, confidence_score: confidenceScore,
+            abf_demand_impact: abfDemandImpact,
+            evidence_summary: evidenceSummary,
+            confidence_reason: confidenceReason,
+            last_verified_at: lastVerifiedAt,
+            ai_generated: true,
+            source_type: 'ai_extracted',
+        };
+
+        // Re-validate and re-classify
+        const validated = validateRow(updatedData, signalsData);
+        const reclassified = classifyImportRow(validated, signalsData);
+
+        // Update the candidate in-place, preserving rowNumber
+        aiExtractCandidates[idx] = {
+            rowNumber,
+            ...reclassified,
+        };
+
+        renderAiCandidates();
+        showToast(`候選信號已重新分類: ${reclassified.action}`);
+    }, false);
+
+    // Auto-fill company_name when company_id changes
+    document.getElementById('edit-ai-company-id').addEventListener('change', e => {
+        const selectedCompany = companiesData.find(c => c.id === e.target.value);
+        if (selectedCompany) {
+            document.getElementById('edit-ai-company-name').value = selectedCompany.name;
+        } else {
+            document.getElementById('edit-ai-company-name').value = '';
+        }
+    });
 }
 
 // ===== ARTICLES TAB =====
