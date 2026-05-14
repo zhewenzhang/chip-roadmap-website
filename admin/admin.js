@@ -1772,30 +1772,32 @@ function renderDataQualityTab() {
         });
     });
 
-    // Filter event delegation
-    document.getElementById('data-quality-content').addEventListener('click', e => {
-        const btn = e.target.closest('[data-action]');
-        if (!btn) return;
-        const action = btn.dataset.action;
-        if (action === 'refresh-quality') {
-            buildQualityQueueFromData();
-            renderDataQualityTab();
-            return;
-        }
-        if (action === 'dq-apply-filter') applyDQFilters();
-        if (action === 'dq-reset-filter') {
-            dqFilterState = { queueType: '', priority: '', status: '', company: '', highImpact: false, search: '' };
-            dqSortMode = 'priority';
-            renderDataQualityTab();
-            return;
-        }
-        if (action === 'dq-quick-fix') openQuickFixModal(btn.dataset.id);
-        if (action === 'dq-full-edit') openEditSignalModal(btn.dataset.id);
-        if (action === 'dq-mark-reviewed') openMarkReviewedModal(btn.dataset.id);
-    });
-
     renderDQTable();
 }
+
+// DQ filter/action event delegation — bound ONCE outside renderDataQualityTab
+// to prevent listener accumulation on repeated renders.
+document.getElementById('data-quality-content').addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const action = btn.dataset.action;
+    if (action === 'refresh-quality') {
+        buildQualityQueueFromData();
+        renderDataQualityTab();
+        return;
+    }
+    if (action === 'dq-apply-filter') applyDQFilters();
+    if (action === 'dq-reset-filter') {
+        dqFilterState = { queueType: '', priority: '', status: '', company: '', highImpact: false, search: '' };
+        dqSortMode = 'priority';
+        renderDataQualityTab();
+        return;
+    }
+    if (action === 'dq-quick-fix') openQuickFixModal(btn.dataset.id);
+    if (action === 'dq-full-edit') openEditSignalModal(btn.dataset.id);
+    if (action === 'dq-mark-reviewed') openMarkReviewedModal(btn.dataset.id);
+    if (action === 'dq-complete-verification') openCompleteVerificationModal(btn.dataset.id);
+});
 
 function applyDQFilters() {
     dqFilterState.priority = document.getElementById('dq-priority')?.value || '';
@@ -1863,6 +1865,7 @@ function renderDQTable() {
             <td>${verified}</td>
             <td class="td-actions">
                 ${item.quickFixEligible ? `<button class="btn-sm" data-action="dq-quick-fix" data-id="${esc(s.id)}">快速修正</button>` : ''}
+                ${item.queueType === QUEUE_TYPES.NEEDS_VERIFICATION ? `<button class="btn-sm" data-action="dq-complete-verification" data-id="${esc(s.id)}">完成驗證</button>` : ''}
                 ${item.queueType === QUEUE_TYPES.NEEDS_REVIEW ? `<button class="btn-sm" data-action="dq-mark-reviewed" data-id="${esc(s.id)}">標記已複核</button>` : ''}
                 <button class="btn-sm" data-action="dq-full-edit" data-id="${esc(s.id)}">完整編輯</button>
             </td>
@@ -2056,6 +2059,108 @@ function getRemainingIssues(updatedSignal) {
     const companies = companiesData || [];
     const allChipNames = new Set(signalsData.map(s => s.chip_name).filter(Boolean));
     return evaluateSignalQuality(updatedSignal, { companies, allChipNames });
+}
+
+function openCompleteVerificationModal(signalId) {
+    const signal = signalsData.find(s => s.id === signalId);
+    if (!signal) return;
+
+    const formHtml = `
+        <div class="dq-review-form">
+            <div class="dq-review-signal">
+                <strong>${esc(signal.title)}</strong>
+                <div style="margin-top:4px">${esc(signal.company_name)} / ${esc(signal.chip_name)}</div>
+            </div>
+            <div class="dq-section">
+                <h4 class="dq-section-title">完成驗證</h4>
+                <div class="dq-field">
+                    <label>狀態</label>
+                    <select id="dq-complete-status">
+                        <option value="verified" ${signal.status === 'verified' ? 'selected' : ''}>${STATUS_LABEL.verified}</option>
+                        <option value="watch" ${signal.status === 'watch' ? 'selected' : ''}>${STATUS_LABEL.watch}</option>
+                        <option value="downgraded" ${signal.status === 'downgraded' ? 'selected' : ''}>${STATUS_LABEL.downgraded}</option>
+                        <option value="invalidated" ${signal.status === 'invalidated' ? 'selected' : ''}>${STATUS_LABEL.invalidated}</option>
+                    </select>
+                </div>
+                <div class="dq-field">
+                    <label>信度 (0-100)</label>
+                    <input id="dq-complete-confidence" type="number" min="0" max="100" value="${signal.confidence_score ?? 50}">
+                </div>
+                <div class="dq-field">
+                    <label>驗證日期</label>
+                    <input id="dq-complete-date" type="date" value="${signal.last_verified_at ? new Date(signal.last_verified_at).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)}">
+                </div>
+                <div class="dq-field">
+                    <label>驗證人</label>
+                    <input id="dq-complete-by" value="${esc(signal.last_verified_by || auth.currentUser?.email || '')}">
+                </div>
+                <div class="dq-field">
+                    <label>證據摘要</label>
+                    <textarea id="dq-complete-evidence" rows="3">${esc(signal.evidence_summary || '')}</textarea>
+                </div>
+                <div class="dq-field">
+                    <label>信度依據</label>
+                    <textarea id="dq-complete-reason" rows="3">${esc(signal.confidence_reason || '')}</textarea>
+                </div>
+                <div class="dq-field">
+                    <label>驗證備註</label>
+                    <textarea id="dq-complete-note" rows="2">${esc(signal.verification_note || '')}</textarea>
+                </div>
+            </div>
+            <div class="dq-review-info">
+                這個動作會處理「待驗證」問題。若仍缺封裝、ABF 或公司關聯欄位，儲存後會留在其他數據品質分類中。
+            </div>
+        </div>
+    `;
+
+    openModal('完成驗證', formHtml, async () => {
+        const status = document.getElementById('dq-complete-status').value;
+        const confidence = Number(document.getElementById('dq-complete-confidence').value);
+        const date = document.getElementById('dq-complete-date').value;
+        const verifiedBy = document.getElementById('dq-complete-by').value.trim();
+        const evidence = document.getElementById('dq-complete-evidence').value.trim();
+        const reason = document.getElementById('dq-complete-reason').value.trim();
+        const note = document.getElementById('dq-complete-note').value.trim();
+
+        if (isNaN(confidence) || confidence < 0 || confidence > 100) {
+            throw new Error('信度必須介於 0 到 100');
+        }
+        if (!date) throw new Error('請填寫驗證日期');
+        if (!verifiedBy) throw new Error('請填寫驗證人');
+        if (status === 'verified') {
+            if (!evidence) throw new Error('verified 狀態必須填寫證據摘要');
+            if (!reason) throw new Error('verified 狀態必須填寫信度依據');
+        }
+
+        const updatedData = {
+            ...signal,
+            status,
+            confidence_score: confidence,
+            last_verified_at: new Date(date).toISOString(),
+            last_verified_by: verifiedBy,
+            evidence_summary: evidence,
+            confidence_reason: reason,
+            verification_note: note,
+        };
+
+        const actor = auth.currentUser?.email || '';
+        await saveSignal(signalId, updatedData, {
+            actor,
+            previousStatus: signal.status,
+            previousConfidence: signal.confidence_score,
+        });
+
+        await fetchSignals();
+        buildQualityQueueFromData();
+        const refreshed = signalsData.find(s => s.id === signalId);
+        const remaining = refreshed ? getRemainingIssues(refreshed) : [];
+        if (remaining.length === 0) {
+            showToast('驗證完成，沒有剩餘數據品質問題');
+        } else {
+            showToast(`驗證完成，仍有 ${remaining.length} 個問題需要處理`, 'success');
+        }
+        renderDataQualityTab();
+    }, true);
 }
 
 function openMarkReviewedModal(signalId) {

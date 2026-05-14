@@ -203,3 +203,76 @@ test('mark-reviewed + verified fields removes NEEDS_VERIFICATION', () => {
     assert.equal(reviewIssues.length, 0, 'NEEDS_REVIEW should be suppressed');
     assert.equal(verIssues.length, 0, 'NEEDS_VERIFICATION should be suppressed after verification');
 });
+
+test('draft/watch signals do not create NEEDS_REVIEW even with recent status change', () => {
+    const signal = {
+        ...baseSignal,
+        status: 'draft',
+        last_status_changed_at: daysAgo(1),
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const reviewIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_REVIEW);
+    const verificationIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_VERIFICATION);
+    assert.equal(reviewIssues.length, 0, 'draft signal should not be routed to NEEDS_REVIEW');
+    assert.ok(verificationIssues.length > 0, 'draft signal should remain in NEEDS_VERIFICATION');
+});
+
+test('buildQualityQueue: draft with recent status change is primarily NEEDS_VERIFICATION', () => {
+    const queue = buildQualityQueue([
+        {
+            ...baseSignal,
+            id: 'sig-draft-recent',
+            status: 'draft',
+            last_status_changed_at: daysAgo(1),
+        },
+    ], {});
+    assert.equal(queue.length, 1);
+    assert.equal(queue[0].queueType, QUEUE_TYPES.NEEDS_VERIFICATION);
+});
+
+test('checkNeedsReview: watch + recent confidence change does NOT create NEEDS_REVIEW', () => {
+    const signal = {
+        ...baseSignal,
+        status: 'watch',
+        last_confidence_changed_at: daysAgo(3),
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const reviewIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_REVIEW);
+    assert.equal(reviewIssues.length, 0, 'watch signal should not be routed to NEEDS_REVIEW');
+});
+
+test('checkNeedsReview: conflicting_evidence on draft does NOT create NEEDS_REVIEW', () => {
+    const signal = {
+        ...baseSignal,
+        status: 'draft',
+        conflicting_evidence: 'Some contradictory info',
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const reviewIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_REVIEW);
+    assert.equal(reviewIssues.length, 0, 'conflicting evidence on draft should not produce NEEDS_REVIEW');
+});
+
+test('checkNeedsReview: conflicting_evidence on verified creates NEEDS_REVIEW', () => {
+    const signal = {
+        ...baseSignal,
+        conflicting_evidence: 'Source A says ramp, Source B says pilot',
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const reviewIssues = issues.filter(i => i.queueType === QUEUE_TYPES.NEEDS_REVIEW);
+    assert.ok(reviewIssues.length > 0, 'conflicting evidence on verified should produce NEEDS_REVIEW');
+    assert.ok(reviewIssues.some(i => i.reason.includes('矛盾')));
+});
+
+test('checkNeedsReview: conflicting_evidence on verified + reviewed_at + review_note resolves', () => {
+    const signal = {
+        ...baseSignal,
+        conflicting_evidence: 'Contradictory sources',
+        reviewed_at: daysAgo(1),
+        review_note: 'Resolved: latest earnings call confirms ramp status',
+    };
+    const issues = evaluateSignalQuality(signal, {});
+    const conflictReviewIssues = issues.filter(i =>
+        i.queueType === QUEUE_TYPES.NEEDS_REVIEW && i.reason.includes('矛盾')
+    );
+    assert.equal(conflictReviewIssues.length, 0, 'conflicting evidence should be suppressed with review');
+});
