@@ -1,15 +1,17 @@
 /**
- * Admin Import Signals Module — Phase 12A
+ * Admin Import Signals Module — Phase 12A + Phase 13.2
  *
- * Excel bulk import workflow for signals.
- * - Template download
+ * Excel bulk import workflow for signals with upsert support.
+ * - Template download (includes import_key column)
  * - Excel upload/parse (dynamic import of xlsx)
  * - Row validation and duplicate detection
+ * - Import key matching (create / update / skip / error)
  * - Preview-before-write
- * - Confirmed import via createSignal()
+ * - Confirmed import via createSignal() or saveSignal()
+ * - Import batch log to Firestore
  */
 
-import { createSignal } from '../js/firebase/db.js';
+import { createSignal, saveSignal } from '../js/firebase/db.js';
 import {
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS,
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL,
@@ -24,6 +26,7 @@ const REQUIRED_COLS = [
 ];
 
 const OPTIONAL_COLS = [
+    'import_key',
     'signal_type', 'release_year', 'release_quarter',
     'package_type', 'cowos_required', 'abf_size', 'abf_layers',
     'hbm', 'expected_volume', 'impact_scope', 'conflicting_evidence',
@@ -31,24 +34,34 @@ const OPTIONAL_COLS = [
     'notes', 'verification_note',
 ];
 
-const ALL_COLS = [...REQUIRED_COLS, ...OPTIONAL_COLS];
+const ALL_COLS = ['import_key', ...REQUIRED_COLS.filter(c => c !== 'import_key'), ...OPTIONAL_COLS.filter(c => c !== 'import_key')];
+
+// Meaningful fields for change detection
+const MEANINGFUL_FIELDS = [
+    'title', 'company_id', 'company_name', 'chip_name', 'region',
+    'stage', 'status', 'confidence_score', 'abf_demand_impact',
+    'evidence_summary', 'confidence_reason', 'last_verified_at',
+    'signal_type', 'release_year', 'release_quarter',
+    'package_type', 'cowos_required', 'abf_size', 'abf_layers',
+    'hbm', 'expected_volume', 'impact_scope', 'conflicting_evidence',
+    'last_verified_by', 'tags', 'source_regions', 'sources',
+    'notes', 'verification_note', 'import_key',
+];
 
 // ===== Template Generation =====
 
-/**
- * Generate and download an .xlsx template for signals import.
- */
 export function downloadTemplate() {
     const templateData = [
         ALL_COLS,
         [
+            'nvidia_blackwell-b200_ramp_2024_q4',  // import_key
             'Example verified signal',
             'nvidia', 'NVIDIA', 'Blackwell B200',
             'USA', 'ramp', 'verified', 80, 'high',
             'Example evidence summary. Replace before import.',
             'Example confidence reason. Replace before import.',
             '2026-05-14',
-            // optional columns
+            // remaining optional columns
             'product_progress', 2024, 'Q4',
             'CoWoS-L', 'yes', '77mm x 77mm', 18,
             'HBM3E', 'high', '', '',
@@ -65,7 +78,6 @@ export function downloadTemplate() {
         return out;
     });
 
-    // Dynamic import xlsx only when needed
     import('xlsx').then(XLSX => {
         const ws = XLSX.utils.aoa_to_sheet(wsData);
         const wb = XLSX.utils.book_new();
@@ -79,9 +91,6 @@ export function downloadTemplate() {
 
 // ===== Excel Parsing =====
 
-/**
- * Parse an uploaded Excel file into raw row objects.
- */
 export async function parseExcelFile(file) {
     const XLSX = await import('xlsx');
     const data = await file.arrayBuffer();
@@ -92,14 +101,30 @@ export async function parseExcelFile(file) {
     return rows;
 }
 
-// ===== Validation =====
+// ===== Import Key =====
 
 /**
- * Validate a single parsed row.
- * Returns { status: 'ready'|'warning'|'error'|'duplicate', issues: string[], data: object }
+ * Generate a deterministic import key from row data.
  */
+export function buildImportKey(data) {
+    const parts = [
+        data.company_id,
+        data.chip_name,
+        data.signal_type,
+        data.release_year,
+        data.release_quarter,
+        data.stage,
+    ];
+    return parts
+        .map(v => String(v || '').trim().toLowerCase())
+        .map(v => v.replace(/\s+/g, '-').replace(/[^a-z0-9._-]/g, ''))
+        .filter(Boolean)
+        .join('_');
+}
+
+// ===== Validation =====
+
 export function validateRow(row, existingSignals) {
-    const issues = [];
     const errors = [];
     const data = {};
 
@@ -111,20 +136,26 @@ export function validateRow(row, existingSignals) {
         data[key] = val;
     }
 
+    // Auto-generate import_key if empty
+    if (!data.import_key) {
+        data.import_key = buildImportKey(data);
+    }
+
     // --- Blocking errors ---
 
     // Required fields
     for (const col of REQUIRED_COLS) {
+        if (col === 'import_key') continue; // import_key is auto-generated
         if (!data[col] && data[col] !== 0) {
             errors.push(`缺少必填欄位: ${col}`);
         }
     }
 
     if (errors.length > 0) {
-        return { status: 'error', issues: errors, data };
+        return { status: 'error', action: 'error', issues: errors, data };
     }
 
-    // Prevent the template example row from being imported as real data.
+    // Template example row guard (Phase 12A.1)
     const looksLikeTemplateExample =
         data.title === 'Example verified signal' ||
         String(data.evidence_summary).includes('Replace before import') ||
@@ -132,6 +163,7 @@ export function validateRow(row, existingSignals) {
     if (looksLikeTemplateExample) {
         return {
             status: 'error',
+            action: 'error',
             issues: ['模板範例行不可匯入，請替換為真實信號資料'],
             data,
         };
@@ -181,7 +213,7 @@ export function validateRow(row, existingSignals) {
         data.release_year = yr;
     }
 
-    // cowos_required
+    // cowos_required — strict (Phase 12A.1)
     if (data.cowos_required !== '') {
         const boolResult = parseBoolStrict(data.cowos_required);
         if (boolResult.ok) {
@@ -208,38 +240,10 @@ export function validateRow(row, existingSignals) {
     }
 
     if (errors.length > 0) {
-        return { status: 'error', issues: errors, data };
+        return { status: 'error', action: 'error', issues: errors, data };
     }
 
-    // --- Duplicate detection ---
-    const dupKey = `${data.company_id}|${data.chip_name}|${data.title}`;
-    const isDuplicate = existingSignals.some(s =>
-        `${s.company_id}|${s.chip_name}|${s.title}`.toLowerCase() === dupKey.toLowerCase()
-    );
-    if (isDuplicate) {
-        return { status: 'duplicate', issues: ['可能重複：相同 company_id + chip_name + title'], data };
-    }
-
-    // --- Warnings ---
-    const warnings = [];
-
-    if (data.status === 'verified' && !data.last_verified_by) {
-        warnings.push('verified 信號但 last_verified_by 為空');
-    }
-    if (data.status === 'verified' && data.confidence_reason && data.confidence_reason.length < 10) {
-        warnings.push('verified 信號但 confidence_reason 太短');
-    }
-    if (data.cowos_required === true && !data.abf_size && !data.abf_layers) {
-        warnings.push('CoWoS required 但 abf_size 和 abf_layers 皆為空');
-    }
-    if (data.sources && typeof data.sources === 'string') {
-        warnings.push('sources 無法解析為 JSON');
-    }
-    if (data.status === 'draft') {
-        warnings.push('draft 信號不會出現在公開頁面');
-    }
-
-    return { status: warnings.length > 0 ? 'warning' : 'ready', issues: warnings, data };
+    return { status: 'ready', action: '', issues: [], data };
 }
 
 function parseBoolStrict(val) {
@@ -250,24 +254,152 @@ function parseBoolStrict(val) {
     return { ok: false, value: null };
 }
 
+// ===== Classification (Phase 13.2) =====
+
+/**
+ * Classify a validated row as create / update / skip / error.
+ *
+ * Matching priority:
+ * 1. exact import_key match
+ * 2. legacy: company_id + chip_name + title
+ */
+export function classifyImportRow(validatedRow, existingSignals) {
+    if (validatedRow.status === 'error') {
+        return { ...validatedRow, action: 'error' };
+    }
+
+    const data = validatedRow.data;
+    const importKey = data.import_key || buildImportKey(data);
+
+    // Build lookup maps
+    const byImportKey = {};
+    const byLegacyKey = {};
+
+    for (const s of existingSignals) {
+        if (s.archived || s.status === 'archived') continue;
+        if (s.import_key) {
+            byImportKey[s.import_key.toLowerCase()] = s;
+        }
+        const legacyKey = `${s.company_id}|${s.chip_name}|${s.title}`.toLowerCase();
+        byLegacyKey[legacyKey] = s;
+    }
+
+    // 1. Match by import_key
+    const matchByKey = byImportKey[importKey.toLowerCase()];
+    if (matchByKey) {
+        const changed = getChangedFields(data, matchByKey);
+        if (changed.length === 0) {
+            return {
+                ...validatedRow,
+                action: 'skip',
+                existingId: matchByKey.id,
+                existing: matchByKey,
+                changedFields: [],
+                issues: ['No changes detected'],
+            };
+        }
+        return {
+            ...validatedRow,
+            action: 'update',
+            existingId: matchByKey.id,
+            existing: matchByKey,
+            changedFields: changed,
+            status: 'warning',
+            issues: [`Will update ${changed.length} field(s)`],
+        };
+    }
+
+    // 2. Match by legacy key
+    const legacyKey = `${data.company_id}|${data.chip_name}|${data.title}`.toLowerCase();
+    const matchByLegacy = byLegacyKey[legacyKey];
+    if (matchByLegacy) {
+        const changed = getChangedFields(data, matchByLegacy);
+        if (changed.length === 0) {
+            return {
+                ...validatedRow,
+                action: 'skip',
+                existingId: matchByLegacy.id,
+                existing: matchByLegacy,
+                changedFields: [],
+                issues: ['No changes detected'],
+            };
+        }
+        return {
+            ...validatedRow,
+            action: 'update',
+            existingId: matchByLegacy.id,
+            existing: matchByLegacy,
+            changedFields: changed,
+            status: 'warning',
+            issues: [`Will update ${changed.length} field(s)`],
+        };
+    }
+
+    // 3. No match → create
+    return {
+        ...validatedRow,
+        action: 'create',
+        existingId: '',
+        existing: null,
+        changedFields: [],
+    };
+}
+
+/**
+ * Compare normalized import data against existing signal.
+ * Returns list of field names that differ.
+ */
+export function getChangedFields(nextData, existingSignal) {
+    const changed = [];
+    for (const field of MEANINGFUL_FIELDS) {
+        const next = normalizeFieldValue(nextData[field]);
+        const prev = normalizeFieldValue(existingSignal[field]);
+        if (next !== prev) {
+            changed.push(field);
+        }
+    }
+    return changed;
+}
+
+function normalizeFieldValue(val) {
+    if (val === null || val === undefined) return '';
+    if (typeof val === 'boolean') return val ? '1' : '0';
+    if (Array.isArray(val)) return val.sort().join(',');
+    if (typeof val === 'object') return JSON.stringify(val);
+    return String(val).trim();
+}
+
 // ===== Import =====
 
 /**
- * Import validated rows into Firestore via createSignal().
- * Only imports rows with status 'ready' or 'warning'.
+ * Import validated+classified rows into Firestore.
+ * Creates new signals or updates existing ones.
  */
 export async function importSignals(rows, actor) {
-    const results = { imported: 0, skipped: 0, errors: 0 };
+    const results = { created: 0, updated: 0, skipped: 0, errors: 0 };
 
     for (const row of rows) {
-        if (row.status === 'error' || row.status === 'duplicate') {
+        if (row.action === 'error') {
+            results.errors++;
+            continue;
+        }
+        if (row.action === 'skip') {
             results.skipped++;
             continue;
         }
 
         try {
-            await createSignal(row.data, actor);
-            results.imported++;
+            if (row.action === 'create') {
+                await createSignal(row.data, actor);
+                results.created++;
+            } else if (row.action === 'update') {
+                await saveSignal(row.existingId, row.data, {
+                    actor,
+                    previousStatus: row.existing?.status || null,
+                    previousConfidence: row.existing?.confidence_score || null,
+                });
+                results.updated++;
+            }
         } catch (err) {
             console.error('Import error for row:', row.data.title, err);
             results.errors++;
@@ -275,4 +407,26 @@ export async function importSignals(rows, actor) {
     }
 
     return results;
+}
+
+/**
+ * Write import batch log to Firestore.
+ */
+export async function logImportBatch(actor, results) {
+    try {
+        const { db } = await import('../js/firebase/config.js');
+        const { collection, addDoc, serverTimestamp } = await import('firebase/firestore');
+        await addDoc(collection(db, 'import_batches'), {
+            type: 'signals',
+            actor: actor || 'unknown',
+            created_count: results.created,
+            updated_count: results.updated,
+            skipped_count: results.skipped,
+            error_count: results.errors,
+            total_count: results.created + results.updated + results.skipped + results.errors,
+            createdAt: serverTimestamp(),
+        });
+    } catch (err) {
+        console.warn('[Firestore] import_batches write failed:', err);
+    }
 }

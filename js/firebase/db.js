@@ -4,6 +4,7 @@ import {
     query, orderBy, serverTimestamp, where
 } from 'firebase/firestore';
 import { normalizeSignal, IMPACT_SORT, HISTORY_ACTIONS } from '../modules/signals-schema.js';
+import { normalizeSignalDoc, stripSignalIdForWrite } from './signal-record.js';
 
 function showErrorBanner(message) {
     const existing = document.querySelector('.notification-error');
@@ -114,11 +115,17 @@ export { normalizeSignal };
 /**
  * loadSignals — returns { ok: true, data: Signal[] } or { ok: false, error: Error }
  * Never collapses a load failure into an empty array.
+ *
+ * Phase 13.1: excludes archived records by default.
  */
-export async function loadSignals() {
+export async function loadSignals(options = {}) {
+    const { includeArchived = false } = options;
     try {
         const snap = await getDocs(collection(db, 'signals'));
-        const signals = snap.docs.map(d => normalizeSignal({ id: d.id, ...d.data() })).filter(Boolean);
+        let signals = snap.docs.map(d => normalizeSignal({ id: d.id, ...d.data() })).filter(Boolean);
+        if (!includeArchived) {
+            signals = signals.filter(s => !s.archived && s.status !== 'archived');
+        }
         signals.sort((a, b) => {
             const impDiff = (IMPACT_SORT[b.abf_demand_impact] || 0) - (IMPACT_SORT[a.abf_demand_impact] || 0);
             if (impDiff !== 0) return impDiff;
@@ -223,8 +230,29 @@ export async function saveSignal(id, data, opts = {}) {
     await writeSignalHistory(id, action, actor, summary);
 }
 
-export async function deleteSignal(id) {
-    await deleteDoc(doc(db, 'signals', id));
+/**
+ * archiveSignal — Phase 13.1: soft delete.
+ * Sets archived=true, status='archived', records metadata and history.
+ */
+export async function archiveSignal(id, opts = {}) {
+    const { actor = '', reason = '' } = opts;
+    await updateDoc(doc(db, 'signals', id), {
+        archived: true,
+        archived_at: new Date().toISOString(),
+        archived_by: actor || '',
+        archive_reason: reason || '',
+        status: 'archived',
+        updatedAt: serverTimestamp(),
+    });
+    await writeSignalHistory(id, HISTORY_ACTIONS.ARCHIVED, actor, reason || 'Signal archived');
+}
+
+/**
+ * deleteSignal — Phase 13.1: aliased to archiveSignal for safety.
+ * Hard delete (deleteDoc) is no longer the default admin action.
+ */
+export async function deleteSignal(id, opts = {}) {
+    return archiveSignal(id, opts);
 }
 
 // ===== WRITE FUNCTIONS (admin only) =====

@@ -4,7 +4,7 @@ import {
     collection, doc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
     query, orderBy, serverTimestamp
 } from 'firebase/firestore';
-import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, normalizeSignal, loadSignalHistory } from '../js/firebase/db.js';
+import { loadSignals, createSignal, saveSignal, deleteSignal as deleteSignalDb, archiveSignal, normalizeSignal, loadSignalHistory } from '../js/firebase/db.js';
 import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS,
@@ -15,7 +15,8 @@ import {
     QUEUE_TYPES,
 } from '../js/modules/data-quality.js';
 import {
-    downloadTemplate, parseExcelFile, validateRow, importSignals,
+    downloadTemplate, parseExcelFile, validateRow, classifyImportRow,
+    importSignals, logImportBatch,
 } from './import-signals.js';
 
 // ===== STATE =====
@@ -24,6 +25,7 @@ let insightsData = [];
 let signalsData = [];
 let qualityQueue = [];
 let currentSaveFn = null;
+let showArchivedSignals = false;
 
 // ===== HELPERS =====
 function esc(v) {
@@ -216,7 +218,7 @@ async function fetchInsights() {
 }
 
 async function fetchSignals() {
-    const result = await loadSignals();
+    const result = await loadSignals({ includeArchived: showArchivedSignals });
     if (result.ok) {
         signalsData = result.data;
         buildQualityQueueFromData();
@@ -547,6 +549,7 @@ function statusChipClass(s) {
         case 'watch': return 'badge-yellow';
         case 'downgraded': return 'badge-yellow';
         case 'invalidated': return 'badge-red';
+        case 'archived': return 'badge-gray';
         default: return 'badge-gray';
     }
 }
@@ -560,19 +563,22 @@ function renderSignalsTab(filterState = {}) {
     const companies = [...new Set(signalsData.map(s => s.company_name).filter(Boolean))].sort();
 
     const rows = filtered.map(s => {
+        const isArchived = s.archived || s.status === 'archived';
         const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
         const updated = s.updatedAt ? new Date(s.updatedAt).toISOString().slice(0, 16).replace('T', ' ') : '—';
-        return `<tr>
+        const rowClass = isArchived ? 'style="opacity:0.5"' : '';
+        const archivedBadge = isArchived ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">封存</span>' : '';
+        return `<tr ${rowClass}>
             <td>${esc(s.company_name)}</td>
             <td>${esc(s.chip_name)}</td>
-            <td>${esc(s.title)}</td>
+            <td>${esc(s.title)}${archivedBadge}</td>
             <td><span class="badge badge-gray">${stageLabel(s.stage)}</span></td>
             <td><span class="badge ${statusChipClass(s.status)}">${statusLabel(s.status)}</span></td>
             <td>${s.confidence_score}</td>
             <td>${verified}<br><small style="color:#888">${updated}</small></td>
             <td class="td-actions">
                 <button class="btn-sm" data-action="edit-signal" data-id="${esc(s.id)}">編輯</button>
-                <button class="btn-sm btn-danger" data-action="delete-signal" data-id="${esc(s.id)}">刪除</button>
+                <button class="btn-sm btn-danger" data-action="delete-signal" data-id="${esc(s.id)}">${isArchived ? '已封存' : '封存'}</button>
             </td>
         </tr>`;
     }).join('');
@@ -597,6 +603,10 @@ function renderSignalsTab(filterState = {}) {
             </select>
             <button class="btn-sm" data-action="filter-signals">套用</button>
             <button class="btn-sm btn-secondary" data-action="reset-signal-filters">重置</button>
+            <label style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--text-muted);margin-left:auto;cursor:pointer">
+                <input type="checkbox" id="sig-show-archived" ${showArchivedSignals ? 'checked' : ''} style="cursor:pointer">
+                顯示已封存
+            </label>
         </div>
         <div class="table-wrap">
             <table>
@@ -604,6 +614,16 @@ function renderSignalsTab(filterState = {}) {
                 <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">尚無信號</td></tr>'}</tbody>
             </table>
         </div>`;
+
+    // Bind archived toggle
+    const archivedCheckbox = document.getElementById('sig-show-archived');
+    if (archivedCheckbox) {
+        archivedCheckbox.addEventListener('change', async () => {
+            showArchivedSignals = archivedCheckbox.checked;
+            await fetchSignals();
+            renderSignalsTab(filterState);
+        });
+    }
 }
 
 function applySignalFilters() {
@@ -893,9 +913,19 @@ async function renderAdminSignalHistory(signalId) {
 
 async function deleteSignalAction(id) {
     const signal = signalsData.find(s => s.id === id);
-    if (!confirm(`確定刪除「${signal?.title}」嗎？此動作無法復原。`)) return;
-    await deleteSignalDb(id);
-    showToast('已刪除');
+    if (!signal) return;
+    const isArchived = signal.archived || signal.status === 'archived';
+    if (isArchived) {
+        showToast('此信號已封存', 'error');
+        return;
+    }
+    const reason = prompt('Archive this signal? It will be hidden from public pages but kept for audit.\n\nArchive reason (optional):');
+    if (reason === null) return; // cancelled
+    await archiveSignal(id, {
+        actor: auth.currentUser?.email || 'admin',
+        reason: reason || '',
+    });
+    showToast('已封存');
     await fetchSignals();
     renderSignalsTab();
 }
@@ -904,7 +934,7 @@ async function deleteSignalAction(id) {
 function renderImportTab() {
     document.getElementById('import-content').innerHTML = `
         <div class="import-workflow">
-            <h2>Signals Excel Import</h2>
+            <h2>Signals Excel Import (Upsert)</h2>
             <div class="import-step">
                 <h3>1. 下載模板</h3>
                 <button class="btn-sm" id="import-download-template">下載 Signals Excel 模板</button>
@@ -926,35 +956,31 @@ function renderImportTab() {
         </div>
     `;
 
-    // Bind download button
     document.getElementById('import-download-template').addEventListener('click', () => {
         downloadTemplate();
     });
 
-    // Bind file input
     document.getElementById('import-file-input').addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
         await handleImportFile(file);
     });
 
-    // Bind confirm import button
     document.getElementById('import-confirm-btn').addEventListener('click', async () => {
         await handleConfirmImport();
     });
 }
 
-// Parsed/import state
 let importParsedRows = [];
 
 async function handleImportFile(file) {
     try {
         const rawRows = await parseExcelFile(file);
         importParsedRows = rawRows.map((row, idx) => {
-            const result = validateRow(row, signalsData);
-            return { rowNumber: idx + 1, ...result };
+            const validated = validateRow(row, signalsData);
+            const classified = classifyImportRow(validated, signalsData);
+            return { rowNumber: idx + 1, ...classified };
         });
-
         renderImportPreview();
     } catch (err) {
         console.error('Import parse error:', err);
@@ -971,36 +997,42 @@ function renderImportPreview() {
     preview.style.display = 'block';
     document.getElementById('import-result').style.display = 'none';
 
-    const counts = { ready: 0, warning: 0, error: 0, duplicate: 0 };
-    for (const r of importParsedRows) counts[r.status]++;
+    const counts = { create: 0, update: 0, skip: 0, error: 0 };
+    for (const r of importParsedRows) {
+        if (r.action === 'error') counts.error++;
+        else if (r.action === 'skip') counts.skip++;
+        else if (r.action === 'update') counts.update++;
+        else counts.create++;
+    }
 
     summary.innerHTML = `
-        <span class="badge badge-green">${counts.ready} ready</span>&nbsp;
-        <span class="badge badge-yellow">${counts.warning} warning</span>&nbsp;
+        <span class="badge badge-green">${counts.create} create</span>&nbsp;
+        <span class="badge badge-blue">${counts.update} update</span>&nbsp;
+        <span class="badge badge-gray">${counts.skip} skip</span>&nbsp;
         <span class="badge badge-red">${counts.error} error</span>&nbsp;
-        <span class="badge badge-gray">${counts.duplicate} duplicate</span>&nbsp;
         <span style="margin-left:8px">共 ${importParsedRows.length} 筆</span>
     `;
 
-    const importable = importParsedRows.filter(r => r.status === 'ready' || r.status === 'warning');
-    confirmBtn.disabled = importable.length === 0;
+    const actionable = importParsedRows.filter(r => r.action === 'create' || r.action === 'update');
+    confirmBtn.disabled = actionable.length === 0;
 
-    // Build compact preview table
-    const statusLabels = { ready: '可匯入', warning: '警告', error: '錯誤', duplicate: '重複' };
-    const statusClasses = { ready: 'badge-green', warning: 'badge-yellow', error: 'badge-red', duplicate: 'badge-gray' };
+    const actionLabels = { create: '建立', update: '更新', skip: '跳過', error: '錯誤' };
+    const actionClasses = { create: 'badge-green', update: 'badge-blue', skip: 'badge-gray', error: 'badge-red' };
 
     const rows = importParsedRows.map(r => {
         const d = r.data;
-        return `<tr class="import-row-${r.status}">
+        const changedInfo = r.changedFields && r.changedFields.length > 0
+            ? `${r.changedFields.length} 欄位` : '';
+        return `<tr class="import-row-${r.action}">
             <td>${r.rowNumber}</td>
-            <td><span class="badge ${statusClasses[r.status]}">${statusLabels[r.status]}</span></td>
+            <td><span class="badge ${actionClasses[r.action]}">${actionLabels[r.action]}</span></td>
             <td class="td-truncate" title="${esc(d.title)}">${esc(d.title?.slice(0, 30) || '')}</td>
             <td>${esc(d.company_name)}</td>
             <td>${esc(d.chip_name)}</td>
             <td>${esc(STAGE_LABEL[d.stage] || d.stage)}</td>
             <td>${esc(STATUS_LABEL[d.status] || d.status)}</td>
             <td>${esc(IMPACT_LABEL[d.abf_demand_impact] || d.abf_demand_impact)}</td>
-            <td class="td-truncate" title="${esc(r.issues.join('; '))}">${esc(r.issues.slice(0, 2).join('; ') || '')}</td>
+            <td class="td-truncate">${esc(changedInfo || r.issues.slice(0, 1).join('; ') || '')}</td>
         </tr>`;
     }).join('');
 
@@ -1008,8 +1040,8 @@ function renderImportPreview() {
         <table class="import-table">
             <thead>
                 <tr>
-                    <th>#</th><th>狀態</th><th>標題</th><th>公司</th><th>芯片</th>
-                    <th>階段</th><th>信號狀態</th><th>ABF 影響</th><th>問題</th>
+                    <th>#</th><th>動作</th><th>標題</th><th>公司</th><th>芯片</th>
+                    <th>階段</th><th>信號狀態</th><th>ABF 影響</th><th>變更</th>
                 </tr>
             </thead>
             <tbody>${rows}</tbody>
@@ -1018,21 +1050,20 @@ function renderImportPreview() {
 }
 
 async function handleConfirmImport() {
-    const importable = importParsedRows.filter(r => r.status === 'ready' || r.status === 'warning');
-    if (importable.length === 0) return;
+    const actionable = importParsedRows.filter(r => r.action === 'create' || r.action === 'update');
+    if (actionable.length === 0) return;
 
     const actor = auth.currentUser?.email || 'bulk-import';
     const results = await importSignals(importParsedRows, actor);
+    await logImportBatch(actor, results);
 
-    // Show result
     const resultDiv = document.getElementById('import-result');
     const resultSummary = document.getElementById('import-result-summary');
     resultDiv.style.display = 'block';
     resultSummary.innerHTML = `
-        <p>匯入完成：${results.imported} 筆成功 / ${results.skipped} 筆跳過 / ${results.errors} 筆失敗</p>
+        <p>匯入完成：${results.created} 建立 / ${results.updated} 更新 / ${results.skipped} 跳過 / ${results.errors} 錯誤</p>
     `;
 
-    // Refresh data
     await fetchSignals();
     buildQualityQueueFromData();
     renderDataQualityTab();
@@ -1040,7 +1071,7 @@ async function handleConfirmImport() {
     importParsedRows = [];
     document.getElementById('import-confirm-btn').disabled = true;
 
-    showToast(`匯入完成：${results.imported} 筆信號`);
+    showToast(`匯入完成：${results.created} 建立 / ${results.updated} 更新`);
 }
 
 // ===== ARTICLES TAB =====

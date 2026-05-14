@@ -5,7 +5,7 @@
 
 // ===== Enums =====
 export const STAGE_ENUM = ['rumor', 'announced', 'sampling', 'design_win', 'pilot', 'ramp', 'volume'];
-export const STATUS_ENUM = ['draft', 'watch', 'verified', 'downgraded', 'invalidated'];
+export const STATUS_ENUM = ['draft', 'watch', 'verified', 'downgraded', 'invalidated', 'archived'];
 export const IMPACT_ENUM = ['low', 'medium', 'high', 'explosive'];
 export const REGION_OPTIONS = ['China', 'Taiwan', 'USA', 'Korea', 'Japan', 'Europe', 'Israel', 'Canada', 'Other', 'Global'];
 
@@ -29,6 +29,7 @@ export const STATUS_LABEL = {
     verified: '已驗證',
     downgraded: '降級',
     invalidated: '已失效',
+    archived: '已封存',
 };
 
 export const IMPACT_LABEL = {
@@ -61,6 +62,7 @@ export const HISTORY_ACTIONS = {
     UPDATED: 'updated',
     STATUS_CHANGED: 'status_changed',
     CONFIDENCE_CHANGED: 'confidence_changed',
+    ARCHIVED: 'archived',
 };
 
 export const HISTORY_ACTION_LABELS = {
@@ -68,6 +70,7 @@ export const HISTORY_ACTION_LABELS = {
     updated: '已更新',
     status_changed: '狀態變更',
     confidence_changed: '信度變更',
+    archived: '已封存',
 };
 
 // ===== Navigation Helpers =====
@@ -136,5 +139,11 @@ export function normalizeSignal(raw) {
         last_confidence_changed_at: raw.last_confidence_changed_at || null,
         verification_note: raw.verification_note || '',
         source_regions: Array.isArray(raw.source_regions) ? raw.source_regions : [],
+        // Archive metadata (Phase 13.1)
+        archived: Boolean(raw.archived),
+        archived_at: raw.archived_at || '',
+        archived_by: raw.archived_by || '',
+        archive_reason: raw.archive_reason || '',
+        import_key: raw.import_key || '',
     };
 }
