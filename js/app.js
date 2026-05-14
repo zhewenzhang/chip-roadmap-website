@@ -9,8 +9,6 @@ import { renderTimeline } from './modules/timeline.js';
 import { showCompanyDetail, setModalData } from './modules/modal.js';
 import { init as initSignals } from './modules/signals.js';
 import { buildRoadmapMatrixFromSignals, getRoadmapYears, getRoadmapCompanies } from './modules/roadmap-derived.js';
-import { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate } from './modules/insights-derived.js';
-import { buildPriorityQueue, buildSignalChangeFeed, CHANGE_TYPES, PRIORITY_LABELS } from './modules/change-intelligence.js';
 import { loadWatchlist, getWatchlist, isEmpty as isWatchlistEmpty } from './modules/watchlist.js';
 import { deriveChipImpact } from './modules/impact-engine.js';
 import { STAGE_LABEL, IMPACT_LABEL as SIG_IMPACT_LABEL, STATUS_LABEL as SIG_STATUS_LABEL } from './modules/signals-schema.js';
@@ -18,26 +16,15 @@ import { STAGE_LABEL, IMPACT_LABEL as SIG_IMPACT_LABEL, STATUS_LABEL as SIG_STAT
 // ============== 全局数据 ==============
 let companiesData = {};
 let roadmapsData = {};
-let marketData = {};
-let insightsData = {};
 
 // ============== 初始化 ==============
 document.addEventListener('DOMContentLoaded', async function() {
-    const data = await loadAllData();
-    companiesData = data.companies;
-    roadmapsData = data.roadmaps;
-    marketData = data.market;
-    insightsData = data.insights;
-
-    // 将数据传递给模态框模块
-    setModalData(companiesData, roadmapsData);
-
-    // 暴露 showCompanyDetail 到全局，供 companies.js 模块调用
-    window.showCompanyDetail = showCompanyDetail;
-
+    // Shared UI setup — no Firestore reads here
     initFilters();
     initMobileMenu();
     initSearch();
+
+    // Page-specific data loading (Approach A: each page decides what it needs)
     initPageSpecific();
 });
 
@@ -135,7 +122,7 @@ function renderLatestVerifiedSignals(signals) {
 
     container.innerHTML = verified.map(s => {
         const dateStr = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '';
-        return `<div class="home-signal-row" data-id="${esc(s.id)}">
+        return `<div class="home-signal-row" data-id="${esc(s.id)}" role="button" tabindex="0">
             <a href="chip-signals.html?name=${encodeURIComponent(s.chip_name)}" class="home-signal-chip">${esc(s.chip_name)}</a>
             <span class="home-signal-company"><a href="company-signals.html?id=${encodeURIComponent(s.company_id)}">${esc(s.company_name)}</a></span>
             <span class="home-badge home-stage">${esc(STAGE_LABEL[s.stage] || s.stage)}</span>
@@ -148,7 +135,20 @@ function renderLatestVerifiedSignals(signals) {
     container.querySelectorAll('.home-signal-row').forEach(row => {
         row.addEventListener('click', (e) => {
             if (e.target.closest('a')) return;
-            window.location.href = `chip-signals.html?name=${encodeURIComponent(signals.find(s2 => s2.id === row.dataset.id)?.chip_name || '')}`;
+            const signal = signals.find(s2 => s2.id === row.dataset.id);
+            if (signal) {
+                window.location.href = `chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`;
+            }
+        });
+        // Keyboard handler (Problem 2)
+        row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const signal = signals.find(s2 => s2.id === row.dataset.id);
+                if (signal) {
+                    window.location.href = `chip-signals.html?name=${encodeURIComponent(signal.chip_name)}`;
+                }
+            }
         });
     });
 }
@@ -195,18 +195,38 @@ function renderTopImpactChips(signals) {
     const top5 = qualifying.slice(0, 5);
 
     container.innerHTML = top5.map(d => {
-        const firstSignal = signals.find(s => s.chip_name === d.name);
+        // Problem 5: get company name from first driving signal (verified/watch only)
+        const driver = d.drivingSignals?.[0];
+        const companyName = driver
+            ? (signals.find(s => s.id === driver.id)?.company_name || '')
+            : '';
         const cowosLabel = d.cowosDependency === 'Yes' ? 'Yes' : d.cowosDependency === 'Likely' ? 'Likely' : 'No';
         const reason = (d.reasonsByField?.abf_demand_impact || '').slice(0, 60);
-        return `<div class="home-impact-row">
+        return `<div class="home-impact-row" role="button" tabindex="0">
             <a href="chip-signals.html?name=${encodeURIComponent(d.name)}" class="home-signal-chip">${esc(d.name)}</a>
-            <span class="home-signal-company">${firstSignal ? esc(firstSignal.company_name) : ''}</span>
+            <span class="home-signal-company">${companyName ? esc(companyName) : ''}</span>
             <span class="home-badge home-impact-${d.abfDemandImpact}">${esc(SIG_IMPACT_LABEL[d.abfDemandImpact] || d.abfDemandImpact)}</span>
             <span class="home-cowos">CoWoS: ${cowosLabel}</span>
             <span class="home-confidence">信度 ${d.derivedConfidence ?? '—'}</span>
             <span class="home-reason">${esc(reason)}</span>
         </div>`;
     }).join('');
+
+    // Problem 2: keyboard handler for impact rows
+    container.querySelectorAll('.home-impact-row').forEach(row => {
+        row.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            const chipLink = row.querySelector('.home-signal-chip');
+            if (chipLink) window.location.href = chipLink.href;
+        });
+        row.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const chipLink = row.querySelector('.home-signal-chip');
+                if (chipLink) window.location.href = chipLink.href;
+            }
+        });
+    });
 }
 
 function renderTopImpactEmpty() {
@@ -301,6 +321,13 @@ function initRoadmapFilters() {
 
 // ============== 公司页面初始化 (V2: signals-enriched) ==============
 async function initCompaniesPage() {
+    // Load companies data for the grid + modal
+    const data = await loadAllData();
+    companiesData = data.companies;
+    roadmapsData = data.roadmaps;
+    setModalData(companiesData, roadmapsData);
+    window.showCompanyDetail = showCompanyDetail;
+
     // Load signals to enrich company cards with live metrics
     const result = await loadSignals();
     const signalMetrics = result.ok ? buildSignalMetrics(result.data) : {};
@@ -333,12 +360,22 @@ async function initInsightsPage() {
     }
 
     const signals = result.data;
-    renderRecentSignalCountsModule(signals);
-    renderRecentUpgradesModule(signals);
-    renderHighImpactModule(signals);
-    renderRiskSignalsModule(signals);
-    renderSignificantChangesModule(signals);
-    renderPriorityQueueModule(signals);
+
+    // Dynamic imports — only loaded on the Insights page (Problem 3)
+    const [insightsDerived, changeIntel] = await Promise.all([
+        import('./modules/insights-derived.js'),
+        import('./modules/change-intelligence.js'),
+    ]);
+
+    const { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate } = insightsDerived;
+    const { buildPriorityQueue, buildSignalChangeFeed, CHANGE_TYPES, PRIORITY_LABELS } = changeIntel;
+
+    renderRecentSignalCountsModule(signals, buildRecentSignalCounts);
+    renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, STATUS_LABELS);
+    renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LABELS, formatDate);
+    renderRiskSignalsModule(signals, buildRiskSignals);
+    renderSignificantChangesModule(signals, buildSignalChangeFeed, CHANGE_TYPES);
+    renderPriorityQueueModule(signals, buildPriorityQueue, PRIORITY_LABELS);
 }
 
 function renderInsightsError() {
@@ -348,7 +385,7 @@ function renderInsightsError() {
     });
 }
 
-function renderRecentSignalCountsModule(signals) {
+function renderRecentSignalCountsModule(signals, buildRecentSignalCounts) {
     const container = document.getElementById('recentCounts');
     if (!container) return;
 
@@ -390,7 +427,7 @@ function renderRecentSignalCountsModule(signals) {
     });
 }
 
-function renderRecentUpgradesModule(signals) {
+function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, STATUS_LABELS) {
     const container = document.getElementById('recentUpgrades');
     if (!container) return;
 
@@ -438,7 +475,7 @@ function renderRecentUpgradesModule(signals) {
     });
 }
 
-function renderHighImpactModule(signals) {
+function renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LABELS, formatDate) {
     const container = document.getElementById('highImpactSignals');
     if (!container) return;
 
@@ -485,7 +522,7 @@ function renderHighImpactModule(signals) {
     });
 }
 
-function renderRiskSignalsModule(signals) {
+function renderRiskSignalsModule(signals, buildRiskSignals) {
     const container = document.getElementById('riskSignals');
     if (!container) return;
 
@@ -540,7 +577,7 @@ function renderRiskSignalsModule(signals) {
  * Module 5: Most Significant Changes (last 30 days)
  * Cross-entity feed of upgrades, downgrades, impact shifts, conflicts.
  */
-function renderSignificantChangesModule(signals) {
+function renderSignificantChangesModule(signals, buildSignalChangeFeed, CHANGE_TYPES) {
     const container = document.getElementById('significantChanges');
     if (!container) return;
 
@@ -610,7 +647,7 @@ function renderSignificantChangesModule(signals) {
  * Module 6: Priority Review Queue
  * Top ranked items from the shared priority model.
  */
-function renderPriorityQueueModule(signals) {
+function renderPriorityQueueModule(signals, buildPriorityQueue, PRIORITY_LABELS) {
     const container = document.getElementById('priorityQueue');
     if (!container) return;
 

@@ -258,44 +258,6 @@ hr.thick {
     letter-spacing: 0.1em;
 }
 
-/* Hero stats - inverted black background row */
-.hero-stats {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-    background: var(--color-fg);
-    color: var(--color-bg);
-    padding: 32px 24px;
-    margin-top: 48px;
-}
-
-.stat-item {
-    flex: 1;
-    text-align: center;
-    border-right: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0 24px;
-}
-
-.stat-item:last-child {
-    border-right: none;
-}
-
-.stat-number {
-    font-family: var(--font-display);
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--color-bg);
-    display: block;
-}
-
-.stat-label {
-    font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.7);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
 /* ============== Main Content ============== */
 .main-content {
     max-width: 1280px;
@@ -1608,22 +1570,6 @@ hr.thick {
 
     .hero h1 .hero-dramatic {
         font-size: 3.5rem;
-    }
-
-    .hero-stats {
-        flex-direction: column;
-        gap: 16px;
-        padding: 24px;
-    }
-
-    .stat-item {
-        border-right: none;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        padding: 16px 0;
-    }
-
-    .stat-item:last-child {
-        border-bottom: none;
     }
 
     .stats-row {
@@ -4077,8 +4023,18 @@ tr:hover .td-company { background: #f5f5f5; }
     border-bottom: none;
 }
 
+.home-impact-row:focus-visible {
+    outline: 2px solid var(--color-fg);
+    outline-offset: -2px;
+}
+
 .home-signal-row:hover {
     background: var(--color-muted-bg);
+}
+
+.home-signal-row:focus-visible {
+    outline: 2px solid var(--color-fg);
+    outline-offset: -2px;
 }
 
 .home-signal-chip {
