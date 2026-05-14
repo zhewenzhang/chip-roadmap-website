@@ -28,7 +28,6 @@ import {
 
 // ===== STATE =====
 let companiesData = [];
-let insightsData = [];
 let signalsData = [];
 let qualityQueue = [];
 let currentSaveFn = null;
@@ -188,17 +187,15 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ===== DATA LOADING =====
 async function loadAllData() {
-    await Promise.all([fetchCompanies(), fetchInsights(), fetchSignals()]);
+    await Promise.all([fetchCompanies(), fetchSignals()]);
     buildQualityQueueFromData();
     renderDashboardTab();
     renderInboxTab();
     renderReviewTab();
     renderAddDataTab();
     renderCompaniesTab();
-    renderInsightsTab();
     renderSignalsTab();
     renderDataQualityTab();
-    renderArticlesTab();
     // Legacy tabs (hidden, kept for backward compatibility)
     renderImportTab();
     renderAiExtractTab();
@@ -217,16 +214,6 @@ async function fetchCompanies() {
     } catch (err) {
         console.error('Error fetching companies:', err);
         companiesData = [];
-    }
-}
-
-async function fetchInsights() {
-    try {
-        const snap = await getDocs(collection(db, 'insights'));
-        insightsData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch (err) {
-        console.error('Error fetching insights:', err);
-        insightsData = [];
     }
 }
 
@@ -385,157 +372,6 @@ async function deleteCompanyAction(companyId) {
     await fetchCompanies();
     renderCompaniesTab();
     renderCompletenessTab();
-}
-
-// ===== INSIGHTS TAB =====
-document.getElementById('tab-insights').addEventListener('click', e => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, id } = btn.dataset;
-    if (action === 'edit-trend') openEditTrendModal(id);
-    else if (action === 'edit-top-player') openEditTopPlayerModal(id);
-    else if (action === 'delete-insight') deleteInsightAction(id);
-    else if (action === 'new-trend') openNewTrendModal();
-    else if (action === 'new-top-player') openNewTopPlayerModal();
-});
-
-function renderInsightsTab() {
-    const trends = insightsData.filter(i => i.type === 'trend');
-    const players = insightsData.filter(i => i.type === 'top_player');
-
-    const trendRows = trends.map(t => `<tr>
-        <td>${esc(t.title)}</td>
-        <td><span class="badge badge-gray">${esc(t.impact)}</span></td>
-        <td class="td-actions">
-            <button class="btn-sm" data-action="edit-trend" data-id="${esc(t.id)}">Edit</button>
-            <button class="btn-sm btn-danger" data-action="delete-insight" data-id="${esc(t.id)}">Del</button>
-        </td>
-    </tr>`).join('');
-
-    const playerRows = players.map(p => `<tr>
-        <td>${esc(p.name)}</td>
-        <td>${esc(p.market_share)}</td>
-        <td class="td-actions">
-            <button class="btn-sm" data-action="edit-top-player" data-id="${esc(p.id)}">Edit</button>
-            <button class="btn-sm btn-danger" data-action="delete-insight" data-id="${esc(p.id)}">Del</button>
-        </td>
-    </tr>`).join('');
-
-    document.getElementById('insights-content').innerHTML = `
-        <div class="toolbar" style="margin-bottom:8px">
-            <h2>Trends (${trends.length})</h2>
-            <button class="btn-primary" data-action="new-trend" style="width:auto;padding:8px 16px">+ Add Trend</button>
-        </div>
-        <div class="table-wrap" style="margin-bottom:32px">
-            <table><thead><tr><th>Title</th><th>Impact</th><th>Actions</th></tr></thead>
-            <tbody>${trendRows || '<tr><td colspan="3" style="color:#888;text-align:center">No trends</td></tr>'}</tbody></table>
-        </div>
-        <div class="toolbar" style="margin-bottom:8px">
-            <h2>Top Players (${players.length})</h2>
-            <button class="btn-primary" data-action="new-top-player" style="width:auto;padding:8px 16px">+ Add Player</button>
-        </div>
-        <div class="table-wrap">
-            <table><thead><tr><th>Name</th><th>Market Share</th><th>Actions</th></tr></thead>
-            <tbody>${playerRows || '<tr><td colspan="3" style="color:#888;text-align:center">No players</td></tr>'}</tbody></table>
-        </div>`;
-}
-
-function buildTrendForm(t = {}) {
-    const impacts = ['高','中','低'];
-    return `
-        <div class="form-group"><label>Title</label><input id="ft-title" value="${esc(t.title || '')}"></div>
-        <div class="form-group"><label>Description</label><textarea id="ft-desc" rows="4">${esc(t.description || '')}</textarea></div>
-        <div class="form-group"><label>Impact</label>
-            <select id="ft-impact">${impacts.map(v => `<option ${t.impact === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>Companies (comma-separated)</label>
-            <input id="ft-companies" value="${esc((t.companies || []).join(', '))}">
-        </div>`;
-}
-
-function collectTrendForm() {
-    return {
-        type: 'trend',
-        title: document.getElementById('ft-title').value.trim(),
-        description: document.getElementById('ft-desc').value.trim(),
-        impact: document.getElementById('ft-impact').value,
-        companies: document.getElementById('ft-companies').value.split(',').map(s => s.trim()).filter(Boolean)
-    };
-}
-
-function openEditTrendModal(id) {
-    const trend = insightsData.find(i => i.id === id);
-    if (!trend) return;
-    openModal('Edit Trend', buildTrendForm(trend), async () => {
-        await updateDoc(doc(db, 'insights', id), { ...collectTrendForm(), updatedAt: serverTimestamp() });
-        showToast('Saved ✓');
-        await fetchInsights();
-        renderInsightsTab();
-    });
-}
-
-function openNewTrendModal() {
-    openModal('New Trend', buildTrendForm({}), async () => {
-        await addDoc(collection(db, 'insights'), {
-            ...collectTrendForm(), tags: ['trend'],
-            publishedAt: serverTimestamp(), createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-        });
-        showToast('Created ✓');
-        await fetchInsights();
-        renderInsightsTab();
-    });
-}
-
-function buildTopPlayerForm(p = {}) {
-    return `
-        <div class="form-group"><label>Name</label><input id="fp-name" value="${esc(p.name || '')}"></div>
-        <div class="form-group"><label>Market Share</label><input id="fp-share" value="${esc(p.market_share || '')}"></div>
-        <div class="form-group"><label>Strength</label><textarea id="fp-strength" rows="3">${esc(p.strength || '')}</textarea></div>
-        <div class="form-group"><label>Weakness</label><textarea id="fp-weakness" rows="3">${esc(p.weakness || '')}</textarea></div>
-        <div class="form-group"><label>Outlook</label><textarea id="fp-outlook" rows="3">${esc(p.outlook || '')}</textarea></div>`;
-}
-
-function collectTopPlayerForm() {
-    return {
-        type: 'top_player',
-        name: document.getElementById('fp-name').value.trim(),
-        market_share: document.getElementById('fp-share').value.trim(),
-        strength: document.getElementById('fp-strength').value.trim(),
-        weakness: document.getElementById('fp-weakness').value.trim(),
-        outlook: document.getElementById('fp-outlook').value.trim()
-    };
-}
-
-function openEditTopPlayerModal(id) {
-    const player = insightsData.find(i => i.id === id);
-    if (!player) return;
-    openModal('Edit Player', buildTopPlayerForm(player), async () => {
-        await updateDoc(doc(db, 'insights', id), { ...collectTopPlayerForm(), updatedAt: serverTimestamp() });
-        showToast('Saved ✓');
-        await fetchInsights();
-        renderInsightsTab();
-    });
-}
-
-function openNewTopPlayerModal() {
-    openModal('New Top Player', buildTopPlayerForm({}), async () => {
-        await addDoc(collection(db, 'insights'), {
-            ...collectTopPlayerForm(), tags: ['market'],
-            publishedAt: serverTimestamp(), createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-        });
-        showToast('Created ✓');
-        await fetchInsights();
-        renderInsightsTab();
-    });
-}
-
-async function deleteInsightAction(id) {
-    if (!confirm('Delete this item? Cannot be undone.')) return;
-    await deleteDoc(doc(db, 'insights', id));
-    showToast('Deleted');
-    await fetchInsights();
-    renderInsightsTab();
-    renderArticlesTab();
 }
 
 // ===== SIGNALS TAB =====
@@ -953,15 +789,36 @@ async function deleteSignalAction(id) {
         showToast('此信號已封存', 'error');
         return;
     }
-    const reason = prompt('Archive this signal? It will be hidden from public pages but kept for audit.\n\nArchive reason (optional):');
-    if (reason === null) return; // cancelled
-    await archiveSignal(id, {
-        actor: auth.currentUser?.email || 'admin',
-        reason: reason || '',
-    });
-    showToast('已封存');
-    await fetchSignals();
-    renderSignalsTab();
+    openModal('封存信號：' + signal.title, `
+        <div class="dq-review-form">
+            <div class="dq-review-signal">
+                <strong>${esc(signal.title)}</strong>
+                <div style="margin-top:4px">${esc(signal.company_name)} / ${esc(signal.chip_name)}</div>
+            </div>
+            <div class="dq-field">
+                <label>封存原因（可選）</label>
+                <textarea id="archive-reason" rows="3" placeholder="說明封存此信號的原因..."></textarea>
+            </div>
+        </div>
+        <style>
+            .dq-review-form .dq-field { margin-bottom: 10px; }
+            .dq-review-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+            .dq-review-form textarea {
+                width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
+            }
+            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+        </style>
+    `, async () => {
+        const reason = document.getElementById('archive-reason').value.trim();
+        await archiveSignal(id, {
+            actor: auth.currentUser?.email || 'admin',
+            reason: reason || '',
+        });
+        showToast('已封存');
+        await fetchSignals();
+        renderSignalsTab();
+    }, false);
 }
 
 // ===== DASHBOARD TAB (今日待辦) =====
@@ -1031,16 +888,14 @@ function renderDashboardTab() {
 
 function renderInboxTab() {
     const now = new Date();
-    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
     const inboxItems = signalsData.filter(s => {
         if (s.status !== 'draft') return false;
-        if (s.ai_generated) return true;
-        if (s.createdAt) {
-            const created = s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt);
-            return created >= sevenDaysAgo;
-        }
-        return false;
+        // Include if never reviewed (last_reviewed_at is null) OR last reviewed > 30 days ago
+        const lastReviewed = s.last_reviewed_at ? new Date(s.last_reviewed_at) : null;
+        if (!lastReviewed) return true; // truly fresh, never reviewed
+        return lastReviewed < thirtyDaysAgo; // re-review queue
     });
 
     const rows = inboxItems.map(s => {
@@ -1839,108 +1694,6 @@ function openEditAiCandidateModal(rowNumber) {
             document.getElementById('edit-ai-company-name').value = '';
         }
     });
-}
-
-// ===== ARTICLES TAB =====
-document.getElementById('tab-articles').addEventListener('click', e => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, id } = btn.dataset;
-    if (action === 'edit-article') openEditArticleModal(id);
-    else if (action === 'delete-article') deleteInsightAction(id);
-    else if (action === 'new-article') openNewArticleModal();
-});
-
-function renderArticlesTab() {
-    const articles = insightsData.filter(i => i.type === 'article' || i.type === 'market_brief');
-    const rows = articles.map(a => `<tr>
-        <td>${esc(a.title)}</td>
-        <td><span class="badge badge-gray">${esc(a.type)}</span></td>
-        <td>${esc((a.tags || []).join(', '))}</td>
-        <td class="td-actions">
-            <button class="btn-sm" data-action="edit-article" data-id="${esc(a.id)}">Edit</button>
-            <button class="btn-sm btn-danger" data-action="delete-article" data-id="${esc(a.id)}">Del</button>
-        </td>
-    </tr>`).join('');
-
-    document.getElementById('articles-content').innerHTML = `
-        <div class="toolbar">
-            <h2>Articles (${articles.length})</h2>
-            <button class="btn-primary" data-action="new-article" style="width:auto;padding:8px 16px">+ New Article</button>
-        </div>
-        <div class="table-wrap">
-            <table><thead><tr><th>Title</th><th>Type</th><th>Tags</th><th>Actions</th></tr></thead>
-            <tbody>${rows || '<tr><td colspan="4" style="color:#888;text-align:center">No articles yet</td></tr>'}</tbody></table>
-        </div>
-        <p style="color:#888;font-size:12px;margin-top:12px">Articles support Markdown with image links and tables.</p>`;
-}
-
-function buildArticleForm(a = {}) {
-    const types = ['article','market_brief'];
-    return `
-        <div class="form-group"><label>Title</label><input id="fa-title" value="${esc(a.title || '')}"></div>
-        <div class="form-group"><label>Type</label>
-            <select id="fa-type">${types.map(v => `<option ${a.type === v ? 'selected' : ''}>${v}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>Tags (comma-separated)</label><input id="fa-tags" value="${esc((a.tags || []).join(', '))}"></div>
-        <div class="form-group"><label>Summary</label><textarea id="fa-summary" rows="2">${esc(a.summary || '')}</textarea></div>
-        <div class="form-group"><label>Related Companies (comma-separated)</label>
-            <input id="fa-companies" value="${esc((a.relatedCompanies || []).join(', '))}">
-        </div>
-        <div class="form-section-title">Content (Markdown)</div>
-        <div class="md-editor-wrap">
-            <div class="form-group">
-                <div class="md-label">Write</div>
-                <textarea id="fa-content" rows="20">${esc(a.content || '')}</textarea>
-            </div>
-            <div>
-                <div class="md-label">Preview</div>
-                <div class="md-preview-panel" id="fa-preview">${renderMarkdown(a.content)}</div>
-            </div>
-        </div>`;
-}
-
-function initArticlePreview() {
-    const textarea = document.getElementById('fa-content');
-    const preview = document.getElementById('fa-preview');
-    if (!textarea || !preview) return;
-    textarea.addEventListener('input', () => { preview.innerHTML = renderMarkdown(textarea.value); });
-}
-
-function collectArticleForm() {
-    return {
-        title: document.getElementById('fa-title').value.trim(),
-        type: document.getElementById('fa-type').value,
-        tags: document.getElementById('fa-tags').value.split(',').map(s => s.trim()).filter(Boolean),
-        summary: document.getElementById('fa-summary').value.trim(),
-        relatedCompanies: document.getElementById('fa-companies').value.split(',').map(s => s.trim()).filter(Boolean),
-        content: document.getElementById('fa-content').value
-    };
-}
-
-function openEditArticleModal(id) {
-    const article = insightsData.find(i => i.id === id);
-    if (!article) return;
-    openModal('Edit Article', buildArticleForm(article), async () => {
-        await updateDoc(doc(db, 'insights', id), { ...collectArticleForm(), updatedAt: serverTimestamp() });
-        showToast('Saved ✓');
-        await fetchInsights();
-        renderArticlesTab();
-    }, true);
-    initArticlePreview();
-}
-
-function openNewArticleModal() {
-    openModal('New Article', buildArticleForm({}), async () => {
-        await addDoc(collection(db, 'insights'), {
-            ...collectArticleForm(),
-            publishedAt: serverTimestamp(), createdAt: serverTimestamp(), updatedAt: serverTimestamp()
-        });
-        showToast('Created ✓');
-        await fetchInsights();
-        renderArticlesTab();
-    }, true);
-    initArticlePreview();
 }
 
 // ===== COMPLETENESS TAB =====

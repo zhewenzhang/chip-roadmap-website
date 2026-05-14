@@ -378,6 +378,13 @@ export function classifyAiCandidates(candidates, existingSignals, companiesData 
         const validated = validateRow(rawRow, existingSignals);
         const classified = classifyImportRow(validated, existingSignals);
 
+        // Low-confidence company match: override action to error until operator confirms
+        if (enrichedCandidate._needsCompanyConfirmation && classified.action !== 'error') {
+            classified.action = 'error';
+            classified.status = 'error';
+            classified.issues = [`低信度公司匹配: "${enrichedCandidate._originalCompanyName}" → "${enrichedCandidate._matchedCompanyName}"。請手動確認或在 Companies 補上正確記錄。`];
+        }
+
         return {
             rowNumber: idx + 1,
             ...classified,
