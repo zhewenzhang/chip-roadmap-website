@@ -14,6 +14,10 @@ import {
     toggleWatchCompany, toggleWatchChip, toggleWatchSignal, getWatchlist,
     isEmpty as isWatchlistEmpty, clearWatchlist
 } from './watchlist.js';
+import {
+    buildPriorityQueue, buildSignalChangeFeed, buildWatchlistPriorityQueue,
+    CHANGE_TYPES, PRIORITY_LABELS
+} from './change-intelligence.js';
 
 // ===== State =====
 let allSignals = [];
@@ -98,6 +102,7 @@ export async function init() {
     } else {
         allSignals = result.data.map(s => ({ ...s, _priority: calculatePriorityScore(s) }));
         renderSummaryLayer(allSignals);
+        renderChangeIntelligence(allSignals);
         renderFilters();
         renderSavedViews();
         renderWatchlistPanel();
@@ -233,6 +238,145 @@ function renderSummaryLayer(signals) {
             if (s) openDrawer(s);
         });
     });
+}
+
+// ===== Change Intelligence Workspace (Phase 10) =====
+
+let changeViewState = 'priority';
+
+function renderChangeIntelligence(signals) {
+    const container = document.getElementById('changeIntelligence');
+    if (!container) return;
+
+    const watchlist = getWatchlist();
+    const hasWatchlist = !isWatchlistEmpty();
+
+    // Build priority queue
+    const queue = buildPriorityQueue(signals, [], {
+        watchlistContext: {
+            companies: watchlist.companies,
+            chips: watchlist.chips,
+            signals: watchlist.signals,
+        }
+    });
+
+    // Only show if there are meaningful changes
+    if (queue.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+
+    container.style.display = 'block';
+    renderChangeView(queue, signals, hasWatchlist);
+    bindChangeTabs(queue, signals, hasWatchlist);
+}
+
+function bindChangeTabs(queue, signals, hasWatchlist) {
+    document.querySelectorAll('.change-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.change-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            changeViewState = btn.dataset.changeView;
+            renderChangeView(queue, signals, hasWatchlist);
+        });
+    });
+}
+
+function renderChangeView(queue, signals, hasWatchlist) {
+    const content = document.getElementById('changeContent');
+    if (!content) return;
+
+    let items;
+    switch (changeViewState) {
+        case 'priority':
+            items = queue.slice(0, 10);
+            break;
+        case 'upgrades':
+            items = queue.filter(i => i.type === CHANGE_TYPES.STATUS_UPGRADED).slice(0, 10);
+            break;
+        case 'conflicts':
+            items = queue.filter(i => i.type === CHANGE_TYPES.NEW_CONFLICT).slice(0, 10);
+            break;
+        case 'watchlist':
+            items = hasWatchlist
+                ? queue.filter(i => {
+                    const wl = getWatchlist();
+                    if (i.companyId && wl.companies.includes(i.companyId)) return true;
+                    if (i.chipName && wl.chips.includes(i.chipName)) return true;
+                    if (i.signalId && wl.signals.includes(i.signalId)) return true;
+                    return false;
+                }).slice(0, 10)
+                : [];
+            break;
+        default:
+            items = queue.slice(0, 10);
+    }
+
+    if (items.length === 0) {
+        content.innerHTML = `<div class="change-empty">${getEmptyMessage(changeViewState)}</div>`;
+        return;
+    }
+
+    content.innerHTML = items.map(item => renderChangeItem(item)).join('');
+
+    // Bind click handlers
+    content.querySelectorAll('.change-item').forEach(el => {
+        el.addEventListener('click', () => {
+            if (el.dataset.signalId) {
+                const signal = signals.find(s => s.id === el.dataset.signalId);
+                if (signal) openDrawer(signal);
+            } else if (el.dataset.companyId) {
+                window.location.href = `company-signals.html?id=${encodeURIComponent(el.dataset.companyId)}`;
+            } else if (el.dataset.chipName) {
+                window.location.href = `chip-signals.html?name=${encodeURIComponent(el.dataset.chipName)}`;
+            }
+        });
+    });
+}
+
+function renderChangeItem(item) {
+    const labelCls = {
+        critical: 'priority-critical',
+        high: 'priority-high',
+        medium: 'priority-medium',
+        low: 'priority-low',
+    }[item.priorityLabel] || 'priority-low';
+
+    const label = {
+        critical: '嚴重',
+        high: '高',
+        medium: '中',
+        low: '低',
+    }[item.priorityLabel] || item.priorityLabel;
+
+    const title = item.chipName || item.companyName || '';
+    const subtitle = item.companyName && item.chipName
+        ? `${item.companyName}`
+        : '';
+    const dateStr = item.changeDate ? new Date(item.changeDate).toISOString().slice(0, 10) : '';
+    const dataAttrs = [
+        item.signalId ? `data-signal-id="${esc(item.signalId)}"` : '',
+        item.companyId && !item.signalId ? `data-company-id="${esc(item.companyId)}"` : '',
+        item.chipName && !item.signalId && !item.companyId ? `data-chip-name="${esc(item.chipName)}"` : '',
+    ].filter(Boolean).join(' ');
+
+    return `<div class="change-item" ${dataAttrs}>
+        <span class="change-priority-badge ${labelCls}">${label}</span>
+        <div class="change-item-body">
+            <div class="change-item-title">${esc(title)}${subtitle ? `<span class="change-item-subtitle">${esc(subtitle)}</span>` : ''}</div>
+            <div class="change-item-reasons">${(item.allReasons || item.reasons || []).slice(0, 3).map(r => esc(r)).join(' · ')}</div>
+        </div>
+        <span class="change-item-date">${dateStr}</span>
+    </div>`;
+}
+
+function getEmptyMessage(view) {
+    switch (view) {
+        case 'upgrades': return '近期無狀態升級';
+        case 'conflicts': return '無新矛盾信號';
+        case 'watchlist': return '關注項目無近期變更';
+        default: return '最近沒有高優先級變更';
+    }
 }
 
 // ===== Watchlist Panel (Phase 3) =====

@@ -10,6 +10,8 @@ import { showCompanyDetail, setModalData } from './modules/modal.js';
 import { init as initSignals } from './modules/signals.js';
 import { buildRoadmapMatrixFromSignals, getRoadmapYears, getRoadmapCompanies } from './modules/roadmap-derived.js';
 import { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate } from './modules/insights-derived.js';
+import { buildPriorityQueue, buildSignalChangeFeed, CHANGE_TYPES, PRIORITY_LABELS } from './modules/change-intelligence.js';
+import { loadWatchlist, getWatchlist, isEmpty as isWatchlistEmpty } from './modules/watchlist.js';
 
 // ============== 全局数据 ==============
 let companiesData = {};
@@ -181,10 +183,12 @@ async function initInsightsPage() {
     renderRecentUpgradesModule(signals);
     renderHighImpactModule(signals);
     renderRiskSignalsModule(signals);
+    renderSignificantChangesModule(signals);
+    renderPriorityQueueModule(signals);
 }
 
 function renderInsightsError() {
-    ['recentCounts', 'recentUpgrades', 'highImpactSignals', 'riskSignals'].forEach(id => {
+    ['recentCounts', 'recentUpgrades', 'highImpactSignals', 'riskSignals', 'significantChanges', 'priorityQueue'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">數據載入失敗，請稍後重試。</p>';
     });
@@ -370,6 +374,151 @@ function renderRiskSignalsModule(signals) {
 
         row.addEventListener('click', () => {
             window.location.href = `company-signals.html?id=${encodeURIComponent(signal.company_id)}`;
+        });
+
+        container.appendChild(row);
+    });
+}
+
+// ===== Phase 10: Insights Change Modules =====
+
+/**
+ * Module 5: Most Significant Changes (last 30 days)
+ * Cross-entity feed of upgrades, downgrades, impact shifts, conflicts.
+ */
+function renderSignificantChangesModule(signals) {
+    const container = document.getElementById('significantChanges');
+    if (!container) return;
+
+    const changes = buildSignalChangeFeed(signals, [], { feedDays: 30 })
+        .filter(c => c.type !== CHANGE_TYPES.STALE_VERIFIED_SIGNAL)
+        .sort((a, b) => new Date(b.changeDate || 0) - new Date(a.changeDate || 0))
+        .slice(0, 12);
+
+    if (changes.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無重大變更。</p>';
+        return;
+    }
+
+    const typeLabel = {
+        [CHANGE_TYPES.STATUS_UPGRADED]: '升級',
+        [CHANGE_TYPES.STATUS_DOWNGRADED]: '降級',
+        [CHANGE_TYPES.CONFIDENCE_MAJOR_CHANGE]: '信度變更',
+        [CHANGE_TYPES.NEW_HIGH_IMPACT_SIGNAL]: '新高影響',
+        [CHANGE_TYPES.NEW_CONFLICT]: '新衝突',
+        [CHANGE_TYPES.IMPACT_DERIVATION_CHANGED]: '影響變更',
+    };
+
+    container.innerHTML = '';
+
+    changes.forEach(c => {
+        const row = document.createElement('div');
+        row.className = 'change-feed-row';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+
+        const tag = document.createElement('span');
+        tag.className = 'change-type-tag';
+        tag.textContent = typeLabel[c.type] || c.type;
+
+        const info = document.createElement('span');
+        info.className = 'change-feed-info';
+        info.textContent = `${c.companyName || ''} · ${c.chipName || ''}`;
+
+        const reason = document.createElement('span');
+        reason.className = 'change-feed-reason';
+        reason.textContent = (c.reasons || []).slice(0, 2).join(' · ');
+
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'change-feed-date';
+        dateSpan.textContent = c.changeDate ? new Date(c.changeDate).toISOString().slice(0, 10) : '';
+
+        row.appendChild(tag);
+        row.appendChild(info);
+        row.appendChild(reason);
+        row.appendChild(dateSpan);
+
+        row.addEventListener('click', () => {
+            if (c.signalId) {
+                window.location.href = `company-signals.html?id=${encodeURIComponent(c.companyId)}`;
+            } else if (c.companyId) {
+                window.location.href = `company-signals.html?id=${encodeURIComponent(c.companyId)}`;
+            } else if (c.chipName) {
+                window.location.href = `chip-signals.html?name=${encodeURIComponent(c.chipName)}`;
+            }
+        });
+
+        container.appendChild(row);
+    });
+}
+
+/**
+ * Module 6: Priority Review Queue
+ * Top ranked items from the shared priority model.
+ */
+function renderPriorityQueueModule(signals) {
+    const container = document.getElementById('priorityQueue');
+    if (!container) return;
+
+    loadWatchlist();
+    const wl = getWatchlist();
+    const queue = buildPriorityQueue(signals, [], {
+        watchlistContext: {
+            companies: wl.companies,
+            chips: wl.chips,
+            signals: wl.signals,
+        }
+    }).slice(0, 10);
+
+    if (queue.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">無高優先級複查項目。</p>';
+        return;
+    }
+
+    const priorityLabelMap = {
+        critical: '嚴重',
+        high: '高',
+        medium: '中',
+        low: '低',
+    };
+
+    container.innerHTML = '';
+
+    queue.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'priority-row';
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+
+        const badge = document.createElement('span');
+        badge.className = `priority-badge priority-${item.priorityLabel}`;
+        badge.textContent = priorityLabelMap[item.priorityLabel] || item.priorityLabel;
+
+        const title = document.createElement('span');
+        title.className = 'priority-title';
+        title.textContent = item.chipName || item.companyName || '';
+
+        const reasons = document.createElement('span');
+        reasons.className = 'priority-reasons';
+        reasons.textContent = (item.allReasons || item.reasons || []).slice(0, 3).join(' · ');
+
+        const dateSpan = document.createElement('span');
+        dateSpan.className = 'priority-date';
+        dateSpan.textContent = item.changeDate ? new Date(item.changeDate).toISOString().slice(0, 10) : '';
+
+        row.appendChild(badge);
+        row.appendChild(title);
+        row.appendChild(reasons);
+        row.appendChild(dateSpan);
+
+        row.addEventListener('click', () => {
+            if (item.signalId) {
+                window.location.href = `company-signals.html?id=${encodeURIComponent(item.companyId)}`;
+            } else if (item.companyId) {
+                window.location.href = `company-signals.html?id=${encodeURIComponent(item.companyId)}`;
+            } else if (item.chipName) {
+                window.location.href = `chip-signals.html?name=${encodeURIComponent(item.chipName)}`;
+            }
         });
 
         container.appendChild(row);

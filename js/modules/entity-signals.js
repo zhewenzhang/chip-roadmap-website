@@ -24,6 +24,10 @@ import {
     deriveChipImpact, deriveCompanyAbfOutlook,
     isImpactDerivable
 } from './impact-engine.js';
+import {
+    buildSignalChangeFeed, buildChipImpactChangeFeed, buildCompanyOutlookChangeFeed,
+    buildPriorityQueue, CHANGE_TYPES
+} from './change-intelligence.js';
 
 // ===== State =====
 let allSignals = [];
@@ -379,6 +383,7 @@ function renderSidebar(signals, allSigs) {
         renderRelatedCompanies(entityId, allSigs);
         renderHighImpactItems(signals);
         renderRecentChanges(signals);
+        renderCompanyChangeSummary(entityId, signals, allSigs);
     } else {
         const dossier = buildChipDossier(entityId, allSigs);
         renderChipOverview(dossier);
@@ -387,6 +392,7 @@ function renderSidebar(signals, allSigs) {
         renderChipRiskIndicators(dossier.risks);
         renderChipRecentChanges(signals);
         renderVerificationTimeline(signals);
+        renderChipImpactChanges(entityId, signals, allSigs);
     }
 }
 
@@ -689,6 +695,122 @@ function impactBadge(impact) {
 
 function confidenceBar(score) {
     return `<span class="confidence-meter"><span class="confidence-bar-fill" style="width:${score}%"></span></span><span class="confidence-num">${score}</span>`;
+}
+
+// ===== Phase 10: Entity Change Summary Blocks =====
+
+/**
+ * Render company-level change summary in the sidebar.
+ * Shows: recent impact shifts, verified upgrades, new risk items.
+ */
+function renderCompanyChangeSummary(companyId, signals, allSigs) {
+    const el = document.getElementById('companyChangeSummary');
+    if (!el) return;
+
+    const companySignals = signals.filter(s => s.company_id === companyId);
+    if (companySignals.length === 0) {
+        el.innerHTML = '<div class="sidebar-empty">無變更數據</div>';
+        return;
+    }
+
+    // Build change feed for this company
+    const changes = buildSignalChangeFeed(allSigs, [], { feedDays: 30 })
+        .filter(c => c.companyId === companyId)
+        .slice(0, 5);
+
+    // Also check for chip impact changes
+    const chipChanges = buildChipImpactChangeFeed(allSigs, { feedDays: 30 })
+        .filter(c => c.companyId === companyId)
+        .slice(0, 3);
+
+    const allChanges = [...changes, ...chipChanges]
+        .sort((a, b) => new Date(b.changeDate || 0) - new Date(a.changeDate || 0))
+        .slice(0, 6);
+
+    if (allChanges.length === 0) {
+        el.innerHTML = '<div class="sidebar-empty">近期無重大變更</div>';
+        return;
+    }
+
+    const typeLabel = {
+        [CHANGE_TYPES.STATUS_UPGRADED]: '升級',
+        [CHANGE_TYPES.STATUS_DOWNGRADED]: '降級',
+        [CHANGE_TYPES.CONFIDENCE_MAJOR_CHANGE]: '信度變更',
+        [CHANGE_TYPES.NEW_HIGH_IMPACT_SIGNAL]: '新高影響',
+        [CHANGE_TYPES.NEW_CONFLICT]: '新衝突',
+        [CHANGE_TYPES.STALE_VERIFIED_SIGNAL]: '驗證過期',
+        [CHANGE_TYPES.IMPACT_DERIVATION_CHANGED]: '影響變更',
+    };
+
+    el.innerHTML = allChanges.map(c => {
+        const label = typeLabel[c.type] || c.type;
+        const dateStr = c.changeDate ? new Date(c.changeDate).toISOString().slice(0, 10) : '';
+        const chipRef = c.chipName
+            ? `<a href="chip-signals.html?name=${encodeURIComponent(c.chipName)}">${esc(c.chipName)}</a>`
+            : '';
+        return `<div class="sidebar-list-item" ${c.signalId ? `data-signal-id="${esc(c.signalId)}"` : ''}>
+            <div class="item-title"><span class="change-type-tag">${esc(label)}</span> ${chipRef || esc(c.companyName || '')}</div>
+            <div class="item-meta">${dateStr} · ${(c.reasons || []).slice(0, 2).map(esc).join(' · ')}</div>
+        </div>`;
+    }).join('');
+
+    // Bind click handlers for signal items
+    el.querySelectorAll('.sidebar-list-item[data-signal-id]').forEach(itemEl => {
+        itemEl.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            const signal = allSigs.find(s => s.id === itemEl.dataset.signalId);
+            if (signal) openDrawer(signal);
+        });
+    });
+}
+
+/**
+ * Render chip-level impact change summary in the sidebar.
+ * Shows: recent status change, confidence change, impact shift, conflict.
+ */
+function renderChipImpactChanges(chipName, signals, allSigs) {
+    const el = document.getElementById('chipImpactChanges');
+    if (!el) return;
+
+    const chipSignals = signals.filter(s => s.chip_name === chipName);
+    if (chipSignals.length === 0) {
+        el.innerHTML = '<div class="sidebar-empty">無變更數據</div>';
+        return;
+    }
+
+    const changes = buildSignalChangeFeed(allSigs, [], { feedDays: 30 })
+        .filter(c => c.chipName === chipName)
+        .slice(0, 5);
+
+    if (changes.length === 0) {
+        el.innerHTML = '<div class="sidebar-empty">近期無重大變更</div>';
+        return;
+    }
+
+    const typeLabel = {
+        [CHANGE_TYPES.STATUS_UPGRADED]: '升級',
+        [CHANGE_TYPES.STATUS_DOWNGRADED]: '降級',
+        [CHANGE_TYPES.CONFIDENCE_MAJOR_CHANGE]: '信度變更',
+        [CHANGE_TYPES.NEW_HIGH_IMPACT_SIGNAL]: '新高影響',
+        [CHANGE_TYPES.NEW_CONFLICT]: '新衝突',
+        [CHANGE_TYPES.STALE_VERIFIED_SIGNAL]: '驗證過期',
+    };
+
+    el.innerHTML = changes.map(c => {
+        const label = typeLabel[c.type] || c.type;
+        const dateStr = c.changeDate ? new Date(c.changeDate).toISOString().slice(0, 10) : '';
+        return `<div class="sidebar-list-item" ${c.signalId ? `data-signal-id="${esc(c.signalId)}"` : ''}>
+            <div class="item-title"><span class="change-type-tag">${esc(label)}</span> ${esc(c.reasons?.[0] || '')}</div>
+            <div class="item-meta">${dateStr}</div>
+        </div>`;
+    }).join('');
+
+    el.querySelectorAll('.sidebar-list-item[data-signal-id]').forEach(itemEl => {
+        itemEl.addEventListener('click', () => {
+            const signal = allSigs.find(s => s.id === itemEl.dataset.signalId);
+            if (signal) openDrawer(signal);
+        });
+    });
 }
 
 // ===== Detail Drawer (Reused) =====
