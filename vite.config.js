@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import { copyFileSync, existsSync } from 'fs';
+import { copyFileSync, existsSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -12,10 +12,26 @@ function copyStaticAssets() {
       const root = process.cwd();
       const distDir = resolve(root, 'dist');
 
-      // Copy sitemap.xml and robots.txt
+      // Ensure dist directory exists
+      if (!existsSync(distDir)) {
+        mkdirSync(distDir, { recursive: true });
+      }
+
+      // Copy optional static files (sitemap.xml, robots.txt)
       ['sitemap.xml', 'robots.txt'].forEach(file => {
         const src = resolve(root, file);
-        if (existsSync(src)) copyFileSync(src, resolve(distDir, file));
+        const dest = resolve(distDir, file);
+
+        if (!existsSync(src)) {
+          console.warn(`[copy-static-assets] Optional static file missing, skipped: ${file}`);
+          return;
+        }
+
+        try {
+          copyFileSync(src, dest);
+        } catch (err) {
+          console.warn(`[copy-static-assets] Failed to copy ${file}, skipped:`, err.message);
+        }
       });
     }
   };
