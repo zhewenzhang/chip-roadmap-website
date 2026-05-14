@@ -149,5 +149,10 @@ export function normalizeSignal(raw) {
         reviewed_at: raw.reviewed_at || '',
         reviewed_by: raw.reviewed_by || '',
         review_note: raw.review_note || '',
+        // AI metadata (Phase 16)
+        ai_generated: Boolean(raw.ai_generated),
+        ai_model: raw.ai_model || '',
+        ai_extracted_at: raw.ai_extracted_at || '',
+        source_type: raw.source_type || '',  // 'manual' | 'imported' | 'ai_extracted' | 'user_contributed' (reserved)
     };
 }

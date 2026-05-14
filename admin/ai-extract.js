@@ -15,6 +15,7 @@
  */
 
 import { classifyImportRow, validateRow } from './import-signals.js';
+import { resolveCompanyId, validateSignalShape } from './signal-validation.js';
 
 // ===== Settings =====
 
@@ -294,54 +295,80 @@ export function normalizeAiCandidates(payload, settings) {
 }
 
 /**
- * Classify AI candidate signals using Phase 13 import helpers.
+ * Classify AI candidate signals using Phase 16 validation pipeline.
  *
- * Each candidate goes through validateRow() → classifyImportRow(),
- * so missing required fields are caught before they ever reach createSignal().
+ * Each candidate goes through:
+ * 1. resolveCompanyId — maps company_name → company_id
+ * 2. validateSignalShape — checks required fields
+ * 3. validateRow — full import validation (template guard, enum checks, etc.)
+ * 4. classifyImportRow — create / update / skip / error
  *
  * @param {Array} candidates — normalized AI candidate objects (from normalizeAiCandidates)
  * @param {Array} existingSignals — current signals from Firestore
+ * @param {Array} companiesData — company catalog for resolver
  * @returns {Array} classified rows with rowNumber, action, issues, data
  */
-export function classifyAiCandidates(candidates, existingSignals) {
+export function classifyAiCandidates(candidates, existingSignals, companiesData = []) {
     return candidates.map((candidate, idx) => {
-        // Build a plain row object that validateRow expects (like an Excel row)
+        // Step 1: Resolve company_id from company_name
+        const resolution = resolveCompanyId(candidate.company_name || candidate.company_id || '', companiesData);
+        const enrichedCandidate = { ...candidate };
+        if (resolution.resolved) {
+            enrichedCandidate.company_id = resolution.candidateId;
+            enrichedCandidate.company_name = resolution.candidateName;
+        }
+
+        // Step 2: Build a plain row object that validateRow expects
         const rawRow = {
-            title: candidate.title || '',
-            company_id: candidate.company_id || '',
-            company_name: candidate.company_name || '',
-            chip_name: candidate.chip_name || '',
-            region: candidate.region || '',
-            stage: candidate.stage || '',
-            status: candidate.status || 'draft',
-            confidence_score: candidate.confidence_score ?? 0,
-            abf_demand_impact: candidate.abf_demand_impact || '',
-            evidence_summary: candidate.evidence_summary || '',
-            confidence_reason: candidate.confidence_reason || '',
-            last_verified_at: candidate.last_verified_at || '',
-            import_key: candidate.import_key || '',
-            signal_type: candidate.signal_type || '',
-            release_year: candidate.release_year || '',
-            release_quarter: candidate.release_quarter || '',
-            package_type: candidate.package_type || '',
-            cowos_required: candidate.cowos_required || '',
-            abf_size: candidate.abf_size || '',
-            abf_layers: candidate.abf_layers || '',
-            hbm: candidate.hbm || '',
-            expected_volume: candidate.expected_volume || '',
-            impact_scope: candidate.impact_scope || '',
-            conflicting_evidence: candidate.conflicting_evidence || '',
-            last_verified_by: candidate.last_verified_by || '',
-            tags: Array.isArray(candidate.tags) ? candidate.tags.join(',') : (candidate.tags || ''),
-            source_regions: Array.isArray(candidate.source_regions) ? candidate.source_regions.join(',') : (candidate.source_regions || ''),
-            sources: Array.isArray(candidate.sources) ? JSON.stringify(candidate.sources) : (candidate.sources || ''),
-            notes: candidate.notes || '',
+            title: enrichedCandidate.title || '',
+            company_id: enrichedCandidate.company_id || '',
+            company_name: enrichedCandidate.company_name || '',
+            chip_name: enrichedCandidate.chip_name || '',
+            region: enrichedCandidate.region || '',
+            stage: enrichedCandidate.stage || '',
+            status: enrichedCandidate.status || 'draft',
+            confidence_score: enrichedCandidate.confidence_score ?? 0,
+            abf_demand_impact: enrichedCandidate.abf_demand_impact || '',
+            evidence_summary: enrichedCandidate.evidence_summary || '',
+            confidence_reason: enrichedCandidate.confidence_reason || '',
+            last_verified_at: enrichedCandidate.last_verified_at || '',
+            import_key: enrichedCandidate.import_key || '',
+            signal_type: enrichedCandidate.signal_type || '',
+            release_year: enrichedCandidate.release_year || '',
+            release_quarter: enrichedCandidate.release_quarter || '',
+            package_type: enrichedCandidate.package_type || '',
+            cowos_required: enrichedCandidate.cowos_required || '',
+            abf_size: enrichedCandidate.abf_size || '',
+            abf_layers: enrichedCandidate.abf_layers || '',
+            hbm: enrichedCandidate.hbm || '',
+            expected_volume: enrichedCandidate.expected_volume || '',
+            impact_scope: enrichedCandidate.impact_scope || '',
+            conflicting_evidence: enrichedCandidate.conflicting_evidence || '',
+            last_verified_by: enrichedCandidate.last_verified_by || '',
+            tags: Array.isArray(enrichedCandidate.tags) ? enrichedCandidate.tags.join(',') : (enrichedCandidate.tags || ''),
+            source_regions: Array.isArray(enrichedCandidate.source_regions) ? enrichedCandidate.source_regions.join(',') : (enrichedCandidate.source_regions || ''),
+            sources: Array.isArray(enrichedCandidate.sources) ? JSON.stringify(enrichedCandidate.sources) : (enrichedCandidate.sources || ''),
+            notes: enrichedCandidate.notes || '',
         };
 
-        // Step 1: validate (catches missing required fields, enum errors, etc.)
-        const validated = validateRow(rawRow, existingSignals);
+        // Step 3: Pre-validate required fields — if missing company_id, fail early with clear message
+        const shapeValidation = validateSignalShape(rawRow);
+        if (!shapeValidation.ok) {
+            // If company couldn't be resolved, show a helpful message
+            if (!resolution.resolved && (candidate.company_name || candidate.company_id)) {
+                shapeValidation.errors = [`公司無法識別: "${candidate.company_name || candidate.company_id}" — 請先在 Companies 補上`];
+            }
+            return {
+                rowNumber: idx + 1,
+                status: 'error',
+                action: 'error',
+                issues: shapeValidation.errors,
+                data: { ...enrichedCandidate, ...rawRow },
+            };
+        }
 
-        // Step 2: classify (create / update / skip / error)
+        // Step 4: Full validation + classification
+        const validated = validateRow(rawRow, existingSignals);
         const classified = classifyImportRow(validated, existingSignals);
 
         return {

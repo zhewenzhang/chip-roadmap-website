@@ -190,14 +190,19 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 async function loadAllData() {
     await Promise.all([fetchCompanies(), fetchInsights(), fetchSignals()]);
     buildQualityQueueFromData();
+    renderDashboardTab();
+    renderInboxTab();
+    renderReviewTab();
+    renderAddDataTab();
     renderCompaniesTab();
     renderInsightsTab();
     renderSignalsTab();
+    renderDataQualityTab();
+    renderArticlesTab();
+    // Legacy tabs (hidden, kept for backward compatibility)
     renderImportTab();
     renderAiExtractTab();
-    renderArticlesTab();
     renderCompletenessTab();
-    renderDataQualityTab();
 }
 
 function buildQualityQueueFromData() {
@@ -235,6 +240,10 @@ async function fetchSignals() {
         signalsData = [];
         showToast('信號載入失敗，請重整頁面', 'error');
     }
+    // Refresh all tabs that depend on signals data
+    renderDashboardTab();
+    renderInboxTab();
+    renderReviewTab();
 }
 
 // ===== COMPANIES TAB =====
@@ -567,6 +576,15 @@ function renderSignalsTab(filterState = {}) {
     if (filterState.company) filtered = filtered.filter(s => s.company_name === filterState.company);
     if (filterState.stage) filtered = filtered.filter(s => s.stage === filterState.stage);
     if (filterState.status) filtered = filtered.filter(s => s.status === filterState.status);
+    if (filterState.source) {
+        if (filterState.source === 'manual') {
+            filtered = filtered.filter(s => !s.ai_generated && s.source_type !== 'imported');
+        } else if (filterState.source === 'ai') {
+            filtered = filtered.filter(s => s.ai_generated === true);
+        } else if (filterState.source === 'imported') {
+            filtered = filtered.filter(s => s.source_type === 'imported');
+        }
+    }
 
     const companies = [...new Set(signalsData.map(s => s.company_name).filter(Boolean))].sort();
 
@@ -576,10 +594,11 @@ function renderSignalsTab(filterState = {}) {
         const updated = s.updatedAt ? new Date(s.updatedAt).toISOString().slice(0, 16).replace('T', ' ') : '—';
         const rowClass = isArchived ? 'style="opacity:0.5"' : '';
         const archivedBadge = isArchived ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">封存</span>' : '';
+        const aiBadge = s.ai_generated ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">AI</span>' : '';
         return `<tr ${rowClass}>
             <td>${esc(s.company_name)}</td>
             <td>${esc(s.chip_name)}</td>
-            <td>${esc(s.title)}${archivedBadge}</td>
+            <td>${esc(s.title)}${archivedBadge}${aiBadge}</td>
             <td><span class="badge badge-gray">${stageLabel(s.stage)}</span></td>
             <td><span class="badge ${statusChipClass(s.status)}">${statusLabel(s.status)}</span></td>
             <td>${s.confidence_score}</td>
@@ -608,6 +627,12 @@ function renderSignalsTab(filterState = {}) {
             <select id="sig-filter-status" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
                 <option value="">全部狀態</option>
                 ${STATUS_OPTIONS.map(v => `<option value="${v}" ${filterState.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}
+            </select>
+            <select id="sig-filter-source" style="width:auto;padding:4px 8px;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:3px;font-size:12px">
+                <option value="">全部來源</option>
+                <option value="manual" ${filterState.source === 'manual' ? 'selected' : ''}>人工</option>
+                <option value="ai" ${filterState.source === 'ai' ? 'selected' : ''}>AI</option>
+                <option value="imported" ${filterState.source === 'imported' ? 'selected' : ''}>匯入</option>
             </select>
             <button class="btn-sm" data-action="filter-signals">套用</button>
             <button class="btn-sm btn-secondary" data-action="reset-signal-filters">重置</button>
@@ -638,7 +663,8 @@ function applySignalFilters() {
     const company = document.getElementById('sig-filter-company')?.value || '';
     const stage = document.getElementById('sig-filter-stage')?.value || '';
     const status = document.getElementById('sig-filter-status')?.value || '';
-    renderSignalsTab({ company, stage, status });
+    const source = document.getElementById('sig-filter-source')?.value || '';
+    renderSignalsTab({ company, stage, status, source });
 }
 
 function resetSignalFilters() {
@@ -936,6 +962,276 @@ async function deleteSignalAction(id) {
     showToast('已封存');
     await fetchSignals();
     renderSignalsTab();
+}
+
+// ===== DASHBOARD TAB (今日待辦) =====
+
+function renderDashboardTab() {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+    // 新信號: draft AND (ai_generated OR createdAt within 7 days)
+    const newSignals = signalsData.filter(s => {
+        if (s.status !== 'draft') return false;
+        if (s.ai_generated) return true;
+        if (s.createdAt) {
+            const created = s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt);
+            return created >= sevenDaysAgo;
+        }
+        return false;
+    });
+
+    // 待驗證: watch AND evidence_summary non-empty AND confidence_score >= 50
+    const pendingVerify = signalsData.filter(s =>
+        s.status === 'watch' && s.evidence_summary && s.confidence_score >= 50
+    );
+
+    // 資料修補: reuse qualityQueue.length
+    const dqCount = qualityQueue.length;
+
+    // 陳舊草稿: draft older than 30 days with no status change
+    const staleDrafts = signalsData.filter(s => {
+        if (s.status !== 'draft') return false;
+        const changedAt = s.last_status_changed_at ? new Date(s.last_status_changed_at) : null;
+        const createdAt = s.createdAt ? (s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt)) : null;
+        const refDate = changedAt || createdAt;
+        return refDate && refDate < thirtyDaysAgo;
+    });
+
+    document.getElementById('dashboard-content').innerHTML = `
+        <div class="toolbar">
+            <h2>今日待辦</h2>
+        </div>
+        <div class="dashboard-cards" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px">
+            <div class="dashboard-card" data-action="dash-nav" data-target="inbox" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:24px;cursor:pointer;text-align:center;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                <div style="font-size:36px;font-weight:700;color:var(--primary)">${newSignals.length}</div>
+                <div style="font-size:14px;color:var(--text-muted);margin-top:4px">新信號</div>
+                <div style="font-size:11px;color:#888;margin-top:8px">草稿 AI 或 7 天內建立</div>
+            </div>
+            <div class="dashboard-card" data-action="dash-nav" data-target="review" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:24px;cursor:pointer;text-align:center;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                <div style="font-size:36px;font-weight:700;color:var(--warning)">${pendingVerify.length}</div>
+                <div style="font-size:14px;color:var(--text-muted);margin-top:4px">待驗證</div>
+                <div style="font-size:11px;color:#888;margin-top:8px">觀察中 信度≥50 有證據</div>
+            </div>
+            <div class="dashboard-card" data-action="dash-nav" data-target="data-quality" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:24px;cursor:pointer;text-align:center;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                <div style="font-size:36px;font-weight:700;color:var(--danger)">${dqCount}</div>
+                <div style="font-size:14px;color:var(--text-muted);margin-top:4px">資料修補</div>
+                <div style="font-size:11px;color:#888;margin-top:8px">數據品質問題項</div>
+            </div>
+            <div class="dashboard-card" data-action="dash-nav" data-target="signals" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:24px;cursor:pointer;text-align:center;transition:box-shadow 0.2s" onmouseover="this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'" onmouseout="this.style.boxShadow='none'">
+                <div style="font-size:36px;font-weight:700;color:#888">${staleDrafts.length}</div>
+                <div style="font-size:14px;color:var(--text-muted);margin-top:4px">陳舊草稿</div>
+                <div style="font-size:11px;color:#888;margin-top:8px">草稿超過 30 天未變更</div>
+            </div>
+        </div>`;
+}
+
+// ===== INBOX TAB (新信號) =====
+
+function renderInboxTab() {
+    const now = new Date();
+    const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+
+    const inboxItems = signalsData.filter(s => {
+        if (s.status !== 'draft') return false;
+        if (s.ai_generated) return true;
+        if (s.createdAt) {
+            const created = s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt);
+            return created >= sevenDaysAgo;
+        }
+        return false;
+    });
+
+    const rows = inboxItems.map(s => {
+        const source = s.ai_generated ? '<span class="badge badge-gray">AI</span>' : (s.source_type === 'imported' ? '<span class="badge badge-gray">匯入</span>' : '<span class="badge badge-gray">人工</span>');
+        const created = s.createdAt ? new Date(s.createdAt.toDate ? s.createdAt.toDate() : new Date(s.createdAt)).toISOString().slice(0, 10) : '—';
+        return `<tr>
+            <td>${esc(s.company_name)}</td>
+            <td>${esc(s.chip_name)}</td>
+            <td>${esc(s.title)}${source}</td>
+            <td>${s.confidence_score}</td>
+            <td>${created}</td>
+            <td class="td-actions">
+                <button class="btn-sm btn-primary" data-action="inbox-adopt" data-id="${esc(s.id)}">採用為草稿</button>
+                <button class="btn-sm" data-action="inbox-promote" data-id="${esc(s.id)}">升級為觀察中</button>
+                <button class="btn-sm btn-danger" data-action="inbox-reject" data-id="${esc(s.id)}">拒絕</button>
+                <button class="btn-sm btn-secondary" data-action="inbox-edit" data-id="${esc(s.id)}">編輯詳情</button>
+            </td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('inbox-content').innerHTML = `
+        <div class="toolbar">
+            <h2>新信號 (${inboxItems.length})</h2>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>公司</th><th>芯片</th><th>標題</th><th>信度</th><th>建立日期</th><th>操作</th></tr></thead>
+                <tbody>${rows || '<tr><td colspan="6" style="color:#888;text-align:center">尚無新信號</td></tr>'}</tbody>
+            </table>
+        </div>`;
+}
+
+// ===== REVIEW TAB (待驗證) =====
+
+function renderReviewTab() {
+    const reviewItems = signalsData.filter(s =>
+        s.status === 'watch' && s.evidence_summary && s.confidence_score >= 50
+    );
+
+    const rows = reviewItems.map(s => {
+        const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
+        const updated = s.updatedAt ? new Date(s.updatedAt).toISOString().slice(0, 16).replace('T', ' ') : '—';
+        return `<tr>
+            <td>${esc(s.company_name)}</td>
+            <td>${esc(s.chip_name)}</td>
+            <td>${esc(s.title)}</td>
+            <td><span class="badge badge-yellow">${statusLabel(s.status)}</span></td>
+            <td>${s.confidence_score}</td>
+            <td>${esc(s.evidence_summary.slice(0, 50))}${s.evidence_summary.length > 50 ? '...' : ''}</td>
+            <td>${verified}<br><small style="color:#888">${updated}</small></td>
+            <td class="td-actions">
+                <button class="btn-sm btn-primary" data-action="review-verify" data-id="${esc(s.id)}">驗證</button>
+                <button class="btn-sm btn-danger" data-action="review-downgrade" data-id="${esc(s.id)}">降級</button>
+                <button class="btn-sm btn-secondary" data-action="review-edit" data-id="${esc(s.id)}">編輯詳情</button>
+            </td>
+        </tr>`;
+    }).join('');
+
+    document.getElementById('review-content').innerHTML = `
+        <div class="toolbar">
+            <h2>待驗證 (${reviewItems.length})</h2>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>公司</th><th>芯片</th><th>標題</th><th>狀態</th><th>信度</th><th>證據摘要</th><th>最後驗證</th><th>操作</th></tr></thead>
+                <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">尚無待驗證信號</td></tr>'}</tbody>
+            </table>
+        </div>`;
+}
+
+// ===== ADD DATA TAB (資料輸入) =====
+
+let addDataSubMode = 'manual'; // 'manual' | 'excel' | 'ai'
+
+function renderAddDataTab() {
+    document.getElementById('add-data-content').innerHTML = `
+        <div class="toolbar">
+            <h2>資料輸入</h2>
+        </div>
+        <div class="segmented-control" style="display:flex;gap:4px;margin:16px 0;background:var(--border);border-radius:6px;padding:4px;width:fit-content">
+            <button class="segment-btn ${addDataSubMode === 'manual' ? 'active' : ''}" data-action="add-data-mode" data-mode="manual" style="padding:8px 20px;border:none;border-radius:4px;cursor:pointer;font-size:13px;background:${addDataSubMode === 'manual' ? 'var(--bg)' : 'transparent'};color:${addDataSubMode === 'manual' ? 'var(--text)' : 'var(--text-muted)'}">手動新增</button>
+            <button class="segment-btn ${addDataSubMode === 'excel' ? 'active' : ''}" data-action="add-data-mode" data-mode="excel" style="padding:8px 20px;border:none;border-radius:4px;cursor:pointer;font-size:13px;background:${addDataSubMode === 'excel' ? 'var(--bg)' : 'transparent'};color:${addDataSubMode === 'excel' ? 'var(--text)' : 'var(--text-muted)'}">Excel 匯入</button>
+            <button class="segment-btn ${addDataSubMode === 'ai' ? 'active' : ''}" data-action="add-data-mode" data-mode="ai" style="padding:8px 20px;border:none;border-radius:4px;cursor:pointer;font-size:13px;background:${addDataSubMode === 'ai' ? 'var(--bg)' : 'transparent'};color:${addDataSubMode === 'ai' ? 'var(--text)' : 'var(--text-muted)'}">AI 抽取</button>
+        </div>
+        <div id="add-data-sub-content"></div>`;
+
+    renderAddDataSubContent();
+}
+
+function renderAddDataSubContent() {
+    const container = document.getElementById('add-data-sub-content');
+    if (!container) return;
+
+    if (addDataSubMode === 'manual') {
+        container.innerHTML = `
+            <div style="padding:16px">
+                <button class="btn-primary" data-action="add-data-new-signal" style="width:auto;padding:8px 16px">+ 新增信號</button>
+                <p style="color:var(--text-muted);font-size:13px;margin-top:12px">點擊上方按鈕手動新增一筆信號記錄</p>
+            </div>`;
+    } else if (addDataSubMode === 'excel') {
+        // Reuse existing import tab content by rendering into a temp div
+        renderImportTab();
+        // The import content goes into import-content, we need to copy it
+        const importContent = document.getElementById('import-content');
+        if (importContent) {
+            container.innerHTML = importContent.innerHTML;
+            // Re-bind import events
+            document.getElementById('import-download-template')?.addEventListener('click', () => {
+                downloadTemplate();
+            });
+            document.getElementById('import-file-input')?.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                await handleImportFile(file);
+            });
+            document.getElementById('import-confirm-btn')?.addEventListener('click', async () => {
+                await handleConfirmImport();
+            });
+        }
+    } else if (addDataSubMode === 'ai') {
+        // Reuse existing AI extract content
+        renderAiExtractTab();
+        const aiContent = document.getElementById('ai-extract-content');
+        if (aiContent) {
+            container.innerHTML = aiContent.innerHTML;
+            // Re-bind AI extract events
+            bindAiExtractEvents();
+        }
+    }
+}
+
+function bindAiExtractEvents() {
+    document.getElementById('ai-save-settings')?.addEventListener('click', () => {
+        aiExtractSettings = {
+            apiKey: document.getElementById('ai-api-key').value.trim(),
+            baseUrl: document.getElementById('ai-base-url').value.trim(),
+            model: document.getElementById('ai-model').value.trim(),
+        };
+        saveAiSettings(aiExtractSettings);
+        showToast('設定已儲存');
+    });
+
+    document.getElementById('ai-test-connection')?.addEventListener('click', async () => {
+        const statusEl = document.getElementById('ai-connection-status');
+        statusEl.textContent = '測試中...';
+        statusEl.style.color = 'var(--text-muted)';
+        try {
+            const settings = {
+                apiKey: document.getElementById('ai-api-key').value.trim(),
+                baseUrl: document.getElementById('ai-base-url').value.trim(),
+                model: document.getElementById('ai-model').value.trim(),
+            };
+            const result = await testDeepSeekConnection(settings);
+            statusEl.textContent = `✓ 連線成功 (${result.model})`;
+            statusEl.style.color = 'var(--success)';
+        } catch (err) {
+            statusEl.textContent = `✗ ${err.message}`;
+            statusEl.style.color = 'var(--danger)';
+        }
+    });
+
+    document.getElementById('ai-save-prompt')?.addEventListener('click', () => {
+        saveExtractionPrompt(document.getElementById('ai-prompt').value);
+        showToast('提示詞已儲存');
+    });
+
+    document.getElementById('ai-reset-prompt')?.addEventListener('click', () => {
+        document.getElementById('ai-prompt').value = resetExtractionPrompt();
+        showToast('提示詞已恢復預設');
+    });
+
+    document.getElementById('ai-extract-btn')?.addEventListener('click', async () => {
+        await handleAiExtract();
+    });
+
+    document.getElementById('ai-confirm-import')?.addEventListener('click', async () => {
+        await handleAiConfirmImport();
+    });
+
+    document.getElementById('ai-clear-candidates')?.addEventListener('click', () => {
+        aiExtractCandidates = [];
+        document.getElementById('ai-candidates-section').style.display = 'none';
+        document.getElementById('ai-result-section').style.display = 'none';
+    });
+
+    document.getElementById('ai-candidates-table')?.addEventListener('click', e => {
+        const btn = e.target.closest('[data-action="edit-ai-candidate"]');
+        if (!btn) return;
+        const rowNum = Number(btn.dataset.row);
+        openEditAiCandidateModal(rowNum);
+    });
 }
 
 // ===== IMPORT TAB =====
@@ -1278,7 +1574,7 @@ async function handleAiExtract() {
         }
 
         // Classify using Phase 13 helpers
-        aiExtractCandidates = classifyAiCandidates(candidates, signalsData);
+        aiExtractCandidates = classifyAiCandidates(candidates, signalsData, companiesData);
 
         renderAiCandidates();
     } catch (err) {
@@ -1798,6 +2094,143 @@ document.getElementById('data-quality-content').addEventListener('click', e => {
     if (action === 'dq-mark-reviewed') openMarkReviewedModal(btn.dataset.id);
     if (action === 'dq-complete-verification') openCompleteVerificationModal(btn.dataset.id);
 });
+
+// ===== NEW TAB EVENT DELEGATION =====
+
+// Dashboard nav click → switch to target tab
+document.getElementById('dashboard-content').addEventListener('click', e => {
+    const card = e.target.closest('[data-action="dash-nav"]');
+    if (!card) return;
+    const targetTab = card.dataset.target;
+    const btn = document.querySelector(`.tab-btn[data-tab="${targetTab}"]`);
+    if (btn) btn.click();
+});
+
+// Inbox actions
+document.getElementById('inbox-content').addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, id } = btn.dataset;
+    if (action === 'inbox-adopt') handleInboxAdopt(id);
+    else if (action === 'inbox-promote') handleInboxPromote(id);
+    else if (action === 'inbox-reject') handleInboxReject(id);
+    else if (action === 'inbox-edit') openEditSignalModal(id);
+});
+
+// Review actions
+document.getElementById('review-content').addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, id } = btn.dataset;
+    if (action === 'review-verify') handleReviewVerify(id);
+    else if (action === 'review-downgrade') handleReviewDowngrade(id);
+    else if (action === 'review-edit') openEditSignalModal(id);
+});
+
+// Add Data tab: segmented control + new signal
+document.getElementById('add-data-content').addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const { action, mode } = btn.dataset;
+    if (action === 'add-data-mode') {
+        addDataSubMode = mode;
+        renderAddDataTab();
+    } else if (action === 'add-data-new-signal') {
+        openNewSignalModal();
+    }
+});
+
+// ===== INBOX HANDLERS =====
+
+async function handleInboxAdopt(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!signal) return;
+    const actor = auth.currentUser?.email || '';
+    await saveSignal(id, {
+        ...signal,
+        status: 'draft',
+        last_status_changed_at: new Date().toISOString(),
+    }, {
+        actor,
+        previousStatus: signal.status,
+    });
+    showToast('已採用為草稿');
+    await fetchSignals();
+    renderInboxTab();
+}
+
+async function handleInboxPromote(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!signal) return;
+    const actor = auth.currentUser?.email || '';
+    await saveSignal(id, { ...signal, status: 'watch' }, {
+        actor,
+        previousStatus: signal.status,
+    });
+    showToast('已升級為觀察中');
+    await fetchSignals();
+    renderInboxTab();
+    renderReviewTab();
+}
+
+async function handleInboxReject(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!signal) return;
+    const reason = prompt('拒絕此信號的原因：');
+    if (reason === null) return;
+    const actor = auth.currentUser?.email || '';
+    await saveSignal(id, { ...signal, status: 'invalidated', notes: (signal.notes ? signal.notes + '\n' : '') + '拒絕原因：' + reason }, {
+        actor,
+        previousStatus: signal.status,
+    });
+    showToast('已拒絕');
+    await fetchSignals();
+    renderInboxTab();
+}
+
+// ===== REVIEW HANDLERS =====
+
+async function handleReviewVerify(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!signal) return;
+    const verifier = prompt('驗證人（email）：', auth.currentUser?.email || '');
+    if (verifier === null) return;
+    const note = prompt('驗證備註：');
+    if (note === null) return;
+    const actor = auth.currentUser?.email || '';
+    await saveSignal(id, {
+        ...signal,
+        status: 'verified',
+        last_verified_at: new Date().toISOString(),
+        last_verified_by: verifier,
+        verification_note: note,
+    }, {
+        actor,
+        previousStatus: signal.status,
+    });
+    showToast('已驗證');
+    await fetchSignals();
+    renderReviewTab();
+}
+
+async function handleReviewDowngrade(id) {
+    const signal = signalsData.find(s => s.id === id);
+    if (!signal) return;
+    const reason = prompt('降級原因：');
+    if (reason === null) return;
+    const actor = auth.currentUser?.email || '';
+    await saveSignal(id, {
+        ...signal,
+        status: 'downgraded',
+        notes: (signal.notes ? signal.notes + '\n' : '') + '降級原因：' + reason,
+    }, {
+        actor,
+        previousStatus: signal.status,
+    });
+    showToast('已降級');
+    await fetchSignals();
+    renderReviewTab();
+}
 
 function applyDQFilters() {
     dqFilterState.priority = document.getElementById('dq-priority')?.value || '';
