@@ -124,6 +124,19 @@ export function validateRow(row, existingSignals) {
         return { status: 'error', issues: errors, data };
     }
 
+    // Prevent the template example row from being imported as real data.
+    const looksLikeTemplateExample =
+        data.title === 'Example verified signal' ||
+        String(data.evidence_summary).includes('Replace before import') ||
+        String(data.confidence_reason).includes('Replace before import');
+    if (looksLikeTemplateExample) {
+        return {
+            status: 'error',
+            issues: ['模板範例行不可匯入，請替換為真實信號資料'],
+            data,
+        };
+    }
+
     // Enum validation
     if (!STAGE_ENUM.includes(data.stage)) {
         errors.push(`無效 stage: "${data.stage}" (可用: ${STAGE_ENUM.join(', ')})`);
@@ -170,7 +183,12 @@ export function validateRow(row, existingSignals) {
 
     // cowos_required
     if (data.cowos_required !== '') {
-        data.cowos_required = parseBool(data.cowos_required);
+        const boolResult = parseBoolStrict(data.cowos_required);
+        if (boolResult.ok) {
+            data.cowos_required = boolResult.value;
+        } else {
+            errors.push(`cowos_required 必須是 true/false、yes/no、1/0、是/否: "${data.cowos_required}"`);
+        }
     }
 
     // Array fields: comma-separated
@@ -224,10 +242,12 @@ export function validateRow(row, existingSignals) {
     return { status: warnings.length > 0 ? 'warning' : 'ready', issues: warnings, data };
 }
 
-function parseBool(val) {
-    if (typeof val === 'boolean') return val;
+function parseBoolStrict(val) {
+    if (typeof val === 'boolean') return { ok: true, value: val };
     const s = String(val).toLowerCase().trim();
-    return ['true', 'yes', '1', '是'].includes(s);
+    if (['true', 'yes', '1', '是'].includes(s)) return { ok: true, value: true };
+    if (['false', 'no', '0', '否'].includes(s)) return { ok: true, value: false };
+    return { ok: false, value: null };
 }
 
 // ===== Import =====

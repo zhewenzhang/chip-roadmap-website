@@ -1000,7 +1000,7 @@ function renderImportPreview() {
             <td>${esc(STAGE_LABEL[d.stage] || d.stage)}</td>
             <td>${esc(STATUS_LABEL[d.status] || d.status)}</td>
             <td>${esc(IMPACT_LABEL[d.abf_demand_impact] || d.abf_demand_impact)}</td>
-            <td class="td-truncate" title="${r.issues.join('; ')}">${esc(r.issues.slice(0, 2).join('; ') || '')}</td>
+            <td class="td-truncate" title="${esc(r.issues.join('; '))}">${esc(r.issues.slice(0, 2).join('; ') || '')}</td>
         </tr>`;
     }).join('');
 
@@ -1022,7 +1022,7 @@ async function handleConfirmImport() {
     if (importable.length === 0) return;
 
     const actor = auth.currentUser?.email || 'bulk-import';
-    const results = await importSignals(importable, actor);
+    const results = await importSignals(importParsedRows, actor);
 
     // Show result
     const resultDiv = document.getElementById('import-result');
@@ -1037,7 +1037,8 @@ async function handleConfirmImport() {
     buildQualityQueueFromData();
     renderDataQualityTab();
     renderSignalsTab();
-    renderImportTab();
+    importParsedRows = [];
+    document.getElementById('import-confirm-btn').disabled = true;
 
     showToast(`匯入完成：${results.imported} 筆信號`);
 }
