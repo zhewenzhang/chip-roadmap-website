@@ -13,7 +13,40 @@ import {
     STAGE_ENUM, STATUS_ENUM, IMPACT_ENUM, REGION_OPTIONS,
 } from '../js/modules/signals-schema.js';
 
-// ===== Company Resolver =====
+// ===== Simplified ↔ Traditional Chinese Mapping =====
+// Maps Simplified → Traditional for the characters found in V2 target company names.
+// T_TO_S is built automatically as the reverse mapping.
+const S_TO_T = {
+    '华': '華', '为': '為', '尔': '爾', '电': '電', '讯': '訊',
+    '飞': '飛', '亚': '亞', '当': '當', '击': '擊', '术': '術',
+    '网': '網', '络': '絡', '设': '設', '备': '備', '车': '車',
+    '东': '東', '门': '門', '问': '問', '关': '關', '兴': '興',
+    '产': '產', '发': '發', '体': '體', '导': '導', '马': '馬',
+    '龙': '龍', '齐': '齊', '丰': '豐', '优': '優', '传': '傳',
+    '伟': '偉', '伦': '倫', '协': '協', '历': '歷', '压': '壓',
+    '参': '參', '双': '雙', '变': '變', '号': '號', '湾': '灣',
+    '韩': '韓', '长': '長', '际': '際', '阶': '階', '随': '隨',
+    '隐': '隱', '难': '難', '雾': '霧', '领': '領', '风': '風',
+    '麦': '麥', '腾': '騰', '胜': '勝', '脑': '腦', '芯': '芯',
+    '纪': '紀', '云': '雲', '苹': '蘋', '线': '線', '数': '數',
+    '积': '積', '硕': '碩', '开': '開', '节': '節', '动': '動',
+    '里': '裡', '逊': '遜', '谷': '穀', '软': '軟', '微': '微',
+    '歌': '歌', '果': '果', '摩': '摩', '程': '程', '壁': '壁',
+    '仞': '仞', '燧': '燧', '路': '路', '鼎': '鼎', '寒': '寒',
+    '武': '武', '曼': '曼', '深': '深', '度': '度', '字': '字',
+    '跳': '跳', '昆': '崑', '仑': '崙', '百': '百',
+};
+
+const T_TO_S = {};
+for (const [s, t] of Object.entries(S_TO_T)) {
+    if (!(t in T_TO_S)) T_TO_S[t] = s;
+}
+
+function toNormalizedForm(s) {
+    // Fold Simplified → Traditional. Characters already in Traditional pass through.
+    // Latin characters pass through unchanged.
+    return s.split('').map(c => S_TO_T[c] || c).join('');
+}
 
 /**
  * Resolve a company name or alias to an internal company_id.
@@ -43,30 +76,32 @@ export function resolveCompanyId(name, companies = []) {
         return { resolved: true, candidateId: byId.id, candidateName: byId.name_en || byId.name || '', confidence: 'high' };
     }
 
-    // Strategy 2: exact match on name_en or name_cn or name
+    // Strategy 2: exact match on name_en or name_cn (with S↔T normalization)
+    const normInputCJK = toNormalizedForm(input.toLowerCase());
     const byName = companies.find(c => {
         const n1 = c.name_en?.toLowerCase();
-        const n2 = c.name_cn?.toLowerCase();
-        const n3 = c.name?.toLowerCase();
-        const target = input.toLowerCase();
+        const n2 = toNormalizedForm(c.name_cn?.toLowerCase() || '');
+        const n3 = toNormalizedForm(c.name?.toLowerCase() || '');
+        const target = normInputCJK;
         return n1 === target || n2 === target || n3 === target;
     });
     if (byName) {
         return { resolved: true, candidateId: byName.id, candidateName: byName.name_en || byName.name || '', confidence: 'high' };
     }
 
-    // Strategy 3: fuzzy — normalize and compare
+    // Strategy 3: fuzzy — normalize (CJK-preserving) and compare
     const normalize = s => s
         .toLowerCase()
-        .replace(/[^\w\s]/g, '')  // remove punctuation
+        .replace(/[\p{P}]/gu, '')  // remove only punctuation (Unicode property), preserves CJK
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '')  // remove diacritics
         .replace(/\s+/g, ' ')
         .trim();
 
-    const normInput = normalize(input);
+    // CJK-aware normalize: apply S↔T fold then punctuation removal
+    const normInput = normalize(toNormalizedForm(input));
 
-    // Skip fuzzy if input is too short or too generic
-    if (normInput.length < 3) {
+    // Skip fuzzy if input is too short (1 char is too generic)
+    if (normInput.length < 2) {
         return { resolved: false, candidateId: '', candidateName: '', confidence: 'low' };
     }
 
@@ -76,7 +111,8 @@ export function resolveCompanyId(name, companies = []) {
         for (const field of ['name_en', 'name_cn', 'name']) {
             const val = c[field];
             if (!val) continue;
-            const normVal = normalize(val);
+            // Apply CJK normalization before fuzzy comparison
+            const normVal = normalize(toNormalizedForm(val));
             // Require significant overlap: input must be at least 60% of the company name
             // or the company name must be contained within the input
             const inputInVal = normVal.includes(normInput);

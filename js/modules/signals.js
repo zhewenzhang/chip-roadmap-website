@@ -56,6 +56,20 @@ function statusChipClass(s) {
     }
 }
 
+/**
+ * Return a small provenance badge for the signal's source.
+ * AI-extracted and imported signals are visually distinguishable from manual.
+ */
+function sourceBadge(signal) {
+    if (signal.ai_generated) {
+        return ' <span class="source-badge source-badge-ai">AI 抽取</span>';
+    }
+    if (signal.source_type === 'imported') {
+        return ' <span class="source-badge source-badge-imported">匯入</span>';
+    }
+    return '';
+}
+
 function formatDate(d) {
     if (!d) return '—';
     try {
@@ -661,6 +675,7 @@ function renderDesktopTable(signals, wrap) {
             <td class="col-stage">${esc(stageLabel(s.stage))}</td>
             <td class="col-impact">${impactBadge(s.abf_demand_impact)}</td>
             <td class="col-confidence">${confidenceBar(s.confidence_score)}</td>
+            <td class="col-source">${sourceBadge(s)}</td>
             <td class="col-status"><span class="signal-status-chip ${statusChipClass(s.status)}">${esc(statusLabel(s.status))}</span></td>
             <td class="col-verified">${formatDate(s.last_verified_at)}</td>
             <td class="col-view"><button class="signal-view-btn" data-id="${esc(s.id)}">查看</button></td>
@@ -677,6 +692,7 @@ function renderDesktopTable(signals, wrap) {
                 <th>階段</th>
                 <th>ABF 影響</th>
                 <th>信度</th>
+                <th>來源</th>
                 <th>狀態</th>
                 <th>最後驗證</th>
                 <th></th>
@@ -730,6 +746,7 @@ function renderMobileList(signals, wrap) {
                     <a href="company-signals.html?id=${esc(s.company_id)}" class="entity-link">${esc(s.company_name)}</a>
                 </span>
                 <span class="signal-status-chip ${statusChipClass(s.status)}">${esc(statusLabel(s.status))}</span>
+                ${sourceBadge(s)}
             </div>
             <div class="mobile-chip">
                 <button class="watch-btn watch-btn-sm" data-type="chip" data-id="${esc(s.chip_name)}">${watchIcon(watchingChip)}</button>
@@ -967,7 +984,7 @@ function openDrawer(signal) {
     const body = document.getElementById('drawerBody');
     if (!overlay || !title || !body) { console.warn('[Signals] drawer elements missing'); return; }
 
-    title.textContent = signal.title || '';
+    title.innerHTML = esc(signal.title || '') + sourceBadge(signal);
 
     const isMobile = window.innerWidth <= 768;
 

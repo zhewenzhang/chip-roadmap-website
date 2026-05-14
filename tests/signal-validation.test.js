@@ -75,6 +75,46 @@ test('resolveCompanyId: whitespace-only input returns unresolved', () => {
     assert.equal(result.resolved, false);
 });
 
+// ===== CJK / Simplified-Traditional Resolution =====
+
+test('resolveCompanyId: Simplified→Traditional exact match (name_cn)', () => {
+    const result = resolveCompanyId('华为昇腾', mockCompanies);
+    assert.equal(result.resolved, true);
+    assert.equal(result.candidateId, 'huawei_ascend');
+    assert.equal(result.confidence, 'high');
+});
+
+test('resolveCompanyId: Traditional→Simplified exact match (name_cn)', () => {
+    const result = resolveCompanyId('華為昇騰', mockCompanies);
+    assert.equal(result.resolved, true);
+    assert.equal(result.candidateId, 'huawei_ascend');
+    assert.equal(result.confidence, 'high');
+});
+
+test('resolveCompanyId: CJK fuzzy — partial company name matches', () => {
+    // '华为' is a significant substring of '华为昇腾' — fuzzy should find it
+    const result = resolveCompanyId('华为', mockCompanies);
+    assert.equal(result.resolved, true);
+    assert.equal(result.candidateId, 'huawei_ascend');
+    assert.equal(result.confidence, 'low'); // partial match = low confidence
+});
+
+test('resolveCompanyId: Mixed-language input resolves via fuzzy', () => {
+    // 'Huawei 昇腾' mixes Latin + CJK; fuzzy should match after normalization
+    const result = resolveCompanyId('Huawei 昇腾', mockCompanies);
+    assert.equal(result.resolved, true);
+    assert.equal(result.candidateId, 'huawei_ascend');
+    // Mixed-language partial match may be low or high depending on overlap
+    assert.ok(result.confidence === 'low' || result.confidence === 'high');
+});
+
+test('resolveCompanyId: CJK-only partial match with low confidence', () => {
+    // "华为子公司" has some overlap with "華為昇騰" but is not a clean match
+    const result = resolveCompanyId('華為子', mockCompanies);
+    // Should either resolve with low confidence or not resolve — but MUST NOT crash
+    assert.ok(result.resolved === false || result.confidence === 'low');
+});
+
 // ===== validateSignalShape =====
 
 test('validateSignalShape: valid data returns ok', () => {

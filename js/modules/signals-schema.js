@@ -63,6 +63,7 @@ export const HISTORY_ACTIONS = {
     STATUS_CHANGED: 'status_changed',
     CONFIDENCE_CHANGED: 'confidence_changed',
     ARCHIVED: 'archived',
+    REVIEWED: 'reviewed',
 };
 
 export const HISTORY_ACTION_LABELS = {
@@ -71,6 +72,7 @@ export const HISTORY_ACTION_LABELS = {
     status_changed: '狀態變更',
     confidence_changed: '信度變更',
     archived: '已封存',
+    reviewed: '已複核',
 };
 
 // ===== Navigation Helpers =====
@@ -149,6 +151,8 @@ export function normalizeSignal(raw) {
         reviewed_at: raw.reviewed_at || '',
         reviewed_by: raw.reviewed_by || '',
         review_note: raw.review_note || '',
+        // Operator review tracking (Phase 16.1)
+        last_reviewed_at: raw.last_reviewed_at || null,
         // AI metadata (Phase 16)
         ai_generated: Boolean(raw.ai_generated),
         ai_model: raw.ai_model || '',

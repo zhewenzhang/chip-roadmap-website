@@ -1631,11 +1631,17 @@ function renderAiCandidates() {
         const aiBadge = d.ai_generated ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">AI</span>' : '';
         const changedInfo = r.changedFields && r.changedFields.length > 0 ? `${r.changedFields.length} 欄位` : '';
         const issuesText = r.issues.length > 0 ? r.issues.join('; ') : (changedInfo || '—');
+
+        // Low-confidence company match warning
+        let companyCell = esc(d.company_name);
+        if (d._needsCompanyConfirmation) {
+            companyCell = `<span title="低信度公司匹配: &quot;${esc(d._originalCompanyName)}&quot; → &quot;${esc(d._matchedCompanyName)}&quot;。請確認後再匯入。" style="color:var(--warning)">⚠ ${esc(d.company_name)}</span>`;
+        }
         return `<tr class="import-row-${r.action}">
             <td>${r.rowNumber}</td>
             <td><span class="badge ${actionClasses[r.action]}">${actionLabels[r.action]}</span></td>
             <td class="td-truncate" title="${esc(d.title)}">${esc(d.title?.slice(0, 25) || '')}${aiBadge}</td>
-            <td>${esc(d.company_name)}</td>
+            <td>${companyCell}</td>
             <td>${esc(d.chip_name)}</td>
             <td>${esc(STAGE_LABEL[d.stage] || d.stage)}</td>
             <td><span class="badge ${statusChipClass(d.status)}">${statusLabel(d.status)}</span></td>
@@ -2146,10 +2152,13 @@ async function handleInboxAdopt(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
     const actor = auth.currentUser?.email || '';
+    // "Adopt" = operator reviewed and confirmed it stays as draft.
+    // Do NOT stamp last_status_changed_at (no status change occurred).
+    // DO stamp last_reviewed_at to record the operator interaction.
     await saveSignal(id, {
         ...signal,
         status: 'draft',
-        last_status_changed_at: new Date().toISOString(),
+        last_reviewed_at: new Date().toISOString(),
     }, {
         actor,
         previousStatus: signal.status,
@@ -2163,7 +2172,7 @@ async function handleInboxPromote(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
     const actor = auth.currentUser?.email || '';
-    await saveSignal(id, { ...signal, status: 'watch' }, {
+    await saveSignal(id, { ...signal, status: 'watch', last_reviewed_at: new Date().toISOString() }, {
         actor,
         previousStatus: signal.status,
     });
@@ -2176,16 +2185,43 @@ async function handleInboxPromote(id) {
 async function handleInboxReject(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
-    const reason = prompt('拒絕此信號的原因：');
-    if (reason === null) return;
-    const actor = auth.currentUser?.email || '';
-    await saveSignal(id, { ...signal, status: 'invalidated', notes: (signal.notes ? signal.notes + '\n' : '') + '拒絕原因：' + reason }, {
-        actor,
-        previousStatus: signal.status,
-    });
-    showToast('已拒絕');
-    await fetchSignals();
-    renderInboxTab();
+    openModal('拒絕信號：' + signal.title, `
+        <div class="dq-review-form">
+            <div class="dq-review-signal">
+                <strong>${esc(signal.title)}</strong>
+                <div style="margin-top:4px">${esc(signal.company_name)} / ${esc(signal.chip_name)}</div>
+            </div>
+            <div class="dq-field">
+                <label>拒絕原因 <span style="color:var(--danger)">*</span></label>
+                <textarea id="inbox-reject-reason" rows="3" placeholder="說明拒絕此信號的原因..."></textarea>
+            </div>
+        </div>
+        <style>
+            .dq-review-form .dq-field { margin-bottom: 10px; }
+            .dq-review-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+            .dq-review-form textarea {
+                width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
+            }
+            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+        </style>
+    `, async () => {
+        const reason = document.getElementById('inbox-reject-reason').value.trim();
+        if (!reason) throw new Error('請填寫拒絕原因');
+        const actor = auth.currentUser?.email || '';
+        await saveSignal(id, {
+            ...signal,
+            status: 'invalidated',
+            verification_note: '拒絕原因：' + reason,
+            last_reviewed_at: new Date().toISOString(),
+        }, {
+            actor,
+            previousStatus: signal.status,
+        });
+        showToast('已拒絕');
+        await fetchSignals();
+        renderInboxTab();
+    }, false);
 }
 
 // ===== REVIEW HANDLERS =====
@@ -2193,43 +2229,109 @@ async function handleInboxReject(id) {
 async function handleReviewVerify(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
-    const verifier = prompt('驗證人（email）：', auth.currentUser?.email || '');
-    if (verifier === null) return;
-    const note = prompt('驗證備註：');
-    if (note === null) return;
-    const actor = auth.currentUser?.email || '';
-    await saveSignal(id, {
-        ...signal,
-        status: 'verified',
-        last_verified_at: new Date().toISOString(),
-        last_verified_by: verifier,
-        verification_note: note,
-    }, {
-        actor,
-        previousStatus: signal.status,
-    });
-    showToast('已驗證');
-    await fetchSignals();
-    renderReviewTab();
+    openModal('驗證信號：' + signal.title, `
+        <div class="dq-review-form">
+            <div class="dq-review-signal">
+                <strong>${esc(signal.title)}</strong>
+                <div style="margin-top:4px">
+                    ${esc(signal.company_name)} / ${esc(signal.chip_name)} ·
+                    ${esc(stageLabel(signal.stage))} · 信度 ${signal.confidence_score}
+                </div>
+            </div>
+            <div class="dq-field">
+                <label>驗證人 email <span style="color:var(--danger)">*</span></label>
+                <input id="review-verifier" type="email" value="${esc(auth.currentUser?.email || '')}" />
+            </div>
+            <div class="dq-field">
+                <label>驗證備註 <span style="color:var(--danger)">*</span></label>
+                <textarea id="review-note" rows="3" placeholder="記錄驗證依據..."></textarea>
+            </div>
+            <div class="dq-field">
+                <label style="cursor:pointer">
+                    <input type="checkbox" id="review-boost-confidence">
+                    同時將信度提升到 95
+                </label>
+            </div>
+        </div>
+        <style>
+            .dq-review-form .dq-field { margin-bottom: 10px; }
+            .dq-review-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+            .dq-review-form input[type="email"],
+            .dq-review-form textarea {
+                width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
+            }
+            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+        </style>
+    `, async () => {
+        const verifier = document.getElementById('review-verifier').value.trim();
+        const note = document.getElementById('review-note').value.trim();
+        const boostConfidence = document.getElementById('review-boost-confidence')?.checked || false;
+        if (!verifier) throw new Error('請填寫驗證人');
+        if (!note) throw new Error('請填寫驗證備註');
+        const actor = auth.currentUser?.email || '';
+        const updatedData = {
+            ...signal,
+            status: 'verified',
+            last_verified_at: new Date().toISOString(),
+            last_verified_by: verifier,
+            verification_note: note,
+            last_reviewed_at: new Date().toISOString(),
+        };
+        if (boostConfidence) {
+            updatedData.confidence_score = 95;
+        }
+        await saveSignal(id, updatedData, {
+            actor,
+            previousStatus: signal.status,
+            previousConfidence: signal.confidence_score,
+        });
+        showToast('已驗證');
+        await fetchSignals();
+        renderReviewTab();
+    }, false);
 }
 
 async function handleReviewDowngrade(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
-    const reason = prompt('降級原因：');
-    if (reason === null) return;
-    const actor = auth.currentUser?.email || '';
-    await saveSignal(id, {
-        ...signal,
-        status: 'downgraded',
-        notes: (signal.notes ? signal.notes + '\n' : '') + '降級原因：' + reason,
-    }, {
-        actor,
-        previousStatus: signal.status,
-    });
-    showToast('已降級');
-    await fetchSignals();
-    renderReviewTab();
+    openModal('降級信號：' + signal.title, `
+        <div class="dq-review-form">
+            <div class="dq-review-signal">
+                <strong>${esc(signal.title)}</strong>
+                <div style="margin-top:4px">${esc(signal.company_name)} / ${esc(signal.chip_name)}</div>
+            </div>
+            <div class="dq-field">
+                <label>降級原因 <span style="color:var(--danger)">*</span></label>
+                <textarea id="review-downgrade-reason" rows="3" placeholder="說明降級原因..."></textarea>
+            </div>
+        </div>
+        <style>
+            .dq-review-form .dq-field { margin-bottom: 10px; }
+            .dq-review-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+            .dq-review-form textarea {
+                width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
+            }
+            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+        </style>
+    `, async () => {
+        const reason = document.getElementById('review-downgrade-reason').value.trim();
+        if (!reason) throw new Error('請填寫降級原因');
+        const actor = auth.currentUser?.email || '';
+        await saveSignal(id, {
+            ...signal,
+            status: 'downgraded',
+            verification_note: '降級原因：' + reason,
+            last_reviewed_at: new Date().toISOString(),
+        }, {
+            actor,
+            previousStatus: signal.status,
+        });
+        showToast('已降級');
+        await fetchSignals();
+        renderReviewTab();
+    }, false);
 }
 
 function applyDQFilters() {

@@ -313,9 +313,16 @@ export function classifyAiCandidates(candidates, existingSignals, companiesData 
         // Step 1: Resolve company_id from company_name
         const resolution = resolveCompanyId(candidate.company_name || candidate.company_id || '', companiesData);
         const enrichedCandidate = { ...candidate };
-        if (resolution.resolved) {
+        if (resolution.resolved && resolution.confidence === 'high') {
             enrichedCandidate.company_id = resolution.candidateId;
             enrichedCandidate.company_name = resolution.candidateName;
+        } else if (resolution.resolved && resolution.confidence === 'low') {
+            // Low-confidence fuzzy match: auto-fill but flag for operator review
+            enrichedCandidate.company_id = resolution.candidateId;
+            enrichedCandidate.company_name = resolution.candidateName;
+            enrichedCandidate._needsCompanyConfirmation = true;
+            enrichedCandidate._originalCompanyName = candidate.company_name || '';
+            enrichedCandidate._matchedCompanyName = resolution.candidateName;
         }
 
         // Step 2: Build a plain row object that validateRow expects

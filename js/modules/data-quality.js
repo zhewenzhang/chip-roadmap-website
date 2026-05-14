@@ -183,6 +183,13 @@ function checkVerification(signal) {
 function checkNeedsReview(signal) {
     const issues = [];
 
+    // Draft/watch records are not ready for review resolution yet.
+    // They should stay in NEEDS_VERIFICATION until the analyst explicitly
+    // promotes them to a verified/downgraded/invalidated decision.
+    if (signal.status === 'draft' || signal.status === 'watch') {
+        return issues;
+    }
+
     // Recent status change — suppressed if reviewed_at is after last_status_changed_at
     if (signal.last_status_changed_at) {
         const reviewedAfterStatus = signal.reviewed_at &&
@@ -345,8 +352,8 @@ export function buildQualityQueue(signals, context = {}) {
     // Primary queue type is determined by the highest-severity issue, not by detection order.
     const ISSUE_SEVERITY_RANK = {
         [QUEUE_TYPES.LINKING_ISSUE]: 5,
-        [QUEUE_TYPES.NEEDS_REVIEW]: 4,
-        [QUEUE_TYPES.NEEDS_VERIFICATION]: 3,
+        [QUEUE_TYPES.NEEDS_VERIFICATION]: 4,
+        [QUEUE_TYPES.NEEDS_REVIEW]: 3,
         [QUEUE_TYPES.NAMING_ISSUE]: 2,
         [QUEUE_TYPES.MISSING_FIELDS]: 1,
     };

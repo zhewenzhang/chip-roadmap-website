@@ -54,6 +54,16 @@ function statusChipClass(s) {
     }
 }
 
+function sourceBadge(signal) {
+    if (signal.ai_generated) {
+        return '<span class="source-badge source-badge-ai">AI</span>';
+    }
+    if (signal.source_type === 'imported') {
+        return '<span class="source-badge source-badge-imported">匯入</span>';
+    }
+    return '';
+}
+
 function formatDate(d) {
     if (!d) return '—';
     try {
@@ -149,7 +159,7 @@ function renderSignalsTable(signals) {
     const rows = signals.map(s => `
         <tr class="signal-row" data-id="${esc(s.id)}">
             <td>${formatDate(s.last_verified_at)}</td>
-            <td>${esc(s.title)}</td>
+            <td>${esc(s.title)} ${sourceBadge(s)}</td>
             <td>${esc(stageLabel(s.stage))}</td>
             <td>${impactBadge(s.abf_demand_impact)}</td>
             <td><span class="signal-status-chip ${statusChipClass(s.status)}">${esc(statusLabel(s.status))}</span></td>
@@ -821,7 +831,7 @@ function openDrawer(signal) {
     const body = document.getElementById('drawerBody');
     if (!overlay || !title || !body) return;
 
-    title.textContent = signal.title;
+    title.innerHTML = esc(signal.title) + sourceBadge(signal);
     
     // Minimal version for entity pages
     let html = `
