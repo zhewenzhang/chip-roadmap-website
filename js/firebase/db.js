@@ -179,13 +179,29 @@ export async function loadSignalHistory(signalId, limit = 5) {
 }
 
 export async function createSignal(data, actor = '') {
+    // Trim string fields before validation to catch whitespace-only values
+    const cleaned = { ...data };
+    for (const key of Object.keys(cleaned)) {
+        if (typeof cleaned[key] === 'string') {
+            cleaned[key] = cleaned[key].trim();
+        }
+    }
+
     const required = ['title', 'company_id', 'company_name', 'chip_name', 'region', 'stage', 'confidence_score', 'abf_demand_impact', 'status'];
     for (const field of required) {
-        if (!data[field] && data[field] !== 0) {
+        if (!cleaned[field] && cleaned[field] !== 0) {
             throw new Error(`Missing required field: ${field}`);
         }
     }
-    const normalized = normalizeSignal(data);
+
+    const normalized = normalizeSignal(cleaned);
+    // Double-check after normalization (normalizeSignal may default missing fields to '')
+    for (const field of required) {
+        if (!normalized[field] && normalized[field] !== 0) {
+            throw new Error(`Missing required field: ${field}`);
+        }
+    }
+
     const ref = await addDoc(collection(db, 'signals'), {
         ...normalized,
         createdAt: serverTimestamp(),
@@ -198,7 +214,16 @@ export async function createSignal(data, actor = '') {
 
 export async function saveSignal(id, data, opts = {}) {
     const { actor = '', previousStatus = null, previousConfidence = null } = opts;
-    const normalized = normalizeSignal(data);
+
+    // Trim string fields before normalization
+    const cleaned = { ...data };
+    for (const key of Object.keys(cleaned)) {
+        if (typeof cleaned[key] === 'string') {
+            cleaned[key] = cleaned[key].trim();
+        }
+    }
+
+    const normalized = normalizeSignal(cleaned);
 
     // Auto-stamp last_status_changed_at when status changes
     if (previousStatus !== null && previousStatus !== normalized.status) {
