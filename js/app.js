@@ -161,18 +161,20 @@ function renderLatestVerifiedEmpty() {
 
 /**
  * Top Impact Chips — derived via impact-engine.js, top 5.
+ * Homepage trust gate: verified-only signals (Phase 11.2).
  */
 function renderTopImpactChips(signals) {
     const container = document.getElementById('topImpactChips');
     if (!container) return;
 
-    // Collect unique chips
-    const chipSet = new Set(signals.map(s => s.chip_name).filter(Boolean));
+    // Phase 11.2: verified-only input for homepage trust gate
+    const verifiedSignals = signals.filter(s => s.status === 'verified');
+    const chipSet = new Set(verifiedSignals.map(s => s.chip_name).filter(Boolean));
     const chips = [...chipSet];
 
-    // Derive impact for each chip
+    // Derive impact using verified-only signals
     const derived = chips.map(name => {
-        const result = deriveChipImpact(name, signals);
+        const result = deriveChipImpact(name, verifiedSignals);
         return { name, ...result };
     });
 
@@ -195,10 +197,10 @@ function renderTopImpactChips(signals) {
     const top5 = qualifying.slice(0, 5);
 
     container.innerHTML = top5.map(d => {
-        // Problem 5: get company name from first driving signal (verified/watch only)
+        // Company name from first driving signal — resolved from verified-only pool
         const driver = d.drivingSignals?.[0];
         const companyName = driver
-            ? (signals.find(s => s.id === driver.id)?.company_name || '')
+            ? (verifiedSignals.find(s => s.id === driver.id)?.company_name || '')
             : '';
         const cowosLabel = d.cowosDependency === 'Yes' ? 'Yes' : d.cowosDependency === 'Likely' ? 'Likely' : 'No';
         const reason = (d.reasonsByField?.abf_demand_impact || '').slice(0, 60);
