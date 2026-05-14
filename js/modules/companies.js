@@ -78,6 +78,26 @@ function renderCompaniesGrid(companiesData, filter = 'all', searchTerm = '', sig
                 if (company.region !== 'China' && company.country !== '中国') return false;
             } else if (filter === 'overseas') {
                 if (company.region === 'China' || company.country === '中国') return false;
+            } else if (filter === 'usa') {
+                if (company.region !== 'USA' && company.country !== '美国' && company.country !== '美國') return false;
+            } else if (filter === 'taiwan') {
+                if (company.region !== 'Taiwan' && company.country !== '台湾' && company.country !== '台灣') return false;
+            } else if (filter === 'japan') {
+                if (company.region !== 'Japan' && company.country !== '日本') return false;
+            } else if (filter === 'korea') {
+                if (company.region !== 'Korea' && company.country !== '韩国' && company.country !== '韓國') return false;
+            } else if (filter === 'foundry') {
+                const cat = (company.category || '').toLowerCase();
+                if (!cat.includes('foundry') && !cat.includes('代工') && !cat.includes('製造')) return false;
+            } else if (filter === 'memory') {
+                const cat = (company.category || '').toLowerCase();
+                if (!cat.includes('memory') && !cat.includes('記憶') && !cat.includes('存储')) return false;
+            } else if (filter === 'substrate') {
+                const cat = (company.category || '').toLowerCase();
+                if (!cat.includes('substrate') && !cat.includes('abf') && !cat.includes('载板') && !cat.includes('載板')) return false;
+            } else if (filter === 'osat') {
+                const cat = (company.category || '').toLowerCase();
+                if (!cat.includes('osat') && !cat.includes('封装') && !cat.includes('封裝') && !cat.includes('package')) return false;
             }
         }
 

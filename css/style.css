@@ -563,18 +563,50 @@ hr.thick {
 
 /* ============== Company Cards ============== */
 .companies-header {
-    padding: 128px 24px 48px;
+    padding: 64px 24px 24px;
     text-align: center;
     border-bottom: 4px solid var(--color-fg);
 }
 
-.companies-header h1 {
-    font-size: 2.5rem;
-}
+.companies-header h1 { font-size: 2rem; }
 
 .companies-header h1 em {
     font-style: normal;
     text-decoration: underline;
+}
+
+.companies-search-wrap {
+    margin: 20px auto 0;
+    max-width: 480px;
+    width: 100%;
+}
+
+.companies-search-input {
+    width: 100%;
+    padding: 10px 16px;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    background: var(--color-muted);
+    border: 1px solid var(--color-border);
+    color: var(--color-fg);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.companies-search-input::placeholder {
+    color: var(--color-muted-fg);
+}
+
+.companies-search-input:focus {
+    border-color: var(--color-fg);
+}
+
+.companies-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 16px;
 }
 
 .companies-grid {
@@ -857,30 +889,36 @@ hr.thick {
 }
 
 .insights-hero {
-    text-align: center;
-    margin-bottom: 64px;
-    padding-bottom: 48px;
-    border-bottom: 8px solid var(--color-fg);
+    text-align: left;
+    margin-bottom: 32px;
+    padding: 24px 0 16px;
+    border-bottom: 1px solid var(--color-border);
 }
 
-.insights-hero h1 {
-    font-size: 2.5rem;
-}
+.insights-hero h1 { font-size: 1.3rem; margin-bottom: 4px; }
 
-.insights-hero h1 em {
-    font-style: normal;
-    text-decoration: underline;
-}
+.insights-hero h1 em { font-style: normal; text-decoration: underline; }
 
 .insights-hero p {
     font-family: var(--font-mono);
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: var(--color-muted-fg);
-    max-width: 600px;
-    margin: 1rem auto 0;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    margin: 0;
 }
+
+/* Insights 三色灯号 */
+.signal-lamp {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+.signal-lamp-green  { background: #33ff00; box-shadow: 0 0 4px #33ff00; }
+.signal-lamp-yellow { background: #ffb000; box-shadow: 0 0 4px #ffb000; }
+.signal-lamp-red    { background: #ff3333; box-shadow: 0 0 4px #ff3333; }
 
 .insight-section {
     margin-bottom: 80px;

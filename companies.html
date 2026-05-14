@@ -25,14 +25,14 @@
         <div class="nav-container">
             <div class="logo">
                 <span class="logo-icon" aria-hidden="true">&#9670;</span>
-                <span class="logo-text">晶片產業分析</span>
+                <span class="logo-text">芯片情報</span>
             </div>
             <ul class="nav-links" id="navLinks">
                 <li><a href="index.html">首頁</a></li>
-                <li><a href="roadmap.html">Roadmap</a></li>
+                <li><a href="roadmap.html">路線圖</a></li>
                 <li><a href="companies.html" class="active" aria-current="page">公司分析</a></li>
                 <li><a href="insights.html">行業洞察</a></li>
-                <li><a href="signals.html">Signals</a></li>
+                <li><a href="signals.html">信號工作台</a></li>
             </ul>
             <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="選單" aria-expanded="false" aria-controls="navLinks">
                 <span aria-hidden="true"></span>
@@ -44,13 +44,28 @@
 
     <!-- 页面标题 -->
     <header class="companies-header">
-        <h1>晶片情報目錄</h1>
-        <p style="color: var(--text-secondary); margin-top: 16px;">全球半導體公司情報索引 — 由 signals 系統驅動的即時數據</p>
-
-        <div class="roadmap-filters" style="margin-top: 32px;" role="group" aria-label="公司篩選">
+        <h1>公司情報目錄</h1>
+        <div class="companies-search-wrap">
+            <input
+                type="search"
+                id="companySearchInput"
+                class="companies-search-input"
+                placeholder="搜索公司名稱或芯片型號…"
+                autocomplete="off"
+                aria-label="搜索公司"
+            />
+        </div>
+        <div class="companies-filter-bar" role="group" aria-label="公司篩選">
             <button class="filter-btn active" data-filter="all" aria-pressed="true">全部</button>
-            <button class="filter-btn" data-filter="china" aria-pressed="false">中国公司</button>
-            <button class="filter-btn" data-filter="overseas" aria-pressed="false">海外公司</button>
+            <button class="filter-btn" data-filter="china" aria-pressed="false">中國</button>
+            <button class="filter-btn" data-filter="usa" aria-pressed="false">美國</button>
+            <button class="filter-btn" data-filter="taiwan" aria-pressed="false">台灣</button>
+            <button class="filter-btn" data-filter="japan" aria-pressed="false">日本</button>
+            <button class="filter-btn" data-filter="korea" aria-pressed="false">韓國</button>
+            <button class="filter-btn" data-filter="foundry" aria-pressed="false">晶圓代工</button>
+            <button class="filter-btn" data-filter="memory" aria-pressed="false">記憶體</button>
+            <button class="filter-btn" data-filter="substrate" aria-pressed="false">ABF 基板</button>
+            <button class="filter-btn" data-filter="osat" aria-pressed="false">封裝 OSAT</button>
         </div>
     </header>
 

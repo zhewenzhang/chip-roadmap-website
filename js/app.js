@@ -350,6 +350,17 @@ async function initCompaniesPage() {
             renderCompaniesGrid(companiesData, filter, '', signalMetrics);
         });
     });
+
+    // Search input binding
+    const searchInput = document.getElementById('companySearchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const term = searchInput.value.trim();
+            const activeFilterBtn = document.querySelector('.companies-header .filter-btn.active');
+            const activeFilter = activeFilterBtn?.dataset.filter || 'all';
+            renderCompaniesGrid(companiesData, activeFilter, term, signalMetrics);
+        });
+    }
 }
 
 // ============== 洞察页面初始化 (V2: signals-derived) ==============
@@ -369,12 +380,12 @@ async function initInsightsPage() {
         import('./modules/change-intelligence.js'),
     ]);
 
-    const { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate } = insightsDerived;
+    const { buildRecentSignalCounts, buildRecentUpgrades, buildHighImpactRecentSignals, buildRiskSignals, IMPACT_LABELS, STATUS_LABELS, formatDate, getLampColor } = insightsDerived;
     const { buildPriorityQueue, buildSignalChangeFeed, CHANGE_TYPES, PRIORITY_LABELS } = changeIntel;
 
     renderRecentSignalCountsModule(signals, buildRecentSignalCounts);
-    renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, STATUS_LABELS);
-    renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LABELS, formatDate);
+    renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, STATUS_LABELS, getLampColor);
+    renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LABELS, formatDate, getLampColor);
     renderRiskSignalsModule(signals, buildRiskSignals);
     renderSignificantChangesModule(signals, buildSignalChangeFeed, CHANGE_TYPES);
     renderPriorityQueueModule(signals, buildPriorityQueue, PRIORITY_LABELS);
@@ -429,7 +440,7 @@ function renderRecentSignalCountsModule(signals, buildRecentSignalCounts) {
     });
 }
 
-function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, STATUS_LABELS) {
+function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, STATUS_LABELS, getLampColor) {
     const container = document.getElementById('recentUpgrades');
     if (!container) return;
 
@@ -448,6 +459,10 @@ function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, ST
         row.setAttribute('role', 'button');
         row.setAttribute('tabindex', '0');
 
+        const lamp = getLampColor(signal);
+        const lampSpan = document.createElement('span');
+        lampSpan.className = `signal-lamp signal-lamp-${lamp}`;
+
         const dateSpan = document.createElement('span');
         dateSpan.className = 'upgrade-date';
         dateSpan.textContent = formatDate(date);
@@ -464,6 +479,7 @@ function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, ST
         toSpan.className = 'upgrade-to';
         toSpan.textContent = STATUS_LABELS[toStatus] || toStatus;
 
+        row.appendChild(lampSpan);
         row.appendChild(dateSpan);
         row.appendChild(companySpan);
         row.appendChild(chipSpan);
@@ -477,7 +493,7 @@ function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, ST
     });
 }
 
-function renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LABELS, formatDate) {
+function renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LABELS, formatDate, getLampColor) {
     const container = document.getElementById('highImpactSignals');
     if (!container) return;
 
@@ -493,6 +509,10 @@ function renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LA
     items.slice(0, 8).forEach(({ signal }) => {
         const card = document.createElement('div');
         card.className = 'summary-card';
+
+        const lamp = getLampColor(signal);
+        const lampSpan = document.createElement('span');
+        lampSpan.className = `signal-lamp signal-lamp-${lamp}`;
 
         const impactBadge = document.createElement('div');
         impactBadge.className = 'summary-card-impact';
@@ -515,6 +535,7 @@ function renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LA
         link.href = `company-signals.html?id=${encodeURIComponent(signal.company_id)}`;
         link.textContent = '查看 →';
 
+        card.appendChild(lampSpan);
         card.appendChild(impactBadge);
         card.appendChild(chipName);
         card.appendChild(companyName);
@@ -549,6 +570,9 @@ function renderRiskSignalsModule(signals, buildRiskSignals) {
         row.setAttribute('role', 'button');
         row.setAttribute('tabindex', '0');
 
+        const lampSpan = document.createElement('span');
+        lampSpan.className = 'signal-lamp signal-lamp-red';
+
         const riskLabel = document.createElement('span');
         riskLabel.className = 'risk-label';
         riskLabel.textContent = RISK_LABELS[riskType] || riskType;
@@ -561,6 +585,7 @@ function renderRiskSignalsModule(signals, buildRiskSignals) {
         reasonSpan.className = 'risk-reason';
         reasonSpan.textContent = reason;
 
+        row.appendChild(lampSpan);
         row.appendChild(riskLabel);
         row.appendChild(companyChip);
         row.appendChild(reasonSpan);

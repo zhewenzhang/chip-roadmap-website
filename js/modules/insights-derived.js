@@ -175,6 +175,18 @@ export function buildRiskSignals(signals) {
 }
 
 /**
+ * Get traffic light color for a signal.
+ * Returns 'red', 'yellow', or 'green'.
+ */
+export function getLampColor(signal) {
+    if (signal.status === 'downgraded' || signal.status === 'invalidated') return 'red';
+    if (signal.conflicting_evidence && signal.conflicting_evidence.trim()) return 'red';
+    if (signal.status === 'verified' && (signal.abf_demand_impact === 'high' || signal.abf_demand_impact === 'explosive')) return 'green';
+    if (signal.status === 'watch' || signal.abf_demand_impact === 'medium') return 'yellow';
+    return 'yellow';
+}
+
+/**
  * Format date as YYYY-MM-DD.
  */
 export function formatDate(d) {
