@@ -709,3 +709,385 @@ tr:hover td { background: var(--surface); }
     color: var(--warning);
     font-style: italic;
 }
+
+/* ===== Part 1B: 待驗證 explanation panel readability ===== */
+.review-explanation {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.review-explanation h3 {
+    color: var(--text);
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.review-explanation p {
+    color: var(--text);
+}
+
+.review-explanation code {
+    background: var(--surface2);
+    padding: 1px 4px;
+    border-radius: 3px;
+    color: var(--warning);
+    font-size: 12px;
+}
+
+/* ===== Part 1C: Signal Transition Result Panel ===== */
+.signal-transition-result {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--success);
+    border-radius: 6px;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+.signal-transition-result .tr-label {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.signal-transition-result .tr-value {
+    color: var(--text);
+    font-weight: 600;
+}
+
+.signal-transition-result .tr-blocker {
+    color: var(--warning);
+    font-size: 12px;
+}
+
+/* ===== Part 1D: Data Quality Next Actions ===== */
+.dq-next-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.dq-next-actions .btn-primary {
+    width: auto;
+    padding: 8px 16px;
+}
+
+.dq-completed-banner {
+    padding: 16px;
+    background: #0d2e1a;
+    border: 1px solid var(--success);
+    border-radius: 6px;
+    text-align: center;
+    color: var(--success);
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 12px;
+}
+
+/* ===== Part 2: Signal Edit Modal Redesign ===== */
+.signal-edit-workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.signal-edit-workspace .edit-section {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+}
+
+.signal-edit-workspace .edit-section-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+}
+
+.signal-edit-workspace .edit-section-full {
+    grid-column: 1 / -1;
+}
+
+.signal-edit-workspace .form-group {
+    margin-bottom: 10px;
+}
+
+.signal-edit-workspace .form-group label {
+    font-size: 11px;
+    margin-bottom: 4px;
+}
+
+.signal-edit-workspace .form-group input,
+.signal-edit-workspace .form-group select,
+.signal-edit-workspace .form-group textarea {
+    padding: 6px 8px;
+    font-size: 13px;
+}
+
+/* Large modal for signal edit */
+.modal-box.signal-edit-modal {
+    max-width: 1100px;
+    width: min(1100px, calc(100vw - 48px));
+    max-height: calc(100vh - 48px);
+}
+
+/* ===== Part 3: AI Extract UI Polish ===== */
+.ai-workflow-steps {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+}
+
+.ai-workflow-step {
+    flex: 1;
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-align: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    position: relative;
+}
+
+.ai-workflow-step.active {
+    border-color: var(--text);
+    color: var(--text);
+    background: var(--surface2);
+}
+
+.ai-workflow-step.done {
+    border-color: var(--success);
+    color: var(--success);
+}
+
+.ai-workflow-step::after {
+    content: '→';
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.ai-workflow-step:last-child::after {
+    display: none;
+}
+
+.ai-section-collapsible {
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.ai-collapsible-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--surface);
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    border: none;
+    width: 100%;
+    text-align: left;
+}
+
+.ai-collapsible-header:hover {
+    background: var(--surface2);
+}
+
+.ai-collapsible-header .collapse-icon {
+    transition: transform 0.2s;
+    font-size: 12px;
+}
+
+.ai-collapsible-header.collapsed .collapse-icon {
+    transform: rotate(-90deg);
+}
+
+.ai-collapsible-body {
+    padding: 14px;
+    background: var(--bg);
+}
+
+.ai-collapsible-body.hidden {
+    display: none;
+}
+
+.ai-source-primary {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.ai-source-primary textarea {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    width: 100%;
+    resize: vertical;
+}
+
+.ai-source-primary textarea:focus {
+    outline: none;
+    border-color: var(--text);
+}
+
+.ai-empty-state {
+    text-align: center;
+    padding: 32px 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.ai-empty-state .empty-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+    opacity: 0.5;
+}
+
+.ai-loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.ai-loading .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--text);
+    border-radius: 50%;
+    animation: ai-spin 0.8s linear infinite;
+}
+
+@keyframes ai-spin {
+    to { transform: rotate(360deg); }
+}
+
+.ai-error-state {
+    padding: 12px 16px;
+    background: #2e0d0d;
+    border: 1px solid var(--danger);
+    border-radius: 4px;
+    color: var(--danger);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* ===== Part 4: Drag-and-Drop Upload ===== */
+.ai-drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 6px;
+    padding: 24px;
+    text-align: center;
+    transition: border-color 0.2s, background 0.2s;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.ai-drop-zone:hover,
+.ai-drop-zone.drag-over {
+    border-color: var(--text);
+    background: var(--surface);
+}
+
+.ai-drop-zone .drop-label {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.ai-drop-zone .drop-label strong {
+    color: var(--text);
+}
+
+.ai-drop-zone .file-preview {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--success);
+}
+
+/* ===== Part 5: Company Bulk Add ===== */
+.bulk-add-textarea {
+    width: 100%;
+    min-height: 120px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    resize: vertical;
+}
+
+.bulk-add-textarea:focus {
+    outline: none;
+    border-color: var(--text);
+}
+
+.bulk-add-preview {
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bulk-add-preview table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bulk-add-preview th {
+    padding: 6px 10px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+}
+
+.bulk-add-preview td {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--border);
+}
+
+.bulk-add-preview .row-duplicate {
+    background: rgba(224, 169, 82, 0.1);
+}
+
+.bulk-add-preview .row-new {
+    background: rgba(82, 224, 154, 0.05);
+}
+
+.bulk-add-preview .row-error {
+    background: rgba(224, 82, 82, 0.1);
+}

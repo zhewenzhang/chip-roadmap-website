@@ -58,12 +58,68 @@ function normalizeChipName(raw) {
     return name;
 }
 
-function showToast(msg, type = 'success') {
+function showToast(msg, type = 'success', duration = 3000) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.className = `toast ${type}`;
     toast.style.display = 'block';
-    setTimeout(() => { toast.style.display = 'none'; }, 3000);
+    setTimeout(() => { toast.style.display = 'none'; }, duration);
+}
+
+/**
+ * Describe where a signal goes after an action.
+ * Returns { statusLabel, queueType, publicVisible, message, blockers }.
+ */
+function describeSignalPlacement(signal, queueItems) {
+    const status = signal.status;
+    const stage = signal.stage;
+    const archived = signal.archived || status === 'archived';
+
+    // Determine queue type
+    let queueType = '無';
+    if (!archived && status !== 'draft') {
+        const item = queueItems?.find(q => q.signalId === signal.id);
+        if (item) queueType = item.queueType;
+    }
+
+    // Public visibility rules
+    const publicVisible = !archived
+        && status !== 'draft'
+        && status !== 'invalidated';
+
+    // Roadmap visibility
+    const roadmapVisible = status === 'verified'
+        && ['pilot', 'ramp', 'volume'].includes(stage);
+
+    // Blockers
+    const blockers = [];
+    if (archived) blockers.push('已封存');
+    if (status === 'draft') blockers.push('狀態為草稿');
+    if (status === 'invalidated') blockers.push('已失效');
+    if (!signal.evidence_summary) blockers.push('缺少證據摘要');
+    if (!signal.confidence_reason) blockers.push('缺少信度依據');
+
+    let message = '';
+    if (archived) {
+        message = `已封存，不再顯示於任何隊列`;
+    } else if (status === 'invalidated') {
+        message = `狀態為 invalidated，不再公開可見`;
+    } else if (status === 'verified') {
+        message = `已驗證，公開可見`;
+        if (roadmapVisible) message += '，同時顯示於路線圖';
+    } else if (status === 'watch') {
+        message = `觀察中，進入「待驗證」隊列`;
+    } else if (status === 'downgraded') {
+        message = `已降級，公開可見但標注為降級`;
+    } else {
+        message = `草稿狀態，進入「新信號」隊列`;
+    }
+
+    if (queueType !== '無') {
+        message += `，仍有數據品質問題：${queueType}`;
+    }
+
+    return { statusLabel: statusLabel(status), queueType, publicVisible, roadmapVisible, message, blockers };
 }
 
 function renderMarkdown(md) {
@@ -241,6 +297,7 @@ document.getElementById('tab-companies').addEventListener('click', e => {
     if (action === 'edit-company') openEditCompanyModal(id);
     else if (action === 'delete-company') deleteCompanyAction(id);
     else if (action === 'new-company') openNewCompanyModal();
+    else if (action === 'bulk-add-companies') openBulkAddCompaniesModal();
 });
 
 function renderCompaniesTab() {
@@ -264,7 +321,10 @@ function renderCompaniesTab() {
     document.getElementById('companies-content').innerHTML = `
         <div class="toolbar">
             <h2>Companies (${companiesData.length})</h2>
-            <button class="btn-primary" data-action="new-company" style="width:auto;padding:8px 16px">+ Add Company</button>
+            <div style="display:flex;gap:8px">
+                <button class="btn-primary" data-action="bulk-add-companies" style="width:auto;padding:8px 16px">批量新增</button>
+                <button class="btn-primary" data-action="new-company" style="width:auto;padding:8px 16px">+ Add Company</button>
+            </div>
         </div>
         <div class="table-wrap">
             <table>
@@ -363,6 +423,133 @@ function openNewCompanyModal() {
         renderCompaniesTab();
         renderCompletenessTab();
     });
+}
+
+function openBulkAddCompaniesModal() {
+    const formHtml = `
+        <div style="margin-bottom:12px">
+            <p style="color:var(--text);font-size:13px;line-height:1.6">
+                每行輸入一個公司名稱，或使用格式：<code style="background:var(--surface2);padding:2px 4px;border-radius:3px">company_id | name_en | name_cn | region</code>
+            </p>
+            <p style="color:var(--text-muted);font-size:12px;margin-top:4px">
+                例如：<code>NVIDIA</code> 或 <code>nvidia | NVIDIA | 輝達 | USA</code>
+            </p>
+        </div>
+        <textarea id="bulk-company-input" class="bulk-add-textarea" placeholder="NVIDIA&#10;AMD&#10;Huawei&#10;tsmc | TSMC | 台積電 | Taiwan"></textarea>
+        <div id="bulk-company-preview" style="display:none"></div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="btn-sm" id="bulk-company-preview-btn">預覽</button>
+            <button class="btn-primary" id="bulk-company-import-btn" style="width:auto" disabled>確認匯入</button>
+        </div>
+        <div style="margin-top:16px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;font-size:12px;color:var(--text-muted)">
+            AI 公司資料補全將在後續階段加入。當前版本只支持批量建立公司目錄，不自動生成未驗證公司資料。
+        </div>
+    `;
+
+    let bulkPreviewData = [];
+
+    openModal('批量新增公司', formHtml, async () => {
+        // Import confirmed companies
+        const actor = auth.currentUser?.email || '';
+        let created = 0;
+        let skipped = 0;
+        for (const item of bulkPreviewData) {
+            if (item.status === 'duplicate') { skipped++; continue; }
+            if (item.status === 'error') { skipped++; continue; }
+            try {
+                await setDoc(doc(db, 'companies', item.id), {
+                    name_en: item.name_en,
+                    name_cn: item.name_cn || '',
+                    region: item.region || 'Other',
+                    country: item.country || '',
+                    category: '',
+                    abf_demand: '',
+                    market_position: '',
+                    createdAt: serverTimestamp(),
+                    updatedAt: serverTimestamp(),
+                });
+                created++;
+            } catch (err) {
+                console.error('Failed to create company:', item.id, err);
+                skipped++;
+            }
+        }
+        showToast(`匯入完成：${created} 建立 / ${skipped} 跳過`, 'success', 4000);
+        await fetchCompanies();
+        renderCompaniesTab();
+        renderCompletenessTab();
+    }, true);
+
+    // Preview button handler
+    document.getElementById('bulk-company-preview-btn')?.addEventListener('click', () => {
+        const raw = document.getElementById('bulk-company-input').value.trim();
+        if (!raw) {
+            showToast('請輸入公司資料', 'error');
+            return;
+        }
+
+        const lines = raw.split('\n').map(l => l.trim()).filter(Boolean);
+        bulkPreviewData = [];
+
+        for (const line of lines) {
+            const parts = line.split('|').map(p => p.trim());
+            let id, name_en, name_cn, region;
+
+            if (parts.length >= 4) {
+                id = parts[0].toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+                name_en = parts[1];
+                name_cn = parts[2];
+                region = parts[3];
+            } else if (parts.length === 1 && parts[0]) {
+                name_en = parts[0];
+                id = name_en.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9_-]/g, '');
+                name_cn = '';
+                region = 'Other';
+            } else {
+                bulkPreviewData.push({ id: line, name_en: line, status: 'error', message: '格式錯誤' });
+                continue;
+            }
+
+            // Check duplicate
+            const existing = companiesData.find(c => c.id === id || c.name_en === name_en);
+            if (existing) {
+                bulkPreviewData.push({ id, name_en, name_cn, region, status: 'duplicate', message: `已存在: ${existing.id}` });
+            } else {
+                bulkPreviewData.push({ id, name_en, name_cn, region, status: 'new', message: '建立' });
+            }
+        }
+
+        renderBulkCompanyPreview();
+    });
+
+    function renderBulkCompanyPreview() {
+        const previewDiv = document.getElementById('bulk-company-preview');
+        const importBtn = document.getElementById('bulk-company-import-btn');
+        if (!previewDiv) return;
+
+        const newCount = bulkPreviewData.filter(i => i.status === 'new').length;
+        importBtn.disabled = newCount === 0;
+
+        const statusLabels = { new: '建立', duplicate: '跳過', error: '錯誤' };
+        const statusClasses = { new: 'row-new', duplicate: 'row-duplicate', error: 'row-error' };
+
+        const rows = bulkPreviewData.map(item => `
+            <tr class="${statusClasses[item.status]}">
+                <td>${esc(item.id)}</td>
+                <td>${esc(item.name_en)}</td>
+                <td>${esc(item.name_cn || '')}</td>
+                <td>${esc(item.region || '')}</td>
+                <td><span class="badge ${item.status === 'new' ? 'badge-green' : item.status === 'duplicate' ? 'badge-yellow' : 'badge-red'}">${statusLabels[item.status]}</span></td>
+                <td>${esc(item.message || '')}</td>
+            </tr>
+        `).join('');
+
+        previewDiv.style.display = 'block';
+        previewDiv.innerHTML = `<div class="bulk-add-preview">
+            <table><thead><tr><th>ID</th><th>Name EN</th><th>Name CN</th><th>Region</th><th>動作</th><th>備註</th></tr></thead>
+            <tbody>${rows}</tbody></table>
+        </div>`;
+    }
 }
 
 async function deleteCompanyAction(companyId) {
@@ -509,116 +696,122 @@ function resetSignalFilters() {
 
 function buildSignalForm(s = {}) {
     const chipNames = [...new Set(signalsData.map(sig => sig.chip_name).filter(Boolean))].sort();
+    const companyOptions = companiesData.map(c =>
+        `<option value="${esc(c.id)}" ${s.company_id === c.id ? 'selected' : ''}>${esc(c.name_en)} (${esc(c.id)})</option>`
+    ).join('');
+
     return `
-        <div class="form-group"><label>標題 *</label><input id="fs-title" value="${esc(s.title || '')}" required></div>
-        <div class="form-group"><label>公司 *</label>
-            <select id="fs-company_id" required>
-                <option value="">選擇公司...</option>
-                ${companiesData.map(c => `<option value="${esc(c.id)}" ${s.company_id === c.id ? 'selected' : ''}>${esc(c.name_en)} (${esc(c.id)})</option>`).join('')}
-            </select>
-        </div>
-        <div class="form-group"><label>公司名稱 * <small>(自動同步)</small></label><input id="fs-company_name" value="${esc(s.company_name || '')}" readonly style="opacity:0.6"></div>
-        <div class="form-group"><label>芯片名稱 *</label>
-            <input id="fs-chip_name" value="${esc(s.chip_name || '')}" list="chip-name-datalist" required>
-            <datalist id="chip-name-datalist">
-                ${chipNames.map(name => `<option value="${esc(name)}">`).join('')}
-            </datalist>
-        </div>
-        <div class="form-group"><label>地區 *</label>
-            <select id="fs-region">${REGION_OPTIONS.map(v => `<option value="${v}" ${s.region === v ? 'selected' : ''}>${regionLabel(v)}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>階段 *</label>
-            <select id="fs-stage">${STAGE_OPTIONS.map(v => `<option value="${v}" ${s.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>狀態 *</label>
-            <select id="fs-status">${STATUS_OPTIONS.map(v => `<option value="${v}" ${s.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>ABF 需求影響 *</label>
-            <select id="fs-abf_demand_impact">${IMPACT_OPTIONS.map(v => `<option value="${v}" ${s.abf_demand_impact === v ? 'selected' : ''}>${impactLabel(v)}</option>`).join('')}</select>
-        </div>
-        <div class="form-group"><label>信度 (0-100) *</label><input id="fs-confidence_score" type="number" min="0" max="100" value="${s.confidence_score ?? 50}"></div>
-        <div class="form-group"><label>信號類型</label>
-            <input id="fs-signal_type" value="${esc(s.signal_type || '')}" list="signal-type-options" placeholder="例如：product_progress">
-            <datalist id="signal-type-options">
-                <option value="product_progress">
-                <option value="supply_chain">
-                <option value="capacity">
-                <option value="customer_win">
-                <option value="roadmap_change">
-            </datalist>
-        </div>
-        <div class="form-group"><label>量產年份</label><input id="fs-release_year" type="number" value="${s.release_year ?? ''}" placeholder="例如：2026"></div>
-        <div class="form-group"><label>量產季度</label>
-            <select id="fs-release_quarter">
-                <option value="" ${!s.release_quarter ? 'selected' : ''}>—</option>
-                <option value="Q1" ${s.release_quarter === 'Q1' ? 'selected' : ''}>Q1</option>
-                <option value="Q2" ${s.release_quarter === 'Q2' ? 'selected' : ''}>Q2</option>
-                <option value="Q3" ${s.release_quarter === 'Q3' ? 'selected' : ''}>Q3</option>
-                <option value="Q4" ${s.release_quarter === 'Q4' ? 'selected' : ''}>Q4</option>
-            </select>
-        </div>
-        <div class="form-group"><label>封裝類型</label>
-            <input id="fs-package_type" value="${esc(s.package_type || '')}" list="package-type-options" placeholder="例如：CoWoS-L">
-            <datalist id="package-type-options">
-                <option value="CoWoS-L">
-                <option value="CoWoS-S">
-                <option value="EMIB">
-                <option value="2.5D">
-                <option value="3D">
-                <option value="flip-chip">
-            </datalist>
-        </div>
-        <div class="form-group"><label>CoWoS 需求</label>
-            <select id="fs-cowos_required">
-                <option value="false" ${!s.cowos_required ? 'selected' : ''}>否</option>
-                <option value="true" ${s.cowos_required ? 'selected' : ''}>是</option>
-            </select>
-        </div>
-        <div class="form-group"><label>ABF 尺寸</label><input id="fs-abf_size" value="${esc(s.abf_size || '')}" placeholder="例如：77mm x 77mm"></div>
-        <div class="form-group"><label>ABF 層數</label><input id="fs-abf_layers" type="number" value="${s.abf_layers ?? ''}" placeholder="例如：16"></div>
-        <div class="form-group"><label>HBM</label>
-            <input id="fs-hbm" value="${esc(s.hbm || '')}" list="hbm-options" placeholder="例如：HBM3">
-            <datalist id="hbm-options">
-                <option value="HBM3">
-                <option value="HBM3E">
-                <option value="HBM4">
-            </datalist>
-        </div>
-        <div class="form-group"><label>預期出貨量</label>
-            <select id="fs-expected_volume">
-                <option value="" ${!s.expected_volume ? 'selected' : ''}>—</option>
-                <option value="low" ${s.expected_volume === 'low' ? 'selected' : ''}>低</option>
-                <option value="medium" ${s.expected_volume === 'medium' ? 'selected' : ''}>中</option>
-                <option value="high" ${s.expected_volume === 'high' ? 'selected' : ''}>高</option>
-            </select>
-        </div>
-        <div class="form-group"><label>影響範圍（逗號分隔）</label><input id="fs-impact_scope" value="${esc((s.impact_scope || []).join(', '))}"></div>
-        <div class="form-group"><label>標籤（逗號分隔）</label><input id="fs-tags" value="${esc((s.tags || []).join(', '))}"></div>
-        <div class="form-section-title">證據</div>
-        <div class="form-group"><label>證據摘要</label><textarea id="fs-evidence_summary" rows="3">${esc(s.evidence_summary || '')}</textarea></div>
-        <div class="form-group"><label>矛盾證據</label><textarea id="fs-conflicting_evidence" rows="3">${esc(s.conflicting_evidence || '')}</textarea></div>
-        <div class="form-group"><label>備註</label><textarea id="fs-notes" rows="3">${esc(s.notes || '')}</textarea></div>
-        <div class="form-group">
-            <label>最後驗證日期</label>
-            <div style="display:flex;gap:8px;align-items:center">
-                <input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}" style="flex:1">
-                <button type="button" class="btn-secondary" style="padding:6px 12px;font-size:12px" onclick="document.getElementById('fs-last_verified_at').value=new Date().toISOString().slice(0,10)">今天</button>
+        <div class="signal-edit-workspace">
+            <!-- Core Identity -->
+            <div class="edit-section">
+                <div class="edit-section-title">核心資訊</div>
+                <div class="form-group"><label>標題 *</label><input id="fs-title" value="${esc(s.title || '')}" required></div>
+                <div class="form-group"><label>公司 *</label>
+                    <select id="fs-company_id" required>
+                        <option value="">選擇公司...</option>
+                        ${companyOptions}
+                    </select>
+                </div>
+                <div class="form-group"><label>公司名稱 <small>(自動同步)</small></label><input id="fs-company_name" value="${esc(s.company_name || '')}" readonly style="opacity:0.6"></div>
+                <div class="form-group"><label>芯片名稱 *</label>
+                    <input id="fs-chip_name" value="${esc(s.chip_name || '')}" list="chip-name-datalist" required>
+                    <datalist id="chip-name-datalist">
+                        ${chipNames.map(name => `<option value="${esc(name)}">`).join('')}
+                    </datalist>
+                </div>
+                <div class="form-group"><label>地區 *</label>
+                    <select id="fs-region">${REGION_OPTIONS.map(v => `<option value="${v}" ${s.region === v ? 'selected' : ''}>${regionLabel(v)}</option>`).join('')}</select>
+                </div>
+                <div class="form-group"><label>信號類型</label>
+                    <input id="fs-signal_type" value="${esc(s.signal_type || '')}" list="signal-type-options" placeholder="例如：product_progress">
+                    <datalist id="signal-type-options">
+                        <option value="product_progress"><option value="supply_chain"><option value="capacity"><option value="customer_win"><option value="roadmap_change">
+                    </datalist>
+                </div>
             </div>
-        </div>
-        <div class="form-group"><label>來源 URL（每行一個）</label>
-            <textarea id="fs-sources" rows="3" placeholder="https://example.com/source-1&#10;https://example.com/source-2"
-                      style="font-family:monospace;font-size:12px">${esc((s.sources || []).map(src => src.url || '').filter(Boolean).join('\n'))}</textarea>
-            <div style="font-size:11px;color:#888;margin-top:4px">每行貼一個網址即可，留空可省略</div>
-        </div>
-        <div class="form-section-title">信任生命週期</div>
-        <div class="form-group"><label>信度依據</label>
-            <textarea id="fs-confidence_reason" rows="2" placeholder="為何信度是這個分數？例如：供應商確認、媒體引用、推測">${esc(s.confidence_reason || '')}</textarea>
-        </div>
-        <div class="form-group"><label>驗證備註</label>
-            <textarea id="fs-verification_note" rows="2" placeholder="本次驗證說明（可選）">${esc(s.verification_note || '')}</textarea>
-        </div>
-        <div class="form-group"><label>驗證人（email）</label>
-            <input id="fs-last_verified_by" value="${esc(s.last_verified_by || '')}" placeholder="留空自動填入當前用戶">
+
+            <!-- Verification / Status -->
+            <div class="edit-section">
+                <div class="edit-section-title">驗證與狀態</div>
+                <div class="form-group"><label>階段 *</label>
+                    <select id="fs-stage">${STAGE_OPTIONS.map(v => `<option value="${v}" ${s.stage === v ? 'selected' : ''}>${stageLabel(v)}</option>`).join('')}</select>
+                </div>
+                <div class="form-group"><label>狀態 *</label>
+                    <select id="fs-status">${STATUS_OPTIONS.map(v => `<option value="${v}" ${s.status === v ? 'selected' : ''}>${statusLabel(v)}</option>`).join('')}</select>
+                </div>
+                <div class="form-group"><label>ABF 需求影響 *</label>
+                    <select id="fs-abf_demand_impact">${IMPACT_OPTIONS.map(v => `<option value="${v}" ${s.abf_demand_impact === v ? 'selected' : ''}>${impactLabel(v)}</option>`).join('')}</select>
+                </div>
+                <div class="form-group"><label>信度 (0-100) *</label><input id="fs-confidence_score" type="number" min="0" max="100" value="${s.confidence_score ?? 50}"></div>
+                <div class="form-group"><label>量產年份</label><input id="fs-release_year" type="number" value="${s.release_year ?? ''}" placeholder="2026"></div>
+                <div class="form-group"><label>量產季度</label>
+                    <select id="fs-release_quarter">
+                        <option value="" ${!s.release_quarter ? 'selected' : ''}>—</option>
+                        <option value="Q1" ${s.release_quarter === 'Q1' ? 'selected' : ''}>Q1</option>
+                        <option value="Q2" ${s.release_quarter === 'Q2' ? 'selected' : ''}>Q2</option>
+                        <option value="Q3" ${s.release_quarter === 'Q3' ? 'selected' : ''}>Q3</option>
+                        <option value="Q4" ${s.release_quarter === 'Q4' ? 'selected' : ''}>Q4</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Evidence -->
+            <div class="edit-section">
+                <div class="edit-section-title">證據</div>
+                <div class="form-group"><label>證據摘要</label><textarea id="fs-evidence_summary" rows="3">${esc(s.evidence_summary || '')}</textarea></div>
+                <div class="form-group"><label>矛盾證據</label><textarea id="fs-conflicting_evidence" rows="3">${esc(s.conflicting_evidence || '')}</textarea></div>
+                <div class="form-group"><label>信度依據</label><textarea id="fs-confidence_reason" rows="2" placeholder="為何信度是這個分數？">${esc(s.confidence_reason || '')}</textarea></div>
+                <div class="form-group"><label>驗證備註</label><textarea id="fs-verification_note" rows="2" placeholder="本次驗證說明">${esc(s.verification_note || '')}</textarea></div>
+                <div class="form-group"><label>驗證人（email）</label><input id="fs-last_verified_by" value="${esc(s.last_verified_by || '')}" placeholder="留空自動填入"></div>
+                <div class="form-group"><label>最後驗證日期</label>
+                    <div style="display:flex;gap:8px;align-items:center">
+                        <input id="fs-last_verified_at" type="date" value="${s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0,10) : ''}" style="flex:1">
+                        <button type="button" class="btn-secondary" style="padding:6px 12px;font-size:12px" onclick="document.getElementById('fs-last_verified_at').value=new Date().toISOString().slice(0,10)">今天</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Packaging / ABF -->
+            <div class="edit-section">
+                <div class="edit-section-title">封裝與 ABF</div>
+                <div class="form-group"><label>封裝類型</label>
+                    <input id="fs-package_type" value="${esc(s.package_type || '')}" list="package-type-options" placeholder="CoWoS-L">
+                    <datalist id="package-type-options"><option value="CoWoS-L"><option value="CoWoS-S"><option value="EMIB"><option value="2.5D"><option value="3D"><option value="flip-chip"></datalist>
+                </div>
+                <div class="form-group"><label>CoWoS 需求</label>
+                    <select id="fs-cowos_required">
+                        <option value="false" ${!s.cowos_required ? 'selected' : ''}>否</option>
+                        <option value="true" ${s.cowos_required ? 'selected' : ''}>是</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>ABF 尺寸</label><input id="fs-abf_size" value="${esc(s.abf_size || '')}" placeholder="77mm x 77mm"></div>
+                <div class="form-group"><label>ABF 層數</label><input id="fs-abf_layers" type="number" value="${s.abf_layers ?? ''}" placeholder="16"></div>
+                <div class="form-group"><label>HBM</label>
+                    <input id="fs-hbm" value="${esc(s.hbm || '')}" list="hbm-options" placeholder="HBM3">
+                    <datalist id="hbm-options"><option value="HBM3"><option value="HBM3E"><option value="HBM4"></datalist>
+                </div>
+                <div class="form-group"><label>預期出貨量</label>
+                    <select id="fs-expected_volume">
+                        <option value="" ${!s.expected_volume ? 'selected' : ''}>—</option>
+                        <option value="low" ${s.expected_volume === 'low' ? 'selected' : ''}>低</option>
+                        <option value="medium" ${s.expected_volume === 'medium' ? 'selected' : ''}>中</option>
+                        <option value="high" ${s.expected_volume === 'high' ? 'selected' : ''}>高</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Metadata Full Width -->
+            <div class="edit-section edit-section-full">
+                <div class="edit-section-title">元數據與來源</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                    <div class="form-group"><label>影響範圍</label><input id="fs-impact_scope" value="${esc((s.impact_scope || []).join(', '))}"></div>
+                    <div class="form-group"><label>標籤</label><input id="fs-tags" value="${esc((s.tags || []).join(', '))}"></div>
+                </div>
+                <div class="form-group"><label>備註</label><textarea id="fs-notes" rows="2">${esc(s.notes || '')}</textarea></div>
+                <div class="form-group"><label>來源 URL（每行一個）</label>
+                    <textarea id="fs-sources" rows="2" placeholder="https://..." style="font-family:monospace;font-size:12px">${esc((s.sources || []).map(src => src.url || '').filter(Boolean).join('\n'))}</textarea>
+                </div>
+            </div>
         </div>`;
 }
 
@@ -717,8 +910,14 @@ function openNewSignalModal() {
         if (!data.last_verified_by) data.last_verified_by = auth.currentUser?.email || '';
         const actor = auth.currentUser?.email || '';
         await createSignal(data, actor);
-        showToast('已建立 ✓');
         await fetchSignals();
+        const refreshed = signalsData.find(s => s.title === data.title && s.company_id === data.company_id);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        if (placement) {
+            showToast(`已建立，${placement.message}`, 'success', 4000);
+        } else {
+            showToast('已建立 ✓');
+        }
         renderSignalsTab();
     });
     initSignalFormEvents();
@@ -738,10 +937,16 @@ function openEditSignalModal(id) {
             previousStatus: signal.status,
             previousConfidence: signal.confidence_score,
         });
-        showToast('已儲存 ✓');
         await fetchSignals();
+        const refreshed = signalsData.find(s => s.id === id);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        if (placement) {
+            showToast(`已儲存，${placement.message}`, 'success', 4000);
+        } else {
+            showToast('已儲存 ✓');
+        }
         renderSignalsTab();
-    });
+    }, 'signal-edit');
     initSignalFormEvents();
 
     // Phase 4: Append lightweight history context (read-only)
@@ -1240,70 +1445,95 @@ let aiExtractCandidates = [];
 function renderAiExtractTab() {
     aiExtractSettings = loadAiSettings();
     const prompt = loadExtractionPrompt();
-    const hasImageUpload = typeof FileReader !== 'undefined';
+    const hasApiKey = !!aiExtractSettings.apiKey;
 
     document.getElementById('ai-extract-content').innerHTML = `
         <div class="ai-extract-workflow">
             <h2>AI 情報抽取</h2>
 
-            <!-- Settings -->
-            <div class="ai-section">
-                <h3>DeepSeek 設定</h3>
-                <div class="ai-form-row">
-                    <div class="ai-field">
-                        <label>API Key</label>
-                        <input type="password" id="ai-api-key" value="${esc(aiExtractSettings.apiKey)}" placeholder="sk-...">
-                    </div>
-                    <div class="ai-field">
-                        <label>Base URL</label>
-                        <input type="text" id="ai-base-url" value="${esc(aiExtractSettings.baseUrl)}" placeholder="https://api.deepseek.com">
-                    </div>
-                    <div class="ai-field">
-                        <label>Model</label>
-                        <input type="text" id="ai-model" value="${esc(aiExtractSettings.model)}" placeholder="deepseek-v4-flash">
-                    </div>
-                </div>
-                <div class="ai-actions">
-                    <button class="btn-sm" id="ai-save-settings">儲存設定</button>
-                    <button class="btn-sm btn-secondary" id="ai-test-connection">測試連線</button>
-                    <span id="ai-connection-status" style="margin-left:8px;font-size:12px"></span>
-                </div>
-                <div class="ai-warning">API key 僅儲存在此瀏覽器的 localStorage 中，請勿在共用電腦上使用。</div>
+            <!-- Workflow Steps -->
+            <div class="ai-workflow-steps">
+                <div class="ai-workflow-step ${hasApiKey ? 'done' : 'active'}">1. 設定</div>
+                <div class="ai-workflow-step">2. 提示詞</div>
+                <div class="ai-workflow-step active">3. 情報來源</div>
+                <div class="ai-workflow-step">4. 候選預覽</div>
+                <div class="ai-workflow-step">5. 匯入</div>
             </div>
 
-            <!-- Prompt -->
-            <div class="ai-section">
-                <h3>抽取提示詞</h3>
-                <textarea id="ai-prompt" rows="12" style="font-family:monospace;font-size:12px;width:100%">${esc(prompt)}</textarea>
-                <div class="ai-actions" style="margin-top:8px">
-                    <button class="btn-sm" id="ai-save-prompt">儲存提示詞</button>
-                    <button class="btn-sm btn-secondary" id="ai-reset-prompt">恢復預設</button>
+            <!-- Settings (collapsible) -->
+            <div class="ai-section-collapsible">
+                <button class="ai-collapsible-header ${hasApiKey ? 'collapsed' : ''}" data-ai-collapse="settings">
+                    <span>${hasApiKey ? '✓ DeepSeek 設定已配置' : 'DeepSeek 設定'}</span>
+                    <span class="collapse-icon">▼</span>
+                </button>
+                <div class="ai-collapsible-body ${hasApiKey ? 'hidden' : ''}" data-ai-collapse-body="settings">
+                    <div class="ai-form-row">
+                        <div class="ai-field">
+                            <label>API Key</label>
+                            <input type="password" id="ai-api-key" value="${esc(aiExtractSettings.apiKey)}" placeholder="sk-...">
+                        </div>
+                        <div class="ai-field">
+                            <label>Base URL</label>
+                            <input type="text" id="ai-base-url" value="${esc(aiExtractSettings.baseUrl)}" placeholder="https://api.deepseek.com">
+                        </div>
+                        <div class="ai-field">
+                            <label>Model</label>
+                            <input type="text" id="ai-model" value="${esc(aiExtractSettings.model)}" placeholder="deepseek-v4-flash">
+                        </div>
+                    </div>
+                    <div class="ai-actions">
+                        <button class="btn-sm" id="ai-save-settings">儲存設定</button>
+                        <button class="btn-sm btn-secondary" id="ai-test-connection">測試連線</button>
+                        <span id="ai-connection-status" style="margin-left:8px;font-size:12px"></span>
+                    </div>
+                    <div class="ai-warning">API key 僅儲存在此瀏覽器的 localStorage 中。</div>
                 </div>
             </div>
 
-            <!-- Source Input -->
-            <div class="ai-section">
-                <h3>情報來源輸入</h3>
-                <textarea id="ai-source-text" rows="6" placeholder="貼上原始情報文字..." style="width:100%"></textarea>
-                <div class="ai-form-row" style="margin-top:8px">
-                    <div class="ai-field">
-                        <label>上傳圖片（可選）</label>
-                        <input type="file" id="ai-image-input" accept=".png,.jpg,.jpeg,.webp">
+            <!-- Prompt (collapsible) -->
+            <div class="ai-section-collapsible">
+                <button class="ai-collapsible-header collapsed" data-ai-collapse="prompt">
+                    <span>抽取提示詞</span>
+                    <span class="collapse-icon">▼</span>
+                </button>
+                <div class="ai-collapsible-body hidden" data-ai-collapse-body="prompt">
+                    <textarea id="ai-prompt" rows="10" style="font-family:monospace;font-size:12px;width:100%;background:var(--bg);color:var(--text);border:1px solid var(--border);border-radius:4px;padding:10px">${esc(prompt)}</textarea>
+                    <div class="ai-actions" style="margin-top:8px">
+                        <button class="btn-sm" id="ai-save-prompt">儲存提示詞</button>
+                        <button class="btn-sm btn-secondary" id="ai-reset-prompt">恢復預設</button>
                     </div>
                 </div>
-                <div class="ai-actions" style="margin-top:8px">
-                    <button class="btn-primary" id="ai-extract-btn">抽取信號</button>
+            </div>
+
+            <!-- Source Input (primary) -->
+            <div class="ai-source-primary">
+                <h3 style="font-size:14px;margin-bottom:12px">情報來源輸入</h3>
+                <textarea id="ai-source-text" rows="8" placeholder="貼上原始情報文字，或拖放文件到下方區域..." style="width:100%"></textarea>
+                
+                <!-- Drag & Drop Zone -->
+                <div class="ai-drop-zone" id="ai-drop-zone">
+                    <div class="drop-label">
+                        <strong>拖放文件至此</strong> 或點擊上傳<br>
+                        <small style="color:#888">支持 .png .jpg .jpeg .webp .txt .md</small>
+                    </div>
+                    <input type="file" id="ai-file-input" accept=".png,.jpg,.jpeg,.webp,.txt,.md" style="display:none">
+                    <div id="ai-file-preview" class="file-preview" style="display:none"></div>
                 </div>
+
+                <div class="ai-actions" style="margin-top:12px">
+                    <button class="btn-primary" id="ai-extract-btn" style="width:auto;padding:10px 24px">抽取信號</button>
+                </div>
+                <div id="ai-extract-status" style="margin-top:8px"></div>
             </div>
 
             <!-- Candidates -->
             <div id="ai-candidates-section" style="display:none">
-                <div class="ai-section">
+                <div class="ai-section" style="margin-top:16px">
                     <h3>候選信號</h3>
                     <div id="ai-candidates-summary" class="import-summary"></div>
                     <div id="ai-candidates-table" class="import-table-wrap"></div>
                     <div class="ai-actions" style="margin-top:12px">
-                        <button class="btn-primary" id="ai-confirm-import" disabled>確認匯入候選信號</button>
+                        <button class="btn-primary" id="ai-confirm-import" disabled style="width:auto">確認匯入</button>
                         <button class="btn-sm btn-secondary" id="ai-clear-candidates">清除候選</button>
                     </div>
                 </div>
@@ -1311,7 +1541,7 @@ function renderAiExtractTab() {
 
             <!-- Result -->
             <div id="ai-result-section" style="display:none">
-                <div class="ai-section">
+                <div class="ai-section" style="margin-top:16px">
                     <h3>匯入結果</h3>
                     <div id="ai-result-summary"></div>
                 </div>
@@ -1319,8 +1549,21 @@ function renderAiExtractTab() {
         </div>
     `;
 
-    // Bind settings
-    document.getElementById('ai-save-settings').addEventListener('click', () => {
+    // Bind collapsible headers
+    document.querySelectorAll('[data-ai-collapse]').forEach(header => {
+        header.addEventListener('click', () => {
+            const key = header.dataset.aiCollapse;
+            const body = document.querySelector(`[data-ai-collapse-body="${key}"]`);
+            header.classList.toggle('collapsed');
+            body.classList.toggle('hidden');
+        });
+    });
+
+    // Bind drop zone
+    setupAiDropZone();
+
+    // Bind all existing AI buttons (settings, prompt, extract, import, clear)
+    document.getElementById('ai-save-settings')?.addEventListener('click', () => {
         aiExtractSettings = {
             apiKey: document.getElementById('ai-api-key').value.trim(),
             baseUrl: document.getElementById('ai-base-url').value.trim(),
@@ -1328,9 +1571,10 @@ function renderAiExtractTab() {
         };
         saveAiSettings(aiExtractSettings);
         showToast('設定已儲存');
+        renderAiExtractTab();
     });
 
-    document.getElementById('ai-test-connection').addEventListener('click', async () => {
+    document.getElementById('ai-test-connection')?.addEventListener('click', async () => {
         const statusEl = document.getElementById('ai-connection-status');
         statusEl.textContent = '測試中...';
         statusEl.style.color = 'var(--text-muted)';
@@ -1349,36 +1593,31 @@ function renderAiExtractTab() {
         }
     });
 
-    // Bind prompt
-    document.getElementById('ai-save-prompt').addEventListener('click', () => {
+    document.getElementById('ai-save-prompt')?.addEventListener('click', () => {
         saveExtractionPrompt(document.getElementById('ai-prompt').value);
         showToast('提示詞已儲存');
     });
 
-    document.getElementById('ai-reset-prompt').addEventListener('click', () => {
+    document.getElementById('ai-reset-prompt')?.addEventListener('click', () => {
         document.getElementById('ai-prompt').value = resetExtractionPrompt();
         showToast('提示詞已恢復預設');
     });
 
-    // Bind extract
-    document.getElementById('ai-extract-btn').addEventListener('click', async () => {
+    document.getElementById('ai-extract-btn')?.addEventListener('click', async () => {
         await handleAiExtract();
     });
 
-    // Bind confirm import
-    document.getElementById('ai-confirm-import').addEventListener('click', async () => {
+    document.getElementById('ai-confirm-import')?.addEventListener('click', async () => {
         await handleAiConfirmImport();
     });
 
-    // Bind clear candidates
-    document.getElementById('ai-clear-candidates').addEventListener('click', () => {
+    document.getElementById('ai-clear-candidates')?.addEventListener('click', () => {
         aiExtractCandidates = [];
         document.getElementById('ai-candidates-section').style.display = 'none';
         document.getElementById('ai-result-section').style.display = 'none';
     });
 
-    // Delegate edit-ai-candidate clicks from the candidate table
-    document.getElementById('ai-candidates-table').addEventListener('click', e => {
+    document.getElementById('ai-candidates-table')?.addEventListener('click', e => {
         const btn = e.target.closest('[data-action="edit-ai-candidate"]');
         if (!btn) return;
         const rowNum = Number(btn.dataset.row);
@@ -1388,14 +1627,74 @@ function renderAiExtractTab() {
 
 let aiImageFile = null;
 
+function setupAiDropZone() {
+    const dropZone = document.getElementById('ai-drop-zone');
+    const fileInput = document.getElementById('ai-file-input');
+    const filePreview = document.getElementById('ai-file-preview');
+    if (!dropZone || !fileInput) return;
+
+    // Click to open file picker
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // Drag events
+    dropZone.addEventListener('dragover', e => {
+        e.preventDefault();
+        dropZone.classList.add('drag-over');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('drag-over');
+    });
+
+    dropZone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropZone.classList.remove('drag-over');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) handleAiFile(files[0]);
+    });
+
+    // File input change
+    fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) handleAiFile(fileInput.files[0]);
+    });
+}
+
+function handleAiFile(file) {
+    const filePreview = document.getElementById('ai-file-preview');
+    const sourceText = document.getElementById('ai-source-text');
+    if (!filePreview) return;
+
+    const ext = file.name.split('.').pop().toLowerCase();
+    const imageExts = ['png', 'jpg', 'jpeg', 'webp'];
+    const textExts = ['txt', 'md'];
+
+    if (imageExts.includes(ext)) {
+        aiImageFile = file;
+        filePreview.style.display = 'block';
+        filePreview.textContent = `📎 ${file.name} (${(file.size / 1024).toFixed(1)} KB) — 圖片將在抽取時發送`;
+    } else if (textExts.includes(ext)) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (sourceText) {
+                sourceText.value = (sourceText.value ? sourceText.value + '\n\n' : '') + reader.result;
+            }
+            filePreview.style.display = 'block';
+            filePreview.textContent = `📎 ${file.name} — 文字已插入來源區域`;
+        };
+        reader.readAsText(file);
+    } else {
+        filePreview.style.display = 'block';
+        filePreview.textContent = `⚠ 不支持的文件類型: .${ext}`;
+        filePreview.style.color = 'var(--danger)';
+    }
+}
+
 async function handleAiExtract() {
     const sourceText = document.getElementById('ai-source-text').value.trim();
-    const imageInput = document.getElementById('ai-image-input');
 
-    // Read image if uploaded
+    // Read image if set via drop zone
     let imageDataUrl = null;
-    if (imageInput.files && imageInput.files[0]) {
-        aiImageFile = imageInput.files[0];
+    if (aiImageFile) {
         imageDataUrl = await readFileAsDataURL(aiImageFile);
     }
 
@@ -1905,9 +2204,6 @@ async function handleInboxAdopt(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
     const actor = auth.currentUser?.email || '';
-    // "Adopt" = operator reviewed and confirmed it stays as draft.
-    // Do NOT stamp last_status_changed_at (no status change occurred).
-    // DO stamp last_reviewed_at to record the operator interaction.
     await saveSignal(id, {
         ...signal,
         status: 'draft',
@@ -1916,7 +2212,10 @@ async function handleInboxAdopt(id) {
         actor,
         previousStatus: signal.status,
     });
-    showToast('已採用為草稿');
+
+    // Show transition result
+    const placement = describeSignalPlacement({ ...signal, status: 'draft' }, qualityQueue);
+    showToast(`已採用為草稿，${placement.message}`, 'success', 4000);
     await fetchSignals();
     renderInboxTab();
 }
@@ -1929,7 +2228,10 @@ async function handleInboxPromote(id) {
         actor,
         previousStatus: signal.status,
     });
-    showToast('已升級為觀察中');
+
+    // Show transition result
+    const placement = describeSignalPlacement({ ...signal, status: 'watch' }, qualityQueue);
+    showToast(`已升級為觀察中，${placement.message}`, 'success', 4000);
     await fetchSignals();
     renderInboxTab();
     renderReviewTab();
@@ -1971,7 +2273,9 @@ async function handleInboxReject(id) {
             actor,
             previousStatus: signal.status,
         });
-        showToast('已拒絕');
+
+        // Show transition result
+        showToast(`已拒絕，狀態為 invalidated`, 'success', 4000);
         await fetchSignals();
         renderInboxTab();
     }, false);
@@ -1983,6 +2287,11 @@ async function handleReviewVerify(id) {
     const signal = signalsData.find(s => s.id === id);
     if (!signal) return;
     openModal('驗證信號：' + signal.title, `
+        <div class="review-explanation">
+            <h3>待驗證說明</h3>
+            <p>此信號目前為 <code>watch</code> 狀態，信度 ≥ 50，且包含證據摘要。請確認信號是否正確，並決定是否升級為 <code>verified</code>。</p>
+            <p>驗證後，信號將在公共網站上可見（若階段為 pilot/ramp/volume 則同時顯示於路線圖）。</p>
+        </div>
         <div class="dq-review-form">
             <div class="dq-review-signal">
                 <strong>${esc(signal.title)}</strong>
@@ -2014,7 +2323,7 @@ async function handleReviewVerify(id) {
                 width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
                 font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
             }
-            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: var(--surface2); border-radius: 4px; }
         </style>
     `, async () => {
         const verifier = document.getElementById('review-verifier').value.trim();
@@ -2039,7 +2348,10 @@ async function handleReviewVerify(id) {
             previousStatus: signal.status,
             previousConfidence: signal.confidence_score,
         });
-        showToast('已驗證');
+
+        // Show transition result
+        const placement = describeSignalPlacement({ ...signal, status: 'verified' }, qualityQueue);
+        showToast(`已升級為觀察中，現在進入「待驗證」`, 'success', 4000);
         await fetchSignals();
         renderReviewTab();
     }, false);
@@ -2081,7 +2393,8 @@ async function handleReviewDowngrade(id) {
             actor,
             previousStatus: signal.status,
         });
-        showToast('已降級');
+        const placement = describeSignalPlacement({ ...signal, status: 'downgraded' }, qualityQueue);
+        showToast(`已降級，${placement.message}`, 'success', 4000);
         await fetchSignals();
         renderReviewTab();
     }, false);
@@ -2328,9 +2641,16 @@ function openQuickFixModal(signalId) {
             previousStatus: signal.status,
             previousConfidence: signal.confidence_score,
         });
-        showToast('已儲存 ✓');
+
         await fetchSignals();
         buildQualityQueueFromData();
+        const refreshed = signalsData.find(s => s.id === signalId);
+        const remaining = refreshed ? getRemainingIssues(refreshed) : [];
+        if (remaining.length === 0) {
+            showToast('已補全，此信號已完成數據品質檢查', 'success', 4000);
+        } else {
+            showToast(`已補全，仍有 ${remaining.length} 個問題需要處理`, 'success', 4000);
+        }
         renderDataQualityTab();
     }, false);
 
@@ -2441,11 +2761,13 @@ function openCompleteVerificationModal(signalId) {
         await fetchSignals();
         buildQualityQueueFromData();
         const refreshed = signalsData.find(s => s.id === signalId);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
         const remaining = refreshed ? getRemainingIssues(refreshed) : [];
         if (remaining.length === 0) {
-            showToast('驗證完成，沒有剩餘數據品質問題');
+            showToast(`驗證完成，${placement?.message || '沒有剩餘數據品質問題'}`, 'success', 4000);
         } else {
-            showToast(`驗證完成，仍有 ${remaining.length} 個問題需要處理`, 'success');
+            const reasons = remaining.map(i => i.reason).join('；');
+            showToast(`驗證完成，仍有 ${remaining.length} 個問題：${reasons}`, 'success', 5000);
         }
         renderDataQualityTab();
     }, true);
@@ -2611,15 +2933,17 @@ function openMarkReviewedModal(signalId) {
 
         // Re-evaluate remaining issues after save
         const remaining = getRemainingIssues(updatedData);
-        if (remaining.length === 0) {
-            showToast('已完成，沒有剩餘數據品質問題');
-        } else {
-            const reasons = remaining.map(i => i.reason).join('；');
-            showToast(`複核已完成，但仍有 ${remaining.length} 個問題需要處理：${reasons}`);
-        }
 
         await fetchSignals();
         buildQualityQueueFromData();
+        const refreshed = signalsData.find(s => s.id === signalId);
+        const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        if (remaining.length === 0) {
+            showToast(`複核已完成，${placement?.message || '沒有剩餘數據品質問題'}`, 'success', 4000);
+        } else {
+            const reasons = remaining.map(i => i.reason).join('；');
+            showToast(`複核已完成，仍有 ${remaining.length} 個問題：${reasons}`, 'success', 5000);
+        }
         renderDataQualityTab();
     }, false);
 
@@ -2642,7 +2966,13 @@ function openModal(title, bodyHtml, onSave, wide = false) {
     modalTitle.textContent = title;
     modalBody.innerHTML = bodyHtml;
     modal.style.display = 'flex';
-    modal.querySelector('.modal-box').style.maxWidth = wide ? '900px' : '680px';
+    const box = modal.querySelector('.modal-box');
+    if (wide === 'signal-edit') {
+        box.classList.add('signal-edit-modal');
+    } else {
+        box.classList.remove('signal-edit-modal');
+        box.style.maxWidth = wide ? '900px' : '680px';
+    }
     currentSaveFn = onSave;
     setTimeout(() => {
         const first = modalBody.querySelector('input, textarea, select');
