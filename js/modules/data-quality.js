@@ -183,43 +183,54 @@ function checkVerification(signal) {
 function checkNeedsReview(signal) {
     const issues = [];
 
-    // Recent status change
+    // Recent status change — suppressed if reviewed_at is after last_status_changed_at
     if (signal.last_status_changed_at) {
-        const daysSince = (Date.now() - new Date(signal.last_status_changed_at).getTime()) / (1000 * 60 * 60 * 24);
-        if (daysSince <= 14) {
-            issues.push({
-                queueType: QUEUE_TYPES.NEEDS_REVIEW,
-                category: 'needs_review',
-                reason: `近期狀態變更（${Math.round(daysSince)} 天前）`,
-                quickFixEligible: false,
-                fields: [],
-            });
+        const reviewedAfterStatus = signal.reviewed_at &&
+            new Date(signal.reviewed_at) >= new Date(signal.last_status_changed_at);
+        if (!reviewedAfterStatus) {
+            const daysSince = (Date.now() - new Date(signal.last_status_changed_at).getTime()) / (1000 * 60 * 60 * 24);
+            if (daysSince <= 14) {
+                issues.push({
+                    queueType: QUEUE_TYPES.NEEDS_REVIEW,
+                    category: 'needs_review',
+                    reason: `近期狀態變更（${Math.round(daysSince)} 天前）`,
+                    quickFixEligible: false,
+                    fields: [],
+                });
+            }
         }
     }
 
-    // Recent confidence change
+    // Recent confidence change — suppressed if reviewed_at is after last_confidence_changed_at
     if (signal.last_confidence_changed_at) {
-        const daysSince = (Date.now() - new Date(signal.last_confidence_changed_at).getTime()) / (1000 * 60 * 60 * 24);
-        if (daysSince <= 14) {
+        const reviewedAfterConfidence = signal.reviewed_at &&
+            new Date(signal.reviewed_at) >= new Date(signal.last_confidence_changed_at);
+        if (!reviewedAfterConfidence) {
+            const daysSince = (Date.now() - new Date(signal.last_confidence_changed_at).getTime()) / (1000 * 60 * 60 * 24);
+            if (daysSince <= 14) {
+                issues.push({
+                    queueType: QUEUE_TYPES.NEEDS_REVIEW,
+                    category: 'needs_review',
+                    reason: `近期信度變更（${Math.round(daysSince)} 天前）`,
+                    quickFixEligible: false,
+                    fields: [],
+                });
+            }
+        }
+    }
+
+    // Conflicting evidence present — suppressed only if both reviewed_at and review_note exist
+    if (signal.conflicting_evidence) {
+        const hasReview = signal.reviewed_at && signal.review_note;
+        if (!hasReview) {
             issues.push({
                 queueType: QUEUE_TYPES.NEEDS_REVIEW,
                 category: 'needs_review',
-                reason: `近期信度變更（${Math.round(daysSince)} 天前）`,
+                reason: '存在矛盾證據',
                 quickFixEligible: false,
                 fields: [],
             });
         }
-    }
-
-    // Conflicting evidence present
-    if (signal.conflicting_evidence) {
-        issues.push({
-            queueType: QUEUE_TYPES.NEEDS_REVIEW,
-            category: 'needs_review',
-            reason: '存在矛盾證據',
-            quickFixEligible: false,
-            fields: [],
-        });
     }
 
     return issues;

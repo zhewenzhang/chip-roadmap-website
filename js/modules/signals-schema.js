@@ -145,5 +145,9 @@ export function normalizeSignal(raw) {
         archived_by: raw.archived_by || '',
         archive_reason: raw.archive_reason || '',
         import_key: raw.import_key || '',
+        // Data quality review metadata (Phase 14.2)
+        reviewed_at: raw.reviewed_at || '',
+        reviewed_by: raw.reviewed_by || '',
+        review_note: raw.review_note || '',
     };
 }

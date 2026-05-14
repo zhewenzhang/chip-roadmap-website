@@ -1791,6 +1791,7 @@ function renderDataQualityTab() {
         }
         if (action === 'dq-quick-fix') openQuickFixModal(btn.dataset.id);
         if (action === 'dq-full-edit') openEditSignalModal(btn.dataset.id);
+        if (action === 'dq-mark-reviewed') openMarkReviewedModal(btn.dataset.id);
     });
 
     renderDQTable();
@@ -1862,6 +1863,7 @@ function renderDQTable() {
             <td>${verified}</td>
             <td class="td-actions">
                 ${item.quickFixEligible ? `<button class="btn-sm" data-action="dq-quick-fix" data-id="${esc(s.id)}">快速修正</button>` : ''}
+                ${item.queueType === QUEUE_TYPES.NEEDS_REVIEW ? `<button class="btn-sm" data-action="dq-mark-reviewed" data-id="${esc(s.id)}">標記已複核</button>` : ''}
                 <button class="btn-sm" data-action="dq-full-edit" data-id="${esc(s.id)}">完整編輯</button>
             </td>
         </tr>`;
@@ -2046,6 +2048,82 @@ function openQuickFixModal(signalId) {
         closeModal();
         setTimeout(() => openEditSignalModal(signalId), 100);
     });
+}
+
+// ===== MARK REVIEWED MODAL (Phase 14.2) =====
+
+function openMarkReviewedModal(signalId) {
+    const signal = signalsData.find(s => s.id === signalId);
+    if (!signal) return;
+
+    // Find the quality item to show current issues
+    const qualityItem = qualityQueue.find(q => q.signalId === signalId);
+    const issuesHtml = qualityItem ? qualityItem.issues.map(i => `<span class="badge badge-red">${esc(i.reason)}</span>`).join(' ') : '';
+
+    const hasConflicting = signal.conflicting_evidence ? true : false;
+
+    const formHtml = `
+        <div class="dq-review-form">
+            <div class="dq-review-signal">
+                <strong>${esc(signal.title)}</strong>
+                <div style="margin-top:4px">${issuesHtml}</div>
+            </div>
+            <div class="dq-field">
+                <label>複核備註</label>
+                <textarea id="dq-review-note" rows="3" placeholder="記錄複核結論...">${esc(signal.review_note || '')}</textarea>
+            </div>
+            ${hasConflicting ? `
+            <div class="dq-field">
+                <label>
+                    <input type="checkbox" id="dq-clear-conflicting">
+                    清除矛盾證據（當前：${esc(signal.conflicting_evidence.slice(0, 60))}${signal.conflicting_evidence.length > 60 ? '...' : ''}）
+                </label>
+            </div>
+            ` : ''}
+            <div class="dq-review-info">
+                複核人：${esc(auth.currentUser?.email || 'unknown')}<br>
+                複核時間：${new Date().toISOString().slice(0, 19).replace('T', ' ')}
+            </div>
+        </div>
+        <style>
+            .dq-review-form .dq-field { margin-bottom: 10px; }
+            .dq-review-form label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text-muted); }
+            .dq-review-form textarea {
+                width: 100%; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                font-size: 13px; font-family: inherit; background: var(--bg); color: var(--text);
+            }
+            .dq-review-signal { margin-bottom: 12px; padding: 8px; background: #f5f5f5; border-radius: 4px; }
+            .dq-review-info { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+        </style>
+    `;
+
+    openModal('標記已複核', formHtml, async () => {
+        const reviewNote = document.getElementById('dq-review-note').value.trim();
+        const clearConflicting = document.getElementById('dq-clear-conflicting')?.checked || false;
+
+        const updatedData = {
+            ...signal,
+            reviewed_at: new Date().toISOString(),
+            reviewed_by: auth.currentUser?.email || '',
+            review_note: reviewNote,
+        };
+
+        if (clearConflicting) {
+            updatedData.conflicting_evidence = '';
+        }
+
+        const actor = auth.currentUser?.email || '';
+        await saveSignal(signalId, updatedData, {
+            actor,
+            previousStatus: signal.status,
+            previousConfidence: signal.confidence_score,
+        });
+
+        showToast('已標記複核 ✓');
+        await fetchSignals();
+        buildQualityQueueFromData();
+        renderDataQualityTab();
+    }, false);
 }
 
 // ===== MODAL SYSTEM =====
