@@ -11,6 +11,7 @@
  *   getChipCompanyContext(chipName, signals)
  *   getSiblingChips(companyId, signals, excludeChipName)
  *   getEntityRiskIndicators(entityType, entityId, signals)
+ *   getRelatedCompanies(companyId, signals, limit=5)
  *   getVerificationTrend(signals, entityType, entityId, months=6)
  */
 
@@ -258,6 +259,56 @@ export function getEntityRiskIndicators(entityType, entityId, signals) {
         staleVerificationCount,
         totalRiskSignals: conflictingEvidenceCount + lowConfHighImpactCount + staleVerificationCount,
     };
+}
+
+/**
+ * Get related companies based on chip domain overlap.
+ *
+ * Finds companies that share chip names or have overlapping chip portfolios
+ * with the target company, indicating they operate in similar domains.
+ *
+ * @param {string} companyId
+ * @param {Array} signals
+ * @param {number} limit — default 5
+ * @returns {Array<{ companyId, companyName, overlapCount, sharedChips, signalCount }>}
+ */
+export function getRelatedCompanies(companyId, signals, limit = 5) {
+    const companySignals = signals.filter(s => s.company_id === companyId);
+    if (companySignals.length === 0) return [];
+
+    // Get the chip names this company works on
+    const companyChips = new Set(companySignals.map(s => s.chip_name).filter(Boolean));
+    if (companyChips.size === 0) return [];
+
+    // Find other companies that share chip names
+    const companyMap = {};
+    for (const s of signals) {
+        if (s.company_id === companyId || !s.chip_name) continue;
+        if (!companyMap[s.company_id]) {
+            companyMap[s.company_id] = {
+                companyId: s.company_id,
+                companyName: s.company_name,
+                sharedChips: new Set(),
+                signalCount: 0,
+            };
+        }
+        if (companyChips.has(s.chip_name)) {
+            companyMap[s.company_id].sharedChips.add(s.chip_name);
+        }
+        companyMap[s.company_id].signalCount++;
+    }
+
+    const related = Object.values(companyMap)
+        .filter(c => c.sharedChips.size > 0)
+        .map(c => ({
+            ...c,
+            overlapCount: c.sharedChips.size,
+            sharedChips: [...c.sharedChips],
+        }))
+        .sort((a, b) => b.overlapCount - a.overlapCount || b.signalCount - a.signalCount)
+        .slice(0, limit);
+
+    return related;
 }
 
 /**

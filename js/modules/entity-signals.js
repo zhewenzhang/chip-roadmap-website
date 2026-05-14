@@ -17,7 +17,8 @@ import {
 import {
     buildCompanyDossier, buildChipDossier,
     getCompanyChipPortfolio, getChipCompanyContext,
-    getSiblingChips, getEntityRiskIndicators, getVerificationTrend
+    getSiblingChips, getEntityRiskIndicators, getVerificationTrend,
+    getRelatedCompanies
 } from './entity-intelligence.js';
 import {
     deriveChipImpact, deriveCompanyAbfOutlook,
@@ -367,6 +368,7 @@ function renderSidebar(signals, allSigs) {
         renderStatusStats(signals);
         renderRiskIndicators(dossier.risks);
         renderVerificationTrend(dossier.trend);
+        renderRelatedCompanies(entityId, allSigs);
         renderHighImpactItems(signals);
         renderRecentChanges(signals);
     } else {
@@ -449,6 +451,29 @@ function renderVerificationTrend(trend) {
             <span class="trend-count">${t.count > 0 ? t.count : '—'}</span>
         </div>
     `).join('');
+}
+
+function renderRelatedCompanies(companyId, signals) {
+    const el = document.getElementById('relatedCompanies');
+    if (!el) return;
+    const related = getRelatedCompanies(companyId, signals, 5);
+    if (related.length === 0) {
+        el.innerHTML = '<div class="sidebar-empty">無相關公司</div>';
+        return;
+    }
+    el.innerHTML = related.map(c => `
+        <div class="sidebar-list-item" data-company="${esc(c.companyId)}">
+            <div class="item-title"><a href="company-signals.html?id=${esc(c.companyId)}">${esc(c.companyName)}</a></div>
+            <div class="item-meta">${c.overlapCount} 共享芯片 · ${c.signalCount} 信號</div>
+        </div>
+    `).join('');
+    el.querySelectorAll('.sidebar-list-item').forEach(el2 => {
+        el2.addEventListener('click', (e) => {
+            if (e.target.closest('a')) return;
+            const cid = el2.dataset.company;
+            window.location.href = `company-signals.html?id=${encodeURIComponent(cid)}`;
+        });
+    });
 }
 
 // ===== Chip Dossier Functions (Phase 8) =====
