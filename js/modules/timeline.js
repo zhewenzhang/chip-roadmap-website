@@ -23,11 +23,11 @@ const COMPANY_STYLE = {
 };
 
 const YEAR_COLORS = [
-    { year: 2024, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
-    { year: 2025, header: '#f3f4f6', border: '#d1d5db', label: '#111827' },
-    { year: 2026, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
-    { year: 2027, header: '#f3f4f6', border: '#d1d5db', label: '#111827' },
-    { year: 2028, header: '#f9fafb', border: '#e5e7eb', label: '#374151' },
+    { year: 2024, header: '#111111', border: '#1f521f', label: '#33ff00' },
+    { year: 2025, header: '#0d0d0d', border: '#1f521f', label: '#33ff00' },
+    { year: 2026, header: '#111111', border: '#1f521f', label: '#33ff00' },
+    { year: 2027, header: '#0d0d0d', border: '#1f521f', label: '#33ff00' },
+    { year: 2028, header: '#111111', border: '#1f521f', label: '#33ff00' },
 ];
 
 const IMPACT_SORT = { explosive: 4, high: 3, medium: 2, low: 1 };
@@ -228,7 +228,7 @@ function showSignalDetail(signal, style) {
     overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:10000;';
 
     const modal = document.createElement('div');
-    modal.style.cssText = 'background:#fff;border:2px solid #111;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;padding:24px;position:relative;';
+    modal.style.cssText = 'background:#0a0a0a;border:2px solid #33ff00;color:#33ff00;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;padding:24px;position:relative;';
 
     // Close button
     const closeBtn = document.createElement('button');

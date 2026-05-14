@@ -1864,6 +1864,24 @@ tr:hover .td-company { background: var(--color-border); }
     outline-offset: -2px;
 }
 
+/* Ensure roadmap table cells inherit dark theme */
+.roadmap-matrix td,
+.roadmap-matrix th {
+    background-color: inherit;
+    color: var(--color-fg);
+    border-color: var(--color-border);
+}
+
+.roadmap-matrix .td-chip {
+    background: var(--color-bg);
+    color: var(--color-fg);
+    border: 1px solid var(--color-border);
+}
+
+.roadmap-matrix .td-chip:hover {
+    background: var(--color-border) !important;
+}
+
 /* 芯片標籤 */
 .chip-tag {
     display: inline-block;
@@ -3935,33 +3953,34 @@ tr:hover .td-company { background: var(--color-border); }
 /* ===== Phase 11: Homepage V2 ===== */
 
 .hero-v2 {
-    padding: 80px 24px 48px;
-    max-width: 900px;
+    padding: 36px 24px 20px;
+    max-width: 1280px;
     margin: 0 auto;
 }
 
 .hero-v2-content h1 {
     font-family: var(--font-mono);
-    font-size: 2.2rem;
+    font-size: 1.4rem;
     font-weight: 700;
     line-height: 1.2;
-    margin-bottom: 16px;
+    margin-bottom: 6px;
     color: var(--color-fg);
 }
 
 .hero-v2-subtitle {
     font-family: var(--font-mono);
-    font-size: 1.05rem;
+    font-size: 0.85rem;
     line-height: 1.6;
     color: var(--color-muted-fg);
-    margin-bottom: 24px;
-    max-width: 640px;
+    margin-bottom: 12px;
+    max-width: 720px;
 }
 
 .hero-v2-ctas {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     flex-wrap: wrap;
+    margin-top: 8px;
 }
 
 .hero-v2-cta {
@@ -4059,10 +4078,11 @@ tr:hover .td-company { background: var(--color-border); }
 
 .home-signal-row,
 .home-impact-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 120px 100px auto auto auto auto;
     align-items: center;
-    gap: 12px;
-    padding: 8px 0;
+    gap: 8px 12px;
+    padding: 10px 0;
     border-bottom: 1px solid var(--color-border);
     cursor: pointer;
     transition: background 0.12s;
@@ -4112,6 +4132,13 @@ tr:hover .td-company { background: var(--color-border); }
 
 .home-signal-company a:hover {
     text-decoration: underline;
+}
+
+.home-date {
+    font-size: 0.75rem;
+    color: var(--color-muted-fg);
+    white-space: nowrap;
+    justify-self: end;
 }
 
 .home-badge {
@@ -4192,13 +4219,13 @@ tr:hover .td-company { background: var(--color-border); }
 /* Mobile: homepage V2 */
 @media (max-width: 768px) {
     .hero-v2 {
-        padding: 60px 16px 32px;
+        padding: 28px 16px 16px;
     }
     .hero-v2-content h1 {
-        font-size: 1.6rem;
+        font-size: 1.2rem;
     }
     .hero-v2-subtitle {
-        font-size: 0.95rem;
+        font-size: 0.8rem;
     }
     .system-status-content {
         flex-direction: column;
