@@ -179,7 +179,7 @@ export async function loadSignalHistory(signalId, limit = 5) {
 }
 
 export async function createSignal(data, actor = '') {
-    // Trim string fields before validation to catch whitespace-only values
+    // Trim string fields before normalization to catch whitespace-only values
     const cleaned = { ...data };
     for (const key of Object.keys(cleaned)) {
         if (typeof cleaned[key] === 'string') {
@@ -187,15 +187,11 @@ export async function createSignal(data, actor = '') {
         }
     }
 
-    const required = ['title', 'company_id', 'company_name', 'chip_name', 'region', 'stage', 'confidence_score', 'abf_demand_impact', 'status'];
-    for (const field of required) {
-        if (!cleaned[field] && cleaned[field] !== 0) {
-            throw new Error(`Missing required field: ${field}`);
-        }
-    }
-
     const normalized = normalizeSignal(cleaned);
-    // Double-check after normalization (normalizeSignal may default missing fields to '')
+
+    // Validate fields that have NO defaults in normalizeSignal
+    // (stage/status/abf_demand_impact/confidence_score get defaults)
+    const required = ['title', 'company_id', 'company_name', 'chip_name', 'region'];
     for (const field of required) {
         if (!normalized[field] && normalized[field] !== 0) {
             throw new Error(`Missing required field: ${field}`);
