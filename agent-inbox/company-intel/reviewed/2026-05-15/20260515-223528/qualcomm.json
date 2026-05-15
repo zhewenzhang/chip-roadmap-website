@@ -1,0 +1,99 @@
+{
+  "company_id": "qualcomm",
+  "name_en": "Qualcomm Incorporated",
+  "name_cn": "高通",
+  "aliases": ["QCOM", "Qualcomm Technologies", "高通公司"],
+  "region": "North America",
+  "country": "USA",
+  "headquarters": "San Diego, California, USA",
+  "founded": 1985,
+  "website": "https://www.qualcomm.com",
+  "company_type": "fabless_semiconductor",
+  "market_data": {
+    "ticker": "QCOM",
+    "exchange": "NASDAQ",
+    "market_cap": "~$170B (estimated May 2026)",
+    "market_cap_date": "2026-05-15",
+    "revenue_latest": "$10.6B Q2 FY2025 (季度); ~$42B FY2025全年估算",
+    "employee_count": "~50000",
+    "fiscal_year": "FY2025 (ends Sep 2025)",
+    "confidence": 0.7,
+    "sources": ["CNBC 2026-04-29 earnings report"]
+  },
+  "supply_chain_role": ["mobile_chip_designer", "modem_supplier", "licensing_patent_holder", "edge_AI_chip_designer", "automotive_chip_supplier"],
+  "main_products": [
+    {"name": "Snapdragon Mobile Platforms", "category": "mobile", "description": "旗舰和中端手机SoC"},
+    {"name": "Snapdragon X Modems", "category": "connectivity", "description": "5G/4G蜂窝调制解调器"},
+    {"name": "Snapdragon Ride", "category": "automotive", "description": "自动驾驶和ADAS平台"},
+    {"name": "Data Center Chips", "category": "datacenter", "description": "数据中心AI芯片（即将出货）"},
+    {"name": "QTL Licensing", "category": "licensing", "description": "无线技术专利授权"}
+  ],
+  "abf_relevance": {
+    "level": "medium",
+    "reason": "手机SoC主要采用FOWLP封装，数据中心新业务可能增加ABF载板需求"
+  },
+  "advanced_packaging_relevance": {
+    "level": "medium",
+    "technologies": ["FOWLP", "InFO", "SiP"],
+    "reason": "手机芯片主要采用扇出型封装"
+  },
+  "china_relevance": {
+    "level": "high",
+    "reason": "大量收入来自中国手机厂商，CEO称当前季度为中国销售底部"
+  },
+  "key_customers_or_partners": ["Samsung", "小米", "OPPO", "vivo", "荣耀", "OpenAI", "BMW"],
+  "competitors": ["MediaTek", "Apple", "Samsung Exynos", "Nvidia"],
+  "company_analysis": {
+    "strengths": ["全球移动芯片领导者", "5G专利组合", "汽车芯片增长38% YoY", "OpenAI合作", "数据中心突破"],
+    "weaknesses": ["失去Apple modem订单", "Android市场疲软", "Q3指引低于预期"],
+    "opportunities": ["AI代理时代", "数据中心芯片", "OpenAI设备合作", "汽车芯片渗透"],
+    "threats": ["Apple自研modem", "MediaTek竞争", "中国市场波动", "Nvidia数据中心统治"],
+    "confidence": 0.7,
+    "basis": "CNBC earnings call报道（CEO直接发言）"
+  },
+  "tracking_priority": {
+    "level": "high",
+    "reason": "全球最大移动芯片公司，正向数据中心和AI终端转型",
+    "watch_topics": ["data_center_chip_shipment", "OpenAI_smartphone_chip", "China_sales_recovery", "automotive_growth"]
+  },
+  "source_quality": {
+    "overall": "strong",
+    "official_sources": 2,
+    "industry_sources": 2,
+    "weak_sources": 1,
+    "notes": "CNBC详细报道earnings call，CEO直接发言"
+  },
+  "import_decision": {
+    "decision": "import_ready",
+    "reason": "score=88, source_quality=strong, 核心财务数据来自CNBC earnings call",
+    "required_human_checks": ["market_cap精确数值", "FY2025全年营收"]
+  },
+  "review_score": 88,
+  "review_details": {
+    "basic_fields_complete": 19,
+    "market_data": 13,
+    "swot_complete": 14,
+    "strong_source": 13,
+    "second_medium_source": 8,
+    "supply_chain_tracking": 9,
+    "abf_packaging_reasoning": 7,
+    "no_contradictions": 5
+  },
+  "why_track": "全球最大移动芯片公司，正向数据中心和AI终端转型，中国收入敞口大",
+  "data_quality": {
+    "confidence": 0.7,
+    "missing_fields": ["exact_market_cap", "full_year_revenue"],
+    "needs_human_review": true
+  },
+  "sources": [
+    {"title": "Qualcomm shares soar on CEO comments", "url": "https://www.cnbc.com/2026/04/29/qualcomm-qcom-stock-earnings-china.html", "publisher": "CNBC", "source_type": "strong"},
+    {"title": "Qualcomm Official Website", "url": "https://www.qualcomm.com/company", "publisher": "Qualcomm", "source_type": "official"},
+    {"title": "高通_百度百科", "url": "https://baike.baidu.com/item/%E9%AB%98%E9%80%9A/3119501", "publisher": "百度百科", "source_type": "weak"}
+  ],
+  "agent_meta": {
+    "run_id": "20260515-223528",
+    "selected_by_planner": true,
+    "last_checked_at": "2026-05-15T14:38:00Z",
+    "change_type": "new_profile"
+  }
+}

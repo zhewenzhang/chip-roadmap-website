@@ -1,0 +1,3 @@
+company_id,name_en,name_cn,region,country,ticker,exchange,review_score,decision,source_quality,tracking_priority
+marvell-technology,Marvell Technology Inc.,美满电子科技,North America,USA,MRVL,NASDAQ,77,import_ready,medium,high
+qualcomm,Qualcomm Incorporated,高通,North America,USA,QCOM,NASDAQ,88,import_ready,strong,high

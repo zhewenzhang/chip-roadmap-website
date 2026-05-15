@@ -1,0 +1,100 @@
+{
+  "company_id": "mediatek",
+  "name_en": "MediaTek Inc.",
+  "name_cn": "联发科技股份有限公司",
+  "aliases": ["MTK", "联发科", "MediaTek"],
+  "region": "Asia",
+  "country": "Taiwan",
+  "headquarters": "Hsinchu, Taiwan",
+  "founded": 1997,
+  "website": "https://www.mediatek.com",
+  "company_type": "fabless_semiconductor",
+  "market_data": {
+    "ticker": "2454.TW",
+    "exchange": "TWSE",
+    "market_cap": "~NT$2.5T (~$80B USD, estimated)",
+    "market_cap_date": "2026-05-15",
+    "revenue_latest": "~NT$500B FY2025 (~$15.5B USD, estimated)",
+    "employee_count": "~19000",
+    "fiscal_year": "FY2025",
+    "confidence": 0.5,
+    "sources": ["百度百科", "MediaTek官网"]
+  },
+  "supply_chain_role": ["mobile_soc_designer", "iot_chip_designer", "automotive_chip_designer", "smart_home_chip_designer"],
+  "main_products": [
+    {"name": "Dimensity 5G SoC", "category": "mobile", "description": "5G手机SoC"},
+    {"name": "Helio 4G", "category": "mobile", "description": "中低端4G手机处理器"},
+    {"name": "Genio IoT", "category": "iot", "description": "物联网平台芯片"},
+    {"name": "Smart TV SoC", "category": "smart_home", "description": "智能电视处理器"},
+    {"name": "Wi-Fi 7/8", "category": "connectivity", "description": "Wi-Fi连接芯片"},
+    {"name": "Automotive Cockpit", "category": "automotive", "description": "汽车座舱平台芯片"}
+  ],
+  "abf_relevance": {
+    "level": "medium",
+    "reason": "手机SoC主要采用FOWLP封装，高端产品可能使用ABF载板"
+  },
+  "advanced_packaging_relevance": {
+    "level": "medium",
+    "technologies": ["FOWLP", "InFO", "SiP"],
+    "reason": "手机芯片主要采用扇出型封装"
+  },
+  "china_relevance": {
+    "level": "high",
+    "reason": "深度绑定中国手机生态，大陆设有多个研发中心"
+  },
+  "key_customers_or_partners": ["小米", "OPPO", "vivo", "荣耀", "三星", "Amazon", "Google", "台积电"],
+  "competitors": ["Qualcomm", "Apple", "Samsung Exynos", "Unisoc"],
+  "company_analysis": {
+    "strengths": ["全球最大手机芯片供应商（出货量）", "台积电深度合作", "产品线广泛", "Wi-Fi 7/8领先", "NeuroPilot AI平台"],
+    "weaknesses": ["高端市场被Qualcomm压制", "数据中心业务早期", "毛利率较低", "欧美品牌认知弱"],
+    "opportunities": ["AI终端需求增长", "Dimensity旗舰突破", "汽车和数据中心新增长", "台积电合作保障"],
+    "threats": ["Qualcomm高端竞争", "Unisoc低端竞争", "手机市场波动", "中国厂商自研芯片"],
+    "confidence": 0.55,
+    "basis": "百度百科历史数据、MediaTek官网"
+  },
+  "tracking_priority": {
+    "level": "medium",
+    "reason": "全球最大手机芯片供应商，正向AI终端扩展",
+    "watch_topics": ["Dimensity_flagship", "data_center_progress", "automotive_growth"]
+  },
+  "source_quality": {
+    "overall": "weak",
+    "official_sources": 1,
+    "industry_sources": 0,
+    "weak_sources": 2,
+    "notes": "主要来源为百度百科和官网，缺乏近期财务报道"
+  },
+  "import_decision": {
+    "decision": "rejected",
+    "reason": "score=59, source_quality=weak, 缺乏近期官方财报和行业分析数据",
+    "required_human_checks": []
+  },
+  "review_score": 59,
+  "review_details": {
+    "basic_fields_complete": 16,
+    "market_data": 8,
+    "swot_complete": 10,
+    "strong_source": 2,
+    "second_medium_source": 3,
+    "supply_chain_tracking": 8,
+    "abf_packaging_reasoning": 7,
+    "no_contradictions": 5
+  },
+  "rejection_reason": "数据主要来自百度百科，缺乏近期官方财报和可信行业分析，market_cap和revenue confidence仅0.5",
+  "why_track": "全球最大手机芯片供应商，与台积电深度合作",
+  "data_quality": {
+    "confidence": 0.5,
+    "missing_fields": ["exact_market_cap", "exact_revenue", "quarterly_earnings"],
+    "needs_human_review": true
+  },
+  "sources": [
+    {"title": "MediaTek Official Website", "url": "https://www.mediatek.com", "publisher": "MediaTek", "source_type": "official"},
+    {"title": "联发科_百度百科", "url": "https://baike.baidu.com/item/%E8%81%94%E5%8F%91%E7%A7%91/6370327", "publisher": "百度百科", "source_type": "weak"}
+  ],
+  "agent_meta": {
+    "run_id": "20260515-223528",
+    "selected_by_planner": true,
+    "last_checked_at": "2026-05-15T14:38:00Z",
+    "change_type": "new_profile"
+  }
+}

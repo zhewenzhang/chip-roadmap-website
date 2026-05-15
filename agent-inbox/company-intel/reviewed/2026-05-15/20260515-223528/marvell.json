@@ -1,0 +1,102 @@
+{
+  "company_id": "marvell-technology",
+  "name_en": "Marvell Technology, Inc.",
+  "name_cn": "美满电子科技",
+  "aliases": ["Marvell", "MRVL", "美满电子"],
+  "region": "North America",
+  "country": "USA",
+  "headquarters": "Santa Clara, California, USA",
+  "founded": 1995,
+  "website": "https://www.marvell.com",
+  "company_type": "fabless_semiconductor",
+  "market_data": {
+    "ticker": "MRVL",
+    "exchange": "NASDAQ",
+    "market_cap": "~$160B (May 2026, stock at ~$185, up 100%+ YTD)",
+    "market_cap_date": "2026-05-15",
+    "revenue_latest": "~$5.5B FY2025 (estimated, fiscal year ends Jan)",
+    "employee_count": "~7000",
+    "fiscal_year": "FY2026 (ends Jan 2027)",
+    "confidence": 0.6,
+    "sources": ["Motley Fool 2026-05-12", "MSN 2026-05-14", "Bing search results"]
+  },
+  "supply_chain_role": ["custom_ASIC_designer", "networking_chip_supplier", "storage_controller_supplier", "interconnect_provider"],
+  "main_products": [
+    {"name": "Custom ASIC", "category": "compute", "description": "定制芯片设计服务，为超大规模客户设计AI和数据中心专用芯片"},
+    {"name": "Data Processing Units (DPU)", "category": "compute", "description": "数据处理单元，用于数据中心网络卸载和加速"},
+    {"name": "CXL", "category": "compute", "description": "CXL内存扩展和互连芯片"},
+    {"name": "Coherent DSPs", "category": "networking", "description": "相干光通信DSP"},
+    {"name": "PAM DSPs", "category": "networking", "description": "高速以太网DSP"},
+    {"name": "Data Center Switches", "category": "networking", "description": "数据中心交换芯片"},
+    {"name": "SSD Controllers", "category": "storage", "description": "固态硬盘控制器"}
+  ],
+  "abf_relevance": {
+    "level": "high",
+    "reason": "定制ASIC和互连芯片需要先进封装（CoWoS/ABF载板），是AI基础设施关键供应商"
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": ["CoWoS", "2.5D封装", "先进IC基板"],
+    "reason": "定制ASIC和DPU芯片采用先进封装技术"
+  },
+  "china_relevance": {
+    "level": "medium",
+    "reason": "在中国有研发中心，但主要客户为美国超大规模厂商"
+  },
+  "key_customers_or_partners": ["AWS", "Microsoft Azure", "Google Cloud", "Nvidia", "Cisco", "Seagate"],
+  "competitors": ["Broadcom", "Intel", "Nvidia", "AMD"],
+  "company_analysis": {
+    "strengths": ["定制ASIC技术领导者", "业界最全面数据基础设施产品组合", "Nvidia战略合作", "Google AI芯片洽谈", "硅光子技术收购"],
+    "weaknesses": ["高度依赖少数超大规模客户", "定制ASIC收入波动性大", "AI训练芯片落后于Nvidia"],
+    "opportunities": ["AI基础设施投资增长", "硅光子技术加速", "Nvidia合作打开新市场", "CXL内存扩展"],
+    "threats": ["客户自研芯片趋势", "Broadcom竞争", "AI投资放缓", "估值风险"],
+    "confidence": 0.65,
+    "basis": "Motley Fool、MSN、Seeking Alpha报道"
+  },
+  "tracking_priority": {
+    "level": "high",
+    "reason": "AI基础设施定制芯片和互连领域领导者",
+    "watch_topics": ["custom_ASIC_wins", "Google_AI_chip_partnership", "Nvidia_collaboration", "silicon_photonics"]
+  },
+  "source_quality": {
+    "overall": "medium",
+    "official_sources": 1,
+    "industry_sources": 3,
+    "weak_sources": 1,
+    "notes": "缺乏官方财报直接数据"
+  },
+  "import_decision": {
+    "decision": "import_ready",
+    "reason": "score=77, source_quality=medium, 核心业务数据来自可信财经媒体",
+    "required_human_checks": ["market_cap精确数值", "FY2025/FY2026营收数据"]
+  },
+  "review_score": 77,
+  "review_details": {
+    "basic_fields_complete": 18,
+    "market_data": 10,
+    "swot_complete": 13,
+    "strong_source": 5,
+    "second_medium_source": 8,
+    "supply_chain_tracking": 9,
+    "abf_packaging_reasoning": 9,
+    "no_contradictions": 5
+  },
+  "why_track": "AI基础设施定制芯片和互连领域领导者，直接影响ABF载板和CoWoS需求",
+  "data_quality": {
+    "confidence": 0.6,
+    "missing_fields": ["exact_market_cap", "exact_revenue"],
+    "needs_human_review": true
+  },
+  "sources": [
+    {"title": "Marvell Company Page", "url": "https://www.marvell.com/company.html", "publisher": "Marvell", "source_type": "official"},
+    {"title": "Motley Fool - Nvidia Changed the Story", "url": "https://www.fool.com/investing/2026/05/12/massive-news-for-marvell-stock-investors-nvidia-ju/", "publisher": "Motley Fool", "source_type": "medium"},
+    {"title": "MSN - Wall Street sees upside", "url": "https://www.msn.com/en-us/money/companies/marvell-stock-pops-why-wall-street-sees-upside/ar-AA237VKn", "publisher": "MSN", "source_type": "medium"},
+    {"title": "Marvell_百度百科", "url": "https://baike.baidu.com/item/Marvell/4208660", "publisher": "百度百科", "source_type": "weak"}
+  ],
+  "agent_meta": {
+    "run_id": "20260515-223528",
+    "selected_by_planner": true,
+    "last_checked_at": "2026-05-15T14:38:00Z",
+    "change_type": "new_profile"
+  }
+}

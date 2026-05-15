@@ -1,0 +1,33 @@
+{
+  "run_id": "20260515-223528",
+  "run_date": "2026-05-15",
+  "selected_companies": [
+    {
+      "company_name": "Marvell",
+      "region": "USA",
+      "category_hint": "AI_chip",
+      "priority": "P2",
+      "reason": "定制AI芯片/网络芯片，为AWS/Microsoft设计，ABF载板大户",
+      "task_type": "new_profile"
+    },
+    {
+      "company_name": "Qualcomm",
+      "region": "USA",
+      "category_hint": "AI_chip",
+      "priority": "P2",
+      "reason": "手机/边缘AI芯片，Snapdragon，边缘推理市场",
+      "task_type": "new_profile"
+    },
+    {
+      "company_name": "MediaTek",
+      "region": "Taiwan",
+      "category_hint": "AI_chip",
+      "priority": "P2",
+      "reason": "联发科，手机芯片+边缘AI，与台积电深度合作",
+      "task_type": "new_profile"
+    }
+  ],
+  "skipped_reviewed": ["Unimicron", "Ibiden", "Shinko Electric", "AT&S", "Nan Ya PCB", "珠海越亞", "JCET Group", "ASE Technology", "Camtek", "DeepX", "NVIDIA", "AMD", "Broadcom", "TSMC"],
+  "retry_candidates": ["寒武纪 Cambricon"],
+  "total_pending": 17
+}
