@@ -1,0 +1,71 @@
+{
+  "company_id": "samsung-foundry",
+  "name_en": "Samsung Foundry",
+  "name_cn": "三星晶圆代工",
+  "aliases": ["Samsung Foundry", "Samsung Semiconductor Foundry", "三星代工"],
+  "region": "South Korea",
+  "country": "South Korea",
+  "headquarters": "Hwaseong, Gyeonggi Province, South Korea",
+  "founded": null,
+  "parent_company": "Samsung Electronics Co., Ltd.",
+  "stock_info": {
+    "krx": "005930",
+    "otc": "SSNLF"
+  },
+  "website": "https://semiconductor.samsung.com/foundry/",
+  "company_type": "Foundry",
+  "supply_chain_role": ["晶圆代工", "先进封装", "IC基板"],
+  "main_products": [
+    {"name": "Advanced Process Nodes", "category": "foundry", "description": "28FD-SOI, 14/10/8/5/4nm FinFET, 3nm GAA with EUV from 5nm"},
+    {"name": "Application-Specific Technologies", "category": "foundry", "description": "RF, eNVM, high voltage, BCD, CMOS image sensors, fingerprint sensors"},
+    {"name": "Integrated Package Solutions", "category": "packaging", "description": "3D/2.5D advanced packaging solutions"},
+    {"name": "SAFE Program", "category": "ecosystem", "description": "Samsung Advanced Foundry Ecosystem - verified EDA/DM solutions, IP, cloud design environment, ASIC design service"}
+  ],
+  "abf_relevance": {
+    "level": "moderate",
+    "reason": "三星代工本身不生产ABF载板，但作为全球第二大晶圆代工厂，其先进封装（3D/2.5D）直接影响ABF载板需求。三星的先进封装技术（如I-Cube、X-Cube）需要高性能IC基板支撑。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": ["3D/2.5D Packaging", "I-Cube", "X-Cube", "FOWLP", "HBM Integration"],
+    "reason": "提供3D/2.5D集成封装解决方案，支持HBM集成，是CoWoS竞争技术。先进封装产能扩张直接推动IC基板/ABF载板需求。"
+  },
+  "china_relevance": {
+    "level": "moderate",
+    "reason": "韩国企业，受中美贸易管制间接影响。三星在中国西安有存储芯片工厂，但代工业务主要在韩国。"
+  },
+  "key_customers_or_partners": ["Qualcomm", "Google", "NVIDIA (部分)", "IBM"],
+  "competitors": ["TSMC", "Intel Foundry", "GlobalFoundries"],
+  "why_track": "全球第二大晶圆代工厂，3nm GAA技术领先，先进封装能力（3D/2.5D）与ABF载板需求直接相关",
+  "market_data": {
+    "parent_revenue_fy2025": "KRW 333.6T (~$250B)",
+    "parent_revenue_ttm_mar2026": "KRW 388.4T (~$291B)",
+    "parent_gross_margin_fy2025": "39.38%",
+    "parent_operating_margin_fy2025": "13.07%",
+    "parent_net_income_fy2025": "KRW 44.3T (~$33.2B)",
+    "parent_net_income_ttm_mar2026": "KRW 83.4T (~$62.5B, +138% YoY)",
+    "parent_rd_fy2025": "KRW 37.7T (~$28.3B)",
+    "foundry_market_share_2025": "约12-15%（全球第二，远低于TSMC ~60%）",
+    "advanced_node_status": "3nm GAA量产中，2nm GAA预计2025-2026量产",
+    "hbm_status": "HBM4已发布，与代工业务协同",
+    "packaging_capability": "3D/2.5D集成封装，支持HBM集成"
+  },
+  "SWOT": {
+    "strengths": ["全球第二大晶圆代工，品牌影响力强", "3nm GAA技术领先（先于TSMC采用GAA架构）", "垂直整合优势（存储+代工+封装）", "HBM4技术领先，AI存储需求强劲", "母公司Samsung Electronics财务实力雄厚"],
+    "weaknesses": ["代工良率问题（3nm GAA良率据报道低于TSMC）", "市场份额远低于TSMC", "客户集中度高（依赖少数大客户）", "代工业务利润率低于存储业务"],
+    "opportunities": ["AI芯片需求推动先进封装/代工市场增长", "GAA架构技术领先优势", "HBM4/5内存需求爆发", "美国CHIPS法案补贴机会"],
+    "threats": ["TSMC先进制程持续领先", "Intel Foundry美国本土竞争", "中美贸易管制影响客户布局", "先进制程投资巨大，回报周期长"]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T2",
+  "import_decision": "import_ready",
+  "confidence": 0.75,
+  "data_limitations": "代工部门单独财务数据未公开（包含在Samsung Electronics整体财报中）。具体代工客户名单和产能数据有限。3nm良率数据为行业传闻，非官方确认。",
+  "sources": [
+    {"title": "Samsung Semiconductor Official Website - Foundry Overview", "url": "https://semiconductor.samsung.com/foundry/", "publisher": "Samsung Electronics", "accessed_at": "2026-05-16", "supports_fields": ["main_products", "company_type", "website"]},
+    {"title": "Samsung Semiconductor - HBM4", "url": "https://semiconductor.samsung.com/dram/hbm/hbm4/", "publisher": "Samsung Electronics", "accessed_at": "2026-05-16", "supports_fields": ["market_data.hbm_status", "SWOT.strengths"]},
+    {"title": "Samsung Electronics Financial Data (StockAnalysis)", "url": "https://stockanalysis.com/quote/otc/SSNLF/financials/", "publisher": "StockAnalysis", "accessed_at": "2026-05-16", "supports_fields": ["market_data.parent_revenue_fy2025", "market_data.parent_gross_margin_fy2025", "market_data.parent_net_income_fy2025"]},
+    {"title": "Samsung SAFE Forum 2026", "url": "https://semiconductor.samsung.com/events/foundry-events/", "publisher": "Samsung Electronics", "accessed_at": "2026-05-16", "supports_fields": ["main_products.SAFE Program"]}
+  ],
+  "agent_meta": {"run_id": "20260516-043524", "discovered_by": "company-intel-agent-v2", "last_checked_at": "2026-05-16T04:37:00", "change_type": "new"}
+}

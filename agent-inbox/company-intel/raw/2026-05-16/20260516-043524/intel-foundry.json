@@ -1,0 +1,76 @@
+{
+  "company_id": "intel-foundry",
+  "name_en": "Intel Foundry",
+  "name_cn": "英特尔代工服务",
+  "aliases": ["Intel Foundry Services", "IFS", "Intel代工"],
+  "region": "USA",
+  "country": "USA",
+  "headquarters": "Santa Clara, California, USA",
+  "founded": null,
+  "parent_company": "Intel Corporation",
+  "stock_info": {
+    "nasdaq": "INTC"
+  },
+  "website": "https://www.intel.com/foundry",
+  "company_type": "Foundry (IDM转型)",
+  "supply_chain_role": ["晶圆代工", "先进封装", "IC基板", "测试"],
+  "main_products": [
+    {"name": "Intel 18A Process", "category": "foundry", "description": "Intel最先进制程节点，2025年已在美国亚利桑那和俄勒冈量产"},
+    {"name": "Intel 14A Process", "category": "foundry", "description": "下一代制程节点，使用High NA EUV光刻"},
+    {"name": "High NA EUV Lithography", "category": "technology", "description": "业界首台商用高NA EUV光刻机（ASML TWINSCAN EXE:5000），已安装在Oregon D1X工厂"},
+    {"name": "Advanced Packaging", "category": "packaging", "description": "EMIB、Foveros、Co-EMIB等2.5D/3D先进封装技术"},
+    {"name": "Assembly & Test", "category": "testing", "description": "马来西亚Penang工厂扩产，支持全球封装测试需求"}
+  ],
+  "abf_relevance": {
+    "level": "high",
+    "reason": "Intel Foundry提供先进封装服务（EMIB/Foveros），需要高性能IC基板支撑。Intel 18A/14A产品需要先进ABF载板进行封装。作为美国本土唯一先进制程代工厂，其产能扩张直接推动ABF载板需求。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "very_high",
+    "technologies": ["EMIB", "Foveros", "Co-EMIB", "2.5D/3D Packaging", "High NA EUV"],
+    "reason": "Intel Foundry提供全面的先进封装服务，是TSMC CoWoS的主要竞争对手。EMIB和Foveros技术用于AI芯片封装，需要先进IC基板/ABF载板。"
+  },
+  "china_relevance": {
+    "level": "high",
+    "reason": "美国企业，受中美贸易管制直接影响。Intel在中国有大连工厂（已出售给SK hynix），但代工业务主要在美国。美国CHIPS法案重点支持对象。"
+  },
+  "key_customers_or_partners": ["Google", "NVIDIA (DGX Rubin CPU)", "SambaNova", "SpaceX/xAI/Terafab", "ASML"],
+  "competitors": ["TSMC", "Samsung Foundry", "GlobalFoundries"],
+  "why_track": "美国本土唯一先进制程晶圆代工厂，Intel 18A已量产，High NA EUV领先，CHIPS法案重点支持，AI时代CPU+代工双轮驱动",
+  "market_data": {
+    "revenue_q1_2026": "$13.6B (Intel整体, Intel Foundry $5.4B, +16% YoY)",
+    "revenue_fy2025": "$52.9B (Intel整体, Intel Foundry $17.8B, +3% YoY)",
+    "gross_margin_q1_2026_gaap": "39.4%",
+    "gross_margin_q1_2026_non_gaap": "41.0%",
+    "operating_margin_q1_2026_non_gaap": "12.3%",
+    "net_income_q1_2026_non_gaap": "$1.5B",
+    "eps_q1_2026_non_gaap": "$0.29 (+123% YoY)",
+    "q2_2026_guidance": "$13.8-14.8B",
+    "eps_q2_2026_guidance_non_gaap": "$0.20",
+    "foundry_revenue_q1_2026": "$5.4B (+16% YoY)",
+    "foundry_revenue_fy2025": "$17.8B (+3% YoY)",
+    "dcai_revenue_q1_2026": "$5.1B (+22% YoY)",
+    "cash_from_ops_fy2025": "$9.7B",
+    "intel_18a_status": "High-volume manufacturing in Arizona and Oregon",
+    "high_na_euv_status": "First commercial system installed and calibrated at D1X, Oregon"
+  },
+  "SWOT": {
+    "strengths": ["美国本土唯一先进制程代工厂", "Intel 18A已量产，技术领先", "High NA EUV业界首家安装", "先进封装技术（EMIB/Foveros）成熟", "CHIPS法案资金支持", "CPU在AI时代角色强化（NVIDIA DGX Rubin选择Intel Xeon 6）", "Q1 2026连续第六个季度超预期"],
+    "weaknesses": ["代工业务仍亏损（GAAP EPS -$0.73）", "市场份额远低于TSMC", "先进制程良率仍需提升", "资本支出巨大，现金流压力"],
+    "opportunities": ["AI推动CPU和先进封装需求爆发", "美国政府CHIPS法案$52B+补贴", "High NA EUV技术领先优势", "Google/NVIDIA等大客户合作深化", "Terafab项目（SpaceX/xAI/Tesla）"],
+    "threats": ["TSMC先进制程持续领先", "中美贸易管制不确定性", "Intel 14A如无法获得足够客户可能暂停", "先进制程投资回报周期长"]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T1",
+  "import_decision": "import_ready",
+  "confidence": 0.9,
+  "data_limitations": "Intel Foundry单独损益表数据有限（GAAP显示亏损）。具体外部代工客户名单未完全公开。Intel 14A进度取决于客户设计订单。",
+  "sources": [
+    {"title": "Intel Reports First-Quarter 2026 Financial Results", "url": "https://www.intc.com/news-events/press-releases/detail/1767/intel-reports-first-quarter-2026-financial-results", "publisher": "Intel Corporation", "published_at": "2026-04-29", "accessed_at": "2026-05-16", "supports_fields": ["market_data.revenue_q1_2026", "market_data.foundry_revenue_q1_2026", "market_data.gross_margin_q1_2026", "market_data.eps_q1_2026", "market_data.q2_2026_guidance", "SWOT"]},
+    {"title": "Intel Reports Q4 and FY2025 Financial Results", "url": "https://www.intc.com/news-events/press-releases/detail/1759/intel-reports-fourth-quarter-and-full-year-2025-financial", "publisher": "Intel Corporation", "published_at": "2026-01-29", "accessed_at": "2026-05-16", "supports_fields": ["market_data.revenue_fy2025", "market_data.foundry_revenue_fy2025", "market_data.cash_from_ops_fy2025"]},
+    {"title": "Intel Foundry Advanced Packaging", "url": "https://www.intel.com/content/www/us/en/foundry/overview.html", "publisher": "Intel Corporation", "accessed_at": "2026-05-16", "supports_fields": ["company_type", "main_products", "website"]},
+    {"title": "Intel CEO Lip-Bu Tan to Headline Intel Foundry Direct Connect", "url": "https://www.intc.com/news-events/press-releases/detail/1735/intel-ceo-lip-bu-tan-to-headline-intel-foundry-direct", "publisher": "Intel Corporation", "published_at": "2025-04-03", "accessed_at": "2026-05-16", "supports_fields": ["main_products", "key_customers_or_partners"]},
+    {"title": "Intel Foundry High NA EUV (Japanese)", "url": "https://newsroom.intel.com/ja/intel-foundry/intel-foundry-%e9%ab%98na-euv%e3%81%a7%e3%83%81%e3%83%83%e3%83%97%e8%a3%bd%e9%80%a0%e3%81%ae%e6%96%b0%e5%a2%83%e5%9c%b0%e3%82%92%e9%96%8b%e6%8b%93", "publisher": "Intel Corporation", "accessed_at": "2026-05-16", "supports_fields": ["main_products.High NA EUV Lithography", "market_data.high_na_euv_status"]}
+  ],
+  "agent_meta": {"run_id": "20260516-043524", "discovered_by": "company-intel-agent-v2", "last_checked_at": "2026-05-16T04:37:30", "change_type": "new"}
+}

@@ -1,0 +1,83 @@
+{
+  "company_id": "samsung-foundry",
+  "name_en": "Samsung Foundry",
+  "name_cn": "三星晶圆代工",
+  "aliases": ["Samsung Foundry", "Samsung Semiconductor Foundry", "三星代工"],
+  "region": "South Korea",
+  "country": "South Korea",
+  "headquarters": "Hwaseong, Gyeonggi Province, South Korea",
+  "founded": null,
+  "parent_company": "Samsung Electronics Co., Ltd.",
+  "stock_info": {"krx": "005930", "otc": "SSNLF"},
+  "website": "https://semiconductor.samsung.com/foundry/",
+  "company_type": "Foundry",
+  "supply_chain_role": ["晶圆代工", "先进封装", "IC基板"],
+  "main_products": [
+    {"name": "Advanced Process Nodes", "category": "foundry", "description": "28FD-SOI, 14/10/8/5/4nm FinFET, 3nm GAA with EUV from 5nm"},
+    {"name": "Application-Specific Technologies", "category": "foundry", "description": "RF, eNVM, high voltage, BCD, CMOS image sensors, fingerprint sensors"},
+    {"name": "Integrated Package Solutions", "category": "packaging", "description": "3D/2.5D advanced packaging solutions"},
+    {"name": "SAFE Program", "category": "ecosystem", "description": "Samsung Advanced Foundry Ecosystem - verified EDA/DM solutions, IP, cloud design environment, ASIC design service"}
+  ],
+  "abf_relevance": {
+    "level": "moderate",
+    "reason": "三星代工本身不生产ABF载板，但作为全球第二大晶圆代工厂，其先进封装（3D/2.5D）直接影响ABF载板需求。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": ["3D/2.5D Packaging", "I-Cube", "X-Cube", "FOWLP", "HBM Integration"],
+    "reason": "提供3D/2.5D集成封装解决方案，支持HBM集成，是CoWoS竞争技术。"
+  },
+  "china_relevance": {
+    "level": "moderate",
+    "reason": "韩国企业，受中美贸易管制间接影响。"
+  },
+  "key_customers_or_partners": ["Qualcomm", "Google", "NVIDIA (部分)", "IBM"],
+  "competitors": ["TSMC", "Intel Foundry", "GlobalFoundries"],
+  "why_track": "全球第二大晶圆代工厂，3nm GAA技术领先，先进封装能力与ABF载板需求直接相关",
+  "market_data": {
+    "parent_revenue_fy2025": "KRW 333.6T (~$250B)",
+    "parent_revenue_ttm_mar2026": "KRW 388.4T (~$291B)",
+    "parent_gross_margin_fy2025": "39.38%",
+    "parent_operating_margin_fy2025": "13.07%",
+    "parent_net_income_fy2025": "KRW 44.3T (~$33.2B)",
+    "parent_net_income_ttm_mar2026": "KRW 83.4T (~$62.5B, +138% YoY)",
+    "parent_rd_fy2025": "KRW 37.7T (~$28.3B)",
+    "foundry_market_share_2025": "约12-15%（全球第二，远低于TSMC ~60%）",
+    "advanced_node_status": "3nm GAA量产中，2nm GAA预计2025-2026量产",
+    "hbm_status": "HBM4已发布",
+    "packaging_capability": "3D/2.5D集成封装"
+  },
+  "SWOT": {
+    "strengths": ["全球第二大晶圆代工，品牌影响力强", "3nm GAA技术领先", "垂直整合优势（存储+代工+封装）", "HBM4技术领先", "母公司财务实力雄厚"],
+    "weaknesses": ["代工良率问题", "市场份额远低于TSMC", "客户集中度高", "代工业务利润率低"],
+    "opportunities": ["AI芯片推动先进封装需求增长", "GAA架构技术领先优势", "HBM4/5需求爆发", "美国CHIPS法案补贴机会"],
+    "threats": ["TSMC先进制程持续领先", "Intel Foundry竞争", "中美贸易管制影响", "先进制程投资巨大"]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T2",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence": 0.75,
+  "data_limitations": "代工部门单独财务数据未公开。具体代工客户名单和产能数据有限。3nm良率数据为行业传闻。",
+  "sources": [
+    {"title": "Samsung Semiconductor Official Website - Foundry Overview", "url": "https://semiconductor.samsung.com/foundry/", "publisher": "Samsung Electronics", "accessed_at": "2026-05-16"},
+    {"title": "Samsung Semiconductor - HBM4", "url": "https://semiconductor.samsung.com/dram/hbm/hbm4/", "publisher": "Samsung Electronics", "accessed_at": "2026-05-16"},
+    {"title": "Samsung Electronics Financial Data (StockAnalysis)", "url": "https://stockanalysis.com/quote/otc/SSNLF/financials/", "publisher": "StockAnalysis", "accessed_at": "2026-05-16"},
+    {"title": "Samsung SAFE Forum 2026", "url": "https://semiconductor.samsung.com/events/foundry-events/", "publisher": "Samsung Electronics", "accessed_at": "2026-05-16"}
+  ],
+  "agent_meta": {"run_id": "20260516-043524", "discovered_by": "company-intel-agent-v2", "last_checked_at": "2026-05-16T04:37:00", "change_type": "new"},
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T04:38:30",
+    "score": 72,
+    "issues": [
+      "代工部门单独财务数据缺失（仅有母公司Samsung Electronics整体数据）",
+      "代工市场份额为估算值（12-15%），非精确数据",
+      "3nm GAA良率数据为行业传闻，非官方确认",
+      "founded字段缺失",
+      "具体客户名单有限"
+    ],
+    "source_quality": "T2",
+    "decision": "reviewed_needs_human_check",
+    "decision_reason": "数据来源为Samsung官方网站和第三方财经数据网站（T2），代工部门单独数据缺乏，财务数据为母公司级别。市场份额为行业估算。需人工确认代工部门独立数据和具体客户信息。"
+  }
+}

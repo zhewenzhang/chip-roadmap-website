@@ -14,7 +14,7 @@
 {"company_name": "Marvell", "region": "USA", "priority_reason": "定制AI芯片/网络芯片，为AWS/Microsoft设计", "category_hint": "AI_chip", "status": "done", "selected_run_id": "20260515-223528", "notes": "20260515-223525: T2来源，77分，import_ready"}
 {"company_name": "Qualcomm", "region": "USA", "priority_reason": "手机/边缘AI芯片，Snapdragon，边缘推理市场", "category_hint": "AI_chip", "status": "done", "selected_run_id": "20260515-223528", "notes": "20260515-223525: T1来源(CNBC)，88分，import_ready"}
 {"company_name": "MediaTek", "region": "Taiwan", "priority_reason": "联发科，手机芯片+边缘AI，与台积电深度合作", "category_hint": "AI_chip", "status": "done", "selected_run_id": "20260515-223528", "notes": "20260515-223525: T3来源(百度百科)，59分，rejected"}
-{"company_name": "寒武纪 Cambricon", "region": "China", "priority_reason": "中国AI芯片龙头，国产替代核心", "category_hint": "AI_chip", "status": "unverified", "selected_run_id": "20260515-203525", "unverified_reason": "20260515-203525: Bing搜索将寒武纪拆解为汉字释义，无法获取数据", "needs_retry": true}
+{"company_name": "寒武纪 Cambricon", "region": "China", "priority_reason": "中国AI芯片龙头，国产替代核心", "category_hint": "AI_chip", "status": "done", "selected_run_id": "20260516-043524", "unverified_reason": "20260515-203525: Bing搜索将寒武纪拆解为汉字释义，无法获取数据", "needs_retry": true, "notes": "20260516-043524: T2来源(新浪财经)，78分，import_ready。retry成功。"}
 {"company_name": "海光 Hygon", "region": "China", "priority_reason": "中国GPU/DCU厂商，数据中心AI芯片", "category_hint": "AI_chip", "status": "pending"}
 {"company_name": "Google (TPU)", "region": "USA", "priority_reason": "自研TPU芯片，CoWoS/ABF载板需求，全球最大云厂商之一", "category_hint": "cloud_chip", "status": "pending"}
 {"company_name": "AWS (Graviton/Trainium)", "region": "USA", "priority_reason": "自研Graviton/Trainium芯片，云芯片先驱", "category_hint": "cloud_chip", "status": "pending"}
@@ -23,8 +23,8 @@
 {"company_name": "华为 Huawei", "region": "China", "priority_reason": "昇腾AI芯片+鲲鹏CPU，中国AI芯片核心，受出口管制影响", "category_hint": "cloud_chip", "status": "pending"}
 {"company_name": "Cisco", "region": "USA", "priority_reason": "网络设备+定制ASIC芯片，通讯基础设施核心", "category_hint": "equipment", "status": "pending"}
 {"company_name": "TSMC", "region": "Taiwan", "priority_reason": "全球最大晶圆代工厂，CoWoS/先进封装核心，AI芯片供应链最关键节点", "category_hint": "foundry", "status": "done", "selected_run_id": "20260515-203525", "unverified_reason": "20260515-183526: 网络环境受限，无法访问国际网站", "needs_retry": true, "notes": "20260515-203525: T3来源，93分，needs_human_check"}
-{"company_name": "Samsung Foundry", "region": "Korea", "priority_reason": "全球第二大晶圆代工，与台积电竞争先进制程，HBM供应核心", "category_hint": "foundry", "status": "pending"}
-{"company_name": "Intel Foundry", "region": "USA", "priority_reason": "Intel代工服务(IFS)，美国本土先进制程，政府补贴支持", "category_hint": "foundry", "status": "pending"}
+{"company_name": "Samsung Foundry", "region": "Korea", "priority_reason": "全球第二大晶圆代工，与台积电竞争先进制程，HBM供应核心", "category_hint": "foundry", "status": "done", "selected_run_id": "20260516-043524", "notes": "20260516-043524: T2来源，72分，needs_human_check。代工部门单独数据缺乏。"}
+{"company_name": "Intel Foundry", "region": "USA", "priority_reason": "Intel代工服务(IFS)，美国本土先进制程，政府补贴支持", "category_hint": "foundry", "status": "done", "selected_run_id": "20260516-043524", "notes": "20260516-043524: T1来源(Intel官方财报)，90分，import_ready。"}
 {"company_name": "GlobalFoundries", "region": "USA", "priority_reason": "全球第四大晶圆代工，成熟制程+特殊工艺，美国CHIPS法案受益者", "category_hint": "foundry", "status": "pending"}
 {"company_name": "通富微电 TFME", "region": "China", "priority_reason": "中国第二大OSAT，AMD封装核心供应商，先进封装能力领先", "category_hint": "OSAT", "status": "pending"}
 {"company_name": "华天科技 Hua Tian", "region": "China", "priority_reason": "中国第三大OSAT，SiP/FC-BGA封装布局", "category_hint": "OSAT", "status": "pending"}

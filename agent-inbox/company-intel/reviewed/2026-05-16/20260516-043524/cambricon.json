@@ -1,0 +1,86 @@
+{
+  "company_id": "cambricon",
+  "name_en": "Cambricon Technologies Corporation",
+  "name_cn": "中科寒武纪科技股份有限公司",
+  "aliases": ["寒武纪", "Cambricon", "688256.SH"],
+  "region": "China",
+  "country": "China",
+  "headquarters": "Beijing, China",
+  "founded": "2016-03-15",
+  "listed_date": "2020-07-20",
+  "stock_info": {"shanghai_star": "688256", "exchange": "上海证券交易所科创板"},
+  "website": "https://www.cambricon.com",
+  "company_type": "Fabless AI Chip Design",
+  "supply_chain_role": ["AI芯片设计", "智能计算"],
+  "main_products": [
+    {"name": "MLU系列AI芯片", "category": "ai_chip", "description": "云端AI训练/推理芯片"},
+    {"name": "边缘计算AI芯片", "category": "edge_chip", "description": "边缘计算设备AI核心芯片"},
+    {"name": "终端AI芯片", "category": "terminal_chip", "description": "终端设备AI核心芯片"},
+    {"name": "基础系统软件", "category": "software", "description": "AI芯片配套编译器、驱动、开发工具链"}
+  ],
+  "abf_relevance": {
+    "level": "moderate",
+    "reason": "寒武纪作为AI芯片设计公司，芯片制造依赖晶圆代工，封装需要先进IC基板/ABF载板。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "moderate",
+    "technologies": ["先进封装需求"],
+    "reason": "AI芯片需要先进封装技术，间接推动ABF载板需求。"
+  },
+  "china_relevance": {
+    "level": "very_high",
+    "reason": "中国本土AI芯片龙头企业，国产替代核心标的。受美国出口管制影响。"
+  },
+  "key_customers_or_partners": ["中国移动/联通/电信（数据中心）", "政府/国企", "AI服务器厂商"],
+  "competitors": ["NVIDIA", "AMD", "华为昇腾", "海光信息", "百度昆仑芯"],
+  "why_track": "中国AI芯片龙头，科创板明星公司，国产替代核心标的。2026年股价涨幅超142%。",
+  "market_data": {
+    "eps_q1_2026": "2.4028元/股",
+    "eps_fy2025": "4.8833元/股",
+    "bvps_q1_2026": "30.5235元/股",
+    "bvps_fy2025": "28.0687元/股",
+    "ocf_per_share_q1_2026": "1.9777元/股",
+    "ocf_per_share_fy2025": "-1.1819元/股",
+    "roe_q1_2026": "7.87%",
+    "roe_fy2025": "17.40%",
+    "undistributed_profit_per_share_q1_2026": "2.3749元/股",
+    "capital_reserve_per_share_q1_2026": "26.7788元/股",
+    "total_shares": "6.28亿股",
+    "major_shareholders": {"陈天石": "28.572%", "北京中科算源": "15.697%", "北京艾溪科技": "7.325%"},
+    "dividend_plan_2026": "10派15元转4.9股",
+    "stock_price_2026_05_15": "约1350元（创历史新高后回落，跌4.09%）",
+    "ytd_return_2026": "超142%",
+    "daily_trading_volume_2026_05_14": "超200亿元成交额"
+  },
+  "SWOT": {
+    "strengths": ["中国AI芯片设计龙头", "科创板上市融资畅通", "2025年净利润率17.4%", "创始人技术背景深厚", "Q1 2026 EPS 2.4元业绩持续增长"],
+    "weaknesses": ["依赖外部代工", "收入规模远小于NVIDIA/AMD", "研发投入占比高", "客户集中在国内"],
+    "opportunities": ["国产AI芯片替代需求爆发", "中国数据中心AI算力需求增长", "出口管制倒逼国产替代加速", "科创板高估值支撑融资"],
+    "threats": ["美国出口管制升级", "华为昇腾等国内竞争", "AI芯片技术迭代快", "股价估值过高回调风险"]
+  },
+  "tracking_priority": "P2",
+  "source_quality": "T2",
+  "import_decision": "import_ready",
+  "confidence": 0.8,
+  "data_limitations": "具体芯片产品规格（制程、性能）未详细获取。收入构成未公开。与台积电代工关系受出口管制影响程度不确定。公司官网访问失败。",
+  "sources": [
+    {"title": "新浪财经 - 寒武纪(688256)股票页面", "url": "https://finance.sina.com.cn/realstock/company/sh688256/nc.shtml", "publisher": "新浪财经", "accessed_at": "2026-05-16"},
+    {"title": "新浪财经 - 寒武纪股价新闻", "url": "https://finance.sina.com.cn/jjxw/2026-05-15/doc-inhxypte8072228.shtml", "publisher": "新浪财经", "published_at": "2026-05-15", "accessed_at": "2026-05-16"},
+    {"title": "新浪财经 - 寒武纪成交额超200亿", "url": "https://finance.sina.com.cn/jjxw/2026-05-14/doc-inhxvyei6834314.shtml", "publisher": "新浪财经", "published_at": "2026-05-14", "accessed_at": "2026-05-16"}
+  ],
+  "agent_meta": {"run_id": "20260516-043524", "discovered_by": "company-intel-agent-v2", "last_checked_at": "2026-05-16T04:38:00", "change_type": "retry"},
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T04:38:30",
+    "score": 78,
+    "issues": [
+      "具体芯片产品规格（制程、TOPS性能）未获取",
+      "收入构成（云端/边缘/终端占比）未公开",
+      "公司官网技术页面访问失败",
+      "founded字段来自第三方，非公司官网确认"
+    ],
+    "source_quality": "T2",
+    "decision": "import_ready",
+    "decision_reason": "数据来自新浪财经（T2中国主流财经平台），财务指标（EPS/BVPS/ROE）精确可靠，股东信息和分红方案来自公司公告。虽产品细节不足，但核心财务和公司信息完整，可导入后补充产品数据。"
+  }
+}
