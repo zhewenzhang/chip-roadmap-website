@@ -11,7 +11,8 @@
     "import-companies": "node scripts/import-companies-v2.js",
     "import-companies-dry": "node scripts/import-companies-v2.js --dry-run",
     "seed-signals": "node scripts/seed-signals-v1.js",
-    "seed-signals-dry": "node scripts/seed-signals-v1.js --dry-run"
+    "seed-signals-dry": "node scripts/seed-signals-v1.js --dry-run",
+    "import-agent-data": "node scripts/agent-data-importer.js"
   },
   "dependencies": {
     "firebase": "^11.0.0",
