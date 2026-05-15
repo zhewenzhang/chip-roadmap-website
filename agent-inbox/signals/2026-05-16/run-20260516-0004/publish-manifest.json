@@ -1,0 +1,11 @@
+{
+  "run_id": "run-20260516-0004",
+  "run_date": "2026-05-16",
+  "signals_file": "agent-inbox/signals/2026-05-16/run-20260516-0004/signals.reviewed.jsonl",
+  "daily_insight_file": "agent-inbox/signals/2026-05-16/run-20260516-0004/insight.daily.md",
+  "signals_total": 7,
+  "verified_count": 5,
+  "watch_count": 2,
+  "rejected_count": 6,
+  "ready_for_firestore_import": true
+}
