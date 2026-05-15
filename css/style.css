@@ -4338,3 +4338,98 @@ tr:hover .td-company { background: var(--color-border); }
     background: var(--color-fg);
     color: var(--color-bg);
 }
+
+/* ===== Phase 21: Company Profile & SWOT ===== */
+
+.company-profile-desc {
+    font-size: 0.8rem;
+    color: var(--color-muted-fg);
+    line-height: 1.65;
+    margin: 0 0 10px;
+}
+
+.company-profile-position {
+    font-size: 0.78rem;
+    color: var(--color-fg);
+    line-height: 1.5;
+    margin: 0 0 12px;
+    opacity: 0.8;
+}
+
+.company-profile-facts {
+    border-top: 1px solid var(--color-border);
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+.profile-fact {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.78rem;
+}
+
+.profile-fact:last-child {
+    border-bottom: none;
+}
+
+.profile-label {
+    color: var(--color-muted-fg);
+    flex-shrink: 0;
+}
+
+.profile-value {
+    color: var(--color-fg);
+    font-family: var(--font-mono);
+    text-align: right;
+}
+
+.profile-abf-badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-family: var(--font-mono);
+    padding: 3px 10px;
+    border: 1px solid;
+    margin-top: 8px;
+    letter-spacing: 0.03em;
+}
+
+.profile-abf-explosive { border-color: #33ff00; color: #33ff00; }
+.profile-abf-high      { border-color: #33ff00; color: #33ff00; opacity: 0.75; }
+.profile-abf-medium    { border-color: #ffb000; color: #ffb000; }
+.profile-abf-low       { border-color: var(--color-muted-fg); color: var(--color-muted-fg); }
+
+/* SWOT */
+.swot-group {
+    margin-bottom: 12px;
+}
+
+.swot-group:last-child {
+    margin-bottom: 0;
+}
+
+.swot-title {
+    font-size: 0.68rem;
+    font-family: var(--font-mono);
+    letter-spacing: 0.08em;
+    color: var(--color-muted-fg);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.swot-item {
+    font-size: 0.78rem;
+    line-height: 1.45;
+    padding: 3px 0 3px 8px;
+    margin-bottom: 3px;
+    color: var(--color-muted-fg);
+    border-left: 2px solid var(--color-border);
+}
+
+.swot-s .swot-item { border-color: #33ff00; }
+.swot-w .swot-item { border-color: #ff4444; }
+.swot-o .swot-item { border-color: #ffb000; }
+.swot-t .swot-item { border-color: #888; }

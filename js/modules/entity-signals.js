@@ -5,7 +5,7 @@
  * Uses impact-engine.js for chip-to-ABF impact derivation.
  */
 
-import { loadSignals } from '../firebase/db.js';
+import { loadSignals, getCompanyDoc } from '../firebase/db.js';
 import {
     STAGE_LABEL, STATUS_LABEL, IMPACT_LABEL, REGION_LABEL, labelize,
     IMPACT_SORT
@@ -84,29 +84,50 @@ export async function initEntityPage(type) {
     }
 
     loadWatchlist();
-    const result = await loadSignals();
-    if (!result.ok) {
-        console.error('[EntitySignals] Load error:', result.error);
+
+    // 並行請求：信號列表 + 公司文檔（公司頁才需要）
+    const [signalResult, companyResult] = await Promise.all([
+        loadSignals(),
+        type === 'company' ? getCompanyDoc(entityId) : Promise.resolve({ ok: false, data: null })
+    ]);
+    const companyDoc = companyResult.data || null;
+
+    // 用 Firestore 公司資料更新標題（不依賴信號）
+    if (type === 'company' && companyDoc) {
+        const displayName = companyDoc.name_en || companyDoc.name_cn || entityId;
+        document.getElementById('entityName').textContent = displayName;
+        const metaParts = [];
+        if (companyDoc.name_cn && companyDoc.name_cn !== displayName) metaParts.push(companyDoc.name_cn);
+        if (companyDoc.category) metaParts.push(companyDoc.category);
+        if (companyDoc.headquarters) metaParts.push(companyDoc.headquarters);
+        if (metaParts.length) {
+            document.getElementById('entityMeta').innerHTML = metaParts.map(p => `<span>${esc(p)}</span>`).join('');
+        }
+    } else {
+        document.getElementById('entityName').textContent = entityId;
+    }
+
+    if (!signalResult.ok) {
+        console.error('[EntitySignals] Load error:', signalResult.error);
         document.getElementById('signalsTableWrap').innerHTML = '<p class="entity-error">信號載入失敗，請稍後重試。</p>';
         return;
     }
 
-    allSignals = result.data;
+    allSignals = signalResult.data;
     const filtered = type === 'company'
         ? allSignals.filter(s => s.company_id === entityId)
         : allSignals.filter(s => s.chip_name === entityId);
 
-    // Handle empty entity — show useful empty state
-    document.getElementById('entityName').textContent = entityId;
     if (filtered.length === 0) {
-        const metaEl = document.getElementById('entityMeta');
-        if (type === 'company') {
-            metaEl.innerHTML = '<span>尚無收錄此公司的信號</span>';
-        } else {
+        // 無信號時：若有公司資料則顯示公司檔案
+        if (type === 'company' && companyDoc) {
+            renderCompanyProfile(companyDoc);
+            renderCompanySwot(companyDoc);
+        } else if (type !== 'company') {
+            const metaEl = document.getElementById('entityMeta');
             metaEl.innerHTML = '<span>尚無收錄此芯片的信號</span>';
         }
         document.getElementById('signalsTableWrap').innerHTML = '<p class="entity-empty">尚無相關信號。可在管理後台新增。</p>';
-        // Render impact headers even for empty entities
         if (type === 'company') renderCompanyAbfHeader([], allSignals);
         else renderChipImpactHeader([], allSignals);
         renderSidebar(filtered, allSignals);
@@ -116,7 +137,12 @@ export async function initEntityPage(type) {
 
     renderEntityInfo(filtered);
 
-    // Phase 9: Render impact headers
+    // 有信號時也顯示公司檔案（補充事實數據）
+    if (type === 'company' && companyDoc) {
+        renderCompanyProfile(companyDoc);
+        renderCompanySwot(companyDoc);
+    }
+
     if (type === 'company') renderCompanyAbfHeader(filtered, allSignals);
     else renderChipImpactHeader(filtered, allSignals);
 
@@ -407,6 +433,83 @@ function renderSidebar(signals, allSigs) {
 }
 
 // ===== Company Dossier Functions (Phase 8) =====
+
+// ===== Phase 21: Company Profile from Firestore =====
+
+const ABF_IMPACT_LABEL = {
+    explosive: '爆發性', high: '高', medium: '中', low: '低', none: '無'
+};
+
+function renderCompanyProfile(companyDoc) {
+    const block = document.getElementById('companyProfileBlock');
+    const el = document.getElementById('companyProfile');
+    if (!el || !companyDoc) return;
+
+    let html = '';
+
+    if (companyDoc.description) {
+        html += `<p class="company-profile-desc">${esc(companyDoc.description)}</p>`;
+    }
+    if (companyDoc.market_position) {
+        html += `<p class="company-profile-position">${esc(companyDoc.market_position)}</p>`;
+    }
+
+    const facts = [
+        companyDoc.country       && ['國家', companyDoc.country],
+        companyDoc.headquarters  && ['總部', companyDoc.headquarters],
+        companyDoc.founded       && ['成立', companyDoc.founded + ' 年'],
+        companyDoc.market_cap    && ['市值', companyDoc.market_cap],
+        companyDoc.category      && ['分類', companyDoc.category],
+    ].filter(Boolean);
+
+    if (facts.length) {
+        html += '<div class="company-profile-facts">';
+        facts.forEach(([label, value]) => {
+            html += `<div class="profile-fact"><span class="profile-label">${esc(label)}</span><span class="profile-value">${esc(String(value))}</span></div>`;
+        });
+        html += '</div>';
+    }
+
+    if (companyDoc.abf_demand_impact && companyDoc.abf_demand_impact !== 'none' && companyDoc.abf_demand_impact !== '') {
+        const impactCls = `profile-abf-${companyDoc.abf_demand_impact}`;
+        const impactTxt = ABF_IMPACT_LABEL[companyDoc.abf_demand_impact] || companyDoc.abf_demand_impact;
+        html += `<div class="profile-abf-badge ${impactCls}">ABF 需求影響：${esc(impactTxt)}</div>`;
+    }
+
+    el.innerHTML = html;
+    if (block) block.style.display = html.trim() ? '' : 'none';
+}
+
+function renderCompanySwot(companyDoc) {
+    const block = document.getElementById('companySwotBlock');
+    const el = document.getElementById('companySwot');
+    if (!el || !companyDoc?.analysis) return;
+
+    const { strengths = [], weaknesses = [], opportunities = [], threats = [] } = companyDoc.analysis;
+    const hasContent = strengths.length || weaknesses.length || opportunities.length || threats.length;
+
+    if (!hasContent) {
+        if (block) block.style.display = 'none';
+        return;
+    }
+
+    function swotGroup(title, items, cls) {
+        if (!items.length) return '';
+        return `<div class="swot-group ${cls}">
+            <div class="swot-title">${esc(title)}</div>
+            ${items.map(i => `<div class="swot-item">${esc(i)}</div>`).join('')}
+        </div>`;
+    }
+
+    el.innerHTML = [
+        swotGroup('優勢', strengths, 'swot-s'),
+        swotGroup('劣勢', weaknesses, 'swot-w'),
+        swotGroup('機會', opportunities, 'swot-o'),
+        swotGroup('威脅', threats, 'swot-t')
+    ].join('');
+
+    if (block) block.style.display = '';
+}
 
 function renderCompanyOverview(dossier) {
     const el = document.getElementById('companyOverview');
