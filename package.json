@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "migrate": "node scripts/migrate-to-firestore.js",
     "import-companies": "node scripts/import-companies-v2.js",
-    "import-companies-dry": "node scripts/import-companies-v2.js --dry-run"
+    "import-companies-dry": "node scripts/import-companies-v2.js --dry-run",
+    "seed-signals": "node scripts/seed-signals-v1.js",
+    "seed-signals-dry": "node scripts/seed-signals-v1.js --dry-run"
   },
   "dependencies": {
     "firebase": "^11.0.0",
