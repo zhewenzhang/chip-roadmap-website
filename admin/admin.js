@@ -579,6 +579,8 @@ const IMPACT_OPTIONS = IMPACT_ENUM;
 
 // Bulk selection state
 let selectedSignalIds = new Set();
+let currentFilterState = {};
+let currentVisibleSignalIds = [];
 
 document.getElementById('tab-signals').addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
@@ -612,9 +614,9 @@ document.getElementById('tab-signals').addEventListener('click', e => {
     const sa = e.target.closest('#sig-select-all');
     if (sa) {
         if (sa.checked) {
-            signalsData.forEach(s => selectedSignalIds.add(s.id));
+            currentVisibleSignalIds.forEach(id => selectedSignalIds.add(id));
         } else {
-            selectedSignalIds.clear();
+            currentVisibleSignalIds.forEach(id => selectedSignalIds.delete(id));
         }
         document.querySelectorAll('[data-signal-cb]').forEach(c => c.checked = sa.checked);
         renderBulkBar();
@@ -638,6 +640,7 @@ function statusChipClass(s) {
 }
 
 function renderSignalsTab(filterState = {}) {
+    currentFilterState = { ...filterState };
     let filtered = [...signalsData];
     if (filterState.company) filtered = filtered.filter(s => s.company_name === filterState.company);
     if (filterState.stage) filtered = filtered.filter(s => s.stage === filterState.stage);
@@ -655,6 +658,7 @@ function renderSignalsTab(filterState = {}) {
     const companies = [...new Set(signalsData.map(s => s.company_name).filter(Boolean))].sort();
 
     const filteredIds = new Set(filtered.map(s => s.id));
+    currentVisibleSignalIds = filtered.map(s => s.id);
     // Clean up selections that are no longer visible
     selectedSignalIds.forEach(sid => {
         if (!filteredIds.has(sid)) selectedSignalIds.delete(sid);
@@ -761,7 +765,7 @@ function renderBulkBar() {
 }
 
 function toggleSelectAll() {
-    signalsData.forEach(s => selectedSignalIds.add(s.id));
+    currentVisibleSignalIds.forEach(id => selectedSignalIds.add(id));
     document.querySelectorAll('[data-signal-cb]').forEach(c => c.checked = true);
     const sa = document.getElementById('sig-select-all');
     if (sa) sa.checked = true;
@@ -776,6 +780,12 @@ function clearSelection() {
     renderBulkBar();
 }
 
+async function refreshSignalsAfterBulk() {
+    await fetchSignals();
+    buildQualityQueueFromData();
+    renderSignalsTab(currentFilterState);
+}
+
 function applySignalFilters() {
     const company = document.getElementById('sig-filter-company')?.value || '';
     const stage = document.getElementById('sig-filter-stage')?.value || '';
@@ -785,6 +795,7 @@ function applySignalFilters() {
 }
 
 function resetSignalFilters() {
+    currentFilterState = {};
     renderSignalsTab({});
 }
 
@@ -810,8 +821,7 @@ function openBulkStatusModal() {
         }
         showToast(`已變更 ${updated} 條信號狀態為 ${statusLabel(newStatus)}`, 'success', 4000);
         clearSelection();
-        await fetchSignals();
-        renderSignalsTab(currentFilterState);
+        await refreshSignalsAfterBulk();
     }, true);
 }
 
@@ -855,8 +865,7 @@ function openBulkVerifyModal() {
         }
         showToast(`已驗證 ${updated} 條信號`, 'success', 4000);
         clearSelection();
-        await fetchSignals();
-        renderSignalsTab(currentFilterState);
+        await refreshSignalsAfterBulk();
     }, true);
 }
 
@@ -880,8 +889,7 @@ function openBulkReviewedModal() {
         }
         showToast(`已標記 ${updated} 條信號為已複核`, 'success', 4000);
         clearSelection();
-        await fetchSignals();
-        renderSignalsTab(currentFilterState);
+        await refreshSignalsAfterBulk();
     }, true);
 }
 
@@ -900,18 +908,19 @@ function openBulkArchiveModal() {
         <textarea id="bulk-archive-reason" rows="2" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="說明封存原因..."></textarea></div>
     `, async () => {
         const reason = document.getElementById('bulk-archive-reason').value.trim();
+        if (!reason) throw new Error('請填寫封存原因');
         const actor = auth.currentUser?.email || '';
         let updated = 0;
         for (const id of selectedSignalIds) {
             const sig = signalsData.find(s => s.id === id);
             if (!sig) continue;
-            await saveSignal(id, { ...sig, status: 'archived', archived: true, verification_note: (sig.verification_note ? sig.verification_note + '\n' : '') + '封存：' + reason, last_reviewed_at: new Date().toISOString() }, { actor, previousStatus: sig.status });
+            if (sig.archived || sig.status === 'archived') continue;
+            await archiveSignal(id, { actor, reason });
             updated++;
         }
         showToast(`已封存 ${updated} 條信號`, 'success', 4000);
         clearSelection();
-        await fetchSignals();
-        renderSignalsTab(currentFilterState);
+        await refreshSignalsAfterBulk();
     }, false);
 }
 
@@ -935,8 +944,7 @@ function openBulkImpactModal() {
         }
         showToast(`已設定 ${updated} 條信號的 ABF 影響為 ${impactLabel(newImpact)}`, 'success', 4000);
         clearSelection();
-        await fetchSignals();
-        renderSignalsTab(currentFilterState);
+        await refreshSignalsAfterBulk();
     }, true);
 }
 
@@ -961,8 +969,7 @@ function openBulkTagsModal() {
         }
         showToast(`已設定 ${updated} 條信號的標籤 (${newTags.length} 個)`, 'success', 4000);
         clearSelection();
-        await fetchSignals();
-        renderSignalsTab(currentFilterState);
+        await refreshSignalsAfterBulk();
     }, true);
 }
 
