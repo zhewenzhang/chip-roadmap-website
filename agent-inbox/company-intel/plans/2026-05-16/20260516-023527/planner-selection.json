@@ -1,0 +1,31 @@
+{
+  "run_id": "20260516-023527",
+  "run_date": "2026-05-16",
+  "selection_round": 4,
+  "companies": [
+    {
+      "company": "JCET Group",
+      "category": "OSAT",
+      "priority": "P1",
+      "reason": "China OSAT leader, advanced packaging capability including flip chip and SiP, relevant to ABF substrate supply chain"
+    },
+    {
+      "company": "ASE Technology",
+      "category": "OSAT",
+      "priority": "P1",
+      "reason": "World's largest OSAT, CoWoS advanced packaging involvement, key ABF ecosystem player"
+    },
+    {
+      "company": "Camtek",
+      "category": "Equipment",
+      "priority": "P1",
+      "reason": "Israel-based inspection/metrology equipment for IC substrates, direct ABF manufacturing relevance"
+    }
+  ],
+  "skipped_reviewed": ["TSMC", "Broadcom", "Qualcomm", "Marvell", "AT&S", "Nan Ya PCB", "Zhuhai Access"],
+  "skipped_unverified": ["Cambricon"],
+  "deferred": [
+    {"company": "DeepX", "priority": "P2", "reason": "Deferred to next round"},
+    {"company": "Cambricon", "priority": "P2", "reason": "Previously unverified, deferred for retry"}
+  ]
+}

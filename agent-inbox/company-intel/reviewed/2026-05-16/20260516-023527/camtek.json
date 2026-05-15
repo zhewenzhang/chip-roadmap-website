@@ -1,0 +1,78 @@
+{
+  "company_id": "camtek",
+  "name_en": "Camtek Ltd.",
+  "name_cn": "康明特有限公司",
+  "aliases": ["Camtek", "CAMT"],
+  "region": "Israel",
+  "country": "Israel",
+  "headquarters": "Migdal HaEmek, Israel",
+  "founded": null,
+  "stock_info": {
+    "nasdaq": "CAMT",
+    "tase": "CAMT"
+  },
+  "website": "https://www.camtek.com",
+  "company_type": "Equipment",
+  "supply_chain_role": ["检测设备", "量测设备", "半导体设备"],
+  "main_products": [
+    {"name": "Inspection Systems", "category": "equipment", "description": "IC晶圆检测系统，覆盖前道/中道/组装后"},
+    {"name": "Metrology Systems", "category": "equipment", "description": "IC特征量测系统"},
+    {"name": "AI-based Inspection Software", "category": "software", "description": "基于AI的检测和分类算法"}
+  ],
+  "abf_relevance": {
+    "level": "high",
+    "reason": "半导体检测/量测设备领导者，设备用于IC载板（含ABF）生产质量检测。先进封装对检测精度要求提升，直接受益于ABF产能扩张。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": ["Advanced Interconnect Packaging", "Heterogeneous Integration", "HBM", "CoWoS-like"],
+    "reason": "先进互连封装、异构集成、HBM为核心应用领域。Q1 2026获OSAT客户$31M CoWoS-like封装检测订单。"
+  },
+  "china_relevance": {
+    "level": "moderate",
+    "reason": "以色列企业，中国OSAT是重要客户。受出口管制影响。"
+  },
+  "key_customers_or_partners": ["Leading OSATs (unnamed)", "IDMs", "Foundries"],
+  "competitors": ["KLA", "Onto Innovation", "Hitachi High-Tech"],
+  "why_track": "检测/量测设备领导者，AI驱动技术升级，先进封装产能扩张直接受益者",
+  "market_data": {
+    "revenue_q1_2026": "$121.7M",
+    "revenue_q4_2025": "$128.1M (record)",
+    "revenue_fy2025": "$496.1M (record, +16% YoY)",
+    "gross_margin_q1_2026": "50.1% GAAP / 51.0% non-GAAP",
+    "net_income_q1_2026": "$31.6M GAAP / $35.3M non-GAAP",
+    "cash_position_q1_2026": "$849.7M",
+    "q2_2026_guidance": "$129-131M",
+    "h2_2026_outlook": "Expected 25%+ revenue growth vs H1 2026",
+    "q1_2026_orders_from_osats": ">$90M (majority for CoWoS-like packaging for AI)",
+    "order_momentum": "Unprecedented start to 2026"
+  },
+  "SWOT": {
+    "strengths": ["检测/量测设备市场领导者", "AI驱动检测技术（收购Visual Layer）", "强劲订单增长（Q1 OSAT>$90M）", "稳健财务（FY2025 $496M，毛利率50%+）", "充足现金（$849.7M）"],
+    "weaknesses": ["规模相对KLA较小", "研发投入压力大"],
+    "opportunities": ["AI芯片推动先进封装检测需求爆发", "Visual Layer收购强化AI能力", "OSAT客户大规模扩产", "2026年预计双位数增长"],
+    "threats": ["KLA等大竞争对手", "半导体周期性波动", "出口管制影响中国市场"]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T1",
+  "import_decision": "import_ready",
+  "confidence": 0.9,
+  "data_limitations": "公司成立年份未确认。具体客户名单未公开。",
+  "sources": [
+    {"title": "Camtek Official Website", "url": "https://www.camtek.com", "publisher": "Camtek Ltd.", "accessed_at": "2026-05-16", "supports_fields": ["website", "company_type", "main_products", "headquarters"]},
+    {"title": "Camtek Q1 2026 Results", "url": "https://www.camtek.com/news-and-events/camtek-announces-results-for-the-first-quarter-of-2026/", "publisher": "Camtek Ltd.", "published_at": "2026-05-12", "accessed_at": "2026-05-16", "supports_fields": ["market_data.revenue_q1_2026", "market_data.gross_margin_q1_2026", "market_data.net_income_q1_2026", "market_data.cash_position_q1_2026", "market_data.q2_2026_guidance"]},
+    {"title": "Camtek FY2025 Record Results", "url": "https://www.camtek.com/news-and-events/camtek-announces-record-results-for-the-fourth-quarter-full-year-2025/", "publisher": "Camtek Ltd.", "published_at": "2026-02-18", "accessed_at": "2026-05-16", "supports_fields": ["market_data.revenue_fy2025", "market_data.revenue_q4_2025"]},
+    {"title": "Camtek Acquires Visual Layer", "url": "https://www.camtek.com/news-and-events/camtek-announces-acquisition-of-visual-layer-to-deepen-its-visual-ai-capabilities-in-its-inspection-and-metrology-offering/", "publisher": "Camtek Ltd.", "published_at": "2026-04-13", "accessed_at": "2026-05-16", "supports_fields": ["SWOT.strengths", "SWOT.opportunities"]},
+    {"title": "Camtek $31M OSAT Order", "url": "https://www.camtek.com/news-and-events/camtek-receives-31-million-multi-system-order-from-a-leading-osat/", "publisher": "Camtek Ltd.", "published_at": "2026-03-30", "accessed_at": "2026-05-16", "supports_fields": ["market_data.q1_2026_orders_from_osats", "advanced_packaging_relevance"]}
+  ],
+  "agent_meta": {"run_id": "20260516-023527", "discovered_by": "company-intel-agent-v2", "last_checked_at": "2026-05-16T02:37:30", "change_type": "new"},
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T02:39:00",
+    "score": 95,
+    "issues": ["成立年份缺失"],
+    "source_quality": "T1",
+    "decision": "import_ready",
+    "decision_reason": "数据全部来自Camtek官方新闻稿（T1），财务数据精确，可直接导入"
+  }
+}

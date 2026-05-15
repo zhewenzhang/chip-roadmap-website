@@ -1,19 +1,19 @@
 {
   "status": "completed",
-  "started_at": "2026-05-16T00:34:30+08:00",
-  "completed_at": "2026-05-16T00:38:00+08:00",
-  "duration_seconds": 210,
-  "run_id": "20260516-003529",
+  "started_at": "2026-05-16T02:35:27+08:00",
+  "completed_at": "2026-05-16T02:39:30+08:00",
+  "duration_seconds": 243,
+  "run_id": "20260516-023527",
   "run_date": "2026-05-16",
-  "raw_count": 0,
+  "raw_count": 3,
   "reviewed_count": 3,
-  "import_ready_count": 0,
-  "needs_human_check_count": 3,
+  "import_ready_count": 1,
+  "needs_human_check_count": 2,
   "rejected_count": 0,
   "unverified_count": 0,
-  "date_total_reviewed": 7,
+  "date_total_reviewed": 6,
   "date_total_unverified": 0,
   "errors": [],
   "network_issue": true,
-  "note": "本轮新增3家：AT&S(95分/needs_human_check)、Nan Ya PCB(95分/needs_human_check)、Zhuhai Access(95分/needs_human_check)。所有数据基于训练知识，无实时来源（网络受限），全部标记为T4/needs_human_check。"
+  "note": "本轮新增3家：JCET Group(82分/T2/needs_human_check)、ASE Technology(72分/T3/needs_human_check)、Camtek(95分/T1/import_ready)。Camtek数据来自官方新闻稿，质量高。ASE官网大量404，数据不足。"
 }

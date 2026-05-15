@@ -1,0 +1,69 @@
+{
+  "company_id": "ase-technology",
+  "name_en": "ASE Technology Holding Co., Ltd.",
+  "name_cn": "日月光半导体控股股份有限公司",
+  "aliases": ["日月光", "ASE", "ASEH"],
+  "region": "Taiwan",
+  "country": "Taiwan",
+  "headquarters": "Kaohsiung, Taiwan",
+  "founded": 1984,
+  "stock_info": {
+    "twse": "3711.TW",
+    "nyse": "ASX"
+  },
+  "website": "https://www.aseglobal.com",
+  "company_type": "OSAT",
+  "supply_chain_role": ["封测(OSAT)", "先进封装", "CoWoS-like封装", "系统集成"],
+  "main_products": [
+    {"name": "Advanced Packaging (CoWoS-like)", "category": "packaging", "description": "类CoWoS先进封装技术"},
+    {"name": "IC Packaging", "category": "packaging", "description": "全面IC封装服务"},
+    {"name": "IC Testing", "category": "testing", "description": "晶圆测试和成品测试"},
+    {"name": "System Integration", "category": "system", "description": "系统级集成服务"}
+  ],
+  "abf_relevance": {
+    "level": "critical",
+    "reason": "全球最大OSAT企业，合并SPIL和USI后综合实力最强。先进封装领域积极扩张，是ABF载板核心消费者。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "critical",
+    "technologies": ["CoWoS-like", "Fan-Out", "Flip Chip", "SiP", "2.5D/3D"],
+    "reason": "官网明确表示结合ASE、SPIL和USI力量推动先进封装和系统集成，驱动AI时代"
+  },
+  "china_relevance": {
+    "level": "strategic",
+    "reason": "台湾企业，在中国大陆有封装产能。受地缘政治和出口管制影响。"
+  },
+  "key_customers_or_partners": ["NVIDIA", "Qualcomm", "AMD", "Apple", "Broadcom"],
+  "competitors": ["JCET Group", "Amkor", "通富微电(TFME)", "华天科技(Hua Tian)"],
+  "why_track": "全球最大OSAT，先进封装能力是AI芯片供应链关键环节，ABF载板最大消耗方之一",
+  "market_data": {
+    "estimated_revenue_fy2025": "~$18-20B (合并估算，需验证)",
+    "global_osat_rank": "No.1 worldwide",
+    "subsidiaries": ["ASE", "SPIL", "USI"]
+  },
+  "SWOT": {
+    "strengths": ["全球最大OSAT，规模优势显著", "ASE+SPIL+USI合并后综合实力最强", "先进封装技术领先", "AI时代定位明确"],
+    "weaknesses": ["台湾地缘政治风险", "大规模合并后整合挑战", "资本开支压力"],
+    "opportunities": ["AI芯片先进封装需求爆发", "CoWoS产能外溢带来OSAT机会", "系统集成需求增长"],
+    "threats": ["TSMC自建先进封装产能", "中国大陆OSAT企业追赶", "地缘政治不确定性"]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T3",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence": 0.6,
+  "data_limitations": "官网大量页面返回404，无法获取详细财务数据。营收数据基于行业常识估算。搜索引擎返回无关内容。需人工验证。",
+  "sources": [
+    {"title": "ASE Holdings Website", "url": "https://www.aseglobal.com/en", "publisher": "ASE Holdings", "accessed_at": "2026-05-16", "supports_fields": ["headquarters", "subsidiaries"]},
+    {"title": "Baidu百科 - 日月光集团", "url": "https://baike.baidu.com/item/日月光集团", "publisher": "Baidu", "accessed_at": "2026-05-16", "supports_fields": ["founded", "name_cn"]}
+  ],
+  "agent_meta": {"run_id": "20260516-023527", "discovered_by": "company-intel-agent-v2", "last_checked_at": "2026-05-16T02:37:00", "change_type": "new"},
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T02:38:30",
+    "score": 72,
+    "issues": ["官网大量404页面", "营收数据基于行业常识估算", "来源质量T3"],
+    "source_quality": "T3",
+    "decision": "reviewed_needs_human_check",
+    "decision_reason": "数据主要来自官网导航结构和百度百科（T3），关键财务数据缺失，需人工补充验证"
+  }
+}
