@@ -21,4 +21,12 @@
 {"company_name": "Microsoft (Maia/Cobalt)", "region": "USA", "priority_reason": "自研Maia AI芯片+Cobalt CPU，Azure核心", "category_hint": "cloud_chip", "status": "pending"}
 {"company_name": "阿里巴巴 (平头哥)", "region": "China", "priority_reason": "自研含光/倚天芯片，中国最大云厂商", "category_hint": "cloud_chip", "status": "pending"}
 {"company_name": "华为 Huawei", "region": "China", "priority_reason": "昇腾AI芯片+鲲鹏CPU，中国AI芯片核心，受出口管制影响", "category_hint": "cloud_chip", "status": "pending"}
-{"company_name": "Cisco", "region": "USA", "priority_reason": "网络设备芯片，定制ASIC需求", "category_hint": "equipment", "status": "pending"}
+{"company_name": "Cisco", "region": "USA", "priority_reason": "网络设备+定制ASIC芯片，通讯基础设施核心", "category_hint": "equipment", "status": "pending"}
+{"company_name": "TSMC", "region": "Taiwan", "priority_reason": "全球最大晶圆代工厂，CoWoS/先进封装核心，AI芯片供应链最关键节点", "category_hint": "foundry", "status": "pending"}
+{"company_name": "Samsung Foundry", "region": "Korea", "priority_reason": "全球第二大晶圆代工，与台积电竞争先进制程，HBM供应核心", "category_hint": "foundry", "status": "pending"}
+{"company_name": "Intel Foundry", "region": "USA", "priority_reason": "Intel代工服务(IFS)，美国本土先进制程，政府补贴支持", "category_hint": "foundry", "status": "pending"}
+{"company_name": "GlobalFoundries", "region": "USA", "priority_reason": "全球第四大晶圆代工，成熟制程+特殊工艺，美国CHIPS法案受益者", "category_hint": "foundry", "status": "pending"}
+{"company_name": "通富微电 TFME", "region": "China", "priority_reason": "中国第二大OSAT，AMD封装核心供应商，先进封装能力领先", "category_hint": "OSAT", "status": "pending"}
+{"company_name": "华天科技 Hua Tian", "region": "China", "priority_reason": "中国第三大OSAT，SiP/FC-BGA封装布局", "category_hint": "OSAT", "status": "pending"}
+{"company_name": "Nokia", "region": "Europe", "priority_reason": "全球通讯设备商，5G基站芯片需求", "category_hint": "equipment", "status": "pending"}
+{"company_name": "中兴通讯 ZTE", "region": "China", "priority_reason": "中国第二大通讯设备商，自研芯片+5G设备", "category_hint": "cloud_chip", "status": "pending"}
