@@ -577,15 +577,48 @@ const STAGE_OPTIONS = STAGE_ENUM;
 const STATUS_OPTIONS = STATUS_ENUM;
 const IMPACT_OPTIONS = IMPACT_ENUM;
 
+// Bulk selection state
+let selectedSignalIds = new Set();
+
 document.getElementById('tab-signals').addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, id } = btn.dataset;
-    if (action === 'edit-signal') openEditSignalModal(id);
-    else if (action === 'delete-signal') deleteSignalAction(id);
-    else if (action === 'new-signal') openNewSignalModal();
-    else if (action === 'filter-signals') applySignalFilters();
-    else if (action === 'reset-signal-filters') resetSignalFilters();
+    if (btn) {
+        const { action, id } = btn.dataset;
+        if (action === 'edit-signal') openEditSignalModal(id);
+        else if (action === 'delete-signal') deleteSignalAction(id);
+        else if (action === 'new-signal') openNewSignalModal();
+        else if (action === 'filter-signals') applySignalFilters();
+        else if (action === 'reset-signal-filters') resetSignalFilters();
+        else if (action === 'bulk-select-all') toggleSelectAll();
+        else if (action === 'bulk-select-none') clearSelection();
+        else if (action === 'bulk-status') openBulkStatusModal();
+        else if (action === 'bulk-verify') openBulkVerifyModal();
+        else if (action === 'bulk-reviewed') openBulkReviewedModal();
+        else if (action === 'bulk-archive') openBulkArchiveModal();
+        else if (action === 'bulk-impact') openBulkImpactModal();
+        else if (action === 'bulk-tags') openBulkTagsModal();
+        else if (action === 'bulk-cancel') clearSelection();
+        return;
+    }
+    // Checkbox clicks
+    const cb = e.target.closest('[data-signal-cb]');
+    if (cb) {
+        const sid = cb.dataset.signalCb;
+        if (cb.checked) selectedSignalIds.add(sid);
+        else selectedSignalIds.delete(sid);
+        renderBulkBar();
+    }
+    // Select all checkbox
+    const sa = e.target.closest('#sig-select-all');
+    if (sa) {
+        if (sa.checked) {
+            signalsData.forEach(s => selectedSignalIds.add(s.id));
+        } else {
+            selectedSignalIds.clear();
+        }
+        document.querySelectorAll('[data-signal-cb]').forEach(c => c.checked = sa.checked);
+        renderBulkBar();
+    }
 });
 
 function stageLabel(v) { return labelize(STAGE_LABEL, v); }
@@ -621,14 +654,23 @@ function renderSignalsTab(filterState = {}) {
 
     const companies = [...new Set(signalsData.map(s => s.company_name).filter(Boolean))].sort();
 
+    const filteredIds = new Set(filtered.map(s => s.id));
+    // Clean up selections that are no longer visible
+    selectedSignalIds.forEach(sid => {
+        if (!filteredIds.has(sid)) selectedSignalIds.delete(sid);
+    });
+
     const rows = filtered.map(s => {
         const isArchived = s.archived || s.status === 'archived';
         const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
         const updated = s.updatedAt ? new Date(s.updatedAt).toISOString().slice(0, 16).replace('T', ' ') : '—';
         const rowClass = isArchived ? 'style="opacity:0.5"' : '';
+        const selected = selectedSignalIds.has(s.id);
+        const rowBg = selected ? 'style="background:rgba(223,225,4,0.08)"' : rowClass;
         const archivedBadge = isArchived ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">封存</span>' : '';
         const aiBadge = s.ai_generated ? '<span class="badge badge-gray" style="margin-left:4px;font-size:10px">AI</span>' : '';
-        return `<tr ${rowClass}>
+        return `<tr ${rowBg}>
+            <td style="width:36px"><input type="checkbox" data-signal-cb="${esc(s.id)}" ${selected ? 'checked' : ''} style="cursor:pointer"></td>
             <td>${esc(s.company_name)}</td>
             <td>${esc(s.chip_name)}</td>
             <td>${esc(s.title)}${archivedBadge}${aiBadge}</td>
@@ -642,6 +684,9 @@ function renderSignalsTab(filterState = {}) {
             </td>
         </tr>`;
     }).join('');
+
+    const allVisibleSelected = filtered.length > 0 && filtered.every(s => selectedSignalIds.has(s.id));
+    const someVisibleSelected = filtered.some(s => selectedSignalIds.has(s.id)) && !allVisibleSelected;
 
     document.getElementById('signals-content').innerHTML = `
         <div class="toolbar">
@@ -676,9 +721,24 @@ function renderSignalsTab(filterState = {}) {
         </div>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>公司</th><th>芯片</th><th>標題</th><th>階段</th><th>狀態</th><th>信度</th><th>最後驗證</th><th>操作</th></tr></thead>
-                <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">尚無信號</td></tr>'}</tbody>
+                <thead><tr>
+                    <th style="width:36px"><input type="checkbox" id="sig-select-all" ${allVisibleSelected ? 'checked' : ''} ${someVisibleSelected ? 'data-indeterminate="1"' : ''} style="cursor:pointer"></th>
+                    <th>公司</th><th>芯片</th><th>標題</th><th>階段</th><th>狀態</th><th>信度</th><th>最後驗證</th><th>操作</th>
+                </tr></thead>
+                <tbody>${rows || '<tr><td colspan="9" style="color:#888;text-align:center">尚無信號</td></tr>'}</tbody>
             </table>
+        </div>
+        <div id="bulk-action-bar" class="bulk-action-bar" style="display:${selectedSignalIds.size > 0 ? 'flex' : 'none'}">
+            <span class="bulk-count">${selectedSignalIds.size} 條已選</span>
+            <div class="bulk-actions">
+                <button class="btn-sm" data-action="bulk-status">變更狀態</button>
+                <button class="btn-sm" data-action="bulk-verify">驗證</button>
+                <button class="btn-sm" data-action="bulk-reviewed">標記複核</button>
+                <button class="btn-sm" data-action="bulk-archive">封存</button>
+                <button class="btn-sm" data-action="bulk-impact">ABF 影響</button>
+                <button class="btn-sm" data-action="bulk-tags">標籤</button>
+                <button class="btn-sm btn-secondary" data-action="bulk-cancel">取消</button>
+            </div>
         </div>`;
 
     // Bind archived toggle
@@ -692,6 +752,30 @@ function renderSignalsTab(filterState = {}) {
     }
 }
 
+function renderBulkBar() {
+    const bar = document.getElementById('bulk-action-bar');
+    if (!bar) return;
+    const countEl = bar.querySelector('.bulk-count');
+    if (countEl) countEl.textContent = `${selectedSignalIds.size} 條已選`;
+    bar.style.display = selectedSignalIds.size > 0 ? 'flex' : 'none';
+}
+
+function toggleSelectAll() {
+    signalsData.forEach(s => selectedSignalIds.add(s.id));
+    document.querySelectorAll('[data-signal-cb]').forEach(c => c.checked = true);
+    const sa = document.getElementById('sig-select-all');
+    if (sa) sa.checked = true;
+    renderBulkBar();
+}
+
+function clearSelection() {
+    selectedSignalIds.clear();
+    document.querySelectorAll('[data-signal-cb]').forEach(c => c.checked = false);
+    const sa = document.getElementById('sig-select-all');
+    if (sa) sa.checked = false;
+    renderBulkBar();
+}
+
 function applySignalFilters() {
     const company = document.getElementById('sig-filter-company')?.value || '';
     const stage = document.getElementById('sig-filter-stage')?.value || '';
@@ -702,6 +786,184 @@ function applySignalFilters() {
 
 function resetSignalFilters() {
     renderSignalsTab({});
+}
+
+// ===== Bulk Signal Management =====
+
+function openBulkStatusModal() {
+    const count = selectedSignalIds.size;
+    if (!count) return;
+    openModal(`批量變更狀態 (${count} 條)`, `
+        <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px">將 ${count} 條信號的狀態變更為以下值。此操作會同時更新 last_status_changed_at。</p>
+        <select id="bulk-status-value" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:14px">
+            ${STATUS_OPTIONS.map(v => `<option value="${v}">${statusLabel(v)} (${v})</option>`).join('')}
+        </select>
+    `, async () => {
+        const newStatus = document.getElementById('bulk-status-value').value;
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedSignalIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, status: newStatus, last_reviewed_at: new Date().toISOString() }, { actor, previousStatus: sig.status });
+            updated++;
+        }
+        showToast(`已變更 ${updated} 條信號狀態為 ${statusLabel(newStatus)}`, 'success', 4000);
+        clearSelection();
+        await fetchSignals();
+        renderSignalsTab(currentFilterState);
+    }, true);
+}
+
+function openBulkVerifyModal() {
+    const count = selectedSignalIds.size;
+    if (!count) return;
+    const nonWatchCount = [...selectedSignalIds].filter(id => {
+        const s = signalsData.find(x => x.id === id);
+        return s && s.status !== 'watch' && s.status !== 'draft';
+    }).length;
+    let warningHtml = '';
+    if (nonWatchCount > 0) {
+        warningHtml = `<div style="margin-top:8px;padding:8px;background:#2e1a0d;border:1px solid var(--warning);border-radius:4px;font-size:12px;color:var(--warning)">⚠ 注意：${nonWatchCount} 條信號目前不是 watch/draft 狀態，驗證後會直接轉為 verified。</div>`;
+    }
+    openModal(`批量驗證 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">將 ${count} 條信號標記為已驗證。請填寫驗證人信息。</p>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">驗證人 email *</label>
+        <input id="bulk-verify-by" type="email" value="${esc(auth.currentUser?.email || '')}" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:14px" /></div>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">驗證備註 *</label>
+        <textarea id="bulk-verify-note" rows="3" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="批量驗證依據..."></textarea></div>
+        <div style="margin-bottom:10px"><label style="font-size:12px;cursor:pointer">
+            <input type="checkbox" id="bulk-verify-boost"> 同時將信度設為 95
+        </label></div>
+        ${warningHtml}
+    `, async () => {
+        const by = document.getElementById('bulk-verify-by').value.trim();
+        const note = document.getElementById('bulk-verify-note').value.trim();
+        const boost = document.getElementById('bulk-verify-boost')?.checked || false;
+        if (!by) throw new Error('請填寫驗證人');
+        if (!note) throw new Error('請填寫驗證備註');
+        const actor = auth.currentUser?.email || '';
+        const now = new Date().toISOString();
+        let updated = 0;
+        for (const id of selectedSignalIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            const data = { ...sig, status: 'verified', last_verified_at: now, last_verified_by: by, verification_note: note, last_reviewed_at: now };
+            if (boost) data.confidence_score = 95;
+            await saveSignal(id, data, { actor, previousStatus: sig.status });
+            updated++;
+        }
+        showToast(`已驗證 ${updated} 條信號`, 'success', 4000);
+        clearSelection();
+        await fetchSignals();
+        renderSignalsTab(currentFilterState);
+    }, true);
+}
+
+function openBulkReviewedModal() {
+    const count = selectedSignalIds.size;
+    if (!count) return;
+    openModal(`批量標記已複核 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">為 ${count} 條信號設置 reviewed_at，清除 NEEDS_REVIEW 隊列項目。不會變更信號狀態。</p>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">複核備註</label>
+        <textarea id="bulk-reviewed-note" rows="3" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="複核說明..."></textarea></div>
+    `, async () => {
+        const note = document.getElementById('bulk-reviewed-note').value.trim();
+        const actor = auth.currentUser?.email || '';
+        const now = new Date().toISOString();
+        let updated = 0;
+        for (const id of selectedSignalIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, reviewed_at: now, review_note: note, last_reviewed_at: now }, { actor });
+            updated++;
+        }
+        showToast(`已標記 ${updated} 條信號為已複核`, 'success', 4000);
+        clearSelection();
+        await fetchSignals();
+        renderSignalsTab(currentFilterState);
+    }, true);
+}
+
+function openBulkArchiveModal() {
+    const count = selectedSignalIds.size;
+    if (!count) return;
+    const names = [...selectedSignalIds].slice(0, 5).map(id => {
+        const s = signalsData.find(x => x.id === id);
+        return s ? `${s.company_name} / ${s.chip_name}` : '';
+    }).filter(Boolean).join('、');
+    const more = selectedSignalIds.size > 5 ? ` 等 ${count} 條` : '';
+    openModal(`批量封存 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">確認封存以下信號？封存後信號仍可在資料庫中找到，但不顯示於公共頁面。</p>
+        <div style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:4px;font-size:12px;color:var(--text-muted);margin-bottom:12px">${esc(names)}${esc(more)}</div>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">封存原因</label>
+        <textarea id="bulk-archive-reason" rows="2" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="說明封存原因..."></textarea></div>
+    `, async () => {
+        const reason = document.getElementById('bulk-archive-reason').value.trim();
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedSignalIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, status: 'archived', archived: true, verification_note: (sig.verification_note ? sig.verification_note + '\n' : '') + '封存：' + reason, last_reviewed_at: new Date().toISOString() }, { actor, previousStatus: sig.status });
+            updated++;
+        }
+        showToast(`已封存 ${updated} 條信號`, 'success', 4000);
+        clearSelection();
+        await fetchSignals();
+        renderSignalsTab(currentFilterState);
+    }, false);
+}
+
+function openBulkImpactModal() {
+    const count = selectedSignalIds.size;
+    if (!count) return;
+    openModal(`批量設定 ABF 需求影響 (${count} 條)`, `
+        <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px">為 ${count} 條信號設定 abf_demand_impact 值。</p>
+        <select id="bulk-impact-value" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:14px">
+            ${IMPACT_OPTIONS.map(v => `<option value="${v}">${impactLabel(v)} (${v})</option>`).join('')}
+        </select>
+    `, async () => {
+        const newImpact = document.getElementById('bulk-impact-value').value;
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedSignalIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, abf_demand_impact: newImpact, last_reviewed_at: new Date().toISOString() }, { actor });
+            updated++;
+        }
+        showToast(`已設定 ${updated} 條信號的 ABF 影響為 ${impactLabel(newImpact)}`, 'success', 4000);
+        clearSelection();
+        await fetchSignals();
+        renderSignalsTab(currentFilterState);
+    }, true);
+}
+
+function openBulkTagsModal() {
+    const count = selectedSignalIds.size;
+    if (!count) return;
+    openModal(`批量設定標籤 (${count} 條)`, `
+        <p style="color:var(--text-muted);font-size:12px;margin-bottom:12px">為 ${count} 條信號設定標籤（會覆蓋現有標籤）。</p>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">標籤（逗號分隔）</label>
+        <input id="bulk-tags-value" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:14px" placeholder="例如：nvidia, blackwell, hbm3" /></div>
+        <p style="font-size:11px;color:var(--text-muted)">留空則清除所有標籤</p>
+    `, async () => {
+        const raw = document.getElementById('bulk-tags-value').value.trim();
+        const newTags = raw ? raw.split(',').map(t => t.trim()).filter(Boolean) : [];
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedSignalIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, tags: newTags, last_reviewed_at: new Date().toISOString() }, { actor });
+            updated++;
+        }
+        showToast(`已設定 ${updated} 條信號的標籤 (${newTags.length} 個)`, 'success', 4000);
+        clearSelection();
+        await fetchSignals();
+        renderSignalsTab(currentFilterState);
+    }, true);
 }
 
 function buildSignalForm(s = {}) {
@@ -2727,7 +2989,7 @@ function openCompleteVerificationModal(signalId) {
                 </div>
                 <div class="dq-field">
                     <label>驗證日期</label>
-                    <input id="dq-complete-date" type="date" value="${signal.last_verified_at ? new Date(signal.last_verified_at).toISOString().slice(0, 10) : new Date().toISOString().slice(0, 10)}">
+                    <input id="dq-complete-date" type="date" value="${new Date().toISOString().slice(0, 10)}">
                 </div>
                 <div class="dq-field">
                     <label>驗證人</label>

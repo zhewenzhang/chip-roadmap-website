@@ -1091,3 +1091,35 @@ tr:hover td { background: var(--surface); }
 .bulk-add-preview .row-error {
     background: rgba(224, 82, 82, 0.1);
 }
+
+/* ===== Bulk Action Bar ===== */
+.bulk-action-bar {
+    position: sticky;
+    bottom: 0;
+    background: var(--panel-header);
+    border-top: 2px solid var(--accent);
+    padding: 10px 16px;
+    align-items: center;
+    gap: 12px;
+    z-index: 100;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+}
+
+.bulk-count {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.bulk-actions .btn-sm {
+    padding: 6px 12px;
+    font-size: 12px;
+}
