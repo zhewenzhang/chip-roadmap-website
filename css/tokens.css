@@ -1,0 +1,69 @@
+/*
+ * Design tokens — Single source of truth for colors, spacing, typography.
+ * Phase 25: Frontend Redesign Foundation
+ */
+
+:root {
+    /* ============ Colors ============ */
+    --bg:            #0a0a0a;
+    --bg-panel:      #0d0d0d;
+    --bg-hover:      #1a2e1a;
+    --fg:            #33ff00;
+    --fg-dim:        #22aa00;
+    --fg-muted:      #888888;
+    --accent:        #ffb000;
+    --accent-dim:    #cc8800;
+    --danger:        #ff3333;
+    --border:        #1f521f;
+    --border-bright: #33ff00;
+
+    /* ============ Spacing scale (4px base, REM ONLY) ============ */
+    --s-0:  0;
+    --s-1:  0.25rem;   /* 4px */
+    --s-2:  0.5rem;    /* 8px */
+    --s-3:  0.75rem;   /* 12px */
+    --s-4:  1rem;      /* 16px */
+    --s-5:  1.25rem;   /* 20px */
+    --s-6:  1.5rem;    /* 24px */
+    --s-8:  2rem;      /* 32px */
+    --s-10: 2.5rem;    /* 40px */
+    --s-12: 3rem;      /* 48px */
+    --s-16: 4rem;      /* 64px */
+    --s-20: 5rem;      /* 80px */
+
+    /* ============ Typography scale ============ */
+    --t-xs:   0.75rem;
+    --t-sm:   0.875rem;
+    --t-base: 1rem;
+    --t-md:   1.125rem;
+    --t-lg:   1.375rem;
+    --t-xl:   1.75rem;
+    --t-2xl:  2.25rem;
+    --t-3xl:  3rem;
+
+    /* ============ Layout ============ */
+    --max-content: 72rem;   /* 1152px */
+    --max-reading: 48rem;   /* 768px */
+    --sidebar-w:   20rem;   /* 320px */
+    --nav-h:       4rem;    /* 64px */
+
+    /* ============ Effects ============ */
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    --glow:      0 0 5px rgba(51, 255, 0, 0.35);
+    --glow-accent: 0 0 5px rgba(255, 176, 0, 0.35);
+    --transition: 100ms ease;
+
+    /* ============ DEPRECATED — kept for migration only ============ */
+    /* These will be removed in a future Phase. Do not use in new code. */
+    --color-bg: var(--bg);
+    --color-fg: var(--fg);
+    --color-muted: var(--bg-panel);
+    --color-muted-fg: var(--fg-muted);
+    --color-border: var(--border);
+    --color-invert-bg: var(--fg);
+    --color-invert-fg: var(--bg);
+    --text-primary: var(--fg);
+    --text-secondary: var(--fg-muted);
+    --text-muted: #555555;
+    --border-color: var(--border);
+}

@@ -1,0 +1,12 @@
+/* Typography — extracted from style.css Phase 25 */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1.2;
+    text-shadow: var(--glow);
+}
+
+h1 { font-size: var(--t-xl); letter-spacing: 0.05em; text-transform: uppercase; }
+h2 { font-size: 1.1rem; letter-spacing: 0.03em; text-transform: uppercase; }
+h3 { font-size: 0.95rem; }

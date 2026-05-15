@@ -1,66 +1,14 @@
 /*
  * Supply Chain Intelligence Terminal — Public Site Design System
- * Dark mode only. Terminal CLI aesthetic.
+ * Phase 25: Modular CSS architecture
  */
 
-/* ============== Design Tokens ============== */
-:root {
-    --bg: #0a0a0a;
-    --fg: #33ff00;
-    --fg-dim: #22aa00;
-    --accent: #ffb000;
-    --accent-dim: #cc8800;
-    --border: #1f521f;
-    --border-bright: #33ff00;
-    --error: #ff3333;
-    --warn: #ffb000;
-    --ok: #33ff00;
-    --watch: #ffb000;
-    --muted: #555555;
-    --muted-fg: #888888;
-    --panel-bg: #0d0d0d;
-    --panel-header: #111111;
-    --hover-bg: #1a2e1a;
-    --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
-    --glow: 0 0 5px rgba(51, 255, 0, 0.35);
-    --glow-accent: 0 0 5px rgba(255, 176, 0, 0.35);
-    --transition: 100ms ease;
-    /* Backward compat */
-    --color-bg: #0a0a0a;
-    --color-fg: #33ff00;
-    --color-muted: #0d0d0d;
-    --color-muted-fg: #888888;
-    --color-border: #1f521f;
-    --color-invert-bg: #33ff00;
-    --color-invert-fg: #0a0a0a;
-    --text-primary: #33ff00;
-    --text-secondary: #888888;
-    --text-muted: #555555;
-    --border-color: #1f521f;
-}
+@import './tokens.css';
+@import './reset.css';
+@import './typography.css';
+@import './layout.css';
 
-/* ============== Reset & Base ============== */
-*, *::before, *::after {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-    border-radius: 0 !important;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    font-family: var(--font-mono);
-    background: var(--bg);
-    color: var(--fg);
-    line-height: 1.5;
-    min-height: 100vh;
-    font-size: 14px;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
+/* Legacy styles below — being migrated to components/ and pages/ in Phase 26-32 */
 
 /* ============== Terminal Effects ============== */
 
@@ -81,23 +29,7 @@ body::before {
     );
 }
 
-::selection {
-    background: var(--fg);
-    color: var(--bg);
-}
-
-/* ============== Typography ============== */
-h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-mono);
-    font-weight: 600;
-    color: var(--fg);
-    line-height: 1.2;
-    text-shadow: var(--glow);
-}
-
-h1 { font-size: 1.75rem; letter-spacing: 0.05em; text-transform: uppercase; }
-h2 { font-size: 1.1rem; letter-spacing: 0.03em; text-transform: uppercase; }
-h3 { font-size: 0.95rem; }
+/* ============== Typography (legacy overrides) ============== */
 
 p {
     font-family: var(--font-mono);
@@ -3992,66 +3924,7 @@ tr:hover .td-company { background: var(--color-border); }
     }
 }
 
-/* ===== Phase 11: Homepage V2 ===== */
-
-.hero-v2 {
-    padding: 36px 24px 20px;
-    max-width: 1280px;
-    margin: 0 auto;
-}
-
-.hero-v2-content h1 {
-    font-family: var(--font-mono);
-    font-size: 1.4rem;
-    font-weight: 700;
-    line-height: 1.2;
-    margin-bottom: 6px;
-    color: var(--color-fg);
-}
-
-.hero-v2-subtitle {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    line-height: 1.6;
-    color: var(--color-muted-fg);
-    margin-bottom: 12px;
-    max-width: 720px;
-}
-
-.hero-v2-ctas {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 8px;
-}
-
-.hero-v2-cta {
-    font-family: var(--font-mono);
-    font-size: 0.85rem;
-    padding: 10px 20px;
-    text-decoration: none;
-    border: 1px solid var(--color-border);
-    transition: all 0.15s;
-}
-
-.hero-v2-cta-primary {
-    background: var(--color-fg);
-    color: var(--color-bg);
-    border-color: var(--color-fg);
-}
-
-.hero-v2-cta-primary:hover {
-    opacity: 0.85;
-}
-
-.hero-v2-cta-secondary {
-    background: transparent;
-    color: var(--color-fg);
-}
-
-.hero-v2-cta-secondary:hover {
-    background: var(--color-muted-bg);
-}
+/* ===== Phase 11: Homepage V2 — .hero-v2 removed in Phase 25 ===== */
 
 /* System Status Panel */
 .system-status {
@@ -4260,15 +4133,7 @@ tr:hover .td-company { background: var(--color-border); }
 
 /* Mobile: homepage V2 */
 @media (max-width: 768px) {
-    .hero-v2 {
-        padding: 28px 16px 16px;
-    }
-    .hero-v2-content h1 {
-        font-size: 1.2rem;
-    }
-    .hero-v2-subtitle {
-        font-size: 0.8rem;
-    }
+    /* .hero-v2 mobile rules removed in Phase 25 */
     .system-status-content {
         flex-direction: column;
         align-items: flex-start;
