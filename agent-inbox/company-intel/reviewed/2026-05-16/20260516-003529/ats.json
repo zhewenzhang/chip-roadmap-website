@@ -1,0 +1,131 @@
+{
+  "company_id": "ats",
+  "name_en": "AT & S Austria Technologie & Systemtechnik AG",
+  "name_cn": "奥地利科技与系统技术公司",
+  "aliases": [
+    "AT&S",
+    "AT and S"
+  ],
+  "region": "Europe",
+  "country": "Austria",
+  "headquarters": "Leoben, Styria, Austria",
+  "founded": 1987,
+  "website": "https://www.ats.net",
+  "company_type": "public",
+  "supply_chain_role": [
+    "IC substrate manufacturer",
+    "High-end PCB manufacturer"
+  ],
+  "main_products": [
+    {
+      "name": "IC Substrates",
+      "category": "IC substrate",
+      "description": "ABF-based IC substrates for advanced semiconductor packaging, used in HPC, AI, and networking chips"
+    },
+    {
+      "name": "High-End PCBs",
+      "category": "PCB",
+      "description": "Multilayer and HDI PCBs for automotive, medical, and industrial applications"
+    },
+    {
+      "name": "Miniature Components",
+      "category": "module",
+      "description": "Embedded component packaging solutions"
+    }
+  ],
+  "abf_relevance": {
+    "level": "critical",
+    "reason": "AT&S is one of the top 5 global IC substrate manufacturers, directly producing ABF-based IC substrates for high-performance computing chips. Major supplier to Intel and other leading chip designers."
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": [
+      "ABF IC substrate",
+      "embedded component packaging"
+    ],
+    "reason": "IC substrates are a critical enabling component for advanced semiconductor packaging. AT&S substrates are used in Intel CPUs and AI accelerators."
+  },
+  "china_relevance": {
+    "level": "strategic",
+    "reason": "AT&S has IC substrate production facilities in Chongqing, China (operational since ~2016). China expansion positions it in the growing Chinese semiconductor ecosystem. Also has facility in Kulim, Malaysia."
+  },
+  "key_customers_or_partners": [
+    "Intel",
+    "AMD (reported)",
+    "NVIDIA (indirect via substrate supply chain)",
+    "Qualcomm",
+    "Automotive OEMs"
+  ],
+  "competitors": [
+    "Ibiden",
+    "Shinko Electric",
+    "Unimicron",
+    "Nan Ya PCB",
+    "Zhuhai Access Semiconductor",
+    "Samsung Electro-Mechanics"
+  ],
+  "why_track": "全球前五大IC载板厂商之一，是ABF载板供应链关键节点。奥地利企业但在中国有产能布局，是理解全球IC载板供需格局的必跟踪标的。",
+  "market_data": {
+    "estimated_revenue_fy2025": "~€2.0-2.2B (based on FY2024 guidance and industry trends, 待验证)",
+    "ic_substrate_revenue_share": "IC substrates estimated to represent ~40-50% of total revenue",
+    "global_ic_substrate_share": "Estimated ~8-10% global IC substrate market share (待验证)"
+  },
+  "SWOT": {
+    "strengths": [
+      "技术领先的IC载板制造能力",
+      "欧洲唯一主要IC载板厂商，地缘多元化优势",
+      "中国重庆工厂产能布局",
+      "与Intel长期深度合作关系"
+    ],
+    "weaknesses": [
+      "相比日系/台系竞争对手规模较小",
+      "ABF载板良率提升仍在追赶领先者",
+      "汽车/医疗PCB业务分散管理精力"
+    ],
+    "opportunities": [
+      "AI芯片需求爆发拉动ABF载板需求",
+      "中国本地化供应链需求增长",
+      "地缘政治推动客户寻求非亚洲供应商"
+    ],
+    "threats": [
+      "日系/台系竞争对手扩产导致产能过剩",
+      "ABF载板价格下行压力",
+      "中国本土IC载板厂商崛起",
+      "全球经济放缓影响终端需求"
+    ]
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T4",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence": 0.45,
+  "data_limitations": "CRITICAL: 无法访问任何外部网站（Wikipedia、公司官网、搜索引擎均被屏蔽）。所有数据基于训练知识，无实时来源验证。收入数据、市场份额均为估计值。需要人工验证所有关键数据点。",
+  "sources": [
+    {
+      "title": "Training knowledge - no live sources accessible",
+      "url": "N/A",
+      "publisher": "LLM training data",
+      "accessed_at": "2026-05-16",
+      "supports_fields": [
+        "all fields - unverified"
+      ]
+    }
+  ],
+  "agent_meta": {
+    "run_id": "20260516-003529",
+    "discovered_by": "company-intel-agent-v3",
+    "last_checked_at": "2026-05-16T00:35:29+08:00",
+    "change_type": "initial",
+    "network_status": "all_external_access_blocked"
+  },
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T00:39:50+08:00",
+    "score": 95,
+    "issues": [
+      "No live sources accessible - all data from training knowledge"
+    ],
+    "source_quality": "T4",
+    "decision": "reviewed_needs_human_check",
+    "decision_override_reason": "source_quality T4 (no live sources) - all data unverified, needs human validation"
+  }
+}

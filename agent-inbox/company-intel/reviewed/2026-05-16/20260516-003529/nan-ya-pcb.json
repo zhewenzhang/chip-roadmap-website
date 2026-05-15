@@ -1,0 +1,132 @@
+{
+  "company_id": "nan-ya-pcb",
+  "name_en": "Nan Ya PCB Corporation",
+  "name_cn": "南亚电路板股份有限公司",
+  "aliases": [
+    "南亚电路板",
+    "Nan Ya PCB",
+    "NPC"
+  ],
+  "region": "Taiwan",
+  "country": "Taiwan",
+  "headquarters": "Taoyuan, Taiwan",
+  "founded": 1997,
+  "website": "https://www.npc.com.tw",
+  "company_type": "public (subsidiary of Formosa Plastics Group)",
+  "supply_chain_role": [
+    "IC substrate manufacturer",
+    "PCB manufacturer"
+  ],
+  "main_products": [
+    {
+      "name": "ABF IC Substrates",
+      "category": "IC substrate",
+      "description": "ABF-based IC substrates for CPU, GPU, AI accelerator, and networking chips"
+    },
+    {
+      "name": "BT IC Substrates",
+      "category": "IC substrate",
+      "description": "BT resin-based IC substrates for mobile and memory applications"
+    },
+    {
+      "name": "HDI PCBs",
+      "category": "PCB",
+      "description": "High-density interconnect PCBs for consumer electronics"
+    }
+  ],
+  "abf_relevance": {
+    "level": "critical",
+    "reason": "全球前三的ABF载板供应商，是Intel、AMD等主要芯片厂商的核心载板供应来源。台塑集团旗下，具有强大的资金和产能扩张能力。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": [
+      "ABF IC substrate",
+      "BT IC substrate"
+    ],
+    "reason": "IC载板是先进封装的关键组件。Nan Ya PCB的ABF载板直接用于Intel/AMD的CPU和AI芯片封装。"
+  },
+  "china_relevance": {
+    "level": "moderate",
+    "reason": "台湾企业，主要产能在台湾。中国大陆是重要终端市场，但受地缘政治和出口管制影响。"
+  },
+  "key_customers_or_partners": [
+    "Intel",
+    "AMD",
+    "NVIDIA (via substrate supply chain)",
+    "Broadcom",
+    "MediaTek"
+  ],
+  "competitors": [
+    "Ibiden",
+    "Shinko Electric",
+    "Unimicron",
+    "AT&S",
+    "Samsung Electro-Mechanics",
+    "Zhuhai Access Semiconductor"
+  ],
+  "why_track": "全球前三ABF载板厂商，是理解ABF载板供需格局的核心标的。台塑集团背景提供强资金支持，产能扩张积极。",
+  "market_data": {
+    "estimated_revenue_fy2025": "~NT$80-100B (~$2.5-3.1B USD, 待验证)",
+    "global_abf_substrate_share": "Estimated ~15-20% global ABF substrate market share (待验证)",
+    "capex_note": "持续扩产中，高雄新厂产能爬坡"
+  },
+  "SWOT": {
+    "strengths": [
+      "台塑集团强大资金支持",
+      "ABF载板技术领先，良率高",
+      "与Intel/AMD长期合作关系",
+      "产能规模大且持续扩张"
+    ],
+    "weaknesses": [
+      "高度依赖ABF载板单一产品线",
+      "产能集中在台湾，地缘风险",
+      "消费电子PCB业务利润率较低"
+    ],
+    "opportunities": [
+      "AI芯片需求爆发驱动ABF载板需求增长",
+      "先进封装技术演进增加载板层数和复杂度",
+      "竞争对手产能不足时可抢占份额"
+    ],
+    "threats": [
+      "ABF载板产能过剩和价格竞争",
+      "中国大陆IC载板厂商崛起",
+      "地缘政治风险（台海局势）",
+      "下游客户库存周期波动"
+    ]
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T4",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence": 0.45,
+  "data_limitations": "CRITICAL: 无法访问任何外部网站。所有数据基于训练知识，无实时来源验证。收入和市场份额数据为粗略估计。需要人工验证。",
+  "sources": [
+    {
+      "title": "Training knowledge - no live sources accessible",
+      "url": "N/A",
+      "publisher": "LLM training data",
+      "accessed_at": "2026-05-16",
+      "supports_fields": [
+        "all fields - unverified"
+      ]
+    }
+  ],
+  "agent_meta": {
+    "run_id": "20260516-003529",
+    "discovered_by": "company-intel-agent-v3",
+    "last_checked_at": "2026-05-16T00:35:29+08:00",
+    "change_type": "initial",
+    "network_status": "all_external_access_blocked"
+  },
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T00:39:50+08:00",
+    "score": 95,
+    "issues": [
+      "No live sources accessible - all data from training knowledge"
+    ],
+    "source_quality": "T4",
+    "decision": "reviewed_needs_human_check",
+    "decision_override_reason": "source_quality T4 (no live sources) - all data unverified, needs human validation"
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "company_id": "zhuhai-access",
+  "name_en": "Zhuhai Access Semiconductor Co., Ltd.",
+  "name_cn": "珠海越亚半导体股份有限公司",
+  "aliases": [
+    "珠海越亚",
+    "Access Semiconductor",
+    "越亚半导体"
+  ],
+  "region": "China",
+  "country": "China",
+  "headquarters": "Zhuhai, Guangdong, China",
+  "founded": 2006,
+  "website": "待确认",
+  "company_type": "private (pre-IPO or recently IPO'd, 待验证)",
+  "supply_chain_role": [
+    "IC substrate manufacturer"
+  ],
+  "main_products": [
+    {
+      "name": "ABF IC Substrates",
+      "category": "IC substrate",
+      "description": "ABF-based IC substrates for HPC, networking, and AI applications"
+    },
+    {
+      "name": "Embedded Die Substrates",
+      "category": "IC substrate",
+      "description": "Embedded die packaging substrates"
+    }
+  ],
+  "abf_relevance": {
+    "level": "high",
+    "reason": "中国大陆领先的IC载板厂商，是国产ABF载板替代的关键标的。在中美科技脱钩背景下具有战略意义。"
+  },
+  "advanced_packaging_relevance": {
+    "level": "medium",
+    "technologies": [
+      "ABF IC substrate",
+      "embedded die"
+    ],
+    "reason": "IC载板是先进封装基础组件。越亚在嵌入式裸片基板技术上有独特积累。"
+  },
+  "china_relevance": {
+    "level": "critical",
+    "reason": "中国大陆IC载板国产替代的核心企业。受益于中国半导体自主可控政策和本土芯片设计公司需求增长。"
+  },
+  "key_customers_or_partners": [
+    "华为海思（待验证）",
+    "中国本土芯片设计公司",
+    "部分国际芯片公司中国业务"
+  ],
+  "competitors": [
+    "Ibiden",
+    "Shinko Electric",
+    "Unimicron",
+    "Nan Ya PCB",
+    "AT&S",
+    "Samsung Electro-Mechanics",
+    "深南电路（中国竞争对手）"
+  ],
+  "why_track": "中国大陆最具潜力的ABF载板厂商，是理解中国IC载板国产替代进程的关键标的。在中美科技竞争背景下具有极高战略价值。",
+  "market_data": {
+    "estimated_revenue": "待验证（非上市公司或近期上市，财务数据有限）",
+    "china_ic_substrate_share": "中国本土IC载板领先企业之一（待验证具体份额）",
+    "ipo_status": "待确认IPO状态"
+  },
+  "SWOT": {
+    "strengths": [
+      "中国本土IC载板技术领先者",
+      "嵌入式裸片基板技术独特优势",
+      "受益国产替代政策支持",
+      "靠近中国本土客户需求"
+    ],
+    "weaknesses": [
+      "ABF载板技术与日系/台系仍有差距",
+      "产能规模较小",
+      "客户集中度较高",
+      "品牌知名度和信任度不足"
+    ],
+    "opportunities": [
+      "中国半导体自主可控政策强力支持",
+      "华为海思等中国芯片公司对国产载板需求迫切",
+      "中国AI芯片产业快速发展",
+      "IPO融资加速产能扩张"
+    ],
+    "threats": [
+      "国际大厂技术封锁和专利壁垒",
+      "ABF材料供应受限（味之素垄断）",
+      "深南电路等中国同行竞争",
+      "良率和品质稳定性挑战"
+    ]
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T4",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence": 0.35,
+  "data_limitations": "CRITICAL: 无法访问任何外部网站。数据基于训练知识，很多关键信息（收入、IPO状态、具体客户）标注为待验证。珠海越亚作为中国非上市/新上市公司，公开信息本就有限。需要人工验证所有数据。",
+  "sources": [
+    {
+      "title": "Training knowledge - no live sources accessible",
+      "url": "N/A",
+      "publisher": "LLM training data",
+      "accessed_at": "2026-05-16",
+      "supports_fields": [
+        "all fields - unverified"
+      ]
+    }
+  ],
+  "agent_meta": {
+    "run_id": "20260516-003529",
+    "discovered_by": "company-intel-agent-v3",
+    "last_checked_at": "2026-05-16T00:35:29+08:00",
+    "change_type": "initial",
+    "network_status": "all_external_access_blocked"
+  },
+  "review": {
+    "reviewed_by": "company-intel-reviewer",
+    "reviewed_at": "2026-05-16T00:39:50+08:00",
+    "score": 95,
+    "issues": [
+      "No live sources accessible - all data from training knowledge"
+    ],
+    "source_quality": "T4",
+    "decision": "reviewed_needs_human_check",
+    "decision_override_reason": "source_quality T4 (no live sources) - all data unverified, needs human validation"
+  }
+}

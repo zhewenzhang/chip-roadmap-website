@@ -1,7 +1,7 @@
 {
-  "last_run_at": "2026-05-15T11:00:00+08:00",
-  "processed_count_total": 3,
-  "pending_companies": ["AT&S", "Nan Ya PCB", "Zhuhai Access Semiconductor", "JCET Group", "ASE Technology", "Camtek", "DeepX"],
-  "last_batch_companies": ["Unimicron", "Ibiden", "Shinko Electric"],
+  "last_run_at": "2026-05-16T00:35:29+08:00",
+  "processed_count_total": 6,
+  "pending_companies": ["JCET Group", "ASE Technology", "Camtek", "DeepX"],
+  "last_batch_companies": ["AT&S", "Nan Ya PCB", "Zhuhai Access Semiconductor"],
   "errors": []
 }

@@ -1,0 +1,29 @@
+{
+  "run_id": "20260516-003529",
+  "run_date": "2026-05-16",
+  "selection_round": 3,
+  "already_reviewed": ["TSMC", "Broadcom", "Qualcomm", "Marvell"],
+  "already_unverified": ["Cambricon"],
+  "already_rejected": ["MediaTek"],
+  "selected_companies": [
+    {
+      "company": "AT&S",
+      "category": "IC substrate",
+      "priority": "P0",
+      "reason": "Austria-based IC substrate & PCB manufacturer, key ABF supply chain player, not yet covered"
+    },
+    {
+      "company": "Nan Ya PCB",
+      "category": "IC substrate",
+      "priority": "P0",
+      "reason": "Taiwan IC substrate supplier (Formosa Plastics subsidiary), ABF substrate tier-1, not yet covered"
+    },
+    {
+      "company": "Zhuhai Access Semiconductor",
+      "category": "IC substrate",
+      "priority": "P0",
+      "reason": "China IC substrate manufacturer, emerging ABF player, not yet covered"
+    }
+  ],
+  "pending_remaining": ["JCET Group", "ASE Technology", "Camtek", "DeepX"]
+}
