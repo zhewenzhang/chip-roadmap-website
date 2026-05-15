@@ -530,24 +530,40 @@
       "country": "美国",
       "region": "USA",
       "category": "AI加速器",
-      "headquarters": "",
-      "founded": null,
-      "market_cap": "",
+      "headquarters": "Sunnyvale, CA",
+      "founded": 2016,
+      "market_cap": "未上市（估值 ~$4B）",
       "abf_demand": "高",
-      "market_position": "超大尺寸AI训练芯片",
-      "description": "",
+      "abf_demand_impact": "medium",
+      "ai_chip_focus": true,
+      "market_position": "超大芯片技術領導者，專注大型語言模型訓練加速，主要面向科研機構和雲服務商。",
+      "description": "Cerebras Systems 是美國 AI 芯片公司，以 WSE（晶圓級引擎）技術聞名，WSE-3 擁有 4 萬億個晶體管，是目前世界上最大的 AI 訓練芯片。",
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "WSE 晶圓級芯片技術獨特，單芯片算力遠超傳統 GPU",
+          "訓練速度對某些大模型比 GPU 集群快 10-100 倍",
+          "已有 CS-3 系統商用，客戶包括政府實驗室和研究機構"
+        ],
+        "weaknesses": [
+          "芯片尺寸極大，封裝和良率挑戰高",
+          "生態系統不成熟，軟件支持遠不及 CUDA",
+          "定價極高，難以大規模商業部署"
+        ],
+        "opportunities": [
+          "LLM 訓練需求持續爆發，大型模型需要更強算力",
+          "政府/國防市場對非 GPU 方案有需求"
+        ],
+        "threats": [
+          "NVIDIA GB200 系列持續壓縮其市場空間",
+          "資金壓力大，長期商業化路徑不明確"
+        ]
       },
       "__status": "V1-KEEP",
       "__sources": {},
-      "__last_updated": "",
-      "__updated_by": ""
+      "__last_updated": "2026-05-15",
+      "__updated_by": "phase-23"
     },
     "groq": {
       "id": "groq",
@@ -556,24 +572,40 @@
       "country": "美国",
       "region": "USA",
       "category": "AI加速器",
-      "headquarters": "",
-      "founded": null,
-      "market_cap": "",
+      "headquarters": "Mountain View, CA",
+      "founded": 2016,
+      "market_cap": "未上市（估值 ~$2.8B）",
       "abf_demand": "中",
-      "market_position": "AI推理芯片新秀",
-      "description": "",
+      "abf_demand_impact": "low",
+      "ai_chip_focus": true,
+      "market_position": "推理速度標杆，在 Llama / Mixtral 等開源模型推理上速度遠超 GPU，主要定位雲端 API 推理服務。",
+      "description": "Groq 是美國 AI 推理芯片公司，其 LPU（語言處理單元）以極低延遲著稱，GroqCloud 提供目前市場上最快的 LLM 推理服務之一。",
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "LPU 架構推理延遲極低，token 生成速度業界領先",
+          "GroqCloud 已對外開放，積累大量開發者用戶",
+          "確定性執行（無動態調度），推理性能穩定可預測"
+        ],
+        "weaknesses": [
+          "不擅長訓練，只做推理，市場規模受限",
+          "需要大量 SRAM，單芯片成本高",
+          "與 CUDA 生態完全不兼容，需要重新編譯模型"
+        ],
+        "opportunities": [
+          "推理市場增速快於訓練，隨 AI 應用爆發受益",
+          "低延遲需求（實時語音/Agent）是其差異化優勢"
+        ],
+        "threats": [
+          "NVIDIA 推理專用卡（L40S/B200 推理版）持續優化",
+          "AWS、Google 自研推理芯片侵蝕市場"
+        ]
       },
       "__status": "V1-KEEP",
       "__sources": {},
-      "__last_updated": "",
-      "__updated_by": ""
+      "__last_updated": "2026-05-15",
+      "__updated_by": "phase-23"
     },
     "tenstorrent": {
       "id": "tenstorrent",
@@ -582,24 +614,40 @@
       "country": "加拿大",
       "region": "Canada",
       "category": "AI加速器",
-      "headquarters": "",
-      "founded": null,
-      "market_cap": "",
+      "headquarters": "Austin, TX / Toronto",
+      "founded": 2016,
+      "market_cap": "未上市（估值 ~$2.6B）",
       "abf_demand": "高",
-      "market_position": "开源RISC-V架构AI",
-      "description": "",
+      "abf_demand_impact": "low",
+      "ai_chip_focus": true,
+      "market_position": "性價比 AI 芯片挑戰者，主要面向數據中心推理和邊緣計算，已獲三星、現代等戰略投資。",
+      "description": "Tenstorrent 是加拿大 AI 芯片公司，由前 AMD GPU 架構師 Jim Keller 領導，主打高性價比 AI 推理和訓練芯片，採用 RISC-V 核心架構。",
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "Jim Keller 領導，CPU/GPU 架構設計頂級人才",
+          "RISC-V + Tensix 核心，開放架構降低生態壁壘",
+          "三星代工 + 三星戰略投資，供應鏈有保障"
+        ],
+        "weaknesses": [
+          "出貨量小，量產驗證不足",
+          "軟件工具鏈仍在建設中",
+          "品牌知名度低，難以打入大型雲廠商供應鏈"
+        ],
+        "opportunities": [
+          "RISC-V 生態快速成長，有助於降低切換成本",
+          "亞洲市場（韓國/日本）對非美芯片有需求"
+        ],
+        "threats": [
+          "AMD/Intel 推理卡價格持續下降，性價比優勢縮小",
+          "融資壓力，競爭環境殘酷"
+        ]
       },
       "__status": "V1-KEEP",
       "__sources": {},
-      "__last_updated": "",
-      "__updated_by": ""
+      "__last_updated": "2026-05-15",
+      "__updated_by": "phase-23"
     },
     "graphcore": {
       "id": "graphcore",
@@ -608,24 +656,40 @@
       "country": "英国",
       "region": "Europe",
       "category": "AI加速器",
-      "headquarters": "",
-      "founded": null,
-      "market_cap": "",
+      "headquarters": "Bristol, UK",
+      "founded": 2016,
+      "market_cap": "軟銀收購（私有，估值縮水）",
       "abf_demand": "中",
-      "market_position": "英国AI芯片独角兽",
-      "description": "",
+      "abf_demand_impact": "low",
+      "ai_chip_focus": true,
+      "market_position": "IPU 架構先驅，已被軟銀收購整合，市場地位下滑，主要在學術和研究場景有用戶基礎。",
+      "description": "Graphcore 是英國 AI 芯片公司，以 IPU（智能處理單元）架構聞名，2023 年被軟銀收購。其 Bow IPU 針對稀疏計算優化，但市場拓展受限。",
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "IPU 架構在稀疏計算和 GNN 上有獨特優勢",
+          "技術積累深，學術合作廣泛",
+          "軟銀收購後資金壓力減少"
+        ],
+        "weaknesses": [
+          "市場份額極小，主流 LLM 部署不採用 IPU",
+          "與 PyTorch/CUDA 生態整合差",
+          "軟銀收購後戰略方向不明確"
+        ],
+        "opportunities": [
+          "軟銀可能整合進 Arm 生態",
+          "歐洲 AI 自主戰略可能帶來政府採購機會"
+        ],
+        "threats": [
+          "實際上已退出主流 AI 芯片市場競爭",
+          "人才流失嚴重"
+        ]
       },
       "__status": "V1-KEEP",
       "__sources": {},
-      "__last_updated": "",
-      "__updated_by": ""
+      "__last_updated": "2026-05-15",
+      "__updated_by": "phase-23"
     },
     "sambanova": {
       "id": "sambanova",
@@ -634,24 +698,40 @@
       "country": "美国",
       "region": "USA",
       "category": "AI加速器",
-      "headquarters": "",
-      "founded": null,
-      "market_cap": "",
+      "headquarters": "Palo Alto, CA",
+      "founded": 2017,
+      "market_cap": "未上市（估值 ~$5B）",
       "abf_demand": "高",
-      "market_position": "企业级AI训练",
-      "description": "",
+      "abf_demand_impact": "low",
+      "ai_chip_focus": true,
+      "market_position": "企業級 AI 全棧方案供應商，面向需要本地部署 AI 的大型企業和政府機構，主要競爭對手是 NVIDIA DGX。",
+      "description": "SambaNova Systems 是美國 AI 芯片公司，提供從芯片到系統的全棧 AI 解決方案，SN40L 芯片主打大模型推理，其 SambaNova Cloud 提供快速 LLM 推理 API。",
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "全棧解決方案（芯片+系統+軟件），企業部署門檻低",
+          "SambaNova Cloud 推理速度在 Llama 系列上競爭力強",
+          "已獲多個政府/金融機構大單"
+        ],
+        "weaknesses": [
+          "硬件成本高，難以與 NVIDIA 拼性價比",
+          "生態封閉，遷移成本高",
+          "出貨量小，規模效應不足"
+        ],
+        "opportunities": [
+          "企業本地部署 AI 需求增長（數據安全考量）",
+          "政府/國防採購傾向非 NVIDIA 方案"
+        ],
+        "threats": [
+          "NVIDIA NIM + DGX 系統持續優化，縮小差距",
+          "融資環境收緊"
+        ]
       },
       "__status": "V1-KEEP",
       "__sources": {},
-      "__last_updated": "",
-      "__updated_by": ""
+      "__last_updated": "2026-05-15",
+      "__updated_by": "phase-23"
     },
     "habana_labs": {
       "id": "habana_labs",
@@ -660,24 +740,40 @@
       "country": "以色列",
       "region": "Israel",
       "category": "AI加速器",
-      "headquarters": "",
-      "founded": null,
-      "market_cap": "",
+      "headquarters": "Tel Aviv, Israel",
+      "founded": 2016,
+      "market_cap": "Intel 子公司（2019年以 ~$2B 被收購）",
       "abf_demand": "高",
-      "market_position": "AI训练加速器",
-      "description": "",
+      "abf_demand_impact": "medium",
+      "ai_chip_focus": true,
+      "market_position": "Intel AI 加速器部門，Gaudi 3 是其旗艦產品，主打高性價比替代 NVIDIA GPU，在 AWS EC2 DL2q 實例上有部署。",
+      "description": "Habana Labs 是以色列 AI 芯片公司，2019 年被 Intel 以 20 億美元收購。旗下 Gaudi 系列 AI 訓練/推理芯片是 Intel AI 加速器的核心產品，主要在 AWS 等雲平台提供服務。",
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "依托 Intel 資源，供應鏈和資金有保障",
+          "Gaudi 3 在特定工作負載（Llama 訓練）性價比優於 H100",
+          "AWS 深度合作，有穩定的雲端部署渠道"
+        ],
+        "weaknesses": [
+          "Intel 整體 AI 業務動盪，Gaudi 路線多次調整",
+          "軟件生態遠不及 CUDA，開發者採用率低",
+          "Intel IDM 2.0 戰略重組中，優先級不明確"
+        ],
+        "opportunities": [
+          "Intel 大客戶生態（AWS / Meta）有採購意願",
+          "Gaudi 開源軟件工具鏈持續完善"
+        ],
+        "threats": [
+          "Intel 可能出售或裁撤 Habana 業務（傳言）",
+          "NVIDIA B200 性價比提升，壓縮替代空間"
+        ]
       },
       "__status": "V1-KEEP",
       "__sources": {},
-      "__last_updated": "",
-      "__updated_by": ""
+      "__last_updated": "2026-05-15",
+      "__updated_by": "phase-23"
     },
     "huawei_ascend": {
       "id": "huawei_ascend",
