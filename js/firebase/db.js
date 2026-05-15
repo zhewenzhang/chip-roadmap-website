@@ -122,7 +122,7 @@ export async function loadSignals(options = {}) {
     const { includeArchived = false } = options;
     try {
         const snap = await getDocs(collection(db, 'signals'));
-        let signals = snap.docs.map(d => normalizeSignal({ id: d.id, ...d.data() })).filter(Boolean);
+        let signals = snap.docs.map(d => normalizeSignal({ ...d.data(), id: d.id })).filter(Boolean);
         if (!includeArchived) {
             signals = signals.filter(s => !s.archived && s.status !== 'archived');
         }
@@ -141,9 +141,10 @@ export async function loadSignals(options = {}) {
 }
 
 export async function getSignal(id) {
+    if (!id) throw new Error('Signal document id is required');
     const snap = await getDoc(doc(db, 'signals', id));
     if (!snap.exists()) return null;
-    return normalizeSignal({ id: snap.id, ...snap.data() });
+    return normalizeSignal({ ...snap.data(), id: snap.id });
 }
 
 /**
@@ -188,6 +189,7 @@ export async function createSignal(data, actor = '') {
     }
 
     const normalized = normalizeSignal(cleaned);
+    delete normalized.id;
 
     // Validate fields that have NO defaults in normalizeSignal
     // (stage/status/abf_demand_impact/confidence_score get defaults)
@@ -210,6 +212,7 @@ export async function createSignal(data, actor = '') {
 
 export async function saveSignal(id, data, opts = {}) {
     const { actor = '', previousStatus = null, previousConfidence = null } = opts;
+    if (!id) throw new Error('Signal document id is required');
 
     // Trim string fields before normalization
     const cleaned = { ...data };
@@ -232,6 +235,8 @@ export async function saveSignal(id, data, opts = {}) {
 
     // Don't overwrite createdAt on save
     delete normalized.createdAt;
+    // Firestore document id is the source of truth. Do not persist a stale or blank id field.
+    delete normalized.id;
 
     await updateDoc(doc(db, 'signals', id), {
         ...normalized,
@@ -257,6 +262,7 @@ export async function saveSignal(id, data, opts = {}) {
  */
 export async function archiveSignal(id, opts = {}) {
     const { actor = '', reason = '' } = opts;
+    if (!id) throw new Error('Signal document id is required');
     await updateDoc(doc(db, 'signals', id), {
         archived: true,
         archived_at: new Date().toISOString(),

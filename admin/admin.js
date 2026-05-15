@@ -122,6 +122,16 @@ function describeSignalPlacement(signal, queueItems) {
     return { statusLabel: statusLabel(status), queueType, publicVisible, roadmapVisible, message, blockers };
 }
 
+function summarizeIssues(issues, max = 4) {
+    if (!issues || issues.length === 0) return '';
+    const reasons = issues
+        .map(i => i.reason || i.category || i.queueType)
+        .filter(Boolean);
+    const visible = reasons.slice(0, max).join('；');
+    const extra = reasons.length > max ? `；另有 ${reasons.length - max} 項` : '';
+    return visible + extra;
+}
+
 function renderMarkdown(md) {
     if (!md) return '<em style="color:#888">No content</em>';
     let html = md
@@ -2670,7 +2680,7 @@ function openQuickFixModal(signalId) {
         if (remaining.length === 0) {
             showToast('已補全，此信號已完成數據品質檢查', 'success', 4000);
         } else {
-            showToast(`已補全，仍有 ${remaining.length} 個問題需要處理`, 'success', 4000);
+            showToast(`已補全，仍有 ${remaining.length} 個問題：${summarizeIssues(remaining)}`, 'success', 7000);
         }
         renderDataQualityTab();
     }, false);
@@ -2787,8 +2797,7 @@ function openCompleteVerificationModal(signalId) {
         if (remaining.length === 0) {
             showToast(`驗證完成，${placement?.message || '沒有剩餘數據品質問題'}`, 'success', 4000);
         } else {
-            const reasons = remaining.map(i => i.reason).join('；');
-            showToast(`驗證完成，仍有 ${remaining.length} 個問題：${reasons}`, 'success', 5000);
+            showToast(`驗證完成，仍有 ${remaining.length} 個問題：${summarizeIssues(remaining)}`, 'success', 7000);
         }
         renderDataQualityTab();
     }, true);
@@ -2952,18 +2961,15 @@ function openMarkReviewedModal(signalId) {
             previousConfidence: signal.confidence_score,
         });
 
-        // Re-evaluate remaining issues after save
-        const remaining = getRemainingIssues(updatedData);
-
         await fetchSignals();
         buildQualityQueueFromData();
         const refreshed = signalsData.find(s => s.id === signalId);
         const placement = refreshed ? describeSignalPlacement(refreshed, qualityQueue) : null;
+        const remaining = refreshed ? getRemainingIssues(refreshed) : [];
         if (remaining.length === 0) {
             showToast(`複核已完成，${placement?.message || '沒有剩餘數據品質問題'}`, 'success', 4000);
         } else {
-            const reasons = remaining.map(i => i.reason).join('；');
-            showToast(`複核已完成，仍有 ${remaining.length} 個問題：${reasons}`, 'success', 5000);
+            showToast(`複核已完成，仍有 ${remaining.length} 個問題：${summarizeIssues(remaining)}`, 'success', 7000);
         }
         renderDataQualityTab();
     }, false);
