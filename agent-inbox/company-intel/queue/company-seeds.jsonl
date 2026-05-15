@@ -1,10 +1,10 @@
 {"company_name": "Unimicron", "region": "Taiwan", "priority_reason": "全球第一大ABF載板廠，直接影響AI芯片封裝", "category_hint": "ABF", "status": "done"}
 {"company_name": "Ibiden", "region": "Japan", "priority_reason": "全球第二大ABF載板供應商，Intel/AMD核心供應商", "category_hint": "ABF", "status": "done"}
 {"company_name": "Shinko Electric", "region": "Japan", "priority_reason": "ABF載板+先進封裝基板，Sony/Toyota關聯", "category_hint": "substrate", "status": "done"}
-{"company_name": "AT&S", "region": "Europe", "priority_reason": "歐洲最大IC基板廠，進入ABF載板市場", "category_hint": "substrate", "status": "pending"}
-{"company_name": "Nan Ya PCB", "region": "Taiwan", "priority_reason": "台灣ABF載板主要供應商，台塑集團", "category_hint": "ABF", "status": "pending"}
-{"company_name": "Zhuhai Access Semiconductor", "region": "China", "priority_reason": "中國ABF載板突破者，國產替代關鍵", "category_hint": "ABF", "status": "pending"}
-{"company_name": "JCET Group", "region": "China", "priority_reason": "中國最大OSAT，先進封裝能力領先", "category_hint": "OSAT", "status": "pending"}
-{"company_name": "ASE Technology", "region": "Taiwan", "priority_reason": "全球最大OSAT，CoWoS/先進封裝核心", "category_hint": "OSAT", "status": "pending"}
-{"company_name": "Camtek", "region": "Israel", "priority_reason": "ABF載板檢測設備龍頭，AI芯片良率關鍵", "category_hint": "equipment", "status": "pending"}
+{"company_name": "AT&S", "region": "Europe", "priority_reason": "歐洲最大IC基板廠，進入ABF載板市場", "category_hint": "substrate", "status": "done"}
+{"company_name": "Nan Ya PCB", "region": "Taiwan", "priority_reason": "台灣ABF載板主要供應商，台塑集團", "category_hint": "ABF", "status": "done"}
+{"company_name": "Zhuhai Access Semiconductor", "region": "China", "priority_reason": "中國ABF載板突破者，國產替代關鍵", "category_hint": "ABF", "status": "done"}
+{"company_name": "JCET Group", "region": "China", "priority_reason": "中國最大OSAT，先進封裝能力領先", "category_hint": "OSAT", "status": "done"}
+{"company_name": "ASE Technology", "region": "Taiwan", "priority_reason": "全球最大OSAT，CoWoS/先進封裝核心", "category_hint": "OSAT", "status": "done"}
+{"company_name": "Camtek", "region": "Israel", "priority_reason": "ABF載板檢測設備龍頭，AI芯片良率關鍵", "category_hint": "equipment", "status": "done"}
 {"company_name": "DeepX", "region": "Korea", "priority_reason": "韓國AI芯片設計新銳，邊緣推理", "category_hint": "AI_chip", "status": "pending"}
