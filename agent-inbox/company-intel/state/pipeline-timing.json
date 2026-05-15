@@ -1,1 +1,12 @@
-{"last_run_started":"2026-05-15T22:35:28+08:00","last_run_completed":"2026-05-15T22:44:30+08:00","last_duration_seconds":542,"avg_duration_seconds":542}
+{
+  "last_run_id": "20260516-003529",
+  "last_started_at": "2026-05-16T00:34:30+08:00",
+  "last_completed_at": "2026-05-16T00:38:00+08:00",
+  "last_duration_seconds": 210,
+  "average_duration_seconds": 376,
+  "run_history": [
+    {"run_id": "20260515-203525", "duration_seconds": 540, "companies": 3},
+    {"run_id": "20260515-223528", "duration_seconds": 542, "companies": 3},
+    {"run_id": "20260516-003529", "duration_seconds": 210, "companies": 3}
+  ]
+}
