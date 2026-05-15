@@ -31,6 +31,16 @@ export async function loadCompanies() {
     return result;
 }
 
+export async function getCompanyDoc(id) {
+    try {
+        const snap = await getDoc(doc(db, 'companies', id));
+        if (snap.exists()) return { ok: true, data: { id: snap.id, ...snap.data() } };
+        return { ok: false, data: null };
+    } catch (e) {
+        return { ok: false, data: null, error: e.message };
+    }
+}
+
 export async function loadRoadmaps() {
     const snap = await getDocs(collection(db, 'companies'));
     const result = {};
