@@ -1,0 +1,20 @@
+.page-head {
+    padding: var(--s-6) 0;
+    margin-bottom: var(--s-6);
+}
+.page-head-eyebrow {
+    font-size: var(--t-xs);
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: var(--s-2);
+}
+.page-head-title {
+    font-size: var(--t-xl);
+    margin: 0;
+    margin-bottom: var(--s-2);
+}
+.page-head-meta {
+    font-size: var(--t-sm);
+    color: var(--fg-muted);
+}
