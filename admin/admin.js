@@ -1419,10 +1419,21 @@ function renderReviewTab() {
         s.status === 'watch' && s.evidence_summary && s.confidence_score >= 50
     );
 
+    // Clean up selections
+    const reviewItemIds = new Set(reviewItems.map(s => s.id));
+    selectedReviewIds.forEach(sid => {
+        if (!reviewItemIds.has(sid)) selectedReviewIds.delete(sid);
+    });
+
+    const allSelected = reviewItems.length > 0 && reviewItems.every(s => selectedReviewIds.has(s.id));
+
     const rows = reviewItems.map(s => {
         const verified = s.last_verified_at ? new Date(s.last_verified_at).toISOString().slice(0, 10) : '—';
         const updated = s.updatedAt ? new Date(s.updatedAt).toISOString().slice(0, 16).replace('T', ' ') : '—';
-        return `<tr>
+        const selected = selectedReviewIds.has(s.id);
+        const rowBg = selected ? 'style="background:rgba(223,225,4,0.08)"' : '';
+        return `<tr ${rowBg}>
+            <td style="width:36px"><input type="checkbox" data-review-cb="${esc(s.id)}" ${selected ? 'checked' : ''} style="cursor:pointer"></td>
             <td>${esc(s.company_name)}</td>
             <td>${esc(s.chip_name)}</td>
             <td>${esc(s.title)}</td>
@@ -1444,10 +1455,176 @@ function renderReviewTab() {
         </div>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>公司</th><th>芯片</th><th>標題</th><th>狀態</th><th>信度</th><th>證據摘要</th><th>最後驗證</th><th>操作</th></tr></thead>
-                <tbody>${rows || '<tr><td colspan="8" style="color:#888;text-align:center">尚無待驗證信號</td></tr>'}</tbody>
+                <thead><tr>
+                    <th style="width:36px"><input type="checkbox" id="review-select-all" ${allSelected ? 'checked' : ''} style="cursor:pointer"></th>
+                    <th>公司</th><th>芯片</th><th>標題</th><th>狀態</th><th>信度</th><th>證據摘要</th><th>最後驗證</th><th>操作</th>
+                </tr></thead>
+                <tbody>${rows || '<tr><td colspan="9" style="color:#888;text-align:center">尚無待驗證信號</td></tr>'}</tbody>
             </table>
+        </div>
+        <div id="review-bulk-bar" class="bulk-action-bar" style="display:${selectedReviewIds.size > 0 ? 'flex' : 'none'}">
+            <span class="bulk-count">${selectedReviewIds.size} 條已選</span>
+            <div class="bulk-actions">
+                <button class="btn-sm btn-primary" data-action="bulk-review-verify">批量驗證</button>
+                <button class="btn-sm btn-danger" data-action="bulk-review-downgrade">批量降級</button>
+                <button class="btn-sm btn-secondary" data-action="bulk-review-draft">退回草稿</button>
+                <button class="btn-sm" data-action="bulk-review-needsdata">標記需補數據</button>
+                <button class="btn-sm btn-secondary" data-action="bulk-review-cancel">取消</button>
+            </div>
         </div>`;
+}
+
+function renderReviewBulkBar() {
+    const bar = document.getElementById('review-bulk-bar');
+    if (!bar) return;
+    const countEl = bar.querySelector('.bulk-count');
+    if (countEl) countEl.textContent = `${selectedReviewIds.size} 條已選`;
+    bar.style.display = selectedReviewIds.size > 0 ? 'flex' : 'none';
+}
+
+function toggleReviewSelectAll() {
+    const reviewItems = signalsData.filter(s =>
+        s.status === 'watch' && s.evidence_summary && s.confidence_score >= 50
+    );
+    reviewItems.forEach(s => selectedReviewIds.add(s.id));
+    document.querySelectorAll('[data-review-cb]').forEach(c => c.checked = true);
+    const sa = document.getElementById('review-select-all');
+    if (sa) sa.checked = true;
+    renderReviewBulkBar();
+}
+
+function clearReviewSelection() {
+    selectedReviewIds.clear();
+    document.querySelectorAll('[data-review-cb]').forEach(c => c.checked = false);
+    const sa = document.getElementById('review-select-all');
+    if (sa) sa.checked = false;
+    renderReviewBulkBar();
+}
+
+async function refreshAllReviewState() {
+    clearReviewSelection();
+    await fetchSignals();
+    buildQualityQueueFromData();
+    renderDashboardTab();
+    renderReviewTab();
+    renderDataQualityTab();
+}
+
+// ===== Bulk Review Operations =====
+
+function openBulkReviewVerifyModal() {
+    const count = selectedReviewIds.size;
+    if (!count) return;
+    openModal(`批量驗證 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">將 ${count} 條待驗證信號升級為已驗證。所有信號將公開可見。</p>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">驗證人 email *</label>
+        <input id="bulk-rv-by" type="email" value="${esc(auth.currentUser?.email || '')}" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:14px" /></div>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">驗證備註 *</label>
+        <textarea id="bulk-rv-note" rows="3" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="批量驗證依據..."></textarea></div>
+        <div style="margin-bottom:10px"><label style="font-size:12px;cursor:pointer">
+            <input type="checkbox" id="bulk-rv-boost"> 同時將信度設為 95
+        </label></div>
+    `, async () => {
+        const by = document.getElementById('bulk-rv-by').value.trim();
+        const note = document.getElementById('bulk-rv-note').value.trim();
+        const boost = document.getElementById('bulk-rv-boost')?.checked || false;
+        if (!by) throw new Error('請填寫驗證人');
+        if (!note) throw new Error('請填寫驗證備註');
+        const actor = auth.currentUser?.email || '';
+        const now = new Date().toISOString();
+        let updated = 0;
+        for (const id of selectedReviewIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            const data = { ...sig, status: 'verified', last_verified_at: now, last_verified_by: by, verification_note: note, last_reviewed_at: now };
+            if (boost) data.confidence_score = 95;
+            await saveSignal(id, data, { actor, previousStatus: sig.status });
+            updated++;
+        }
+        showToast(`已驗證 ${updated} 條信號，現在公開可見`, 'success', 4000);
+        await refreshAllReviewState();
+    }, true);
+}
+
+function openBulkReviewDowngradeModal() {
+    const count = selectedReviewIds.size;
+    if (!count) return;
+    openModal(`批量降級 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">將 ${count} 條信號降級為 downgraded。信號仍公開但標注為降級狀態。</p>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--danger);display:block;margin-bottom:4px">降級原因 *</label>
+        <textarea id="bulk-rd-reason" rows="3" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="說明降級原因..."></textarea></div>
+    `, async () => {
+        const reason = document.getElementById('bulk-rd-reason').value.trim();
+        if (!reason) throw new Error('請填寫降級原因');
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedReviewIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, status: 'downgraded', verification_note: '降級：' + reason, last_reviewed_at: new Date().toISOString() }, { actor, previousStatus: sig.status });
+            updated++;
+        }
+        showToast(`已降級 ${updated} 條信號`, 'success', 4000);
+        await refreshAllReviewState();
+    }, true);
+}
+
+function openBulkReviewDraftModal() {
+    const count = selectedReviewIds.size;
+    if (!count) return;
+    openModal(`退回草稿 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">將 ${count} 條信號退回 draft 狀態。信號將不再公開可見，需要重新審核。</p>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">退回備註</label>
+        <textarea id="bulk-rf-note" rows="2" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="說明退回原因（可選）..."></textarea></div>
+    `, async () => {
+        const note = document.getElementById('bulk-rf-note').value.trim();
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedReviewIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, status: 'draft', verification_note: note ? '退回草稿：' + note : sig.verification_note, last_reviewed_at: new Date().toISOString() }, { actor, previousStatus: sig.status });
+            updated++;
+        }
+        showToast(`已退回 ${updated} 條信號為草稿`, 'success', 4000);
+        await refreshAllReviewState();
+    }, true);
+}
+
+function openBulkReviewNeedsDataModal() {
+    const count = selectedReviewIds.size;
+    if (!count) return;
+    const missingFields = ['evidence_summary', 'confidence_reason', 'verification_note'];
+    openModal(`標記需補數據 (${count} 條)`, `
+        <p style="color:var(--text);font-size:13px;margin-bottom:12px">為 ${count} 條信號標記需要補齊的數據欄位。此操作僅添加備註，不變更信號狀態。</p>
+        <div style="margin-bottom:10px">
+            <label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:6px">需要補齊的欄位：</label>
+            ${missingFields.map(f => {
+                const labels = { evidence_summary: '證據摘要', confidence_reason: '信度依據', verification_note: '驗證備註' };
+                return `<label style="display:block;font-size:12px;margin-bottom:4px;cursor:pointer">
+                    <input type="checkbox" class="bulk-nd-field" value="${f}" checked> ${labels[f]} (${f})
+                </label>`;
+            }).join('')}
+        </div>
+        <div style="margin-bottom:10px"><label style="font-size:12px;color:var(--text-muted);display:block;margin-bottom:4px">補充說明</label>
+        <textarea id="bulk-nd-note" rows="2" style="width:100%;padding:8px;background:var(--bg);color:var(--text);border:1px solid var(--border);font-size:13px;font-family:inherit" placeholder="說明需要補哪些數據..."></textarea></div>
+    `, async () => {
+        const checked = [...document.querySelectorAll('.bulk-nd-field:checked')].map(c => c.value);
+        const note = document.getElementById('bulk-nd-note').value.trim();
+        if (checked.length === 0) throw new Error('請至少選擇一個欄位');
+        const fieldNames = { evidence_summary: '證據摘要', confidence_reason: '信度依據', verification_note: '驗證備註' };
+        const msg = `需補數據：${checked.map(f => fieldNames[f]).join('、')}` + (note ? ' — ' + note : '');
+        const actor = auth.currentUser?.email || '';
+        let updated = 0;
+        for (const id of selectedReviewIds) {
+            const sig = signalsData.find(s => s.id === id);
+            if (!sig) continue;
+            await saveSignal(id, { ...sig, verification_note: (sig.verification_note ? sig.verification_note + '\n' : '') + msg, last_reviewed_at: new Date().toISOString() }, { actor });
+            updated++;
+        }
+        showToast(`已標記 ${updated} 條信號需補數據`, 'success', 4000);
+        await refreshAllReviewState();
+    }, true);
 }
 
 // ===== ADD DATA TAB (資料輸入) =====
@@ -2454,14 +2631,48 @@ document.getElementById('inbox-content').addEventListener('click', e => {
     else if (action === 'inbox-edit') openEditSignalModal(id);
 });
 
+// Review selection state
+let selectedReviewIds = new Set();
+
 // Review actions
 document.getElementById('review-content').addEventListener('click', e => {
+    // Bulk action buttons
     const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const { action, id } = btn.dataset;
-    if (action === 'review-verify') handleReviewVerify(id);
-    else if (action === 'review-downgrade') handleReviewDowngrade(id);
-    else if (action === 'review-edit') openEditSignalModal(id);
+    if (btn) {
+        const { action, id } = btn.dataset;
+        if (action === 'review-verify') handleReviewVerify(id);
+        else if (action === 'review-downgrade') handleReviewDowngrade(id);
+        else if (action === 'review-edit') openEditSignalModal(id);
+        else if (action === 'bulk-review-verify') openBulkReviewVerifyModal();
+        else if (action === 'bulk-review-downgrade') openBulkReviewDowngradeModal();
+        else if (action === 'bulk-review-draft') openBulkReviewDraftModal();
+        else if (action === 'bulk-review-needsdata') openBulkReviewNeedsDataModal();
+        else if (action === 'bulk-review-select-all') toggleReviewSelectAll();
+        else if (action === 'bulk-review-cancel') clearReviewSelection();
+        return;
+    }
+    // Checkbox clicks
+    const cb = e.target.closest('[data-review-cb]');
+    if (cb) {
+        const sid = cb.dataset.reviewCb;
+        if (cb.checked) selectedReviewIds.add(sid);
+        else selectedReviewIds.delete(sid);
+        renderReviewBulkBar();
+    }
+    // Select all checkbox
+    const sa = e.target.closest('#review-select-all');
+    if (sa) {
+        const reviewItems = signalsData.filter(s =>
+            s.status === 'watch' && s.evidence_summary && s.confidence_score >= 50
+        );
+        if (sa.checked) {
+            reviewItems.forEach(s => selectedReviewIds.add(s.id));
+        } else {
+            selectedReviewIds.clear();
+        }
+        document.querySelectorAll('[data-review-cb]').forEach(c => c.checked = sa.checked);
+        renderReviewBulkBar();
+    }
 });
 
 // Add Data tab: segmented control + new signal
