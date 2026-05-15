@@ -1,15 +1,17 @@
 {
-  "last_pipeline_run_at": "2026-05-15T16:40:00+08:00",
-  "last_pipeline_run_id": "20260515-163534",
+  "last_pipeline_run_at": "2026-05-15T18:39:05+08:00",
+  "last_pipeline_run_id": "20260515-183526",
   "last_run_date": "2026-05-15",
-  "raw_count": 3,
-  "import_ready_count": 2,
-  "needs_human_check_count": 1,
+  "raw_count": 0,
+  "import_ready_count": 0,
+  "needs_human_check_count": 0,
   "rejected_count": 0,
-  "unverified_count": 0,
+  "unverified_count": 3,
   "status": "completed",
-  "errors": [],
-  "started_at": "2026-05-15T16:35:34+08:00",
-  "completed_at": "2026-05-15T16:40:00+08:00",
-  "duration_seconds": 266
+  "errors": ["网络环境受限，无法访问国际网站，3家公司写入unverified"],
+  "started_at": "2026-05-15T18:35:26+08:00",
+  "completed_at": "2026-05-15T18:39:05+08:00",
+  "duration_seconds": 0,
+  "network_issue": true,
+  "note": "本轮因网络限制（Wikipedia/Bloomberg/TSMC官网等不可访问）导致Collector无法收集数据，已将TSMC/Broadcom/寒武纪写入unverified待重试"
 }

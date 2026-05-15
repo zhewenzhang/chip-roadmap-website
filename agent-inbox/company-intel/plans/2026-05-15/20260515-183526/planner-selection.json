@@ -1,0 +1,35 @@
+{
+  "run_id": "20260515-183526",
+  "run_date": "2026-05-15",
+  "selected_companies": [
+    {
+      "company_name": "TSMC",
+      "region": "Taiwan",
+      "category_hint": "foundry",
+      "priority_reason": "全球最大晶圆代工厂，CoWoS/先进封装核心，AI芯片供应链最关键节点",
+      "priority_level": "P1",
+      "task_type": "new_profile",
+      "search_focus": ["CoWoS产能", "先进封装", "ABF载板需求", "AI芯片代工份额", "营收数据"]
+    },
+    {
+      "company_name": "Broadcom",
+      "region": "USA",
+      "category_hint": "AI_chip",
+      "priority_reason": "定制ASIC芯片龙头，为Google/Meta设计AI芯片，ABF载板大户",
+      "priority_level": "P2",
+      "task_type": "new_profile",
+      "search_focus": ["定制AI芯片", "XPU", "Google TPU合作", "ABF载板需求", "营收数据"]
+    },
+    {
+      "company_name": "寒武纪 Cambricon",
+      "region": "China",
+      "category_hint": "AI_chip",
+      "priority_reason": "中国AI芯片龙头，国产替代核心",
+      "priority_level": "P2",
+      "task_type": "new_profile",
+      "search_focus": ["思元系列芯片", "国产替代", "营收数据", "客户群体", "技术路线"]
+    }
+  ],
+  "excluded_already_reviewed": ["Unimicron","Ibiden","Shinko Electric","AT&S","Nan Ya PCB","珠海越亞","JCET Group","ASE Technology","Camtek","DeepX","NVIDIA","AMD"],
+  "total_pending": 20
+}
