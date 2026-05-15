@@ -478,7 +478,7 @@ function renderSavedViews() {
     if (!list) return;
 
     if (savedViews.length === 0) {
-        list.innerHTML = '<span style="color:var(--color-muted-fg);font-style:italic">無儲存的視圖</span>';
+        list.innerHTML = '<span style="color:var(--fg-muted);font-style:italic">無儲存的視圖</span>';
         return;
     }
 

@@ -52,18 +52,4 @@
     --glow:      0 0 5px rgba(51, 255, 0, 0.35);
     --glow-accent: 0 0 5px rgba(255, 176, 0, 0.35);
     --transition: 100ms ease;
-
-    /* ============ DEPRECATED — kept for migration only ============ */
-    /* These will be removed in a future Phase. Do not use in new code. */
-    --color-bg: var(--bg);
-    --color-fg: var(--fg);
-    --color-muted: var(--bg-panel);
-    --color-muted-fg: var(--fg-muted);
-    --color-border: var(--border);
-    --color-invert-bg: var(--fg);
-    --color-invert-fg: var(--bg);
-    --text-primary: var(--fg);
-    --text-secondary: var(--fg-muted);
-    --text-muted: #555555;
-    --border-color: var(--border);
 }

@@ -973,6 +973,56 @@ function openBulkTagsModal() {
     }, true);
 }
 
+function addImpactEntityRow(entity = {}) {
+    const list = document.getElementById('fs-impact-entities-list');
+    if (!list) return;
+    const idx = list.children.length;
+    const row = document.createElement('div');
+    row.className = 'impact-entity-row';
+    row.style.cssText = 'display:grid;grid-template-columns:2fr 1fr 3fr 60px 32px;gap:6px;align-items:center';
+    row.dataset.idx = idx;
+
+    const companyNames = companiesData.map(c => c.name_en).sort();
+    const companyDatalist = `<datalist id="ie-company-dl-${idx}">${companyNames.map(n => `<option value="${esc(n)}">`).join('')}</datalist>`;
+
+    row.innerHTML = `
+        ${companyDatalist}
+        <input class="ie-company_id" value="${esc(entity.company_id || '')}" list="ie-company-dl-${idx}" placeholder="公司 ID / 名稱" style="font-size:12px;padding:4px 6px;background:var(--bg);color:var(--fg);border:1px solid var(--border)">
+        <select class="ie-relation" style="font-size:12px;padding:4px 6px;background:var(--bg);color:var(--fg);border:1px solid var(--border)">
+            <option value="benefit" ${(entity.relation||'benefit')==='benefit'?'selected':''}>受益</option>
+            <option value="impacted" ${entity.relation==='impacted'?'selected':''}>受損</option>
+            <option value="neutral" ${entity.relation==='neutral'?'selected':''}>中性</option>
+        </select>
+        <input class="ie-reason" value="${esc(entity.reason || '')}" placeholder="原因（選填）" style="font-size:12px;padding:4px 6px;background:var(--bg);color:var(--fg);border:1px solid var(--border)">
+        <input class="ie-order" type="number" value="${entity.order ?? idx + 1}" min="1" style="font-size:12px;padding:4px 6px;background:var(--bg);color:var(--fg);border:1px solid var(--border);width:100%">
+        <button type="button" onclick="this.closest('.impact-entity-row').remove()" style="background:transparent;color:var(--danger);border:none;cursor:pointer;font-size:16px;padding:0;line-height:1">✕</button>`;
+
+    list.appendChild(row);
+}
+
+function renderImpactEntityRows(entities = []) {
+    const list = document.getElementById('fs-impact-entities-list');
+    if (!list) return;
+    list.innerHTML = '';
+    (entities || []).forEach(e => addImpactEntityRow(e));
+}
+
+function collectImpactEntities() {
+    const rows = document.querySelectorAll('.impact-entity-row');
+    const result = [];
+    rows.forEach(row => {
+        const company_id = row.querySelector('.ie-company_id')?.value?.trim();
+        if (!company_id) return;
+        result.push({
+            company_id,
+            relation: row.querySelector('.ie-relation')?.value || 'benefit',
+            reason: row.querySelector('.ie-reason')?.value?.trim() || '',
+            order: parseInt(row.querySelector('.ie-order')?.value || '0') || result.length + 1,
+        });
+    });
+    return result;
+}
+
 function buildSignalForm(s = {}) {
     const chipNames = [...new Set(signalsData.map(sig => sig.chip_name).filter(Boolean))].sort();
     const companyOptions = companiesData.map(c =>
@@ -1090,6 +1140,14 @@ function buildSignalForm(s = {}) {
                 <div class="form-group"><label>來源 URL（每行一個）</label>
                     <textarea id="fs-sources" rows="2" placeholder="https://..." style="font-family:monospace;font-size:12px">${esc((s.sources || []).map(src => src.url || '').filter(Boolean).join('\n'))}</textarea>
                 </div>
+                <div class="form-group" style="margin-top:16px">
+                    <label style="display:flex;justify-content:space-between;align-items:center">
+                        影響實體
+                        <button type="button" class="btn-secondary" style="padding:4px 10px;font-size:12px" onclick="addImpactEntityRow()">＋ 新增</button>
+                    </label>
+                    <div id="fs-impact-entities-list" style="display:flex;flex-direction:column;gap:6px;margin-top:6px"></div>
+                    <div style="font-size:11px;color:var(--fg-muted);margin-top:4px">每行代表一個受影響的公司 / 芯片。</div>
+                </div>
             </div>
         </div>`;
 }
@@ -1159,6 +1217,7 @@ function collectSignalForm() {
         confidence_reason: document.getElementById('fs-confidence_reason').value.trim(),
         verification_note: document.getElementById('fs-verification_note').value.trim(),
         last_verified_by: document.getElementById('fs-last_verified_by').value.trim(),
+        impact_entities: collectImpactEntities(),
     };
 }
 
@@ -1200,6 +1259,7 @@ function openNewSignalModal() {
         renderSignalsTab();
     });
     initSignalFormEvents();
+    renderImpactEntityRows([]);
 }
 
 function openEditSignalModal(id) {
@@ -1227,6 +1287,7 @@ function openEditSignalModal(id) {
         renderSignalsTab();
     }, 'signal-edit');
     initSignalFormEvents();
+    renderImpactEntityRows(signal.impact_entities || []);
 
     // Phase 4: Append lightweight history context (read-only)
     renderAdminSignalHistory(id);

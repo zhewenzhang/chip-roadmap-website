@@ -83,7 +83,7 @@ function openModalWithContent(buildContentFn) {
     closeBtn.className = 'modal-close';
     closeBtn.setAttribute('aria-label', '关闭');
     closeBtn.textContent = '\u00D7';
-    closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--text-primary);';
+    closeBtn.style.cssText = 'position:absolute;top:16px;right:16px;background:none;border:none;font-size:24px;cursor:pointer;color:var(--fg);';
     content.insertBefore(closeBtn, content.firstChild);
 
     closeBtn.addEventListener('click', closeModal);
@@ -144,7 +144,7 @@ function showCompanyDetail(companyId) {
 
         if (company.name_cn) {
             const cnName = document.createElement('p');
-            cnName.style.color = 'var(--color-muted-fg, #888)';
+            cnName.style.color = 'var(--fg-muted)';
             cnName.style.margin = '4px 0 0';
             cnName.textContent = company.name_cn;
             titleGroup.appendChild(cnName);
@@ -226,7 +226,7 @@ function showCompanyDetail(companyId) {
             roadmap.forEach(r => {
                 const li = document.createElement('li');
                 li.style.padding = '8px 0';
-                li.style.borderBottom = '1px solid var(--border-color, #ddd)';
+                li.style.borderBottom = '1px solid var(--border)';
 
                 const strong = document.createElement('strong');
                 strong.textContent = `${r.year} ${r.quarter || ''}`;

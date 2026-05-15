@@ -3,148 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>公司詳情 — 芯片情報</title>
-    <meta name="description" content="公司情報詳頁：信號分佈、ABF 需求影響、SWOT 分析與芯片組合。">
-    <meta property="og:title" content="公司詳情 — 芯片情報">
-    <meta property="og:type" content="website">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>公司詳情（重定向） — 芯片情報</title>
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var id = params.get('id') || params.get('company');
+            if (id) {
+                window.location.replace('company.html?id=' + encodeURIComponent(id));
+            } else {
+                window.location.replace('companies.html');
+            }
+        })();
+    </script>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar" aria-label="Main navigation">
-        <div class="nav-container">
-            <div class="logo">
-                <span class="logo-icon" aria-hidden="true">&#9670;</span>
-                <span class="logo-text">芯片情報</span>
-            </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">首頁</a></li>
-                <li><a href="roadmap.html">路線圖</a></li>
-                <li><a href="companies.html">公司分析</a></li>
-                <li><a href="insights.html">行業洞察</a></li>
-                <li><a href="signals.html">信號工作台</a></li>
-            </ul>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="選單" aria-expanded="false" aria-controls="navLinks">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Entity Intelligence Content -->
-    <main class="entity-page" id="entityPage">
-        <nav class="entity-breadcrumb">
-            <a href="companies.html">← 返回公司目錄</a>
-        </nav>
-        <header class="entity-header">
-            <div class="entity-title-row">
-                <h1 id="entityName">公司名稱</h1>
-                <button class="watch-btn-large" id="entityWatchBtn" data-type="company">&#9734; 關注公司</button>
-            </div>
-            <div class="entity-meta-row" id="entityMeta">
-                <!-- Region, etc -->
-            </div>
-        </header>
-
-        <!-- Phase 9: Company ABF Outlook Header -->
-        <div id="companyAbfHeader" class="impact-header" style="display:none">
-            <!-- Rendered by JS -->
-        </div>
-
-        <div class="entity-grid">
-            <section class="entity-main">
-                <h2 class="section-title">相關信號</h2>
-                <div class="signals-table-wrap" id="signalsTableWrap">
-                    <!-- Table rendered by JS -->
-                </div>
-            </section>
-
-            <aside class="entity-sidebar">
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">公司概覽</h3>
-                    <div class="sidebar-info" id="companyOverview">
-                        <!-- Company overview -->
-                    </div>
-                </div>
-                <div class="sidebar-block" id="companyProfileBlock" style="display:none">
-                    <h3 class="sidebar-block-title">公司檔案</h3>
-                    <div class="sidebar-info" id="companyProfile"></div>
-                </div>
-                <div class="sidebar-block" id="companySwotBlock" style="display:none">
-                    <h3 class="sidebar-block-title">SWOT 分析</h3>
-                    <div class="sidebar-info" id="companySwot"></div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">芯片組合</h3>
-                    <div class="sidebar-list" id="chipPortfolio">
-                        <!-- Chip portfolio -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">信號分佈</h3>
-                    <div class="status-stats" id="statusStats">
-                        <!-- Stats -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">風險指標</h3>
-                    <div class="sidebar-list" id="companyRisks">
-                        <!-- Risk indicators -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">驗證趨勢</h3>
-                    <div class="sidebar-list" id="verificationTrend">
-                        <!-- Verification trend -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">相關公司</h3>
-                    <div class="sidebar-list" id="relatedCompanies">
-                        <!-- Related companies -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">高 ABF 影響</h3>
-                    <div class="sidebar-list" id="highImpactItems">
-                        <!-- High impact items -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">最近變更</h3>
-                    <div class="sidebar-list" id="recentChanges">
-                        <!-- Recent list -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">公司變更摘要</h3>
-                    <div class="sidebar-list" id="companyChangeSummary">
-                        <!-- Phase 10: derived change summary -->
-                    </div>
-                </div>
-            </aside>
-        </div>
-
-        <!-- Detail Drawer (Reused from signals.html) -->
-        <div class="drawer-overlay" id="drawerOverlay" style="display:none">
-            <aside class="signal-drawer" id="signalDrawer">
-                <div class="drawer-header">
-                    <h2 id="drawerTitle"></h2>
-                    <button class="drawer-close" id="drawerClose" aria-label="Close">&#215;</button>
-                </div>
-                <div class="drawer-body" id="drawerBody"></div>
-            </aside>
-        </div>
-    </main>
-
-    <script type="module" src="js/modules/global-nav.js"></script>
-    <script type="module">
-        import { initEntityPage } from './js/modules/entity-signals.js';
-        document.addEventListener('DOMContentLoaded', () => initEntityPage('company'));
-    </script>
+    <p>正在跳轉...</p>
 </body>
 </html>

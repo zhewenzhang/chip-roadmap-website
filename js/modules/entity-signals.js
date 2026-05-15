@@ -243,7 +243,7 @@ function renderChipImpactHeader(signals, allSigs) {
     if (impact.insufficientData) {
         container.style.display = 'block';
         container.innerHTML = `<div class="impact-header-title">影響摘要</div>
-            <p style="color:var(--color-muted-fg);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導影響</p>`;
+            <p style="color:var(--fg-muted);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導影響</p>`;
         return;
     }
 
@@ -319,7 +319,7 @@ function renderCompanyAbfHeader(signals, allSigs) {
     if (outlook.insufficientData) {
         container.style.display = 'block';
         container.innerHTML = `<div class="impact-header-title">公司 ABF 展望</div>
-            <p style="color:var(--color-muted-fg);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導 ABF 展望</p>`;
+            <p style="color:var(--fg-muted);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導 ABF 展望</p>`;
         return;
     }
 

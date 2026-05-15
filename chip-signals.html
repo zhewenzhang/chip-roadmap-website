@@ -3,128 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>芯片詳情 — 芯片情報</title>
-    <meta name="description" content="追蹤具體芯片型號的供應鏈信號、ABF 需求影響與驗證進度。">
-    <meta property="og:title" content="芯片詳情 — 芯片情報">
-    <meta property="og:type" content="website">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>芯片詳情（重定向） — 芯片情報</title>
+    <script>
+        (function() {
+            var params = new URLSearchParams(window.location.search);
+            var name = params.get('name') || params.get('chip');
+            if (name) {
+                window.location.replace('chip.html?name=' + encodeURIComponent(name));
+            } else {
+                window.location.replace('companies.html');
+            }
+        })();
+    </script>
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar" aria-label="Main navigation">
-        <div class="nav-container">
-            <div class="logo">
-                <span class="logo-icon" aria-hidden="true">&#9670;</span>
-                <span class="logo-text">芯片情報</span>
-            </div>
-            <ul class="nav-links" id="navLinks">
-                <li><a href="index.html">首頁</a></li>
-                <li><a href="roadmap.html">路線圖</a></li>
-                <li><a href="companies.html">公司分析</a></li>
-                <li><a href="insights.html">行業洞察</a></li>
-                <li><a href="signals.html">信號工作台</a></li>
-            </ul>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="選單" aria-expanded="false" aria-controls="navLinks">
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-                <span aria-hidden="true"></span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Entity Intelligence Content -->
-    <main class="entity-page" id="entityPage">
-        <nav class="entity-breadcrumb" id="chipBreadcrumb">
-            <a href="companies.html">← 返回</a>
-        </nav>
-        <header class="entity-header">
-            <div class="entity-title-row">
-                <h1 id="entityName">芯片名稱</h1>
-                <button class="watch-btn-large" id="entityWatchBtn" data-type="chip">&#9734; 關注芯片</button>
-            </div>
-            <div class="entity-meta-row" id="entityMeta">
-                <!-- Company, etc -->
-            </div>
-        </header>
-
-        <!-- Phase 9: Impact Summary Header -->
-        <div id="chipImpactHeader" class="impact-header" style="display:none">
-            <!-- Rendered by JS -->
-        </div>
-
-        <div class="entity-grid">
-            <section class="entity-main">
-                <h2 class="section-title">相關信號</h2>
-                <div class="signals-table-wrap" id="signalsTableWrap">
-                    <!-- Table rendered by JS -->
-                </div>
-            </section>
-
-            <aside class="entity-sidebar">
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">芯片概覽</h3>
-                    <div class="sidebar-info" id="chipOverview">
-                        <!-- Chip overview with specs -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">公司上下文</h3>
-                    <div class="sidebar-info" id="chipCompanyContext">
-                        <!-- Company context -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">風險指標</h3>
-                    <div class="sidebar-list" id="chipRisks">
-                        <!-- Risk indicators -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">最近變更</h3>
-                    <div class="sidebar-list" id="chipRecentChanges">
-                        <!-- Recent changes -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">驗證時間軸</h3>
-                    <div class="sidebar-list" id="verificationTimeline">
-                        <!-- History -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">同公司芯片</h3>
-                    <div class="sidebar-list" id="siblingChips">
-                        <!-- Sibling list -->
-                    </div>
-                </div>
-                <div class="sidebar-block">
-                    <h3 class="sidebar-block-title">芯片影響變更</h3>
-                    <div class="sidebar-list" id="chipImpactChanges">
-                        <!-- Phase 10: derived impact change summary -->
-                    </div>
-                </div>
-            </aside>
-        </div>
-
-        <!-- Detail Drawer (Reused from signals.html) -->
-        <div class="drawer-overlay" id="drawerOverlay" style="display:none">
-            <aside class="signal-drawer" id="signalDrawer">
-                <div class="drawer-header">
-                    <h2 id="drawerTitle"></h2>
-                    <button class="drawer-close" id="drawerClose" aria-label="Close">&#215;</button>
-                </div>
-                <div class="drawer-body" id="drawerBody"></div>
-            </aside>
-        </div>
-    </main>
-
-    <script type="module" src="js/modules/global-nav.js"></script>
-    <script type="module">
-        import { initEntityPage } from './js/modules/entity-signals.js';
-        document.addEventListener('DOMContentLoaded', () => initEntityPage('chip'));
-    </script>
+    <p>正在跳轉...</p>
 </body>
 </html>
