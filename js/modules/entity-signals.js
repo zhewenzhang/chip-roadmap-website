@@ -216,7 +216,7 @@ function renderChipImpactHeader(signals, allSigs) {
 
     if (impact.insufficientData) {
         container.style.display = 'block';
-        container.innerHTML = `<div class="impact-header-title">Impact 摘要</div>
+        container.innerHTML = `<div class="impact-header-title">影響摘要</div>
             <p style="color:var(--color-muted-fg);font-style:italic;font-size:0.85rem">尚無足夠驗證信號可推導影響</p>`;
         return;
     }
@@ -226,7 +226,7 @@ function renderChipImpactHeader(signals, allSigs) {
         : impact.abfDemandImpact === 'high' ? 'impact-high'
         : impact.abfDemandImpact === 'medium' ? 'impact-medium' : 'impact-low';
 
-    let html = `<div class="impact-header-title">Impact 摘要 — ${esc(impact.chipName)}</div>`;
+    let html = `<div class="impact-header-title">影響摘要 — ${esc(impact.chipName)}</div>`;
 
     // Main row: badge + confidence
     html += `<div class="impact-main-row">
@@ -246,7 +246,7 @@ function renderChipImpactHeader(signals, allSigs) {
     // ABF Layers
     if (impact.abfLayers.value != null) {
         const conflictNote = impact.abfLayers.range ? `<span class="field-conflict">（${impact.abfLayers.range[0]} ~ ${impact.abfLayers.range[1]}）</span>` : '';
-        html += `<div class="impact-field-row"><span class="field-label">ABF Layers</span><span class="field-value">${impact.abfLayers.value}${conflictNote}</span></div>`;
+        html += `<div class="impact-field-row"><span class="field-label">ABF 層數</span><span class="field-value">${impact.abfLayers.value}${conflictNote}</span></div>`;
     }
 
     // CoWoS
@@ -301,7 +301,7 @@ function renderCompanyAbfHeader(signals, allSigs) {
         : outlook.overallImpact === 'high' ? 'impact-high'
         : outlook.overallImpact === 'medium' ? 'impact-medium' : 'impact-low';
 
-    let html = `<div class="impact-header-title">${esc(outlook.companyName)} — ABF Demand Outlook</div>`;
+    let html = `<div class="impact-header-title">${esc(outlook.companyName)} — ABF 需求展望</div>`;
 
     // Main row
     html += `<div class="impact-main-row">
@@ -440,6 +440,8 @@ function renderChipPortfolio(portfolio) {
             window.location.href = `chip-signals.html?name=${encodeURIComponent(chip)}`;
         });
     });
+    const block = el.closest('.sidebar-block');
+    if (block) block.style.display = portfolio.length === 0 ? 'none' : '';
 }
 
 function renderRiskIndicators(risks) {
@@ -460,6 +462,8 @@ function renderRiskIndicators(risks) {
         html += `<div class="risk-row"><span class="risk-label">驗證過期</span><span class="risk-count">${risks.staleVerificationCount}</span></div>`;
     }
     el.innerHTML = html;
+    const block = el.closest('.sidebar-block');
+    if (block) block.style.display = risks.totalRiskSignals === 0 ? 'none' : '';
 }
 
 function renderVerificationTrend(trend) {
@@ -475,16 +479,20 @@ function renderVerificationTrend(trend) {
             <span class="trend-count">${t.count > 0 ? t.count : '—'}</span>
         </div>
     `).join('');
+    const block = el.closest('.sidebar-block');
+    if (block) block.style.display = trend.every(t => t.count === 0) ? 'none' : '';
 }
 
 function renderRelatedCompanies(companyId, signals) {
     const el = document.getElementById('relatedCompanies');
     if (!el) return;
+    const block = el.closest('.sidebar-block');
     const related = getRelatedCompanies(companyId, signals, 5);
     if (related.length === 0) {
-        el.innerHTML = '<div class="sidebar-empty">無相關公司</div>';
+        if (block) block.style.display = 'none';
         return;
     }
+    if (block) block.style.display = '';
     el.innerHTML = related.map(c => `
         <div class="sidebar-list-item" data-company="${esc(c.companyId)}">
             <div class="item-title"><a href="company-signals.html?id=${esc(c.companyId)}">${esc(c.companyName)}</a></div>
@@ -583,10 +591,12 @@ function renderHighImpactItems(signals) {
         .slice(0, 5);
     const list = document.getElementById('highImpactItems');
     if (!list) return;
+    const block = list.closest('.sidebar-block');
     if (highImpact.length === 0) {
-        list.innerHTML = '<div class="sidebar-empty">無高 ABF 影響項目</div>';
+        if (block) block.style.display = 'none';
         return;
     }
+    if (block) block.style.display = '';
     list.innerHTML = highImpact.map(s => `
         <div class="sidebar-list-item" data-id="${esc(s.id)}">
             <div class="item-title">${esc(s.chip_name)} — ${esc(stageLabel(s.stage))}</div>
@@ -605,6 +615,12 @@ function renderRecentChanges(signals) {
     const sorted = [...signals].sort((a, b) => new Date(b.last_verified_at || 0) - new Date(a.last_verified_at || 0)).slice(0, 5);
     const list = document.getElementById('recentChanges');
     if (!list) return;
+    const block = list.closest('.sidebar-block');
+    if (sorted.length === 0) {
+        if (block) block.style.display = 'none';
+        return;
+    }
+    if (block) block.style.display = '';
     list.innerHTML = sorted.map(s => `
         <div class="sidebar-list-item" data-id="${esc(s.id)}">
             <div class="item-meta">${formatDate(s.last_verified_at)}</div>
@@ -716,10 +732,11 @@ function confidenceBar(score) {
 function renderCompanyChangeSummary(companyId, signals, allSigs) {
     const el = document.getElementById('companyChangeSummary');
     if (!el) return;
+    const block = el.closest('.sidebar-block');
 
     const companySignals = signals.filter(s => s.company_id === companyId);
     if (companySignals.length === 0) {
-        el.innerHTML = '<div class="sidebar-empty">無變更數據</div>';
+        if (block) block.style.display = 'none';
         return;
     }
 
@@ -738,9 +755,10 @@ function renderCompanyChangeSummary(companyId, signals, allSigs) {
         .slice(0, 6);
 
     if (allChanges.length === 0) {
-        el.innerHTML = '<div class="sidebar-empty">近期無重大變更</div>';
+        if (block) block.style.display = 'none';
         return;
     }
+    if (block) block.style.display = '';
 
     const typeLabel = {
         [CHANGE_TYPES.STATUS_UPGRADED]: '升級',
