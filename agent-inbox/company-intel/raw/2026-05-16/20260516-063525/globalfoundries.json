@@ -1,0 +1,79 @@
+{
+  "company_name": "GlobalFoundries",
+  "ticker": "GFS (NASDAQ)",
+  "region": "USA",
+  "headquarters": "Malta, New York",
+  "founded": 2008,
+  "category": "foundry",
+  "tracking_priority": "P1",
+  "description": "全球第四大晶圆代工厂（前三为台积电、三星、联电），专注于12nm及以上成熟制程和特殊工艺节点，不参与先进制程竞赛。产品广泛应用于汽车、IoT、5G、智能移动设备等。",
+  "market_data": {
+    "revenue_fy2025_MUSD": 6791,
+    "revenue_fy2024_MUSD": 6750,
+    "revenue_growth_yoy": "0.61%",
+    "net_income_fy2025_MUSD": 885,
+    "gross_margin_fy2025": "24.89%",
+    "operating_margin_fy2025": "11.74%",
+    "profit_margin_fy2025": "13.08%",
+    "fcf_fy2025_MUSD": 1009,
+    "eps_diluted_fy2025": 1.59,
+    "shares_outstanding_M": 555,
+    "employees": 13000,
+    "data_source": "stockanalysis.com (FY2025 ending Dec 2025)"
+  },
+  "key_facts": [
+    "全球前五晶圆代工中唯一总部在美国的公司",
+    "只生产12nm及以上芯片，专注成熟制程和特殊工艺",
+    "全球制造基地分布：美国（纽约Malta Fab 8）、新加坡、德国德累斯顿、法国克罗尔",
+    "马耳他Fab 8年产约40万片晶圆",
+    "2021年在纳斯达克上市",
+    "约50项长期产能协议（LTA），客户包括高通、AMD、NXP、英飞凌、通用汽车、洛克希德马丁",
+    "与美国国防部签有价值30亿美元协议",
+    "2018年放弃先进制程竞争，转向专注成熟节点",
+    "CHIPS法案受益者，纽约州补贴超20亿美元",
+    "正在投资约70亿美元扩产（新加坡40亿、德国/法国合资、纽约）",
+    "汽车是增长最快的领域之一",
+    "2023年底裁员800人，智能手机业务增长放缓"
+  ],
+  "technology_nodes": ["12nm/14nm LP", "22nm FD-SOI", "28nm", "40nm", "55nm", "90nm+", "RF-SOI", "Silicon Photonics", "BCDLite"],
+  "key_customers": ["Qualcomm", "AMD", "NXP", "Infineon", "Lockheed Martin", "General Motors", "MediaTek"],
+  "SWOT": {
+    "strengths": [
+      "美国本土唯一大型晶圆代工厂，地缘政治优势",
+      "成熟制程专注策略避免了先进制程巨额资本支出",
+      "50+长期产能协议提供收入可见性",
+      "FD-SOI和RF-SOI等特殊工艺技术差异化",
+      "CHIPS法案补贴支持扩产"
+    ],
+    "weaknesses": [
+      "不参与先进制程，错失AI训练芯片代工机会",
+      "营收增长几乎停滞（FY2025仅+0.61%）",
+      "智能手机业务占收入46%，集中度风险",
+      "相比台积电规模差距巨大"
+    ],
+    "opportunities": [
+      "AI边缘推理和IoT芯片需求增长",
+      "汽车电动化/智能化驱动汽车芯片需求",
+      "地缘政治推动供应链多元化，客户寻找台积电替代",
+      "CHIPS法案资金支持美国扩产",
+      "5G基础设施和国防/航空航天芯片需求"
+    ],
+    "threats": [
+      "台积电也在扩产成熟制程（日本熊本厂）",
+      "中国大陆晶圆代工厂（中芯国际）在成熟制程价格竞争",
+      "全球半导体周期性波动",
+      "智能手机市场持续疲软"
+    ]
+  },
+  "source_quality": "T2",
+  "sources": [
+    {"url": "https://gf.com/about-us/", "type": "official", "tier": "T1", "content": "公司简介"},
+    {"url": "https://stockanalysis.com/stocks/gfs/financials/", "type": "financial_data", "tier": "T2", "content": "FY2021-FY2025完整财务数据"},
+    {"url": "https://stockanalysis.com/stocks/gfs/company/", "type": "company_profile", "tier": "T2", "content": "公司描述"},
+    {"url": "https://t.cj.sina.com.cn/articles/view/3856710564/e5e0bba401901ifj7", "type": "news_analysis", "tier": "T2", "content": "CNBC深度报道翻译，含CEO采访、扩产计划、CHIPS法案、客户关系等详细信息"}
+  ],
+  "confidence": "high",
+  "import_decision": "import_ready",
+  "review_score": null,
+  "collected_at": "2026-05-16T06:38:00+08:00"
+}

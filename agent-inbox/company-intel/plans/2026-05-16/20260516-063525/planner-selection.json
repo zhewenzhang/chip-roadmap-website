@@ -1,0 +1,31 @@
+{
+  "run_id": "20260516-063525",
+  "run_date": "2026-05-16",
+  "selection_count": 3,
+  "selections": [
+    {
+      "company_name": "GlobalFoundries",
+      "region": "USA",
+      "category_hint": "foundry",
+      "priority": "P1",
+      "priority_reason": "全球第四大晶圆代工，成熟制程+特殊工艺，美国CHIPS法案受益者",
+      "task_type": "new_profile"
+    },
+    {
+      "company_name": "通富微电 TFME",
+      "region": "China",
+      "category_hint": "OSAT",
+      "priority": "P1",
+      "priority_reason": "中国第二大OSAT，AMD封装核心供应商，先进封装能力领先",
+      "task_type": "new_profile"
+    },
+    {
+      "company_name": "华为 Huawei",
+      "region": "China",
+      "category_hint": "cloud_chip",
+      "priority": "P2",
+      "priority_reason": "昇腾AI芯片+鲲鹏CPU，中国AI芯片核心，受出口管制影响",
+      "task_type": "new_profile"
+    }
+  ]
+}

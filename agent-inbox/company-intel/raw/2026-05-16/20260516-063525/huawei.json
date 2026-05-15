@@ -1,0 +1,104 @@
+{
+  "company_name": "华为 Huawei",
+  "ticker": "非上市",
+  "region": "China",
+  "headquarters": "深圳市, 广东省",
+  "founded": 1987,
+  "category": "cloud_chip",
+  "tracking_priority": "P2",
+  "description": "全球领先的ICT基础设施和智能终端提供商，自主研发昇腾AI芯片和鲲鹏CPU，是中国AI芯片核心企业。受美国出口管制影响，但持续推进自主可控技术路线。业务涵盖ICT基础设施、终端、云计算、数字能源、智能汽车解决方案五大板块。",
+  "market_data": {
+    "revenue_2025_RMB_M": 880941,
+    "revenue_2024_RMB_M": 862072,
+    "revenue_2025_USD_M": 126018,
+    "revenue_growth_yoy": "2.2%",
+    "operating_profit_2025_RMB_M": 96937,
+    "operating_margin_2025": "11.0%",
+    "net_profit_2025_RMB_M": 68036,
+    "net_profit_2024_RMB_M": 62574,
+    "net_profit_growth_yoy": "8.7%",
+    "ocf_2025_RMB_M": 127384,
+    "cash_and_investments_2025_RMB_M": 361426,
+    "total_assets_2025_RMB_M": 1334930,
+    "equity_2025_RMB_M": 600120,
+    "debt_ratio_2025": "55.0%",
+    "rd_expense_2025_RMB_M": 192300,
+    "rd_ratio_2025": "21.8%",
+    "employees_rd_K": 114,
+    "employees_rd_ratio": "53.7%",
+    "patents_K": 165,
+    "exchange_rate": "1 USD = 6.9906 RMB (2025 end)",
+    "data_source": "华为2025年年报官方"
+  },
+  "business_segments_2025": [
+    {"name": "ICT基础设施", "revenue_RMB_M": 375014, "growth": "2.6%"},
+    {"name": "终端", "revenue_RMB_M": 344473, "growth": "1.6%"},
+    {"name": "云计算", "revenue_RMB_M": 32161, "growth": "-3.5%"},
+    {"name": "数字能源", "revenue_RMB_M": 77312, "growth": "12.7%"},
+    {"name": "智能汽车解决方案", "revenue_RMB_M": 45018, "growth": "72.1%"},
+    {"name": "其他", "revenue_RMB_M": 6963, "growth": "-76.4%"}
+  ],
+  "regional_revenue_2025": [
+    {"region": "中国", "revenue_RMB_M": 616249, "growth": "0.2%"},
+    {"region": "欧洲中东非洲", "revenue_RMB_M": 161356, "growth": "8.8%"},
+    {"region": "亚太", "revenue_RMB_M": 50113, "growth": "15.7%"},
+    {"region": "美洲", "revenue_RMB_M": 37184, "growth": "2.4%"}
+  ],
+  "key_facts": [
+    "2025年营收8809亿元人民币（约1260亿美元），同比+2.2%",
+    "研发投入1923亿元，占营收21.8%，近十年累计研发投入超1.38万亿元",
+    "研发员工约11.4万名，占总员工53.7%",
+    "全球有效授权专利约16.5万件",
+    "昇腾AI芯片：昇腾384超节点服务互联网、金融、运营商、电力等行业",
+    "鲲鹏+昇腾生态：380万鲲鹏开发者、400万昇腾开发者、9800+伙伴、26000+行业解决方案",
+    "智能汽车解决方案增长72.1%，是增长最快业务板块",
+    "鸿蒙OS 5/6设备突破3600万台，注册开发者超1000万",
+    "华为云覆盖34个地理区域、101个可用区、170+国家",
+    "孟晚舟轮值董事长，梁华董事长"
+  ],
+  "ai_chip_capabilities": {
+    "products": ["昇腾910B/910C (训练)", "昇腾310 (推理)", "昇腾384超节点"],
+    "software": ["CANN (异构计算架构)", "MindSpore (AI框架)", "Mind系列软件", "ModelEngine"],
+    "ecosystem": "400万昇腾开发者，9800+伙伴，26000+行业解决方案",
+    "status": "全面开源开放，昇腾应用使能软件Mind系列和CANN已开源"
+  },
+  "SWOT": {
+    "strengths": [
+      "强大的自主研发投入（年研发21.8%营收），技术自立能力强",
+      "昇腾+鲲鹏AI芯片生态在中国市场快速成长",
+      "全栈ICT能力（芯片-操作系统-云-终端-汽车）",
+      "庞大的专利储备（16.5万件）",
+      "智能汽车业务高速增长（72.1%）",
+      "鸿蒙OS生态初步成型"
+    ],
+    "weaknesses": [
+      "受美国出口管制，先进芯片制造受限",
+      "云业务收入下滑（-3.5%）",
+      "整体营收增长缓慢（+2.2%），中国市场几乎持平",
+      "非上市，财务透明度有限",
+      "昇腾芯片性能与NVIDIA仍有差距"
+    ],
+    "opportunities": [
+      "中国AI算力需求爆发，国产替代空间巨大",
+      "智能汽车市场持续高增长",
+      "鸿蒙OS向更多设备和行业扩展",
+      "数字能源（光储）市场快速增长",
+      "一带一路/新兴市场拓展"
+    ],
+    "threats": [
+      "美国出口管制持续升级，芯片制造瓶颈",
+      "NVIDIA/AMD在中国市场受限后的灰色市场风险",
+      "国内AI芯片竞争加剧（寒武纪、海光等）",
+      "全球经济不确定性影响企业IT支出"
+    ]
+  },
+  "source_quality": "T1",
+  "sources": [
+    {"url": "https://www.huawei.com/cn/annual-report/2025", "type": "official_annual_report", "tier": "T1", "content": "2025年年报完整财务数据、业务分部数据、研发数据、战略规划"},
+    {"url": "https://www.huawei.com/cn/annual-report", "type": "official", "tier": "T1", "content": "年报入口页"}
+  ],
+  "confidence": "high",
+  "import_decision": "import_ready",
+  "review_score": null,
+  "collected_at": "2026-05-16T06:39:00+08:00"
+}

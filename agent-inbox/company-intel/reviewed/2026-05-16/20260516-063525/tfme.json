@@ -1,0 +1,123 @@
+{
+  "company_name": "通富微电 TFME",
+  "ticker": "002156.SZ (深圳)",
+  "region": "China",
+  "headquarters": "南通市, 江苏省",
+  "founded": 1994,
+  "listed": "2007-08-16",
+  "category": "OSAT",
+  "tracking_priority": "P1",
+  "description": "中国第二大OSAT（封装测试）企业，全球排名前列。主营集成电路封装和测试，产品覆盖高性能计算、大数据存储、网络通讯、移动终端、车载电子、人工智能、物联网等领域。是AMD芯片封装的核心供应商之一。",
+  "market_data": {
+    "eps_2025": 0.8031,
+    "eps_2026Q1": 0.2168,
+    "eps_2025Q3": 0.567,
+    "eps_2025Q2": 0.2715,
+    "eps_2025Q1": 0.0668,
+    "bvps_2026Q1": 10.3179,
+    "bvps_2025": 10.2094,
+    "ocf_per_share_2025": 4.59,
+    "roe_2025": "7.87%",
+    "roe_2026Q1": "2.10%",
+    "undistributed_profit_per_share_2025": 2.7639,
+    "total_shares_M": 15176,
+    "circulating_shares_M": 15174.5,
+    "registered_capital_RMB_M": 15176,
+    "chairman": "石磊",
+    "stock_price_20260515": 57.4,
+    "price_change_20260515": "-5.69%",
+    "data_source": "新浪财经 (finance.sina.com.cn)"
+  },
+  "key_facts": [
+    "中国第二大OSAT企业，仅次于长电科技",
+    "AMD芯片封装的核心供应商",
+    "主营业务：集成电路封装和测试",
+    "产品应用：高性能计算、大数据存储、网络通讯、移动终端、车载电子、AI、IoT",
+    "提供一站式服务：设计仿真、圆片中测、封装、成品测试、系统级测试",
+    "2025年报EPS 0.8031元，ROE 7.87%",
+    "经营现金流强劲：2025年每股经营现金流4.59元",
+    "2026Q1延续增长态势",
+    "先进封装能力领先，受益于AI算力需求外溢",
+    "订单爆满、产能紧缺（2026年5月行业报道）"
+  ],
+  "technology_capabilities": [
+    "FC-BGA",
+    "SiP系统级封装",
+    "2.5D/3D封装",
+    "Fan-out封装",
+    "Bumping",
+    "Flip Chip",
+    "测试服务"
+  ],
+  "key_customers": [
+    "AMD",
+    "联发科",
+    "高通"
+  ],
+  "SWOT": {
+    "strengths": [
+      "AMD核心封测供应商，深度绑定大客户",
+      "先进封装技术布局全面（FC-BGA/SiP/2.5D/3D）",
+      "一站式服务能力（设计到测试）",
+      "经营现金流强劲，财务健康",
+      "AI算力需求外溢直接受益"
+    ],
+    "weaknesses": [
+      "对AMD依赖度较高",
+      "营收规模仍落后长电科技",
+      "先进封装设备依赖进口",
+      "国际化程度有待提升"
+    ],
+    "opportunities": [
+      "AI芯片封装需求爆发，先进封装产能紧缺",
+      "国产替代加速，国内客户回流",
+      "HBM/CoWoS等先进封装技术需求增长",
+      "汽车电子、IoT等新兴应用场景拓展"
+    ],
+    "threats": [
+      "日月光/安靠等国际OSAT巨头竞争",
+      "长电科技等国内同行竞争加剧",
+      "先进封装设备受出口管制影响",
+      "半导体行业周期性波动"
+    ]
+  },
+  "source_quality": "T2",
+  "sources": [
+    {
+      "url": "https://www.tfme.com/",
+      "type": "official",
+      "tier": "T1",
+      "content": "公司官网，业务介绍"
+    },
+    {
+      "url": "https://finance.sina.com.cn/realstock/company/sz002156/nc.shtml",
+      "type": "financial_data",
+      "tier": "T2",
+      "content": "2025-2026季度财务数据、公司资料、行业新闻"
+    },
+    {
+      "url": "https://cj.sina.cn/articles/view/1651428902/626ece2601901fswq",
+      "type": "news",
+      "tier": "T2",
+      "content": "订单爆满产能紧缺报道"
+    }
+  ],
+  "confidence": "high",
+  "import_decision": "import_ready",
+  "review_score": 92.0,
+  "collected_at": "2026-05-16T06:38:30+08:00",
+  "review_checks": [
+    "✓ company_name",
+    "✓ region/hq",
+    "✓ category/priority",
+    "✓ description (97 chars)",
+    "✓ market_data (18 fields)",
+    "✓ key_facts (10 items)",
+    "✓ SWOT (15.0/15 pts)",
+    "✓ sources (3 valid)",
+    "✓ source_quality T2",
+    "✓ confidence high",
+    "✓ technology data present",
+    "✓ customers (3)"
+  ]
+}
