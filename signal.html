@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>信號詳情 — 芯片情報</title>
+    <meta name="description" content="單條信號的完整事實、影響鋪開、證據摘要與相關信號。">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <main class="signal-detail-page">
+        <div class="signal-detail-container">
+            <div class="crumb" data-crumb>
+                <a class="crumb-link" href="index.html">← 信號流</a>
+            </div>
+
+            <div id="signalDetailRoot">
+                <div class="empty-state">
+                    <div class="empty-state-icon">◈</div>
+                    <div class="empty-state-title">載入中...</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/modules/global-nav.js"></script>
+    <script type="module" src="js/modules/signal-detail.js"></script>
+</body>
+</html>

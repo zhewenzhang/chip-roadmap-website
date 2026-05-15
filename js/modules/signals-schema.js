@@ -75,6 +75,13 @@ export const HISTORY_ACTION_LABELS = {
     reviewed: '已複核',
 };
 
+export const IMPACT_RELATION_ENUM = ['benefit', 'impacted', 'neutral'];
+export const IMPACT_RELATION_LABEL = {
+    benefit: '受益',
+    impacted: '受影響',
+    neutral: '中性',
+};
+
 // ===== Navigation Helpers =====
 export function getCompanyIntelUrl(id) {
     return `company-signals.html?id=${encodeURIComponent(id)}`;
@@ -158,5 +165,17 @@ export function normalizeSignal(raw) {
         ai_model: raw.ai_model || '',
         ai_extracted_at: raw.ai_extracted_at || '',
         source_type: raw.source_type || '',  // 'manual' | 'imported' | 'ai_extracted' | 'user_contributed' (reserved)
+        // Impact entities (Phase 29)
+        impact_entities: Array.isArray(raw.impact_entities)
+            ? raw.impact_entities
+                .filter(e => e && e.company_id)
+                .map(e => ({
+                    company_id: String(e.company_id),
+                    relation: ['benefit', 'impacted', 'neutral'].includes(e.relation) ? e.relation : 'neutral',
+                    reason: String(e.reason || '').slice(0, 80),
+                    order: Number.isFinite(e.order) ? Number(e.order) : 999,
+                }))
+                .sort((a, b) => a.order - b.order)
+            : [],
     };
 }

@@ -1,0 +1,6 @@
+.signal-detail-page { padding-top: var(--s-4); padding-bottom: var(--s-12); }
+.signal-detail-container {
+    max-width: var(--max-reading);
+    margin: 0 auto;
+    padding: 0 var(--s-6);
+}

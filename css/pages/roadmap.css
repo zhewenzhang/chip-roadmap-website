@@ -1,0 +1,74 @@
+.roadmap-page { padding-top: var(--s-4); padding-bottom: var(--s-12); }
+.roadmap-container {
+    max-width: var(--max-content);
+    margin: 0 auto;
+    padding: 0 var(--s-6);
+}
+.roadmap-matrix-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    background: var(--bg-panel);
+    margin-top: var(--s-4);
+}
+.roadmap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--t-xs);
+}
+.roadmap-table th, .roadmap-table td {
+    border: 1px solid var(--border);
+    padding: var(--s-2);
+    vertical-align: top;
+}
+.roadmap-head-company {
+    position: sticky;
+    left: 0;
+    background: var(--bg-panel);
+    z-index: 2;
+    min-width: 8rem;
+}
+.roadmap-head-quarter {
+    text-align: center;
+    background: var(--bg-panel);
+    color: var(--fg-muted);
+    font-weight: 600;
+    min-width: 7rem;
+}
+.roadmap-head-q { color: var(--fg-dim); font-size: var(--t-xs); }
+.roadmap-row-company {
+    position: sticky;
+    left: 0;
+    background: var(--bg-panel);
+    z-index: 1;
+    font-weight: 600;
+}
+.roadmap-cell { padding: var(--s-1) !important; }
+.roadmap-cell-empty { background: var(--bg); }
+.roadmap-chip {
+    display: block;
+    padding: var(--s-1) var(--s-2);
+    margin: var(--s-1) 0;
+    background: var(--bg);
+    border-left: 3px solid var(--border);
+    color: var(--fg);
+    text-decoration: none;
+    font-size: var(--t-xs);
+    line-height: 1.3;
+    transition: var(--transition);
+}
+.roadmap-chip:hover { background: var(--bg-hover); }
+.roadmap-chip-explosive { border-color: #33ff00; }
+.roadmap-chip-high { border-color: #33ff00; opacity: 0.85; }
+.roadmap-chip-medium { border-color: #ffb000; }
+.roadmap-chip-low { border-color: var(--fg-muted); }
+.roadmap-chip-status-watch { font-style: italic; color: var(--accent); }
+.roadmap-legend {
+    margin-top: var(--s-4);
+    padding: var(--s-3) 0;
+    display: flex;
+    gap: var(--s-2);
+    flex-wrap: wrap;
+    font-size: var(--t-xs);
+    color: var(--fg-muted);
+    border-top: 1px solid var(--border);
+}
