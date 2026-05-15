@@ -382,10 +382,23 @@
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "M系列/A系列芯片设计全球领先",
+          "台积电3nm最大客户关系稳固",
+          "Apple Intelligence推动端侧AI普及"
+        ],
+        "weaknesses": [
+          "完全依赖台积电代工无自有晶圆厂",
+          "ABF高层数封装依赖第三方供应链"
+        ],
+        "opportunities": [
+          "端侧AI芯片换机周期需求",
+          "Apple Intelligence带动设备升级"
+        ],
+        "threats": [
+          "地缘政治风险影响台积电供应",
+          "监管反垄断压力"
+        ]
       },
       "abf_demand_impact": "high",
       "ai_chip_focus": false,
@@ -421,10 +434,24 @@
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "骁龙移动SoC全球市占约30%",
+          "骁龙X Elite AI PC市场强势进入",
+          "汽车芯片Snapdragon Ride增长"
+        ],
+        "weaknesses": [
+          "与苹果自研芯片竞争加剧",
+          "中国市场华为替代压力"
+        ],
+        "opportunities": [
+          "AI PC芯片换机周期",
+          "汽车智能化Snapdragon Ride放量"
+        ],
+        "threats": [
+          "苹果自研基带芯片替代风险",
+          "联发科竞争",
+          "中国替代品崛起"
+        ]
       },
       "abf_demand_impact": "medium",
       "ai_chip_focus": false,
@@ -460,10 +487,23 @@
       "products": [],
       "roadmap": [],
       "analysis": {
-        "strengths": [],
-        "weaknesses": [],
-        "opportunities": [],
-        "threats": []
+        "strengths": [
+          "Google/Meta/Apple自定义AI芯片（XPU）核心供应商",
+          "CoWoS先进封装需求第三大驱动力",
+          "VMware收购后软件+硬件协同"
+        ],
+        "weaknesses": [
+          "过度依赖少数超大规模客户",
+          "自研XPU竞争加剧（客户可能内化）"
+        ],
+        "opportunities": [
+          "云厂商定制AI芯片需求持续爆发",
+          "XPU替代部分NVIDIA GPU的推理场景"
+        ],
+        "threats": [
+          "客户自研芯片能力提升风险",
+          "NVIDIA AI芯片全栈竞争"
+        ]
       },
       "abf_demand_impact": "high",
       "ai_chip_focus": true,
