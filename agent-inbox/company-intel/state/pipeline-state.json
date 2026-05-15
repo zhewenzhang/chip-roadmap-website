@@ -1,0 +1,11 @@
+{
+  "last_pipeline_run_at": "2026-05-15T12:21:00+08:00",
+  "last_pipeline_run_id": "20260515-120819",
+  "last_run_date": "2026-05-15",
+  "raw_count": 5,
+  "reviewed_count": 5,
+  "rejected_count": 0,
+  "unverified_count": 1,
+  "status": "completed",
+  "errors": []
+}
