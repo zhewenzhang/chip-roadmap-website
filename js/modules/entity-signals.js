@@ -264,7 +264,7 @@ function renderChipImpactHeader(signals, allSigs) {
     html += '</div>'; // end fields grid
 
     // Source line
-    html += `<div class="impact-source-line">推導依據: ${impact.verifiedCount} 條 verified、${impact.watchCount} 條 watch</div>`;
+    html += `<div class="impact-source-line">推導依據: ${impact.verifiedCount} 條已驗證、${impact.watchCount} 條觀望</div>`;
 
     // Driving evidence panel
     html += renderEvidencePanel(impact.drivingSignals, impact.conflictingSignals);
@@ -322,7 +322,7 @@ function renderCompanyAbfHeader(signals, allSigs) {
 
     // Top chips
     if (outlook.topChips.length > 0) {
-        html += `<div class="impact-source-line">Top 影響芯片: ${outlook.topChips.map(c =>
+        html += `<div class="impact-source-line">最高影響芯片: ${outlook.topChips.map(c =>
             `<a href="chip-signals.html?name=${encodeURIComponent(c.chipName)}">${esc(c.chipName)}</a>`
         ).join(' / ')}</div>`;
     }
