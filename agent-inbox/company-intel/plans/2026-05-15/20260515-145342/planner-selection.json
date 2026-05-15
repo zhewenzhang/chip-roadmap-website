@@ -1,0 +1,51 @@
+{
+  "run_id": "20260515-145342",
+  "run_date": "2026-05-15",
+  "selected_companies": [
+    {
+      "company_name": "DeepX",
+      "region": "Korea",
+      "category_hint": "AI_chip",
+      "priority": "P2",
+      "task_type": "new_profile",
+      "why_this_run": "唯一的pending公司，韩国AI芯片设计新锐，专注边缘推理芯片，必须本轮处理",
+      "known_risks": ["韩国AI芯片初创公司，公开信息可能有限", "边缘推理市场竞争激烈"],
+      "search_queries": [
+        "DeepX AI芯片 韩国 边缘推理 2026",
+        "DeepX semiconductor Korea edge AI inference",
+        "DeepX NPU 芯片 融资 估值"
+      ]
+    },
+    {
+      "company_name": "Zhuhai Access Semiconductor",
+      "region": "China",
+      "category_hint": "ABF",
+      "priority": "P0",
+      "task_type": "retry",
+      "why_this_run": "中国ABF载板突破者，国产替代关键企业。上轮因网络搜索未找到足够公开信息而unverified，本轮需用更精准的搜索策略重试",
+      "known_risks": ["公司知名度较低，公开信息稀少", "可能尚未大规模量产", "搜索引擎结果被珠海旅游信息干扰"],
+      "search_queries": [
+        "珠海进芯半导体 ABF载板",
+        "珠海进芯半导体 IC基板 先进封装",
+        "Zhuhai Access Semiconductor IC substrate ABF",
+        "珠海 半导体 封装基板 企业"
+      ]
+    },
+    {
+      "company_name": "Shinko Electric",
+      "region": "Japan",
+      "category_hint": "substrate",
+      "priority": "P0",
+      "task_type": "enrichment",
+      "why_this_run": "全球第三大ABF载板厂（市占率约12%），P0级别但review评分仅77分为P0中最低，缺少revenue、exact_market_share_2026等关键字段，需enrichment提升数据质量",
+      "known_risks": ["富士通持股50%，三菱曾考虑竞购", "日本企业英文信息可能有限"],
+      "search_queries": [
+        "Shinko Electric revenue 2025 2026 ABF substrate",
+        "新光电气 营收 市占率 ABF载板 2026",
+        "Shinko Electric Industries annual report financial results",
+        "新光电气工業 富士通 三菱 竞购"
+      ]
+    }
+  ],
+  "planner_notes": "本轮3家公司覆盖P0-P2优先级：(1) DeepX为唯一pending公司必须入选，属P2级AI芯片设计；(2) Zhuhai Access Semiconductor为P0级ABF载板国产替代关键，上轮unverified需retry；(3) Shinko Electric为P0级ABF载板第三大厂，review评分最低(77分)需enrichment补充营收和市占率数据。已reviewed的8家公司中，Unimicron/Ibiden同为77分但数据完整度相近，优先选择Shinko因其ABF市占率数据更关键。"
+}
