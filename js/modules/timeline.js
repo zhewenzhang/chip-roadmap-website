@@ -58,9 +58,13 @@ function renderTimeline(matrix, filterCompany = null, onSignalClick = null) {
     }
 
     if (companyIds.length === 0) {
-        const msg = document.createElement('p');
-        msg.style.cssText = 'text-align:center;color:#9ca3af;padding:60px 0;font-size:15px';
-        msg.textContent = '暫無已驗證 Roadmap 數據';
+        const msg = document.createElement('div');
+        msg.innerHTML = `<div class="page-empty-state">
+  <div class="page-empty-state-icon">◈</div>
+  <div class="page-empty-state-title">路線圖數據累積中</div>
+  <div class="page-empty-state-sub">路線圖由已驗證信號自動生成。<br>添加信號並審核通過後，此處將自動顯示時間軸。</div>
+  <a href="signals.html" class="page-empty-state-link">前往信號工作台 →</a>
+</div>`;
         container.appendChild(msg);
         return;
     }
