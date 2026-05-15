@@ -68,7 +68,11 @@ async function initHomePage() {
  */
 function renderSystemStatus(signals) {
     const el = document.getElementById('statusMetrics');
-    if (!el) return;
+    if (!el) {
+        // Fallback: also try marquee
+        populateMarquee(signals);
+        return;
+    }
 
     const verified = signals.filter(s => s.status === 'verified');
     const draftWatch = signals.filter(s => s.status === 'draft' || s.status === 'watch');
@@ -90,12 +94,56 @@ function renderSystemStatus(signals) {
         `最近驗證 <strong>${agoStr}</strong>`,
         `待驗證信號 <strong>${draftWatch.length}</strong> 條`,
     ].join('&nbsp;&nbsp;|&nbsp;&nbsp;');
+
+    // Also populate kinetic marquee
+    populateMarquee(signals);
+}
+
+function populateMarquee(signals) {
+    const mc = document.getElementById('marqueeContent');
+    const mc2 = document.getElementById('marqueeContent2');
+    if (!mc) return;
+
+    const verified = signals.filter(s => s.status === 'verified');
+    const verifiedChips = new Set(verified.map(s => s.chip_name).filter(Boolean));
+    const allCompanies = new Set(signals.map(s => s.company_id).filter(Boolean));
+    const allRegions = new Set(signals.map(s => s.region).filter(Boolean));
+
+    let lastVerified = '';
+    for (const s of verified) {
+        const d = s.last_verified_at || '';
+        if (d > lastVerified) lastVerified = d;
+    }
+    const agoStr = lastVerified ? relativeTime(lastVerified) : '—';
+
+    const items = [
+        { label: '驗證信號', num: verified.length, unit: '條' },
+        { label: '追蹤芯片', num: verifiedChips.size, unit: '顆' },
+        { label: '追蹤公司', num: allCompanies.size, unit: '家' },
+        { label: '國家/地區', num: allRegions.size, unit: '個' },
+        { label: '最近驗證', text: agoStr },
+        { label: '草稿/觀望', num: signals.filter(s => s.status === 'draft' || s.status === 'watch').length, unit: '條' },
+    ];
+
+    const html = items.map(item => {
+        if (item.text) {
+            return `<span class="marquee-item">${item.label} <span class="marquee-dot"></span> <span style="font-weight:400">${esc(item.text)}</span></span>`;
+        }
+        return `<span class="marquee-item"><span class="marquee-num">${item.num}</span> ${item.label}${item.unit || ''} <span class="marquee-dot"></span></span>`;
+    }).join('');
+
+    mc.innerHTML = html;
+    if (mc2) mc2.innerHTML = html;
 }
 
 function renderSystemStatusEmpty() {
     const el = document.getElementById('statusMetrics');
-    if (!el) return;
+    if (!el) {
+        populateMarquee([]);
+        return;
+    }
     el.innerHTML = '驗證信號 <strong>0</strong> 條&nbsp;&nbsp;|&nbsp;&nbsp;追蹤芯片 <strong>0</strong> 顆&nbsp;&nbsp;|&nbsp;&nbsp;待驗證信號 <strong>0</strong> 條';
+    populateMarquee([]);
 }
 
 /**

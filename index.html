@@ -17,10 +17,10 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Navbar (unchanged) -->
     <nav class="navbar" aria-label="Main navigation">
         <div class="nav-container">
             <div class="logo">
@@ -42,73 +42,104 @@
         </div>
     </nav>
 
-    <!-- Hero (V2: Signal-Centric Landing) -->
-    <header class="hero hero-v2">
-        <div class="hero-v2-content">
-            <h1>AI 芯片供應鏈驗證情報層</h1>
-            <p class="hero-v2-subtitle">追蹤、驗證、推導每顆關鍵 AI 芯片對 ABF / 先進封裝供應鏈的真實影響。信號可追溯、信度可量化、結論可驗證。</p>
-            <div class="hero-v2-ctas">
-                <a href="signals.html" class="hero-v2-cta hero-v2-cta-primary">瀏覽信號工作台 →</a>
-                <a href="roadmap.html" class="hero-v2-cta hero-v2-cta-secondary">查看已驗證進度時間軸</a>
-            </div>
-        </div>
-    </header>
+    <!-- Kinetic Homepage -->
+    <div id="homePage">
 
-    <!-- System Status Panel (replaces vanity counters) -->
-    <section class="system-status" id="systemStatus">
-        <div class="system-status-content">
-            <span class="status-label">[ONLINE]</span>
-            <span class="status-metrics" id="statusMetrics">載入中…</span>
-        </div>
-    </section>
+        <!-- Noise Texture Overlay -->
+        <svg class="kinetic-noise" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+            <title>Noise texture</title>
+            <filter id="kineticNoise">
+                <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" stitchTiles="stitch"/>
+            </filter>
+            <rect width="100%" height="100%" filter="url(#kineticNoise)"/>
+        </svg>
 
-    <!-- Latest Verified Signals -->
-    <main class="home-dynamic">
-        <section class="home-section" id="latestVerifiedSection">
-            <div class="home-section-header">
-                <h2>最新驗證信號</h2>
-                <span class="home-section-sub">近期通過驗證的產業進度信號</span>
+        <!-- Hero Section -->
+        <header class="kinetic-hero">
+            <div class="kinetic-hero-inner">
+                <p class="kinetic-eyebrow">芯片情報 · 驗證情報層</p>
+                <h1 class="kinetic-display">
+                    <span class="kinetic-display-line">AI 芯片</span>
+                    <span class="kinetic-display-line">供應鏈</span>
+                </h1>
+                <h2 class="kinetic-display-accent">
+                    驗證情報層
+                </h2>
+                <p class="kinetic-body">追蹤、驗證、推導每顆關鍵 AI 芯片對 ABF / 先進封裝供應鏈的真實影響。<br>信號可追溯 · 信度可量化 · 結論可驗證</p>
+                <div class="kinetic-ctas">
+                    <a href="signals.html" class="kinetic-btn kinetic-btn-primary">瀏覽信號工作台</a>
+                    <a href="roadmap.html" class="kinetic-btn kinetic-btn-outline">查看時間軸</a>
+                </div>
             </div>
-            <div id="latestVerified" class="latest-verified-list">
-                <p class="home-loading">載入中…</p>
+        </header>
+
+        <!-- Stats Marquee -->
+        <section class="kinetic-marquee-section" aria-label="系統狀態">
+            <div class="kinetic-marquee">
+                <div class="marquee-track" id="statsMarquee">
+                    <div class="marquee-content" id="marqueeContent">
+                        <span class="marquee-item">載入中…</span>
+                    </div>
+                    <div class="marquee-content" aria-hidden="true" id="marqueeContent2">
+                        <span class="marquee-item">載入中…</span>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Top Impact Chips -->
-        <section class="home-section" id="topImpactSection">
-            <div class="home-section-header">
-                <h2>高影響芯片 — ABF / 封裝供應鏈</h2>
-            </div>
-            <div id="topImpactChips" class="top-impact-list">
-                <p class="home-loading">載入中…</p>
-            </div>
-        </section>
-    </main>
+        <!-- Signal Sections -->
+        <main class="kinetic-main">
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>[DATA]</h4>
-                <ul>
-                    <li>供應鏈驗證</li>
-                    <li>跨境情報</li>
-                    <li>產業分析師</li>
-                </ul>
+            <!-- Latest Verified Signals -->
+            <section class="kinetic-section" id="latestVerifiedSection">
+                <div class="kinetic-section-header">
+                    <div class="kinetic-section-label">
+                        <span class="kinetic-num" aria-hidden="true">01</span>
+                        <span>最新驗證信號</span>
+                    </div>
+                    <p class="kinetic-section-desc">近期通過驗證的產業進度信號</p>
+                </div>
+                <div id="latestVerified" class="kinetic-signal-list">
+                    <p class="kinetic-loading">載入中…</p>
+                </div>
+            </section>
+
+            <!-- Top Impact Chips -->
+            <section class="kinetic-section" id="topImpactSection">
+                <div class="kinetic-section-header">
+                    <div class="kinetic-section-label">
+                        <span class="kinetic-num" aria-hidden="true">02</span>
+                        <span>高影響芯片</span>
+                    </div>
+                    <p class="kinetic-section-desc">ABF / 封裝供應鏈影響排名</p>
+                </div>
+                <div id="topImpactChips" class="kinetic-signal-list">
+                    <p class="kinetic-loading">載入中…</p>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="kinetic-footer">
+            <div class="kinetic-footer-inner">
+                <div class="kinetic-footer-grid">
+                    <div class="kinetic-footer-col">
+                        <h4>數據</h4>
+                        <p>供應鏈驗證 · 跨境情報 · 產業分析師</p>
+                    </div>
+                    <div class="kinetic-footer-col">
+                        <h4>更新</h4>
+                        <p>信號持續更新 · 每週驗證通過 · 定期深度檢討</p>
+                    </div>
+                </div>
+                <div class="kinetic-footer-bottom">
+                    <p>2026 芯片情報 · AI 芯片供應鏈驗證情報層 · <span id="footerStatus">SYS READY</span></p>
+                </div>
             </div>
-            <div class="footer-section">
-                <h4>[UPDATES]</h4>
-                <ul>
-                    <li>信號持續更新</li>
-                    <li>每週驗證通過</li>
-                    <li>定期深度檢討</li>
-                </ul>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 芯片產業分析 | AI 芯片供應鏈驗證情報層 | <span id="footerStatus">SYS READY</span></p>
-        </div>
-    </footer>
+        </footer>
+
+    </div><!-- /#homePage -->
 
     <script type="module" src="js/app.js"></script>
 </body>
