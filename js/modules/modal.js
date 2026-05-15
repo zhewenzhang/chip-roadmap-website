@@ -216,7 +216,7 @@ function showCompanyDetail(companyId) {
             roadmapSection.className = 'modal-section';
 
             const roadmapH4 = document.createElement('h4');
-            roadmapH4.textContent = 'Roadmap';
+            roadmapH4.textContent = '路線圖';
             roadmapSection.appendChild(roadmapH4);
 
             const ul = document.createElement('ul');

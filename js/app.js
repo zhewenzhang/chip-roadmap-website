@@ -116,7 +116,13 @@ function renderLatestVerifiedSignals(signals) {
         .slice(0, 8);
 
     if (verified.length < 3) {
-        container.innerHTML = '<p class="home-empty">驗證信號累積中，請稍後再回來</p>';
+        container.innerHTML = `
+  <div class="page-empty-state">
+    <div class="page-empty-state-icon">◈</div>
+    <div class="page-empty-state-title">驗證信號累積中</div>
+    <div class="page-empty-state-sub">信號需要經過審核後才會在此顯示。<br>已有草稿？前往驗證。</div>
+    <a href="signals.html" class="page-empty-state-link">前往信號工作台 →</a>
+  </div>`;
         return;
     }
 
@@ -156,7 +162,13 @@ function renderLatestVerifiedSignals(signals) {
 function renderLatestVerifiedEmpty() {
     const container = document.getElementById('latestVerified');
     if (!container) return;
-    container.innerHTML = '<p class="home-empty">驗證信號累積中，請稍後再回來</p>';
+    container.innerHTML = `
+  <div class="page-empty-state">
+    <div class="page-empty-state-icon">◈</div>
+    <div class="page-empty-state-title">驗證信號累積中</div>
+    <div class="page-empty-state-sub">信號需要經過審核後才會在此顯示。<br>已有草稿？前往驗證。</div>
+    <a href="signals.html" class="page-empty-state-link">前往信號工作台 →</a>
+  </div>`;
 }
 
 /**
@@ -182,7 +194,11 @@ function renderTopImpactChips(signals) {
     const qualifying = derived.filter(d => !d.insufficientData && d.abfDemandImpact);
 
     if (qualifying.length === 0) {
-        container.innerHTML = '<p class="home-empty">推導引擎需要更多驗證信號才能給出可靠排序</p>';
+        container.innerHTML = `
+  <div class="page-empty-state">
+    <div class="page-empty-state-title">推導引擎待機中</div>
+    <div class="page-empty-state-sub">需要至少 3 條已驗證信號才能計算 ABF 影響排序。</div>
+  </div>`;
         return;
     }
 
@@ -234,7 +250,11 @@ function renderTopImpactChips(signals) {
 function renderTopImpactEmpty() {
     const container = document.getElementById('topImpactChips');
     if (!container) return;
-    container.innerHTML = '<p class="home-empty">推導引擎需要更多驗證信號才能給出可靠排序</p>';
+    container.innerHTML = `
+  <div class="page-empty-state">
+    <div class="page-empty-state-title">推導引擎待機中</div>
+    <div class="page-empty-state-sub">需要至少 3 條已驗證信號才能計算 ABF 影響排序。</div>
+  </div>`;
 }
 
 function esc(v) {
@@ -263,7 +283,7 @@ async function initRoadmapPage() {
         console.error('[Roadmap] Signals load error:', result.error);
         const container = document.getElementById('timelineContainer');
         if (container) {
-            container.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:60px 0;font-size:15px">Roadmap 數據載入失敗，請稍後重試。</p>';
+            container.innerHTML = '<p style="text-align:center;color:#9ca3af;padding:60px 0;font-size:15px">路線圖數據載入失敗，請稍後重試。</p>';
         }
         return;
     }
@@ -394,7 +414,7 @@ async function initInsightsPage() {
 function renderInsightsError() {
     ['recentCounts', 'recentUpgrades', 'highImpactSignals', 'riskSignals', 'significantChanges', 'priorityQueue'].forEach(id => {
         const el = document.getElementById(id);
-        if (el) el.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">數據載入失敗，請稍後重試。</p>';
+        if (el) el.innerHTML = '<div class="page-empty-state"><div class="page-empty-state-sub">數據載入失敗，請稍後重試</div></div>';
     });
 }
 
@@ -405,7 +425,7 @@ function renderRecentSignalCountsModule(signals, buildRecentSignalCounts) {
     const counts = buildRecentSignalCounts(signals, 30);
 
     if (counts.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無信號更新。</p>';
+        container.innerHTML = '<div class="page-empty-state"><div class="page-empty-state-sub">近 30 天尚無信號更新</div></div>';
         return;
     }
 
@@ -447,7 +467,7 @@ function renderRecentUpgradesModule(signals, buildRecentUpgrades, formatDate, ST
     const upgrades = buildRecentUpgrades(signals, 30);
 
     if (upgrades.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無狀態升級。</p>';
+        container.innerHTML = '<div class="page-empty-state"><div class="page-empty-state-sub">近期尚無狀態升級記錄</div></div>';
         return;
     }
 
@@ -500,7 +520,7 @@ function renderHighImpactModule(signals, buildHighImpactRecentSignals, IMPACT_LA
     const items = buildHighImpactRecentSignals(signals, 30);
 
     if (items.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-secondary);text-align:center;padding:32px 0">近 30 天無高 ABF 影響信號。</p>';
+        container.innerHTML = '<div class="page-empty-state"><div class="page-empty-state-sub">近期尚無高 ABF 影響信號</div></div>';
         return;
     }
 

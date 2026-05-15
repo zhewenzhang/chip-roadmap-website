@@ -315,7 +315,7 @@ function renderCompanyAbfHeader(signals, allSigs) {
     html += `<div class="impact-field-row"><span class="field-label">進階階段芯片</span><span class="field-value">${outlook.advancedChipCount}</span></div>`;
 
     if (outlook.abfLayerRange) {
-        html += `<div class="impact-field-row"><span class="field-label">ABF Layers 範圍</span><span class="field-value">${outlook.abfLayerRange[0]} ~ ${outlook.abfLayerRange[1]}</span></div>`;
+        html += `<div class="impact-field-row"><span class="field-label">ABF 層數範圍</span><span class="field-value">${outlook.abfLayerRange[0]} ~ ${outlook.abfLayerRange[1]}</span></div>`;
     }
 
     html += '</div>';
