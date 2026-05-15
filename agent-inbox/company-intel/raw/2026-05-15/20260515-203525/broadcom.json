@@ -1,0 +1,146 @@
+{
+  "company_id": "broadcom",
+  "name_en": "Broadcom Inc.",
+  "name_cn": "博通公司",
+  "aliases": [
+    "AVGO",
+    "博通"
+  ],
+  "region": "USA",
+  "country": "USA",
+  "headquarters": "San Jose, California, USA",
+  "founded": 1961,
+  "website": "https://www.broadcom.com",
+  "company_type": "fabless",
+  "supply_chain_role": [
+    "定制ASIC芯片",
+    "网络芯片",
+    "基础设施软件"
+  ],
+  "main_products": [
+    {
+      "name": "Custom AI ASIC",
+      "category": "AI_chip",
+      "description": "为Google/Meta/OpenAI等设计定制AI芯片"
+    },
+    {
+      "name": "Networking Switches",
+      "category": "networking",
+      "description": "数据中心网络交换芯片（Memory交换机）"
+    },
+    {
+      "name": "Storage Controllers",
+      "category": "storage",
+      "description": "企业级存储控制器"
+    },
+    {
+      "name": "Infrastructure Software",
+      "category": "software",
+      "description": "VMware等企业级基础设施软件"
+    }
+  ],
+  "abf_relevance": {
+    "level": "high",
+    "reason": "定制ASIC芯片（如Google TPU）使用先进封装和ABF载板，是ABF载板重要需求方"
+  },
+  "advanced_packaging_relevance": {
+    "level": "high",
+    "technologies": [
+      "CoWoS客户",
+      "定制ASIC封装"
+    ],
+    "reason": "定制AI芯片需使用TSMC CoWoS封装，间接驱动ABF载板需求"
+  },
+  "china_relevance": {
+    "level": "market",
+    "reason": "美国企业，受出口管制影响。中国为重要市场，但受限制。"
+  },
+  "key_customers_or_partners": [
+    "Google (TPU)",
+    "Meta",
+    "OpenAI",
+    "ByteDance"
+  ],
+  "competitors": [
+    "Marvell",
+    "Intel (custom ASIC)",
+    "NVIDIA (GPU竞争)"
+  ],
+  "why_track": "定制AI芯片市场龙头，OpenAI/Google等大客户驱动ABF载板需求，2025年Q3营收$159.6B创历史新高",
+  "market_data": {
+    "revenue_q3_fy2025": "$15.96B",
+    "revenue_growth_yoy": "22%",
+    "market_cap": "$1T+ (as of Dec 2024)",
+    "openai_deal": "$18B financing for custom AI chips"
+  },
+  "SWOT": {
+    "strengths": [
+      "定制ASIC市场领导者",
+      "Google TPU核心设计商",
+      "OpenAI合作",
+      "软件+硬件双轮驱动",
+      "市值突破$1T"
+    ],
+    "weaknesses": [
+      "高度依赖少数大客户",
+      "定制ASIC项目周期长"
+    ],
+    "opportunities": [
+      "AI ASIC市场爆发（OpenAI/Meta/ByteDance）",
+      "VMware整合带来软件收入",
+      "数据中心网络升级"
+    ],
+    "threats": [
+      "NVIDIA GPU竞争",
+      "客户自研（Google TPU团队）",
+      "地缘政治出口管制"
+    ]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T2",
+  "import_decision": "needs_human_check",
+  "confidence": 0.7,
+  "data_limitations": "网络环境受限，无法访问Broadcom官网详情。数据主要来自Bing搜索片段和行业新闻引用，营收数据需人工验证。",
+  "sources": [
+    {
+      "title": "Bing search results for Broadcom 博通",
+      "url": "https://cn.bing.com/search?q=Broadcom+博通+2026",
+      "publisher": "Bing",
+      "accessed_at": "2026-05-15",
+      "supports_fields": [
+        "founded",
+        "market_cap",
+        "revenue_q3_fy2025"
+      ]
+    },
+    {
+      "title": "OpenAI's AI Chip Deal With Broadcom Hits $18B Financing",
+      "url": "https://www.theinformation.com/articles/openai-broadcom-18b",
+      "publisher": "The Information",
+      "published_at": "2026-05-08",
+      "accessed_at": "2026-05-15",
+      "supports_fields": [
+        "openai_deal",
+        "market_data"
+      ]
+    },
+    {
+      "title": "从射频芯片到AI巨头：博通（Broadcom）的逆袭之路",
+      "url": "https://zhuanlan.zhihu.com",
+      "publisher": "知乎",
+      "published_at": "2025-10-18",
+      "accessed_at": "2026-05-15",
+      "supports_fields": [
+        "revenue_q3_fy2025",
+        "revenue_growth_yoy"
+      ]
+    }
+  ],
+  "agent_meta": {
+    "run_id": "20260515-203525",
+    "discovered_by": "company-intel-agent-v2",
+    "last_checked_at": "2026-05-15T20:42:38.434450",
+    "change_type": "retry",
+    "previous_attempt": "20260515-183526"
+  }
+}

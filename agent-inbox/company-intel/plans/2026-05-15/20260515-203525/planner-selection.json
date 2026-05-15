@@ -1,0 +1,42 @@
+{
+  "run_id": "20260515-203525",
+  "run_date": "2026-05-15",
+  "selection_strategy": "retry_unverified_critical",
+  "selected_companies": [
+    {
+      "company_name": "TSMC",
+      "region": "Taiwan",
+      "category_hint": "foundry",
+      "priority": "P0",
+      "priority_reason": "全球最大晶圆代工厂，CoWoS/先进封装核心，AI芯片供应链最关键节点",
+      "task_type": "retry",
+      "previous_attempt": "20260515-183526",
+      "previous_failure": "网络环境受限",
+      "retry_strategy": "尝试中国可访问来源：雪球、东方财富、芯智讯、36氪、电子工程专辑"
+    },
+    {
+      "company_name": "Broadcom",
+      "region": "USA",
+      "category_hint": "AI_chip",
+      "priority": "P1",
+      "priority_reason": "定制ASIC芯片龙头，为Google/Meta设计AI芯片，ABF载板大户",
+      "task_type": "retry",
+      "previous_attempt": "20260515-183526",
+      "previous_failure": "网络环境受限",
+      "retry_strategy": "尝试中国可访问来源：雪球、东方财富、同花顺、电子工程专辑"
+    },
+    {
+      "company_name": "寒武纪 Cambricon",
+      "region": "China",
+      "category_hint": "AI_chip",
+      "priority": "P2",
+      "priority_reason": "中国AI芯片龙头，国产替代核心",
+      "task_type": "retry",
+      "previous_attempt": "20260515-183526",
+      "previous_failure": "网络环境受限",
+      "retry_strategy": "优先搜索中国科技媒体：36氪、芯智讯、电子工程专辑、雪球、同花顺"
+    }
+  ],
+  "total_pending": 18,
+  "total_unverified_retries": 3
+}
