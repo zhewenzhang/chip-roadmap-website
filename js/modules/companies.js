@@ -114,6 +114,19 @@ function renderCompaniesGrid(companiesData, filter = 'all', searchTerm = '', sig
         return true;
     });
 
+    // 排序：有信號的公司優先，按信號數量降序；無信號的公司按名稱字母序排末尾
+    allFilteredCompanies.sort((a, b) => {
+        const aSig = a._signalMetrics?.count || 0;
+        const bSig = b._signalMetrics?.count || 0;
+        if (bSig !== aSig) return bSig - aSig;
+        // 信號數相同：按最新信號日期降序
+        const aDate = a._signalMetrics?.latestDate || '';
+        const bDate = b._signalMetrics?.latestDate || '';
+        if (bDate !== aDate) return bDate.localeCompare(aDate);
+        // 日期也相同：按英文名稱字母序
+        return (a.name_en || a.id).localeCompare(b.name_en || b.id);
+    });
+
     renderCurrentPage(container, signalMetrics);
     updateLoadMoreButton(container);
 }

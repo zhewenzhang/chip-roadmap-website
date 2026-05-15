@@ -4290,3 +4290,51 @@ tr:hover .td-company { background: var(--color-border); }
         display: none;
     }
 }
+
+/* ===== Phase 19: Unified Empty State ===== */
+.page-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--color-muted-fg);
+    font-family: var(--font-mono);
+}
+
+.page-empty-state-icon {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.page-empty-state-title {
+    font-size: 0.9rem;
+    color: var(--color-muted-fg);
+    margin-bottom: 6px;
+}
+
+.page-empty-state-sub {
+    font-size: 0.78rem;
+    color: var(--color-muted-fg);
+    opacity: 0.7;
+    line-height: 1.6;
+    max-width: 360px;
+}
+
+.page-empty-state-link {
+    display: inline-block;
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: var(--color-fg);
+    border: 1px solid var(--color-fg);
+    padding: 6px 14px;
+    text-decoration: none;
+    font-family: var(--font-mono);
+}
+
+.page-empty-state-link:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+}
