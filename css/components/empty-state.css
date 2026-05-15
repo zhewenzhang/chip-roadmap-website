@@ -1,0 +1,31 @@
+.empty-state {
+    text-align: center;
+    padding: var(--s-12) var(--s-6);
+    color: var(--fg-muted);
+}
+.empty-state-icon {
+    font-size: var(--t-3xl);
+    color: var(--fg-dim);
+    margin-bottom: var(--s-4);
+}
+.empty-state-title {
+    font-size: var(--t-md);
+    color: var(--fg);
+    margin-bottom: var(--s-2);
+}
+.empty-state-sub {
+    font-size: var(--t-sm);
+    line-height: 1.6;
+    margin-bottom: var(--s-4);
+}
+.empty-state-cta {
+    display: inline-block;
+    border: 1px solid var(--fg);
+    color: var(--fg);
+    padding: var(--s-2) var(--s-4);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-size: var(--t-xs);
+    letter-spacing: 0.05em;
+}
+.empty-state-cta:hover { background: var(--fg); color: var(--bg); }

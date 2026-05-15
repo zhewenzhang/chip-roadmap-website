@@ -1,0 +1,14 @@
+.crumb {
+    padding: var(--s-3) 0;
+    font-size: var(--t-xs);
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.crumb-link {
+    color: var(--fg-dim);
+    text-decoration: none;
+    transition: var(--transition);
+}
+.crumb-link:hover { color: var(--fg); }
+.crumb-separator { margin: 0 var(--s-2); color: var(--border); }

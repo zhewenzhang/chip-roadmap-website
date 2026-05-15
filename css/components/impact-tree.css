@@ -1,0 +1,40 @@
+.impact-tree {
+    font-family: var(--font-mono);
+    font-size: var(--t-sm);
+    line-height: 1.8;
+    padding: var(--s-4);
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+}
+.impact-tree-root {
+    color: var(--fg);
+    margin-bottom: var(--s-3);
+    padding-left: var(--s-2);
+}
+.impact-tree-branches { padding-left: var(--s-4); }
+.impact-tree-branch {
+    display: flex;
+    align-items: baseline;
+    gap: var(--s-2);
+    padding: var(--s-1) 0;
+}
+.impact-tree-connector { color: var(--border); flex-shrink: 0; }
+.impact-tree-target { color: var(--fg); min-width: 8rem; }
+.impact-tree-reason { color: var(--fg-dim); flex: 1; }
+.impact-tree-relation { font-size: var(--t-xs); padding: 0 var(--s-2); }
+.impact-tree-relation-benefit { color: var(--fg); }
+.impact-tree-relation-impacted { color: var(--accent); }
+.impact-tree-relation-neutral { color: var(--fg-muted); }
+.impact-tree-summary {
+    margin-top: var(--s-3);
+    padding-top: var(--s-3);
+    border-top: 1px dashed var(--border);
+    color: var(--fg-dim);
+    font-size: var(--t-xs);
+}
+.impact-tree-empty {
+    color: var(--fg-muted);
+    font-style: italic;
+    text-align: center;
+    padding: var(--s-6);
+}

@@ -1,0 +1,20 @@
+.kv-table { width: 100%; border-collapse: collapse; }
+.kv-table-row {
+    display: flex;
+    padding: var(--s-2) 0;
+    border-bottom: 1px solid var(--border);
+    font-size: var(--t-sm);
+}
+.kv-table-row:last-child { border-bottom: none; }
+.kv-table-label {
+    color: var(--fg-muted);
+    flex: 0 0 8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: var(--t-xs);
+}
+.kv-table-value {
+    color: var(--fg);
+    flex: 1;
+    word-break: break-word;
+}

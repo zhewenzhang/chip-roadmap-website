@@ -8,7 +8,20 @@
 @import './typography.css';
 @import './layout.css';
 
-/* Legacy styles below — being migrated to components/ and pages/ in Phase 26-32 */
+/* Components (Phase 26) */
+@import './components/signal-card.css';
+@import './components/signal-hero.css';
+@import './components/kv-table.css';
+@import './components/impact-tree.css';
+@import './components/badge.css';
+@import './components/filter-bar.css';
+@import './components/section.css';
+@import './components/empty-state.css';
+@import './components/crumb.css';
+@import './components/watch-btn.css';
+@import './components/entity-link.css';
+
+/* Legacy styles below — migration in Phase 27-32 */
 
 /* ============== Terminal Effects ============== */
 

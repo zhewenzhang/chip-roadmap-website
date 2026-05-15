@@ -1,0 +1,37 @@
+.badge {
+    display: inline-block;
+    padding: var(--s-1) var(--s-2);
+    font-size: var(--t-xs);
+    font-family: var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: 1px solid currentColor;
+    line-height: 1;
+}
+
+/* impact variants */
+.badge-impact-explosive { color: #33ff00; }
+.badge-impact-high      { color: #33ff00; opacity: 0.75; }
+.badge-impact-medium    { color: #ffb000; }
+.badge-impact-low       { color: var(--fg-muted); }
+
+/* stage variants */
+.badge-stage-rumor      { color: var(--fg-muted); }
+.badge-stage-announced  { color: var(--fg-dim); }
+.badge-stage-sampling   { color: var(--accent); }
+.badge-stage-design_win { color: var(--accent); }
+.badge-stage-pilot      { color: var(--fg); }
+.badge-stage-ramp       { color: var(--fg); font-weight: 700; }
+.badge-stage-volume     { color: var(--fg); font-weight: 700; background: rgba(51,255,0,0.1); }
+
+/* status variants */
+.badge-status-draft       { color: var(--fg-muted); }
+.badge-status-watch       { color: var(--accent); }
+.badge-status-verified    { color: var(--fg); }
+.badge-status-downgraded  { color: var(--fg-dim); }
+.badge-status-invalidated { color: var(--danger); }
+.badge-status-archived    { color: var(--fg-muted); opacity: 0.6; }
+
+/* region/confidence (neutral) */
+.badge-region { color: var(--fg-muted); }
+.badge-confidence { color: var(--fg-dim); }

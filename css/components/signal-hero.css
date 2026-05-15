@@ -1,0 +1,18 @@
+.signal-hero {
+    border: 2px solid var(--border-bright);
+    background: var(--bg-panel);
+    padding: var(--s-8);
+    margin-bottom: var(--s-8);
+    box-shadow: var(--glow);
+}
+.signal-hero-title {
+    font-size: var(--t-xl);
+    color: var(--fg);
+    margin-bottom: var(--s-4);
+}
+.signal-hero-badges { display: flex; gap: var(--s-2); margin-bottom: var(--s-3); flex-wrap: wrap; }
+.signal-hero-meta {
+    font-size: var(--t-sm);
+    color: var(--fg-muted);
+    letter-spacing: 0.03em;
+}

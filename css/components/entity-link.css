@@ -1,0 +1,12 @@
+.entity-link {
+    color: var(--fg);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-1);
+    transition: var(--transition);
+}
+.entity-link:hover { text-shadow: var(--glow); }
+.entity-icon { color: var(--fg-dim); font-size: 0.9em; }
+.entity-company .entity-icon::before { content: '◆'; }
+.entity-chip .entity-icon::before { content: '◇'; }
