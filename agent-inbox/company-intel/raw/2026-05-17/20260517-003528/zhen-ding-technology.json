@@ -1,0 +1,45 @@
+{
+  "company": "Zhen Ding Technology",
+  "ticker": "4934.TW",
+  "exchange": "TWSE",
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "profile": {
+    "name": "Zhen Ding Technology Holding Limited",
+    "name_tw": "臻鼎科技控股股份有限公司",
+    "headquarters": "Taiwan",
+    "founded": 1999,
+    "description": "Zhen Ding Technology is a leading IC substrate manufacturer based in Taiwan, specializing in ABF (Ajinomoto Build-up Film) substrates used in advanced semiconductor packaging. The company is a key supplier for high-performance computing and AI chip packaging."
+  },
+  "market_data": {
+    "revenue_note": "All financial data sources unreachable",
+    "stock_price_note": "All stock data sources unreachable"
+  },
+  "swot": {
+    "strengths": [
+      "Leading ABF substrate manufacturer",
+      "Strong position in advanced semiconductor packaging supply chain",
+      "Key supplier for HPC and AI chip applications"
+    ],
+    "weaknesses": [
+      "Data not available - network restrictions"
+    ],
+    "opportunities": [
+      "Growing ABF substrate demand driven by AI/HPC",
+      "Advanced packaging technology expansion"
+    ],
+    "threats": [
+      "Competition from other ABF substrate manufacturers",
+      "Cyclical semiconductor industry"
+    ]
+  },
+  "tracking_priority": "High",
+  "source_quality": "T4",
+  "source_quality_note": "ALL web sources unreachable. Company website, Wikipedia, Bloomberg, Reuters, Yahoo Finance, WSJ, MarketWatch, Simply Wall St, Xueqiu, Investing.com all failed. Network restrictions persist from previous run.",
+  "import_decision": "unverified",
+  "confidence": 0.20,
+  "data_sources": [],
+  "collected_at": "2026-05-17T00:40:00+08:00",
+  "run_id": "20260517-003528",
+  "notes": "Retry attempt after previous rejection (score 49). All web sources still unreachable. Network conditions unchanged. Requires manual data collection or network improvement."
+}

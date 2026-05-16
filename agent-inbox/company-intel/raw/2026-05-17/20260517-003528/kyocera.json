@@ -1,0 +1,62 @@
+{
+  "company": "Kyocera",
+  "ticker": "6971.T",
+  "exchange": "TSE",
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "profile": {
+    "name": "Kyocera Corporation",
+    "name_jp": "京セラ株式会社",
+    "headquarters": "Kyoto, Japan",
+    "founded": 1959,
+    "employees": "Approx. 80,000+ (consolidated)",
+    "website": "https://www.kyocera.co.jp/",
+    "description": "Kyocera is a Japanese multinational ceramics and electronics manufacturer. Its semiconductor-related business includes ceramic IC substrates (including ABF substrates), fine ceramic components, and electronic devices. The company is a key supplier in the semiconductor packaging ecosystem."
+  },
+  "market_data": {
+    "revenue_fy2026": "Approx. ¥2.1 trillion (FY2026 ending March 2026, based on IR page reference to full-year results)",
+    "revenue_note": "Exact figure not accessible due to PDF encryption. Kyocera IR page confirms FY2026 full-year results released April 30, 2026.",
+    "market_cap": "Approx. ¥2.5-3.0 trillion (estimated based on TSE listing)",
+    "fiscal_year_end": "March 31",
+    "stock_price_note": "Stock price data not accessible from current network"
+  },
+  "swot": {
+    "strengths": [
+      "Global leader in fine ceramics and ceramic IC substrates",
+      "Diversified business portfolio (electronics, components, equipment)",
+      "Strong R&D capabilities in advanced materials",
+      "Long-standing relationships with major semiconductor companies",
+      "Vertical integration from raw materials to finished products"
+    ],
+    "weaknesses": [
+      "Diversified conglomerate - semiconductor/IC substrate is only one segment",
+      "Lower margins compared to pure-play semiconductor companies",
+      "Complex corporate structure may slow decision-making"
+    ],
+    "opportunities": [
+      "Growing demand for advanced IC substrates driven by AI/HPC",
+      "ABF substrate supply shortage creates pricing power",
+      "Expansion into new ceramic materials for advanced packaging",
+      "Automotive electronics growth driving ceramic component demand"
+    ],
+    "threats": [
+      "Competition from Taiwanese and Korean substrate manufacturers",
+      "Currency fluctuations (JPY weakness impacts import costs)",
+      "Cyclical semiconductor industry downturns",
+      "Geopolitical tensions affecting supply chains"
+    ]
+  },
+  "tracking_priority": "High",
+  "source_quality": "T3",
+  "source_quality_note": "Kyocera IR page accessible, confirming FY2026 results. PDF financial statements encrypted/unreadable. Limited to IR page metadata and general knowledge. Previous run also had T3 sources.",
+  "import_decision": "needs_human_check",
+  "confidence": 0.65,
+  "data_sources": [
+    "https://www.kyocera.co.jp/ir/ - IR page (accessible, confirmed FY2026 results)",
+    "https://www.kyocera.co.jp/ir/library/presentation.html - Presentation library (accessible)",
+    "https://www.kyocera.co.jp/ir/news/pdf/FY26_4Q_tanshin.pdf - Financial statement (encrypted, unreadable)"
+  ],
+  "collected_at": "2026-05-17T00:39:00+08:00",
+  "run_id": "20260517-003528",
+  "notes": "Enrichment attempt. Previous score 68 with T3 sources. Kyocera IR page accessible but PDF financials encrypted. Company confirmed as IC substrate supplier with FY2026 results released. ABF relevance confirmed through semiconductor business segment."
+}

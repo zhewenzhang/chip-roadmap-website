@@ -1,0 +1,60 @@
+{
+  "company": "Powertech Technology",
+  "ticker": "6239.TW",
+  "exchange": "TWSE",
+  "category": "OSAT",
+  "priority": "P1",
+  "profile": {
+    "name": "Powertech Technology Inc.",
+    "name_tw": "力成科技股份有限公司",
+    "headquarters": "Hsinchu, Taiwan",
+    "founded": 1995,
+    "employees": "Approx. 15,000+",
+    "website": "https://www.pti.com.tw/",
+    "description": "Powertech Technology is a Taiwan-based OSAT (Outsourced Semiconductor Assembly and Test) company specializing in memory packaging and testing. The company provides services for DRAM, Flash memory, and logic devices. It is a key partner for major memory manufacturers."
+  },
+  "market_data": {
+    "revenue_note": "Revenue data not accessible from current network. Company website reachable but IR section returned 404.",
+    "market_cap": "Approx. NT$80-100 billion (estimated)",
+    "fiscal_year_end": "December 31",
+    "stock_price_note": "Stock price data not accessible from current network"
+  },
+  "swot": {
+    "strengths": [
+      "Specialized memory OSAT capabilities (DRAM, Flash testing)",
+      "Strong relationships with major memory manufacturers (Micron, SK Hynix)",
+      "Advanced packaging technologies for HBM and high-bandwidth memory",
+      "Strategic location in Taiwan's semiconductor ecosystem"
+    ],
+    "weaknesses": [
+      "Heavy dependence on memory market cycles",
+      "Smaller scale compared to ASE/Amkor",
+      "Limited logic device packaging capabilities"
+    ],
+    "opportunities": [
+      "HBM demand explosion driven by AI/GPU applications",
+      "Advanced memory packaging technology upgrades",
+      "Growing test complexity requiring specialized capabilities",
+      "Potential expansion into logic device testing"
+    ],
+    "threats": [
+      "Memory market volatility and oversupply cycles",
+      "Competition from larger OSAT players expanding memory services",
+      "In-house testing by memory manufacturers",
+      "Capital intensity of advanced packaging equipment"
+    ]
+  },
+  "tracking_priority": "Medium",
+  "source_quality": "T4",
+  "source_quality_note": "Company website accessible but IR section returned 404. Financial data not accessible. Bing search results only returned unrelated Chinese companies. Previous run also had T3 sources with limited data.",
+  "import_decision": "rejected",
+  "confidence": 0.45,
+  "data_sources": [
+    "https://www.pti.com.tw/en/ - Company homepage (accessible, minimal content)",
+    "https://www.pti.com.tw/en/investor - IR page (404 error)",
+    "https://www.pti.com.tw/en/about/about-overview - About page (DNS failure)"
+  ],
+  "collected_at": "2026-05-17T00:40:00+08:00",
+  "run_id": "20260517-003528",
+  "notes": "Enrichment attempt. Previous score 65 with T3 sources. Company website accessible but IR section broken. Financial data still not available. Network conditions similar to previous run."
+}

@@ -1,0 +1,35 @@
+{
+  "run_id": "20260517-003528",
+  "run_date": "2026-05-17",
+  "selection_strategy": "enrichment_and_retry",
+  "selected_companies": [
+    {
+      "company": "Zhen Ding Technology",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Retry - previous run failed due to network unreachability. Network conditions may have improved.",
+      "previous_score": 49,
+      "previous_status": "rejected",
+      "action": "retry_with_alternative_sources"
+    },
+    {
+      "company": "Kyocera",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Enrichment - previous score 68 with T3 sources. Need stronger sources for import_ready status.",
+      "previous_score": 68,
+      "previous_status": "needs_human_check",
+      "action": "enrich_with_better_sources"
+    },
+    {
+      "company": "Powertech Technology",
+      "category": "OSAT",
+      "priority": "P1",
+      "reason": "Enrichment - previous score 65 with T3 sources. Need stronger sources for import_ready status.",
+      "previous_score": 65,
+      "previous_status": "needs_human_check",
+      "action": "enrich_with_better_sources"
+    }
+  ],
+  "total_count": 3
+}

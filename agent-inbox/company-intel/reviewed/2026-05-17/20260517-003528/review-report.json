@@ -1,0 +1,86 @@
+{
+  "run_id": "20260517-003528",
+  "run_date": "2026-05-17",
+  "review_results": [
+    {
+      "company": "Kyocera",
+      "file": "kyocera.json",
+      "score": 70,
+      "source_quality": "T3",
+      "import_decision": "needs_human_check",
+      "hard_conditions": {
+        "1_company_name": "PASS",
+        "2_ticker_exchange": "PASS",
+        "3_category": "PASS",
+        "4_profile_description": "PASS",
+        "5_market_data": "PARTIAL - Revenue figure approximate, PDF encrypted",
+        "6_swot": "PASS",
+        "7_source_quality": "T3 - IR page accessible but PDFs unreadable",
+        "8_tracking_priority": "PASS",
+        "9_import_decision": "PASS",
+        "10_confidence": "PASS",
+        "11_data_sources": "PASS - 3 URLs with access status",
+        "12_collected_at": "PASS"
+      },
+      "notes": "Enrichment from previous 68 score. IR page accessible confirming FY2026 results. PDF financials encrypted. Score improved from 68 to 70 due to confirmed IR accessibility and better source documentation.",
+      "reviewed_by": "auto-reviewer",
+      "reviewed_at": "2026-05-17T00:41:00+08:00"
+    },
+    {
+      "company": "Powertech Technology",
+      "file": "powertech-technology.json",
+      "score": 58,
+      "source_quality": "T4",
+      "import_decision": "rejected",
+      "hard_conditions": {
+        "1_company_name": "PASS",
+        "2_ticker_exchange": "PASS",
+        "3_category": "PASS",
+        "4_profile_description": "PASS",
+        "5_market_data": "FAIL - No financial data available",
+        "6_swot": "PASS",
+        "7_source_quality": "T4 - All financial sources unreachable",
+        "8_tracking_priority": "PASS",
+        "9_import_decision": "PASS",
+        "10_confidence": "PASS",
+        "11_data_sources": "PARTIAL - URLs provided but most failed",
+        "12_collected_at": "PASS"
+      },
+      "notes": "Enrichment attempt failed. Company website accessible but IR section broken (404). Financial data still unavailable. Score 58 < 60 threshold, rejected.",
+      "reviewed_by": "auto-reviewer",
+      "reviewed_at": "2026-05-17T00:41:00+08:00"
+    },
+    {
+      "company": "Zhen Ding Technology",
+      "file": "zhen-ding-technology.json",
+      "score": 35,
+      "source_quality": "T4",
+      "import_decision": "unverified",
+      "hard_conditions": {
+        "1_company_name": "PASS",
+        "2_ticker_exchange": "PASS",
+        "3_category": "PASS",
+        "4_profile_description": "PASS",
+        "5_market_data": "FAIL - No data",
+        "6_swot": "FAIL - Minimal/placeholder",
+        "7_source_quality": "T4 - All sources unreachable",
+        "8_tracking_priority": "PASS",
+        "9_import_decision": "PASS",
+        "10_confidence": "PASS",
+        "11_data_sources": "FAIL - No successful sources",
+        "12_collected_at": "PASS"
+      },
+      "notes": "Retry failed. All web sources still unreachable. Score 35, well below threshold. Remains in unverified status.",
+      "reviewed_by": "auto-reviewer",
+      "reviewed_at": "2026-05-17T00:41:00+08:00"
+    }
+  ],
+  "summary": {
+    "total_reviewed": 3,
+    "import_ready": 0,
+    "needs_human_check": 1,
+    "rejected": 1,
+    "unverified": 1,
+    "average_score": 54.3
+  }
+}

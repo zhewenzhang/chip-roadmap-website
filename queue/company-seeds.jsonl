@@ -16,8 +16,8 @@
 {"company": "Ibiden", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-103525"}
 {"company": "Unimicron", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-103525"}
 {"company": "Amkor Technology", "category": "OSAT / Advanced Packaging", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-103525"}
-{"company": "Kyocera", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-123533, score 68, needs_human_check, T3 source quality"}
-{"company": "Powertech Technology", "category": "OSAT", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-123533, score 65, needs_human_check, T3 source quality"}
+{"company": "Kyocera", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Enrichment in run 20260517-003528, score 70, needs_human_check, T3 source quality. IR page accessible, PDFs encrypted."}
+{"company": "Powertech Technology", "category": "OSAT", "priority": "P1", "status": "rejected", "notes": "Enrichment attempt in run 20260517-003528, score 58, rejected, T4 source quality. IR section broken (404)."}
 {"company": "Samsung Electro-Mechanics", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-123533, score 70, needs_human_check, T3 source quality"}
 {"company": "Samsung Electronics", "category": "Semiconductor / ABF Customer", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-143529"}
 {"company": "Tongfu Microelectronics", "category": "OSAT / Advanced Packaging", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-143529"}
@@ -31,5 +31,5 @@
 {"company": "Micron Technology", "category": "HBM Memory / Advanced Packaging", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-203531, score 90, import_ready, T2 source quality"}
 {"company": "Tokyo Electron", "category": "Semiconductor Equipment", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-203531, score 68, needs_human_check, T3 source quality"}
 {"company": "Biren Technology", "category": "Chinese AI Chip", "priority": "P2", "status": "reviewed", "notes": "Reviewed in run 20260516-203531, score 84, import_ready, T2 source quality"}
-{"company": "Zhen Ding Technology", "category": "IC Substrate / ABF", "priority": "P0", "status": "rejected", "notes": "Reviewed in run 20260516-223528, score 49, rejected, T4 source quality. All web sources unreachable."}
+{"company": "Zhen Ding Technology", "category": "IC Substrate / ABF", "priority": "P0", "status": "unverified", "notes": "Retry in run 20260517-003528, score 35, unverified, T4 source quality. All web sources still unreachable."}
 {"company": "ASML", "category": "Semiconductor Equipment", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-223528, score 90, import_ready, T1 source quality"}
