@@ -1,0 +1,113 @@
+{
+  "company_id": "sk-hynix",
+  "name_en": "SK Hynix Inc.",
+  "name_cn": "SK海力士株式会社",
+  "aliases": ["SK海力士", "SK hynix", "000660.KS"],
+  "region": "South Korea",
+  "country": "South Korea",
+  "headquarters": "Icheon, Gyeonggi Province, South Korea",
+  "founded": "1983",
+  "listed": "KRX: 000660",
+  "category": "HBM Memory",
+  "priority": "P1",
+  "tracking_priority": "high",
+  "business_scope": "DRAM、NAND Flash、HBM（高带宽内存）、CIS（CMOS图像传感器）设计与制造",
+  "abf_relevance": "HBM是ABF基板的核心下游应用，SK海力士是全球HBM市场领导者（市占率约50%+），HBM3E/HBM4产品推动先进ABF基板需求爆发",
+  "market_data": {
+    "currency": "KRW",
+    "fy2025": {
+      "revenue": "97.1467 trillion KRW",
+      "operating_profit": "47.2063 trillion KRW",
+      "revenue_yoy_growth": "over 30 trillion KRW increase YoY",
+      "op_yoy_growth": "doubled YoY, record annual performance"
+    },
+    "q1_2026": {
+      "revenue": "52.5763 trillion KRW",
+      "operating_profit": "37.6103 trillion KRW",
+      "op_yoy_growth": "405%",
+      "note": "Quarterly revenue first time exceeding 50 trillion KRW"
+    },
+    "market_cap": "1202 trillion KRW (as of May 8, 2026, ~$800B+ USD)",
+    "stock_performance": "YTD 2026 +159.43% (as of May 8, 2026)",
+    "employees": "~35,000 (as of end 2025)"
+  },
+  "products": [
+    {
+      "name": "HBM3E",
+      "description": "最新一代高带宽内存，用于NVIDIA H200/B100/B200 GPU",
+      "status": "mass production"
+    },
+    {
+      "name": "HBM4",
+      "description": "下一代HBM产品，开发中",
+      "status": "in development"
+    },
+    {
+      "name": "DRAM",
+      "description": "服务器、移动、消费级DRAM",
+      "status": "mass production"
+    },
+    {
+      "name": "NAND Flash",
+      "description": "SSD、eUFS等存储产品",
+      "status": "mass production"
+    }
+  ],
+  "key_facts": [
+    "2025年营收97.15万亿韩元，创历史新高",
+    "2026年Q1营收52.58万亿韩元，季度首破50万亿大关",
+    "HBM全球市占率约50%+，与三星电子形成双寡头格局",
+    "2026年初至5月8日股价累计上涨159%",
+    "员工绩效奖金以营业利润10%为资金来源（2025年新劳资协议）",
+    "麦格理预测2027年营业利润可达447万亿韩元",
+    "中国无锡设有最大海外生产基地（SK Hynix Semiconductor (China) Ltd.）",
+    "与NVIDIA深度绑定，是HBM3E首要供应商"
+  ],
+  "SWOT": {
+    "strengths": [
+      "全球HBM市场领导者，技术代际领先",
+      "与NVIDIA等头部AI芯片客户深度绑定",
+      "DRAM/HBM技术壁垒极高，护城河深",
+      "2025-2026年业绩爆发式增长",
+      "无锡中国工厂成本优势显著"
+    ],
+    "weaknesses": [
+      "高度依赖HBM单一增长引擎",
+      "NAND业务竞争力弱于三星和铠侠",
+      "韩国本土罢工风险（三星罢工波及供应链）",
+      "对NVIDIA等少数大客户依赖度高"
+    ],
+    "opportunities": [
+      "AI基础设施建设持续爆发，HBM需求持续增长",
+      "HBM4产品迭代带来更高ASP和利润空间",
+      "边缘AI设备对低功耗存储需求增长",
+      "与SK集团其他业务协同（电池、化工）"
+    ],
+    "threats": [
+      "三星电子HBM业务追赶，竞争加剧",
+      "美光HBM3E量产分流市场份额",
+      "地缘政治风险（中美韩半导体博弈）",
+      "AI投资周期性回落风险",
+      "先进封装产能扩张不及预期"
+    ]
+  },
+  "source_quality": "T1",
+  "sources": [
+    {
+      "url": "https://news.sina.com.cn/o/2026-05-09/doc-inhxhuvf3577573.shtml",
+      "title": "员工人均奖金达610万人民币？SK海力士回应 - 第一财经",
+      "date": "2026-05-09",
+      "type": "financial_news",
+      "reliability": "high"
+    },
+    {
+      "url": "https://baike.baidu.com/item/SK海力士",
+      "title": "SK海力士 - 百度百科",
+      "type": "reference",
+      "reliability": "medium"
+    }
+  ],
+  "confidence": "high",
+  "data_freshness": "2026-05-16",
+  "collection_notes": "财务数据来源第一财经（引用SK海力士官方数据），Q1 2026数据来源可靠。HBM市占率数据为行业共识但精确数字需进一步确认。"
+}

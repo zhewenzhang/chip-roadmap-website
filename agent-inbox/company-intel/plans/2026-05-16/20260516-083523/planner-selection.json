@@ -1,0 +1,25 @@
+{
+  "run_id": "20260516-083523",
+  "run_date": "2026-05-16",
+  "planned_at": "2026-05-16T08:35:23+08:00",
+  "selection": [
+    {
+      "company": "SK Hynix",
+      "category": "HBM Memory",
+      "priority": "P1",
+      "reason": "HBM全球领导者，ABF基板关键下游应用，HBM3E/HBM4推动先进封装需求爆发"
+    },
+    {
+      "company": "Shinko Electric Industries",
+      "category": "IC Substrate",
+      "priority": "P0",
+      "reason": "三菱旗下IC基板大厂，ABF基板核心供应商，与AT&S/南亚PCB同属P0级关键标的"
+    },
+    {
+      "company": "DeepX",
+      "category": "Chinese AI Chip",
+      "priority": "P2",
+      "reason": "队列中pending状态的中国AI芯片初创，本轮补充收集"
+    }
+  ]
+}

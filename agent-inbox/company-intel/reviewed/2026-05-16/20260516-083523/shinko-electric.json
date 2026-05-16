@@ -1,0 +1,38 @@
+{
+  "company_id": "shinko-electric",
+  "name_en": "Shinko Electric Industries Co., Ltd.",
+  "review_score": 72,
+  "source_quality": "T3",
+  "import_decision": "reviewed_needs_human_check",
+  "review_date": "2026-05-16",
+  "reviewed_by": "auto-pipeline",
+  "hard_conditions_check": {
+    "1_company_id": "PASS",
+    "2_name_en": "PASS",
+    "3_name_cn": "PASS",
+    "4_region_country": "PASS - 日本长野",
+    "5_founded": "PASS - 1946-09-12",
+    "6_business_scope": "PASS",
+    "7_abf_relevance": "PASS - 全球IC基板核心供应商，P0级",
+    "8_market_data": "FAIL - 缺少营收/利润等定量财务数据",
+    "9_products": "PASS - PLPs/Leadframes/Heat Spreaders/ESC",
+    "10_key_facts": "PASS - 10条关键事实",
+    "11_sources": "PARTIAL - 3 sources但缺少财务数据源",
+    "12_swot": "PASS - 完整SWOT"
+  },
+  "score_breakdown": {
+    "data_completeness": 18,
+    "source_quality": 15,
+    "abf_relevance": 20,
+    "financial_data": 5,
+    "swot_quality": 14
+  },
+  "strengths": "ABF关联度极高（IC基板核心供应商），产品线清晰，公司历史资料完整",
+  "weaknesses": "2025年6月退市后财务数据获取极度困难，无营收/利润/市值等定量数据",
+  "notes": "⚠️ 需人工确认：1) 通过三菱电机年报补充Shinko财务数据；2) 确认私有化后的最新业务动态；3) IC基板产能扩张计划信息缺失。建议标记为needs_human_check。",
+  "human_action_required": [
+    "补充Shinko Electric最新年度营收和利润数据（可通过三菱电机年报或日本产业报告）",
+    "确认私有化后的业务战略是否有重大调整",
+    "补充IC基板产能和客户信息"
+  ]
+}

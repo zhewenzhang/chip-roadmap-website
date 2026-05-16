@@ -1,0 +1,115 @@
+{
+  "company_id": "shinko-electric",
+  "name_en": "Shinko Electric Industries Co., Ltd.",
+  "name_cn": "神钢电机株式会社（新光电气工业）",
+  "aliases": ["SHINKO", "新光電気工業", "神钢电机"],
+  "region": "Japan",
+  "country": "Japan",
+  "headquarters": "Nagano, Nagano Prefecture, Japan",
+  "founded": "1946-09-12",
+  "listed": "原东证Prime上市，2025年6月6日退市（私有化）",
+  "category": "IC Substrate",
+  "priority": "P0",
+  "tracking_priority": "critical",
+  "business_scope": "IC基板（Plastic Laminated Packages）、引线框架（Leadframes）、玻璃金属密封、散热器、陶瓷静电卡盘、IC封装",
+  "abf_relevance": "全球IC基板核心供应商之一，ABF基板主要制造商，与AT&S、南亚PCB同属P0级ABF供应链标的。三菱电机关联企业。",
+  "market_data": {
+    "currency": "JPY",
+    "capital": "300,000千日元（3亿日元）",
+    "employees": "4,648人（合并5,349人，截至2025年9月30日）",
+    "fiscal_year_end": "March 31",
+    "delisted_date": "2025-06-06",
+    "note": "已退市，财务数据获取受限。需通过三菱电机年报或行业报告获取最新营收数据。"
+  },
+  "products": [
+    {
+      "name": "Plastic Laminated Packages (PLPs)",
+      "description": "IC基板/封装基板，用于先进半导体封装",
+      "relevance": "ABF基板核心产品"
+    },
+    {
+      "name": "Leadframes",
+      "description": "引线框架，半导体封装关键组件",
+      "relevance": "传统封装市场"
+    },
+    {
+      "name": "Glass-to-Metal Seals",
+      "description": "玻璃金属密封件",
+      "relevance": "特种应用"
+    },
+    {
+      "name": "Heat Spreaders",
+      "description": "散热器/热扩散器",
+      "relevance": "先进封装散热解决方案"
+    },
+    {
+      "name": "Ceramic Electrostatic Chucks",
+      "description": "陶瓷静电卡盘，用于半导体制造设备",
+      "relevance": "半导体设备零部件"
+    }
+  ],
+  "key_facts": [
+    "1946年创立，总部日本长野市",
+    "2025年6月从东证Prime退市（私有化）",
+    "三菱电机关联企业（主要股东）",
+    "全球IC基板核心供应商，与AT&S/南亚PCB/Ibiden并列",
+    "主要产品为PLPs（IC基板）和Leadframes",
+    "员工4,648人（合并5,349人）",
+    "工厂分布：Kohoku/Wakaho/Chikuma/Takaoka/Arai/Kyogase等",
+    "海外办事处：东京/大阪/名古屋/福冈/马尼拉",
+    "代表取缔役社长：�的场 进（Susumu Kurashima）",
+    "退市后IR页面仍保留部分历史信息"
+  ],
+  "SWOT": {
+    "strengths": [
+      "IC基板领域技术积累深厚（79年历史）",
+      "三菱电机关联企业，资源和客户网络稳定",
+      "产品线覆盖IC基板/引线框架/散热/静电卡盘",
+      "日本精密制造品质口碑",
+      "与全球主要半导体厂商长期合作关系"
+    ],
+    "weaknesses": [
+      "已退市，资本运作和融资渠道受限",
+      "日本企业决策速度相对较慢",
+      "对ABF基板市场的扩张速度可能落后于AT&S等竞争对手",
+      "财务透明度降低（退市后不再公开详细财报）"
+    ],
+    "opportunities": [
+      "AI/HBM爆发推动先进IC基板需求大幅增长",
+      "CoWoS/2.5D/3D封装技术发展需要更多高端基板",
+      "日本政府半导体产业复兴政策支持（Rapidus等）",
+      "私有化后可更灵活进行长期战略投资"
+    ],
+    "threats": [
+      "AT&S、南亚PCB、Ibiden等竞争对手产能扩张",
+      "中国IC基板厂商加速追赶（深南电路、兴森科技）",
+      "ABF材料供应紧张可能限制产能",
+      "日元汇率波动影响出口竞争力",
+      "半导体周期性下行风险"
+    ]
+  },
+  "source_quality": "T3",
+  "sources": [
+    {
+      "url": "https://www.shinko.co.jp/english/corporate/profile/",
+      "title": "Shinko Electric Industries Corporate Profile (Official)",
+      "type": "official",
+      "reliability": "high"
+    },
+    {
+      "url": "https://www.shinko.co.jp/english/ir/",
+      "title": "Shinko IR Page (Delisted notice)",
+      "type": "official",
+      "reliability": "high"
+    },
+    {
+      "url": "https://baike.baidu.com/item/SHINKO/1483224",
+      "title": "SHINKO - 百度百科",
+      "type": "reference",
+      "reliability": "medium"
+    }
+  ],
+  "confidence": "medium",
+  "data_freshness": "2026-05-16",
+  "collection_notes": "Shinko于2025年6月退市，详细财务数据获取困难。当前数据主要来自官方IR页面和百度百科。source_quality标记为T3因缺少近期营收/利润等定量财务数据。建议后续通过三菱电机年报或日本产业报告补充。"
+}

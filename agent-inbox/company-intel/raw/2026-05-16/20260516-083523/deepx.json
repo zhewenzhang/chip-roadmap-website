@@ -1,0 +1,141 @@
+{
+  "company_id": "deepx",
+  "name_en": "DEEPX Inc.",
+  "name_cn": "DEEPX（迪普克斯）",
+  "aliases": ["DeepX", "DEEPX Inc.", "迪普克斯"],
+  "region": "South Korea",
+  "country": "South Korea",
+  "headquarters": "Gyeonggi-do, South Korea",
+  "founded": "2018-02-23",
+  "listed": "未上市（计划2026年KOSDAQ IPO）",
+  "category": "Edge AI Chip",
+  "priority": "P2",
+  "tracking_priority": "medium",
+  "business_scope": "边缘AI芯片（NPU）设计，覆盖从超小型传感器到AI密集型应用的全谱段需求",
+  "abf_relevance": "边缘AI芯片采用先进封装工艺（5nm/2nm），对IC基板有需求；但当前体量较小，对ABF基板市场直接影响有限",
+  "market_data": {
+    "currency": "USD",
+    "total_funding": "$531 million（约5.31亿美元）",
+    "key_investors": ["Hyundai Robotics（现代机器人）", "多轮战略投资"],
+    "valuation": "未公开，pre-IPO阶段",
+    "ipo_plan": "2026年KOSDAQ IPO",
+    "employees": "未公开（推测200-400人）"
+  },
+  "products": [
+    {
+      "name": "DX-V1（原DX-L1）",
+      "specs": "5 TOPS NPU, 四核RISC-V CPU, 12MP ISP, 三星28nm工艺, 1-2W功耗, <$10",
+      "status": "mass production",
+      "applications": "超低功耗IoT设备"
+    },
+    {
+      "name": "DX-L2",
+      "specs": "低功耗边缘AI芯片",
+      "status": "product",
+      "applications": "智能传感器"
+    },
+    {
+      "name": "DX-M1",
+      "specs": "25 TOPS算力, 5W功耗, 三星5nm工艺, 支持16通道视频",
+      "status": "mass production (2025年量产)",
+      "applications": "智能摄像头、机器人、工业自动化",
+      "note": "全球50+量产项目，40+家公司部署"
+    },
+    {
+      "name": "DX-H1",
+      "specs": "PCIe卡集成8颗M1芯片, 61路视频流同时处理",
+      "status": "product",
+      "applications": "AI服务器、密集视频分析"
+    },
+    {
+      "name": "DX-M2",
+      "specs": "40 TOPS算力, 5W功耗, 三星2nm工艺, RISC-V架构, 支持200亿参数模型推理",
+      "status": "prototype (2026年8月样品, 2027年量产)",
+      "applications": "人形机器人、自动驾驶、生成式AI边缘推理",
+      "note": "全球首款2nm端侧生成式AI芯片"
+    }
+  ],
+  "key_facts": [
+    "创始人金錄元（Lokwon Kim）曾任Apple A11 Bionic芯片开发负责人、IBM T.J. Watson研究员",
+    "全球NPU专利申请超400项，美国注册专利数超过高通/ARM/Intel/NVIDIA",
+    "DX-M1已在全球获得50+量产项目",
+    "与百度合作：2026年中国市场预计出货4万台（OCR相机、无人机等）",
+    "与现代汽车机器人实验室合作：2026年开始量产MobED和DAL-e平台，初期1万台",
+    "POSCO（浦项制铁）同时推进9个量产项目",
+    "与宝马、梅赛德斯、大众合作自动驾驶视觉系统",
+    "DX-M2目标：5W功耗运行200亿参数模型（vs高通10W/10B参数/10 token/s）",
+    "与神州数码签署中国区战略代理协议（2026年2月）",
+    "CES连续两年被评为Must-See Booth",
+    "与百度PaddleOCR合作验证：性能比300W GPU高5倍，功耗仅5W"
+  ],
+  "SWOT": {
+    "strengths": [
+      "极致能效比：5W功耗实现GPU级AI推理性能",
+      "创始人Apple/IBM芯片研发背景深厚",
+      "专利护城河：400+全球NPU专利申请",
+      "产品线覆盖从$10超低功耗到高性能全谱段",
+      "与百度/现代/POSCO等头部客户量产合作验证"
+    ],
+    "weaknesses": [
+      "公司规模小，供应链话语权有限",
+      "依赖三星代工（5nm/2nm），产能受限",
+      "边缘AI市场碎片化，客户获取成本高",
+      "尚未盈利，依赖融资续命"
+    ],
+    "opportunities": [
+      "边缘AI市场爆发（IDC预测2026年中国56% IT设备配AI引擎）",
+      "人形机器人市场对低功耗AI芯片需求激增",
+      "2nm工艺量产带来能效代际飞跃",
+      "中国市场渠道拓展（神州数码代理）",
+      "KOSDAQ IPO提升品牌和资金实力"
+    ],
+    "threats": [
+      "NVIDIA Jetson等巨头边缘AI方案竞争",
+      "高通/联发科等手机SoC厂商向边缘AI扩展",
+      "中国本土AI芯片初创竞争（地平线、寒武纪等）",
+      "三星代工产能分配优先级低于大客户",
+      "IPO市场波动影响融资计划"
+    ]
+  },
+  "source_quality": "T1",
+  "sources": [
+    {
+      "url": "https://www.guancha.cn/GongSi/2026_01_27_805148.shtml",
+      "title": "对话DEEPX创始人：当AI芯片从云端走向现实物理世界 - 观察者网",
+      "date": "2026-01-27",
+      "type": "interview",
+      "reliability": "high"
+    },
+    {
+      "url": "https://finance.sina.com.cn/roll/2026-02-10/doc-inhmihnp5626150.shtml",
+      "title": "DEEPX携手神州数码 - 新浪财经",
+      "date": "2026-02-10",
+      "type": "business_news",
+      "reliability": "high"
+    },
+    {
+      "url": "https://www.ithome.com/0/875/025.htm",
+      "title": "DEEPX宣布DX-M2由三星代工 - IT之家",
+      "date": "2025-08-13",
+      "type": "tech_news",
+      "reliability": "high"
+    },
+    {
+      "url": "https://blog.csdn.net/iNostory/article/details/148968464",
+      "title": "每天了解一家芯片公司：DeepX - CSDN",
+      "date": "2025-06-27",
+      "type": "analysis",
+      "reliability": "medium"
+    },
+    {
+      "url": "https://news.52solution.com/news/80059235/",
+      "title": "韩国DeepX推出全球首款2nm边缘AI芯片DX-M2 - 我爱方案网",
+      "date": "2025-04-14",
+      "type": "tech_news",
+      "reliability": "medium"
+    }
+  ],
+  "confidence": "high",
+  "data_freshness": "2026-05-16",
+  "collection_notes": "注意：原始seeds文件将DeepX分类为'Chinese AI Chip'，实际为韩国公司，已纠正为'Edge AI Chip'。数据来源丰富（观察者网深度专访、新浪财经、IT之家、CSDN分析），多源交叉验证。融资金额$531M来自观察者网专访引用。"
+}
