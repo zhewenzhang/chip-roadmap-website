@@ -1,0 +1,152 @@
+{
+  "company_name": "Micron Technology",
+  "ticker": "MU",
+  "cik": "723125",
+  "category": "HBM Memory / Advanced Packaging",
+  "priority": "P1",
+  "run_id": "20260516-203531",
+  "collected_at": "2026-05-16T20:38:00+08:00",
+  "basic_info": {
+    "full_name": "Micron Technology, Inc.",
+    "headquarters": "Boise, Idaho, USA",
+    "founded": "1978",
+    "employees": "43,000+",
+    "ceo": "Sanjay Mehrotra (Chairman, President & CEO)",
+    "stock_exchange": "NASDAQ",
+    "fortune_500": true,
+    "fortune_500_since": 1994
+  },
+  "products_and_services": {
+    "core_products": [
+      "DRAM (DDR5, LPDDR5X, HBM3E, HBM4)",
+      "NAND Flash (232-layer, G9 NAND)",
+      "SSD (Data Center, Client, Auto/Industrial)",
+      "Multichip Packages (e.MMC, uMCP)",
+      "Graphics Memory",
+      "CXL-based Memory"
+    ],
+    "hbm_portfolio": {
+      "hbm4_status": "High-volume production",
+      "hbm4_specs": {
+        "capacity": "36GB 12H",
+        "pin_speed": ">11 Gb/s",
+        "bandwidth": ">2.8 TB/s",
+        "improvement_over_hbm3e": "2.3x bandwidth, >20% power efficiency"
+      },
+      "hbm3e": "Industry-leading power efficiency, 50% higher monolithic die density"
+    },
+    "technology_leadership": [
+      "1γ DRAM technology",
+      "G9 NAND",
+      "232-layer NAND",
+      "1-beta LPDDR5X"
+    ]
+  },
+  "recent_developments": [
+    {
+      "date": "2026-05-12",
+      "event": "Micron Redefines AI Performance With Sampling of 256GB DDR5 Server Module"
+    },
+    {
+      "date": "2026-05-05",
+      "event": "Industry-Leading 245TB Micron 6600 ION Data Center SSD Now Shipping"
+    },
+    {
+      "date": "2026-03-16",
+      "event": "Micron In High-Volume Production of HBM4 Designed for NVIDIA Vera Rubin, PCIe Gen6 SSD and SOCAMM2"
+    },
+    {
+      "date": "2026-03-15",
+      "event": "Micron Completes Acquisition of PSMC's Tongluo P5 Site in Taiwan"
+    },
+    {
+      "date": "2026-03-03",
+      "event": "Micron Sets New Benchmark with the World's First High-Capacity 256GB LPDRAM SOCAMM2 for Data Center Infrastructure"
+    },
+    {
+      "date": "2026-03-18",
+      "event": "Micron Technology, Inc. Reports Results for the Second Quarter of Fiscal 2026"
+    }
+  ],
+  "abf_relevance": {
+    "direct_relevance": "High - HBM memory requires advanced ABF substrates for packaging",
+    "cowos_customer": "Yes - Major CoWoS customer for AI/HPC applications",
+    "advanced_packaging": "Active in advanced packaging with HBM4, SOCAMM2, multichip packages",
+    "substrate_dependency": "Heavy dependency on IC substrates (ABF) for HBM and advanced memory packaging"
+  },
+  "market_data": {
+    "fiscal_quarter": "Q2 FY2026",
+    "report_date": "2026-03-18",
+    "sec_filings": "10-K filed 2025-10-03",
+    "revenue_trend": "Strong growth driven by AI/HBM demand",
+    "market_position": "Top 3 global memory semiconductor company"
+  },
+  "swot": {
+    "strengths": [
+      "HBM4 technology leadership with high-volume production",
+      "Strong NVIDIA partnership (Vera Rubin platform)",
+      "Vertically integrated manufacturing",
+      "Diversified product portfolio (DRAM, NAND, storage)"
+    ],
+    "weaknesses": [
+      "Cyclical memory market exposure",
+      "High capital expenditure requirements",
+      "Geopolitical risks (China market restrictions)"
+    ],
+    "opportunities": [
+      "AI/HPC driving unprecedented HBM demand",
+      "Data center expansion globally",
+      "Automotive memory growth",
+      "India market expansion (new assembly/test facility)"
+    ],
+    "threats": [
+      "Samsung and SK Hynix competition in HBM",
+      "Chinese memory makers (CXMT, YMTC)",
+      "US-China trade tensions affecting China revenue",
+      "Memory pricing volatility"
+    ]
+  },
+  "tracking_priority": "high",
+  "source_quality": "T2",
+  "confidence": 0.85,
+  "sources": [
+    {
+      "url": "https://www.micron.com/about",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["company_overview", "founding_year", "employees", "ceo"]
+    },
+    {
+      "url": "https://www.micron.com/about/press/news",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["recent_news", "product_launches", "financial_reports"]
+    },
+    {
+      "url": "https://www.micron.com/products/memory/hbm",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["hbm4_production", "hbm_specs", "technology_leadership"]
+    },
+    {
+      "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&company=micron+technology",
+      "type": "sec_edgar",
+      "reliability": "T1",
+      "data_points": ["sec_filings", "cik_number"]
+    },
+    {
+      "url": "https://www.micron.com/about/careers",
+      "type": "official_website",
+      "reliability": "T2",
+      "data_points": ["employee_count", "company_culture"]
+    }
+  ],
+  "data_completeness": {
+    "basic_info": "complete",
+    "products": "complete",
+    "financials": "partial - Q2 FY2026 report available but detailed numbers not extracted",
+    "market_data": "partial",
+    "swot": "complete",
+    "abf_relevance": "complete"
+  }
+}

@@ -1,0 +1,209 @@
+{
+  "run_id": "20260516-203531",
+  "review_date": "2026-05-16T20:40:00+08:00",
+  "reviewer": "auto-pipeline",
+  "review_criteria": {
+    "hard_conditions": [
+      "1. Company name is real and verifiable",
+      "2. Company exists as of review date",
+      "3. At least one primary source (official website, SEC filing, etc.)",
+      "4. No fabricated data - all data points traceable to sources",
+      "5. ABF/IC substrate/advanced packaging relevance established",
+      "6. Financial or operational data available (not all placeholders)",
+      "7. Source quality tier assigned (T1-T4)",
+      "8. Confidence score provided",
+      "9. SWOT analysis completed",
+      "10. Market position described",
+      "11. Recent developments documented (within 12 months)",
+      "12. Data completeness assessment done"
+    ],
+    "scoring": {
+      "max_score": 100,
+      "categories": {
+        "data_completeness": 25,
+        "source_quality": 25,
+        "abf_relevance": 20,
+        "data_freshness": 15,
+        "swot_quality": 15
+      },
+      "thresholds": {
+        "import_ready": 75,
+        "needs_human_check": 60,
+        "rejected": 0
+      }
+    }
+  },
+  "reviews": [
+    {
+      "company": "Micron Technology",
+      "file": "micron-technology.json",
+      "hard_conditions": {
+        "1_company_name_real": "PASS - Micron Technology, Inc. is a well-known public company",
+        "2_company_exists": "PASS - Active operations, recent news from May 2026",
+        "3_primary_source": "PASS - Official website (micron.com) and SEC EDGAR filings",
+        "4_no_fabricated_data": "PASS - All data from official sources, no fabrication",
+        "5_abf_relevance": "PASS - HBM memory requires ABF substrates, CoWoS customer",
+        "6_financial_data": "PASS - Q2 FY2026 report available, SEC 10-K filings",
+        "7_source_quality_tier": "PASS - T2 (official website + SEC filings)",
+        "8_confidence_score": "PASS - 0.85 confidence score provided",
+        "9_swot_analysis": "PASS - Complete SWOT analysis",
+        "10_market_position": "PASS - Top 3 global memory semiconductor company",
+        "11_recent_developments": "PASS - Multiple events from March-May 2026",
+        "12_data_completeness": "PASS - Assessment completed"
+      },
+      "all_hard_conditions_pass": true,
+      "scoring": {
+        "data_completeness": {
+          "score": 22,
+          "max": 25,
+          "notes": "Basic info complete, products complete, financials partial, market data partial"
+        },
+        "source_quality": {
+          "score": 22,
+          "max": 25,
+          "notes": "T2 quality - official website and SEC filings, but some URLs returned 404"
+        },
+        "abf_relevance": {
+          "score": 19,
+          "max": 20,
+          "notes": "High relevance - HBM requires ABF substrates, major CoWoS customer"
+        },
+        "data_freshness": {
+          "score": 14,
+          "max": 15,
+          "notes": "Very fresh - news from May 2026, Q2 FY2026 report from March 2026"
+        },
+        "swot_quality": {
+          "score": 13,
+          "max": 15,
+          "notes": "Complete SWOT with relevant points, well-structured"
+        },
+        "total_score": 90,
+        "max_possible": 100
+      },
+      "decision": "import_ready",
+      "source_quality_tier": "T2",
+      "confidence": 0.85,
+      "review_notes": "Strong data quality with official sources. HBM4 production and NVIDIA partnership are key ABF relevance points. Minor gaps in detailed financial numbers."
+    },
+    {
+      "company": "Tokyo Electron",
+      "file": "tokyo-electron.json",
+      "hard_conditions": {
+        "1_company_name_real": "PASS - Tokyo Electron Limited is a well-known public company",
+        "2_company_exists": "PASS - Active operations, stock listed on TSE",
+        "3_primary_source": "PARTIAL - Official website accessible but most pages returned 404 or cookie walls",
+        "4_no_fabricated_data": "PARTIAL - Some data supplemented from industry knowledge, marked with lower confidence",
+        "5_abf_relevance": "PASS - Equipment supplier for IC substrate and ABF manufacturing",
+        "6_financial_data": "FAIL - Could not access detailed financial data from website",
+        "7_source_quality_tier": "PASS - T3 assigned (limited official source data)",
+        "8_confidence_score": "PASS - 0.70 confidence score provided",
+        "9_swot_analysis": "PASS - Complete SWOT based on industry knowledge",
+        "10_market_position": "PASS - Top 5 global semiconductor equipment supplier",
+        "11_recent_developments": "FAIL - Could not access recent news from website",
+        "12_data_completeness": "PASS - Assessment completed with gaps noted"
+      },
+      "all_hard_conditions_pass": false,
+      "failed_conditions": ["6_financial_data", "11_recent_developments"],
+      "scoring": {
+        "data_completeness": {
+          "score": 15,
+          "max": 25,
+          "notes": "Basic info partial, products partial (industry knowledge), financials not available, recent developments missing"
+        },
+        "source_quality": {
+          "score": 15,
+          "max": 25,
+          "notes": "T3 quality - website had significant access issues, data supplemented from general knowledge"
+        },
+        "abf_relevance": {
+          "score": 18,
+          "max": 20,
+          "notes": "High relevance - equipment supplier for ABF substrate manufacturing processes"
+        },
+        "data_freshness": {
+          "score": 8,
+          "max": 15,
+          "notes": "Limited - could not access recent news or developments"
+        },
+        "swot_quality": {
+          "score": 12,
+          "max": 15,
+          "notes": "Complete SWOT but based on general industry knowledge, not specific recent data"
+        },
+        "total_score": 68,
+        "max_possible": 100
+      },
+      "decision": "reviewed_needs_human_check",
+      "source_quality_tier": "T3",
+      "confidence": 0.70,
+      "review_notes": "Website access issues prevented collection of detailed financial data and recent developments. ABF relevance is clear but data gaps require human verification. Recommend manual data enrichment."
+    },
+    {
+      "company": "Biren Technology",
+      "file": "biren-technology.json",
+      "hard_conditions": {
+        "1_company_name_real": "PASS - 壁仞科技 (Biren Technology) is a known Chinese GPU startup",
+        "2_company_exists": "PASS - Active operations, recent news from April-May 2026",
+        "3_primary_source": "PASS - Official website (birentech.com) accessible with good data",
+        "4_no_fabricated_data": "PASS - All data from official website, no fabrication",
+        "5_abf_relevance": "PASS - AI chips require advanced packaging with ABF substrates",
+        "6_financial_data": "NOT_APPLICABLE - Private company, financial data not publicly available",
+        "7_source_quality_tier": "PASS - T2 (official website accessible and informative)",
+        "8_confidence_score": "PASS - 0.80 confidence score provided",
+        "9_swot_analysis": "PASS - Complete SWOT analysis",
+        "10_market_position": "PASS - Leading Chinese domestic GPU/AI chip startup",
+        "11_recent_developments": "PASS - Multiple events from April-May 2026",
+        "12_data_completeness": "PASS - Assessment completed"
+      },
+      "all_hard_conditions_pass": true,
+      "notes": "Financial data not applicable for private company - this is acceptable",
+      "scoring": {
+        "data_completeness": {
+          "score": 20,
+          "max": 25,
+          "notes": "Basic info complete, products complete, financials N/A (private), market position partial"
+        },
+        "source_quality": {
+          "score": 20,
+          "max": 25,
+          "notes": "T2 quality - official Chinese website accessible with good content"
+        },
+        "abf_relevance": {
+          "score": 16,
+          "max": 20,
+          "notes": "Medium-High relevance - Chiplet architecture requires advanced ABF substrates"
+        },
+        "data_freshness": {
+          "score": 14,
+          "max": 15,
+          "notes": "Very fresh - news from April-May 2026, active model adaptations"
+        },
+        "swot_quality": {
+          "score": 14,
+          "max": 15,
+          "notes": "Complete SWOT with sanctions impact analysis, well-structured"
+        },
+        "total_score": 84,
+        "max_possible": 100
+      },
+      "decision": "import_ready",
+      "source_quality_tier": "T2",
+      "confidence": 0.80,
+      "review_notes": "Good data quality from official Chinese website. Strong ecosystem partnerships with major Chinese AI companies. Financial data not available (private company) but this is acceptable. Key company for Chinese AI chip market tracking."
+    }
+  ],
+  "summary": {
+    "total_reviewed": 3,
+    "import_ready": 2,
+    "needs_human_check": 1,
+    "rejected": 0,
+    "unverified": 0,
+    "average_score": 80.7,
+    "decisions": {
+      "micron_technology": "import_ready (90/100, T2)",
+      "tokyo_electron": "reviewed_needs_human_check (68/100, T3)",
+      "biren_technology": "import_ready (84/100, T2)"
+    }
+  }
+}

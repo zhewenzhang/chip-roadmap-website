@@ -1,0 +1,179 @@
+{
+  "company_name": "Biren Technology",
+  "company_name_cn": "壁仞科技",
+  "category": "Chinese AI Chip",
+  "priority": "P2",
+  "run_id": "20260516-203531",
+  "collected_at": "2026-05-16T20:39:30+08:00",
+  "basic_info": {
+    "full_name": "壁仞科技 (Biren Technology)",
+    "english_tagline": "RENDER THE WORLD WITH INTELLIGENCE",
+    "chinese_tagline": "智绘全球",
+    "headquarters": "Shanghai, China",
+    "founded": "2019",
+    "type": "Private / Startup",
+    "focus": "General-purpose intelligent computing (GPU/AI accelerators)",
+    "core_architecture": "Original self-developed architecture, Chiplet-based large compute chips",
+    "contact": {
+      "business": "business@birentech.com",
+      "media": "pr@birentech.com",
+      "phone": "021-68773133"
+    }
+  },
+  "products_and_services": {
+    "product_line": "壁砺™ (BILI) series",
+    "products": [
+      {
+        "name": "壁砺™ 166M",
+        "type": "Data Center Training/Inference AI Accelerator",
+        "form_factor": "4U OAM V1.1 Air-cooled module",
+        "power": "550W peak",
+        "compatibility": "Standard OAM V1.X GPU servers",
+        "applications": "Large models, multimodal AIGC, image recognition, speech recognition, NLP, recommendation systems"
+      },
+      {
+        "name": "壁砺™ 166L",
+        "type": "Data Center Training/Inference AI Accelerator",
+        "form_factor": "Liquid-cooled OAM module",
+        "applications": "High-performance AI training and inference"
+      },
+      {
+        "name": "壁砺™ 166C",
+        "type": "High-Performance Inference AI Accelerator",
+        "form_factor": "PCIe card",
+        "applications": "AI inference workloads"
+      }
+    ],
+    "software_ecosystem": "Proprietary software stack for AI workloads",
+    "technology_highlights": [
+      "First Chiplet-based large compute chip in China",
+      "Original core architecture (not based on foreign IP)",
+      "Hardware-software协同创新 (co-innovation)"
+    ]
+  },
+  "recent_developments": [
+    {
+      "date": "2026-05-08",
+      "event": "壁仞科技联合模力方舟推出AI技能认证，初级认证现已开放报名"
+    },
+    {
+      "date": "2026-04-29",
+      "event": "Day0适配 | 壁仞科技高效完成商汤日日新SenseNova U1推理验证"
+    },
+    {
+      "date": "2026-04-28",
+      "event": "国产算力x央企大模型 | 壁仞科技率先完成中国移动九天35B大模型预适配"
+    },
+    {
+      "date": "2026-04-28",
+      "event": "壁仞科技壁砺™166系列完成DeepSeek-V4适配验证与优化"
+    },
+    {
+      "date": "2026-04-28",
+      "event": "Day0适配 | 壁仞科技x腾讯混元，率先支持Hy3 preview语言模型"
+    },
+    {
+      "date": "2026-04-28",
+      "event": "Day0适配 | 壁仞科技率先支持Kimi K2.6模型，高效赋能AI编程"
+    },
+    {
+      "date": "2026-04-21",
+      "event": "Day0适配 | 壁仞科技光速支持阿里Qwen3.6-35B-A3B大模型"
+    },
+    {
+      "date": "2026-04-08",
+      "event": "Day 0适配GLM-5.1｜壁仞科技率先完成智谱新一代旗舰模型适配"
+    }
+  ],
+  "abf_relevance": {
+    "direct_relevance": "Medium-High - AI chips require advanced packaging with ABF substrates",
+    "advanced_packaging": "Chiplet architecture requires advanced substrate technology",
+    "substrate_dependency": "Large compute chips depend on high-layer-count ABF substrates",
+    "market_implication": "Growing Chinese AI chip market creates domestic ABF substrate demand"
+  },
+  "market_position": {
+    "status": "Leading Chinese domestic GPU/AI chip startup",
+    "target_market": "AI data centers, smart computing infrastructure",
+    "customer_segments": ["AI data centers", "Telecom", "AI solutions", "Energy/utilities", "FinTech", "Internet"],
+    "deployment": "Multiple smart computing clusters deployed across China",
+    "key_partnerships": [
+      "SenseTime (商汤) - model adaptation",
+      "China Mobile (中国移动) - JiuTian 35B model",
+      "DeepSeek - V4 model adaptation",
+      "Tencent (腾讯) - Hunyuan model",
+      "Moonshot (Kimi) - K2.6 model",
+      "Alibaba (阿里) - Qwen3.6 model",
+      "Zhipu AI (智谱) - GLM-5.1 model"
+    ]
+  },
+  "swot": {
+    "strengths": [
+      "Original self-developed GPU architecture (not foreign IP dependency)",
+      "First Chiplet-based large compute chip in China",
+      "Strong ecosystem partnerships with major Chinese AI companies",
+      "Day0 model adaptation capability (fast software ecosystem support)",
+      "Government and央企 (SOE) customer relationships"
+    ],
+    "weaknesses": [
+      "Private startup - limited financial transparency",
+      "Manufacturing dependent on external foundries",
+      "Software ecosystem still maturing vs NVIDIA CUDA",
+      "Limited international presence"
+    ],
+    "opportunities": [
+      "Chinese government push for domestic chip self-sufficiency",
+      "US export controls creating market opportunity for domestic alternatives",
+      "Growing Chinese AI market demand",
+      "Potential for expansion into edge AI and automotive"
+    ],
+    "threats": [
+      "US sanctions/export controls on advanced manufacturing equipment",
+      "Competition from Huawei Ascend, Cambricon, Moore Threads",
+      "Access to advanced process nodes (7nm and below)",
+      "NVIDIA ecosystem lock-in effect"
+    ]
+  },
+  "sanctions_impact": {
+    "us_entity_list": "Status unclear - needs verification",
+    "manufacturing_risk": "High - dependent on TSMC/SMIC for advanced nodes",
+    "equipment_access": "May face restrictions on EUV and advanced equipment"
+  },
+  "tracking_priority": "medium",
+  "source_quality": "T2",
+  "confidence": 0.80,
+  "sources": [
+    {
+      "url": "https://www.birentech.com/",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["company_overview", "product_line", "tagline"]
+    },
+    {
+      "url": "https://www.birentech.com/about/",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["founding_year", "company_description", "technology_highlights", "contact_info"]
+    },
+    {
+      "url": "https://www.birentech.com/product/hardware/166m/",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["product_specs", "form_factor", "power_consumption"]
+    },
+    {
+      "url": "https://www.birentech.com/news/",
+      "type": "official_website",
+      "reliability": "T1",
+      "data_points": ["recent_developments", "partnerships", "model_adaptations"]
+    }
+  ],
+  "data_completeness": {
+    "basic_info": "complete",
+    "products": "complete",
+    "financials": "not_available - private company",
+    "market_data": "partial",
+    "swot": "complete",
+    "abf_relevance": "complete"
+  },
+  "notes": "Biren Technology website was accessible and provided good data. Company is a leading Chinese GPU startup with strong ecosystem partnerships. Financial data not available as company is private. Recommend monitoring US sanctions impact and manufacturing access."
+}

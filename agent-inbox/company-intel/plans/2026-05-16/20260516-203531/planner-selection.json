@@ -1,0 +1,29 @@
+{
+  "run_id": "20260516-203531",
+  "run_date": "2026-05-16",
+  "selected_companies": [
+    {
+      "company": "Micron Technology",
+      "category": "HBM Memory / Advanced Packaging",
+      "priority": "P1",
+      "reason": "Key HBM supplier alongside SK Hynix, critical CoWoS/ABF customer for AI chips. Not yet reviewed.",
+      "search_focus": "HBM production capacity, ABF substrate usage, CoWoS packaging partnerships, financial performance"
+    },
+    {
+      "company": "Tokyo Electron",
+      "category": "Semiconductor Equipment",
+      "priority": "P1",
+      "reason": "Major semiconductor equipment supplier, critical for advanced packaging/ABF manufacturing process. Not yet reviewed.",
+      "search_focus": "Advanced packaging equipment, ABF-related deposition/etch tools, market position, financial data"
+    },
+    {
+      "company": "Biren Technology",
+      "category": "Chinese AI Chip",
+      "priority": "P2",
+      "reason": "Leading Chinese GPU/AI chip startup, potential ABF substrate customer for advanced packaging. Not yet reviewed.",
+      "search_focus": "GPU products, packaging technology, ABF/substrate usage, funding status, US sanctions impact"
+    }
+  ],
+  "total_reviewed_before": 29,
+  "selection_criteria": "P1 priority for HBM and equipment gaps, P2 for Chinese AI chip coverage expansion"
+}
