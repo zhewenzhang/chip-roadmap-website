@@ -1,0 +1,68 @@
+{
+  "run_id": "20260516-163532",
+  "run_date": "2026-05-16",
+  "selected_companies": [
+    {
+      "company": "Fujitsu",
+      "category": "ABF Substrate Materials / Electronics",
+      "priority": "P0",
+      "reason": "Original inventor and supplier of ABF (Ajinomoto Build-up Film) substrate materials. Critical supply chain node not yet reviewed.",
+      "search_queries": [
+        "Fujitsu ABF substrate material Ajinomoto build-up film",
+        "Fujitsu FY2025 annual report semiconductor packaging",
+        "Fujitsu IC substrate ABF film market share",
+        "Fujitsu advanced packaging technology 2024 2025",
+        "Fujitsu semiconductor materials revenue"
+      ],
+      "target_urls": [
+        "https://www.fujitsu.com/global/about/ir/",
+        "https://en.wikipedia.org/wiki/Fujitsu",
+        "https://www.fujitsu.com/global/products/computing/servers/",
+        "https://finance.yahoo.com/quote/6702.T/",
+        "https://www.fujitsu.com/global/about/ir/library/annual/"
+      ]
+    },
+    {
+      "company": "Showa Denko (Resonac Holdings)",
+      "category": "ABF Substrate Materials / Chemicals",
+      "priority": "P1",
+      "reason": "Key supplier of ABF substrate precursor materials and semiconductor chemicals. Now Resonac Holdings after merger with Hitachi Chemical parent.",
+      "search_queries": [
+        "Showa Denko Resonac ABF substrate material semiconductor",
+        "Resonac Holdings FY2025 annual report semiconductor materials",
+        "Showa Denko semiconductor packaging chemicals ABF",
+        "Resonac Holdings advanced packaging materials market",
+        "Showa Denko Resonac ABF film IC substrate supply"
+      ],
+      "target_urls": [
+        "https://www.resonac.com/",
+        "https://en.wikipedia.org/wiki/Resonac",
+        "https://www.resonac.com/en/ir/",
+        "https://finance.yahoo.com/quote/4004.T/",
+        "https://www.resonac.com/en/business/semiconductor/"
+      ]
+    },
+    {
+      "company": "Mitsui Chemicals",
+      "category": "ABF Substrate Materials / Chemicals",
+      "priority": "P1",
+      "reason": "Supplier of ABF substrate materials and semiconductor packaging chemicals. Complements Hitachi Chemical/Resonac coverage.",
+      "search_queries": [
+        "Mitsui Chemicals ABF substrate semiconductor packaging",
+        "Mitsui Chemicals FY2025 annual report semiconductor materials",
+        "Mitsui Chemicals IC substrate advanced packaging",
+        "Mitsui Chemicals semiconductor materials revenue market share",
+        "Mitsui Chemicals build-up film ABF Ajinomoto"
+      ],
+      "target_urls": [
+        "https://www.mitsui-chem.co.jp/en/",
+        "https://en.wikipedia.org/wiki/Mitsui_Chemicals",
+        "https://www.mitsui-chem.co.jp/en/ir/",
+        "https://finance.yahoo.com/quote/4183.T/",
+        "https://www.mitsui-chem.co.jp/en/service/product/"
+      ]
+    }
+  ],
+  "total_reviewed_before": 24,
+  "selection_strategy": "Focus on ABF substrate materials supply chain - critical gap in coverage. Fujitsu is original ABF inventor (P0), Showa Denko/Resonac and Mitsui Chemicals are key chemical suppliers (P1)."
+}

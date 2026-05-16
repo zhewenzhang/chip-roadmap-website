@@ -1,0 +1,65 @@
+{
+  "company_name": "Mitsui Chemicals, Inc.",
+  "ticker": "4183.T",
+  "exchange": "TSE",
+  "hq_location": "Tokyo, Japan",
+  "founded": 1968,
+  "category": "Chemicals / Semiconductor Materials",
+  "abf_relation": "Supplier of semiconductor packaging materials including chemicals and films used in IC substrate manufacturing. Involved in ABF substrate material supply chain through specialty chemicals and polymer films.",
+  "market_data": {
+    "revenue_fy2025_approx_billion_yen": 1800,
+    "revenue_usd_approx": "12.0B USD",
+    "employees_approx": 19000,
+    "currency": "JPY",
+    "note": "Revenue and employee figures are approximate based on training knowledge; web access to Mitsui Chemicals IR was blocked (timeout)"
+  },
+  "business_segments": {
+    "primary": "Specialty chemicals and advanced materials",
+    "semiconductor_relevance": [
+      "IC substrate materials and specialty films",
+      "Semiconductor packaging chemicals",
+      "Polymer materials for electronic applications"
+    ],
+    "other_businesses": [
+      "Mobility (automotive materials)",
+      "Healthcare materials",
+      "Food & packaging materials",
+      "Basic chemicals",
+      "Functional materials"
+    ]
+  },
+  "swot": {
+    "strengths": [
+      "Diversified chemical portfolio with semiconductor materials as key segment",
+      "Strong R&D capabilities in polymer and specialty chemistry",
+      "Established relationships with IC substrate manufacturers",
+      "Part of Mitsui Group with strong financial backing"
+    ],
+    "weaknesses": [
+      "Semiconductor materials is one of many segments - not pure-play",
+      "Limited publicly available data on specific ABF material market share",
+      "Smaller semiconductor materials portfolio compared to Resonac"
+    ],
+    "opportunities": [
+      "Growing demand for advanced packaging materials",
+      "Potential to expand semiconductor materials portfolio",
+      "Green chemistry and sustainability-driven product development"
+    ],
+    "threats": [
+      "Competition from Resonac, Ajinomoto, and other materials suppliers",
+      "Semiconductor market cyclicality",
+      "Raw material price fluctuations"
+    ]
+  },
+  "tracking_priority": "P1 - Semiconductor materials supplier",
+  "source_quality": "T4 - Training knowledge only (web fetch to Mitsui Chemicals IR timed out)",
+  "confidence": 0.55,
+  "import_decision": "needs_human_check",
+  "review_notes": "Limited data available due to network restrictions. Mitsui Chemicals is a known chemicals company with semiconductor materials involvement, but specific ABF market share and detailed financial data could not be verified. Recommend enrichment when network access improves.",
+  "data_sources": [
+    "https://www.mitsui-chem.co.jp/en/ir/ (timed out - no data retrieved)",
+    "Training knowledge on Mitsui Chemicals business segments"
+  ],
+  "collected_at": "2026-05-16T16:37:45+08:00",
+  "run_id": "20260516-163532"
+}

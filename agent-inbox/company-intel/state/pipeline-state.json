@@ -1,1 +1,20 @@
-{"status":"completed","started_at":"2026-05-16T14:35:29+08:00","completed_at":"2026-05-16T14:39:30+08:00","duration_seconds":270,"run_id":"20260516-143529","run_date":"2026-05-16","raw_count":3,"reviewed_count":3,"import_ready_count":0,"needs_human_check_count":3,"rejected_count":0,"unverified_count":0,"date_total_reviewed":24,"date_total_unverified":0,"date_total_rejected":0,"errors":[],"network_issue":true,"note":"本轮新增3家：Samsung Electronics(68分/T3/needs_human_check)、Tongfu Microelectronics(63分/T3/needs_human_check)、Hitachi Chemical(62分/T3/needs_human_check)。网络访问严重受限，所有外部金融/新闻网站被屏蔽，数据主要基于训练知识。"}
+{
+  "status": "completed",
+  "started_at": "2026-05-16T16:35:32+08:00",
+  "completed_at": "2026-05-16T16:40:26+08:00",
+  "duration_seconds": 294,
+  "run_id": "20260516-163532",
+  "run_date": "2026-05-16",
+  "raw_count": 3,
+  "reviewed_count": 2,
+  "rejected_count": 1,
+  "import_ready_count": 1,
+  "needs_human_check_count": 1,
+  "unverified_count": 0,
+  "date_total_reviewed": 26,
+  "date_total_rejected": 1,
+  "date_total_unverified": 0,
+  "errors": [],
+  "network_issue": true,
+  "note": "本轮新增3家：Resonac Holdings(75分/T2/import_ready)、Fujitsu(62分/T4/needs_human_check)、Mitsui Chemicals(52分/T4/rejected)。网络访问受限但好于前几轮，Resonac官网数据可访问。Fujitsu确认为ABF技术发明者但非供应商。"
+}

@@ -1,0 +1,46 @@
+{
+  "company_name": "Mitsui Chemicals, Inc.",
+  "ticker": "4183.T",
+  "exchange": "TSE",
+  "hq_location": "Tokyo, Japan",
+  "category": "Chemicals / Semiconductor Materials",
+  "abf_relation": "Supplier of semiconductor packaging materials including specialty chemicals and films for IC substrate manufacturing.",
+  "review": {
+    "score": 52,
+    "hard_conditions_passed": 10,
+    "hard_conditions_total": 12,
+    "failed_conditions": ["Financial data is approximate/unverified", "No direct web source confirmed"],
+    "breakdown": {
+      "data_completeness": 10,
+      "source_quality": 6,
+      "abf_relevance": 12,
+      "data_accuracy": 10,
+      "swot_quality": 14
+    },
+    "import_decision": "rejected",
+    "reason": "Insufficient verified data. IR page timed out. Financial figures are approximate from training knowledge only. ABF relevance is less specific than Fujitsu or Resonac. Score below 60 threshold."
+  },
+  "market_data": {
+    "revenue_fy2025_approx_billion_yen": 1800,
+    "revenue_usd_approx": "12.0B USD",
+    "employees_approx": 19000,
+    "currency": "JPY",
+    "note": "UNVERIFIED - approximate figures from training knowledge"
+  },
+  "swot": {
+    "strengths": ["Diversified chemicals", "R&D in polymer chemistry", "Mitsui Group backing", "IC substrate materials relationships"],
+    "weaknesses": ["Not pure-play semi materials", "Limited ABF market data", "Smaller semi portfolio vs Resonac"],
+    "opportunities": ["Advanced packaging demand growth", "Portfolio expansion", "Green chemistry"],
+    "threats": ["Resonac/Ajinomoto competition", "Semi cyclicality", "Raw material prices"]
+  },
+  "source_quality": "T4",
+  "confidence": 0.55,
+  "tracking_priority": "P1 - Semiconductor materials supplier",
+  "data_sources": [
+    "https://www.mitsui-chem.co.jp/en/ir/ (TIMED OUT - no data retrieved)",
+    "Training knowledge only"
+  ],
+  "review_notes": "Data quality insufficient for import. Recommend retry when network access improves. Mitsui Chemicals is a real company with semiconductor materials involvement, but specific ABF data could not be verified.",
+  "reviewed_at": "2026-05-16T16:38:30+08:00",
+  "run_id": "20260516-163532"
+}

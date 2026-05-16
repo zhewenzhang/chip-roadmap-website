@@ -1,0 +1,60 @@
+{
+  "company_name": "Fujitsu Limited",
+  "ticker": "6702.T",
+  "exchange": "TSE",
+  "hq_location": "Tokyo, Japan",
+  "founded": 1935,
+  "category": "IT Services / Semiconductor Technology",
+  "abf_relation": "Original inventor of ABF (Ajinomoto Build-up Film) technology in the 1990s. Fujitsu developed the build-up film technology used in IC substrates, which was later licensed to Ajinomoto for manufacturing. Fujitsu is NOT a direct ABF material supplier but holds foundational IP.",
+  "market_data": {
+    "revenue_fy2025_billion_yen": 3502.9,
+    "revenue_usd_approx": "23.5B USD",
+    "total_assets_trillion_yen": 3.4,
+    "employees": 99000,
+    "employees_date": "2026-03-31",
+    "japan_it_services_rank": 1,
+    "global_it_services_revenue_usd": "14.9B",
+    "currency": "JPY"
+  },
+  "business_segments": {
+    "primary": "IT Services and Digital Transformation (Fujitsu Uvance)",
+    "technology_focus": ["Computing", "Network", "AI", "Data & Security", "Converging Technologies"],
+    "semiconductor_relevance": "Historical - developed ABF build-up film technology; current focus is IT services, not semiconductor materials manufacturing"
+  },
+  "swot": {
+    "strengths": [
+      "Japan's #1 IT services company",
+      "Original inventor of ABF technology with foundational IP",
+      "Strong R&D capabilities in computing and AI",
+      "Global presence with 99,000 employees",
+      "Revenue of ~$23.5B demonstrates scale"
+    ],
+    "weaknesses": [
+      "No longer directly involved in ABF material supply (licensed to Ajinomoto)",
+      "IT services focus means semiconductor materials are not core business",
+      "Lower margins compared to pure-play semiconductor companies"
+    ],
+    "opportunities": [
+      "Growing demand for IT services driven by AI and digital transformation",
+      "Potential to monetize semiconductor-related IP through licensing",
+      "Fujitsu Uvance platform for cross-industry solutions"
+    ],
+    "threats": [
+      "Intense competition in IT services from global players",
+      "ABF technology IP may become less valuable as alternatives emerge",
+      "Yen depreciation impacts international revenue conversion"
+    ]
+  },
+  "tracking_priority": "P0 - ABF technology originator",
+  "source_quality": "T4 - Training knowledge + limited web fetch (fujitsu.com/about page confirmed revenue and employee data)",
+  "confidence": 0.65,
+  "import_decision": "needs_human_check",
+  "review_notes": "Fujitsu invented ABF technology but does NOT manufacture or supply ABF materials. Ajinomoto is the exclusive supplier. Fujitsu's relevance to ABF supply chain is through historical IP, not current material supply. Recommend downgrading ABF supply chain relevance or marking as IP-only stakeholder.",
+  "data_sources": [
+    "https://global.fujitsu/en-global/about (fetched - confirmed revenue, employees)",
+    "https://global.fujitsu/en-global/ir (fetched - limited data)",
+    "Training knowledge on ABF technology origin"
+  ],
+  "collected_at": "2026-05-16T16:37:00+08:00",
+  "run_id": "20260516-163532"
+}

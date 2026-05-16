@@ -1,0 +1,47 @@
+{
+  "company_name": "Resonac Holdings Corporation (formerly Showa Denko K.K.)",
+  "ticker": "4004.T",
+  "exchange": "TSE",
+  "hq_location": "Tokyo, Japan",
+  "category": "Chemicals / Semiconductor Materials",
+  "abf_relation": "Key semiconductor materials supplier. Formed from Showa Denko + Hitachi Chemical merger (2023). Inherited ABF substrate material capabilities from Hitachi Chemical.",
+  "review": {
+    "score": 75,
+    "hard_conditions_passed": 12,
+    "hard_conditions_total": 12,
+    "breakdown": {
+      "data_completeness": 20,
+      "source_quality": 16,
+      "abf_relevance": 15,
+      "data_accuracy": 14,
+      "swot_quality": 10
+    },
+    "import_decision": "import_ready",
+    "reason": "Strong semiconductor materials player with verified financial data from company website. Consolidated revenue ~$9B. ABF relevance confirmed through Hitachi Chemical heritage. Data quality good (T2 source)."
+  },
+  "market_data": {
+    "revenue_2025_billion_yen": 1347.125,
+    "revenue_usd_approx": "9.0B USD",
+    "capital_million_yen": 182146,
+    "employees": 21525,
+    "employees_date": "2025-12-31",
+    "accounting_standard": "IFRS"
+  },
+  "swot": {
+    "strengths": ["Vertically integrated semi materials", "Hitachi Chemical ABF capabilities", "Diversified portfolio", "SiC position", "$9B revenue scale"],
+    "weaknesses": ["Merger integration complexity", "Capital intensive", "Semi cyclicality exposure"],
+    "opportunities": ["AI/HPC ABF demand growth", "SiC for EV", "Advanced packaging expansion", "Merger synergies"],
+    "threats": ["Competition", "Market cyclicality", "Customer concentration", "Raw material volatility"]
+  },
+  "source_quality": "T2",
+  "confidence": 0.80,
+  "tracking_priority": "P1 - Key semiconductor materials supplier",
+  "data_sources": [
+    "https://www.resonac.com/corporate/outline.html (verified - revenue, employees, business segments, CEO)",
+    "https://www.resonac.com/ (verified - navigation confirms semiconductor focus)",
+    "Training knowledge on Showa Denko / Hitachi Chemical"
+  ],
+  "review_notes": "Resonac is the parent company formed from Showa Denko + Hitachi Chemical merger. Hitachi Chemical was already reviewed in earlier run (score 62). Resonac provides consolidated view. Strong import candidate for semiconductor materials tracking.",
+  "reviewed_at": "2026-05-16T16:38:15+08:00",
+  "run_id": "20260516-163532"
+}

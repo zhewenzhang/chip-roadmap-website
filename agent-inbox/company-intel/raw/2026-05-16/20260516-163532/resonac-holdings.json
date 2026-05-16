@@ -1,0 +1,81 @@
+{
+  "company_name": "Resonac Holdings Corporation (formerly Showa Denko K.K.)",
+  "ticker": "4004.T",
+  "exchange": "TSE",
+  "hq_location": "Tokyo, Japan",
+  "founded": "1939 (as Showa Denko); Resonac Holdings formed January 1, 2023",
+  "category": "Chemicals / Semiconductor Materials",
+  "abf_relation": "Key supplier of semiconductor packaging materials including ABF substrate precursor materials. Formed through merger of Showa Denko K.K. and Showa Denko Materials Co., Ltd. (former Hitachi Chemical Co., Ltd.). Hitachi Chemical was a major ABF substrate material supplier.",
+  "market_data": {
+    "revenue_2025_billion_yen": 1347.125,
+    "revenue_usd_approx": "9.0B USD",
+    "capital_million_yen": 182146,
+    "employees": 21525,
+    "employees_date": "2025-12-31",
+    "currency": "JPY",
+    "accounting_standard": "IFRS"
+  },
+  "business_segments": {
+    "primary": "Chemical and semiconductor materials manufacturing",
+    "semiconductor_materials": [
+      "Front-end semiconductor materials",
+      "Back-end semiconductor materials",
+      "ABF substrate materials (via former Hitachi Chemical)"
+    ],
+    "other_businesses": [
+      "Hard disks",
+      "SiC (Silicon Carbide)",
+      "Automotive products",
+      "Aluminum specialty components",
+      "Basic chemicals",
+      "Graphite electrodes",
+      "Lithium-ion battery materials",
+      "Functional chemicals",
+      "Resin materials",
+      "Coating materials",
+      "Ceramics"
+    ]
+  },
+  "leadership": {
+    "ceo": "Hidehito Takahashi",
+    "title": "President & CEO"
+  },
+  "swot": {
+    "strengths": [
+      "Vertically integrated semiconductor materials supplier (front-end + back-end)",
+      "Inherited Hitachi Chemical's ABF substrate material capabilities",
+      "Diversified chemical portfolio reduces single-market risk",
+      "Strong position in SiC and advanced packaging materials",
+      "Consolidated revenue of ~$9B demonstrates significant scale"
+    ],
+    "weaknesses": [
+      "Recent merger integration may create operational complexity",
+      "Capital-intensive business model",
+      "Exposure to cyclical semiconductor market"
+    ],
+    "opportunities": [
+      "Growing ABF substrate demand driven by AI/HPC chip packaging",
+      "SiC materials for EV power semiconductors",
+      "Advanced packaging market expansion (CoWoS, 2.5D/3D)",
+      "Consolidation benefits from Showa Denko + Hitachi Chemical merger"
+    ],
+    "threats": [
+      "Competition from other chemical/materials suppliers",
+      "Semiconductor market cyclicality",
+      "Customer concentration risk",
+      "Raw material price volatility"
+    ]
+  },
+  "tracking_priority": "P1 - Key semiconductor materials supplier",
+  "source_quality": "T2 - Company website confirmed data (resonac.com/corporate/outline.html)",
+  "confidence": 0.80,
+  "import_decision": "import_ready",
+  "review_notes": "Resonac (Showa Denko + Hitachi Chemical merger) is a confirmed key player in semiconductor materials including ABF substrate precursors. Hitachi Chemical was already reviewed (score 62). Resonac provides the parent company perspective and consolidated financials.",
+  "data_sources": [
+    "https://www.resonac.com/corporate/outline.html (fetched - confirmed corporate profile, revenue, employees, business segments)",
+    "https://www.resonac.com/ (fetched - navigation structure confirms semiconductor focus)",
+    "Training knowledge on Showa Denko / Hitachi Chemical history"
+  ],
+  "collected_at": "2026-05-16T16:37:30+08:00",
+  "run_id": "20260516-163532"
+}
