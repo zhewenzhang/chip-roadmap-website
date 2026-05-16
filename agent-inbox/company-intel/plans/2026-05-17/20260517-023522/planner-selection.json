@@ -1,0 +1,31 @@
+{
+  "run_id": "20260517-023522",
+  "run_date": "2026-05-17",
+  "selection_count": 3,
+  "companies": [
+    {
+      "company_name": "华天科技 Hua Tian",
+      "region": "China",
+      "priority_reason": "中國第三大OSAT，SiP/FC-BGA封装布局",
+      "category_hint": "OSAT",
+      "priority_tier": "P1",
+      "task_type": "new_profile"
+    },
+    {
+      "company_name": "海光 Hygon",
+      "region": "China",
+      "priority_reason": "中国GPU/DCU厂商，数据中心AI芯片",
+      "category_hint": "AI_chip",
+      "priority_tier": "P2",
+      "task_type": "new_profile"
+    },
+    {
+      "company_name": "Google (TPU)",
+      "region": "USA",
+      "priority_reason": "自研TPU芯片，CoWoS/ABF载板需求，全球最大云厂商之一",
+      "category_hint": "cloud_chip",
+      "priority_tier": "P2",
+      "task_type": "new_profile"
+    }
+  ]
+}

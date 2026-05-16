@@ -1,0 +1,109 @@
+{
+  "company_name": "海光信息 Hygon Information Technology",
+  "company_name_en": "Hygon Information Technology Co., Ltd.",
+  "stock_code": "688041.SH",
+  "region": "China",
+  "headquarters": "北京市海淀区（办公地）/ 天津华苑产业区（注册地）",
+  "founded": "2014-10-24",
+  "listed_date": "2022-08-12",
+  "category": "AI_chip",
+  "tracking_priority": "P2",
+  "main_business": "研发、设计和销售应用于服务器、工作站等计算、存储设备中的高端处理器",
+  "description": "中国高端处理器龙头，产品包括CPU（海光系列）和DCU（深算系列，类GPU加速卡）。DCU产品对标NVIDIA GPU，是中国AI芯片国产替代核心标的。公司CPU基于x86架构（源自AMD Zen1授权），DCU基于通用GPGPU架构。",
+  "market_data": {
+    "fiscal_year": "2025",
+    "eps_annual_2025": 1.0949,
+    "eps_q1_2026": 0.2956,
+    "bvps_2025": 9.6773,
+    "bvps_q1_2026": 10.1093,
+    "roe_2025_pct": 11.31,
+    "roe_q1_2026_pct": 2.92,
+    "ocf_per_share_2025": 0.9022,
+    "ocf_per_share_q1_2026": 0.0291,
+    "registered_capital_cny_10k": 232434,
+    "total_shares_10k": 232433.8091,
+    "data_source": "新浪财经",
+    "data_date": "2026-05-16",
+    "estimated_annual_revenue_cny_billion": 45.0,
+    "estimated_annual_revenue_note": "基于EPS*总股本估算，实际营收需查阅年报"
+  },
+  "key_developments": [
+    {
+      "date": "2026-05-16",
+      "event": "为'能源电力行业第一届人工智能创新研发交流活动'提供DCU算力支撑，覆盖光伏风电功率预测、风机叶片检测等20多个研发方向",
+      "source": "证券时报",
+      "source_tier": "T2"
+    },
+    {
+      "date": "2026-05-14",
+      "event": "公司回复投资者：CPU、DCU产品均按既定规划推进研发工作（深算四号是否回片/量产问题）",
+      "source": "格隆汇/互动平台",
+      "source_tier": "T2"
+    },
+    {
+      "date": "2026-05",
+      "event": "海光DCU为能源电力行业AI研发提供高性能算力、大容量存储及大模型全流程服务",
+      "source": "证券时报",
+      "source_tier": "T2"
+    }
+  ],
+  "swot": {
+    "strengths": [
+      "中国唯一x86 CPU+GPGPU DCU双线布局的高端处理器公司",
+      "CPU基于AMD Zen1架构授权，兼容x86生态",
+      "DCU深算系列对标NVIDIA GPU，国产替代核心标的",
+      "2025年ROE 11.31%，盈利能力在国产芯片中表现优秀",
+      "Q1 2026 EPS同比大幅增长（0.2956 vs Q1 2025 0.2177）"
+    ],
+    "weaknesses": [
+      "DCU性能与NVIDIA最新产品仍有代际差距",
+      "受美国出口管制影响，先进制程供应链存在不确定性",
+      "x86架构授权存在续期风险"
+    ],
+    "opportunities": [
+      "中国AI芯片国产替代需求迫切，政策强力支持",
+      "数据中心/云计算市场高速增长驱动CPU/DCU需求",
+      "能源电力等垂直行业AI应用加速落地"
+    ],
+    "threats": [
+      "美国出口管制持续升级可能影响供应链",
+      "寒武纪、华为昇腾等国产竞品竞争加剧",
+      "NVIDIA通过特供版（如H20）在中国市场仍有竞争力"
+    ]
+  },
+  "abf_relevance": "low",
+  "abf_relevance_reason": "海光是芯片设计公司，不直接涉及ABF载板/IC基板制造，但其DCU/CPU产品需要先进封装（CoWoS等），间接影响ABF载板需求",
+  "source_quality": "moderate",
+  "source_quality_detail": "财务数据来自新浪财经（T2级别），新闻来源为证券时报/格隆汇（T2级别），无直接官方年报数据。公司互动平台回复为一手信息但内容简短。",
+  "sources": [
+    {
+      "url": "https://finance.sina.com.cn/realstock/company/sh688041/nc.shtml",
+      "tier": "T2",
+      "type": "financial_data",
+      "description": "海光信息股票行情及财务数据"
+    },
+    {
+      "url": "https://finance.sina.com.cn/jjxw/2026-05-16/doc-inhyassp4465815.shtml",
+      "tier": "T2",
+      "type": "news",
+      "description": "海光DCU为能源电力行业AI提供算力支撑"
+    },
+    {
+      "url": "https://cj.sina.cn/articles/view/5115326071/130e5ae7702002vjs2",
+      "tier": "T2",
+      "type": "investor_qa",
+      "description": "海光信息CPU/DCU研发进展互动平台回复"
+    },
+    {
+      "url": "https://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpInfo/stockid/688041.phtml",
+      "tier": "T2",
+      "type": "company_profile",
+      "description": "海光信息公司基本资料"
+    }
+  ],
+  "confidence": 0.72,
+  "import_decision": "needs_human_check",
+  "collected_at": "2026-05-17T02:37:30+08:00",
+  "run_id": "20260517-023522",
+  "collection_notes": "缺少直接的年度营收/利润总额数据（仅有EPS），需查阅官方年报补充。DCU产品线的具体营收占比和出货量数据缺失。网络搜索（百度/Bing）受限，主要依赖新浪财经单一来源。"
+}

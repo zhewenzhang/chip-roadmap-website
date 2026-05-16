@@ -1,0 +1,218 @@
+{
+  "run_id": "20260517-023522",
+  "reviews": [
+    {
+      "company_name": "Google (TPU / Alphabet)",
+      "file": "google-tpu.json",
+      "score": 85,
+      "decision": "import_ready",
+      "source_quality": "strong",
+      "hard_checks": [
+        {
+          "check": "company_name_exists",
+          "pass": true,
+          "detail": "Google (TPU / Alphabet)"
+        },
+        {
+          "check": "region_exists",
+          "pass": true,
+          "detail": "USA"
+        },
+        {
+          "check": "category_exists",
+          "pass": true,
+          "detail": "cloud_chip"
+        },
+        {
+          "check": "main_business_exists",
+          "pass": true,
+          "detail": "搜索引擎、云计算（Google Cloud）、YouTube、自研AI芯片（TPU）、自动驾驶（Waymo）"
+        },
+        {
+          "check": "has_sources",
+          "pass": true,
+          "detail": "3 sources"
+        },
+        {
+          "check": "source_quality_exists",
+          "pass": true,
+          "detail": "strong"
+        },
+        {
+          "check": "confidence_exists",
+          "pass": true,
+          "detail": 0.88
+        },
+        {
+          "check": "has_key_developments",
+          "pass": true,
+          "detail": "4 developments"
+        },
+        {
+          "check": "has_swot",
+          "pass": true,
+          "detail": "keys: ['strengths', 'weaknesses', 'opportunities', 'threats']"
+        },
+        {
+          "check": "has_market_data",
+          "pass": true,
+          "detail": "market_data present"
+        },
+        {
+          "check": "import_decision_exists",
+          "pass": true,
+          "detail": "import_ready"
+        },
+        {
+          "check": "confidence_above_0.5",
+          "pass": true,
+          "detail": "confidence=0.88"
+        }
+      ],
+      "hard_checks_pass": true,
+      "all_hard_pass": true
+    },
+    {
+      "company_name": "华天科技 Hua Tian Technology",
+      "file": "hua-tian-technology.json",
+      "score": 80,
+      "decision": "import_ready",
+      "source_quality": "moderate",
+      "hard_checks": [
+        {
+          "check": "company_name_exists",
+          "pass": true,
+          "detail": "华天科技 Hua Tian Technology"
+        },
+        {
+          "check": "region_exists",
+          "pass": true,
+          "detail": "China"
+        },
+        {
+          "check": "category_exists",
+          "pass": true,
+          "detail": "OSAT"
+        },
+        {
+          "check": "main_business_exists",
+          "pass": true,
+          "detail": "集成电路封装、测试业务"
+        },
+        {
+          "check": "has_sources",
+          "pass": true,
+          "detail": "4 sources"
+        },
+        {
+          "check": "source_quality_exists",
+          "pass": true,
+          "detail": "moderate"
+        },
+        {
+          "check": "confidence_exists",
+          "pass": true,
+          "detail": 0.78
+        },
+        {
+          "check": "has_key_developments",
+          "pass": true,
+          "detail": "4 developments"
+        },
+        {
+          "check": "has_swot",
+          "pass": true,
+          "detail": "keys: ['strengths', 'weaknesses', 'opportunities', 'threats']"
+        },
+        {
+          "check": "has_market_data",
+          "pass": true,
+          "detail": "market_data present"
+        },
+        {
+          "check": "import_decision_exists",
+          "pass": true,
+          "detail": "needs_human_check"
+        },
+        {
+          "check": "confidence_above_0.5",
+          "pass": true,
+          "detail": "confidence=0.78"
+        }
+      ],
+      "hard_checks_pass": true,
+      "all_hard_pass": true
+    },
+    {
+      "company_name": "海光信息 Hygon Information Technology",
+      "file": "hygon.json",
+      "score": 79,
+      "decision": "import_ready",
+      "source_quality": "moderate",
+      "hard_checks": [
+        {
+          "check": "company_name_exists",
+          "pass": true,
+          "detail": "海光信息 Hygon Information Technology"
+        },
+        {
+          "check": "region_exists",
+          "pass": true,
+          "detail": "China"
+        },
+        {
+          "check": "category_exists",
+          "pass": true,
+          "detail": "AI_chip"
+        },
+        {
+          "check": "main_business_exists",
+          "pass": true,
+          "detail": "研发、设计和销售应用于服务器、工作站等计算、存储设备中的高端处理器"
+        },
+        {
+          "check": "has_sources",
+          "pass": true,
+          "detail": "4 sources"
+        },
+        {
+          "check": "source_quality_exists",
+          "pass": true,
+          "detail": "moderate"
+        },
+        {
+          "check": "confidence_exists",
+          "pass": true,
+          "detail": 0.72
+        },
+        {
+          "check": "has_key_developments",
+          "pass": true,
+          "detail": "3 developments"
+        },
+        {
+          "check": "has_swot",
+          "pass": true,
+          "detail": "keys: ['strengths', 'weaknesses', 'opportunities', 'threats']"
+        },
+        {
+          "check": "has_market_data",
+          "pass": true,
+          "detail": "market_data present"
+        },
+        {
+          "check": "import_decision_exists",
+          "pass": true,
+          "detail": "needs_human_check"
+        },
+        {
+          "check": "confidence_above_0.5",
+          "pass": true,
+          "detail": "confidence=0.72"
+        }
+      ],
+      "hard_checks_pass": true,
+      "all_hard_pass": true
+    }
+  ]
+}

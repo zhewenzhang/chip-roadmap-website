@@ -1,0 +1,111 @@
+{
+  "company_name": "华天科技 Hua Tian Technology",
+  "company_name_en": "Tianshui Huatian Technology Co., Ltd.",
+  "stock_code": "002185.SZ",
+  "region": "China",
+  "headquarters": "甘肃省天水市",
+  "founded": "2003-12-25",
+  "listed_date": "2007-11-20",
+  "category": "OSAT",
+  "tracking_priority": "P1",
+  "main_business": "集成电路封装、测试业务",
+  "description": "中国第三大OSAT企业，聚焦存储、CPU/GPU/AI、CPO及汽车电子等先进封装市场。2026年重点推动2.5D技术平台产品量产和CPO封装技术研发。",
+  "market_data": {
+    "fiscal_year": "2025",
+    "eps_annual_2025": 0.2177,
+    "eps_q1_2026": 0.0266,
+    "bvps_2025": 5.4573,
+    "bvps_q1_2026": 5.4846,
+    "roe_2025_pct": 3.99,
+    "roe_q1_2026_pct": 0.48,
+    "ocf_per_share_2025": 1.0637,
+    "registered_capital_cny_10k": 326695,
+    "total_shares_10k": 326695.368,
+    "data_source": "新浪财经",
+    "data_date": "2026-05-16"
+  },
+  "key_developments": [
+    {
+      "date": "2026-05-16",
+      "event": "申请延期回复深交所关于发行股份购买资产审核问询函，延期不超过30日",
+      "source": "新浪财经/公司公告",
+      "source_tier": "T1"
+    },
+    {
+      "date": "2026-05",
+      "event": "总投资100亿元的先进封测产业基地二期项目建设中，3幢现代化厂房同步施工",
+      "source": "21世纪经济报道",
+      "source_tier": "T2"
+    },
+    {
+      "date": "2026",
+      "event": "拟收购华羿微电子100%股份，已收到深交所审核问询函",
+      "source": "公司公告",
+      "source_tier": "T1"
+    },
+    {
+      "date": "2026",
+      "event": "重点聚焦存储、CPU/GPU/AI、CPO及汽车电子市场，加快2.5D技术平台量产",
+      "source": "21世纪经济报道",
+      "source_tier": "T2"
+    }
+  ],
+  "swot": {
+    "strengths": [
+      "中国第三大OSAT企业，规模优势明显",
+      "先进封装技术布局全面（2.5D/3D、FC-BGA、SiP）",
+      "100亿元产业基地二期建设中，产能扩张积极",
+      "聚焦AI/存储/CPO等高增长领域"
+    ],
+    "weaknesses": [
+      "相比长电科技、通富微电规模仍有差距",
+      "2025年全年ROE仅3.99%，盈利能力有待提升",
+      "收购华羿微电子面临监管审批不确定性"
+    ],
+    "opportunities": [
+      "AI驱动先进封装需求爆发，HBM市场规模2026年预计增长58%至546亿美元",
+      "国产替代趋势加速，国内芯片设计企业订单转向本土封测",
+      "CPO封装技术有望成为新增长点"
+    ],
+    "threats": [
+      "长电科技100亿元固定资产投资预算，竞争加剧",
+      "上游原材料（金银铜）价格飙升推高成本",
+      "先进封装设备交期拉长至1年以上，产能扩张受限"
+    ]
+  },
+  "abf_relevance": "medium",
+  "abf_relevance_reason": "华天科技主要做IC封装测试而非ABF载板本身，但其先进封装（2.5D/FC-BGA）业务与ABF载板供应链密切相关",
+  "source_quality": "moderate",
+  "source_quality_detail": "公司公告(T1)+财经媒体(T2)，财务数据来自新浪财经（转载官方财报），核心信息可靠",
+  "sources": [
+    {
+      "url": "https://finance.sina.com.cn/realstock/company/sz002185/nc.shtml",
+      "tier": "T2",
+      "type": "financial_data",
+      "description": "华天科技股票行情及财务数据"
+    },
+    {
+      "url": "https://finance.sina.com.cn/stock/aigc/wenxun/2026-05-15/doc-inhxyptn3255056.shtml",
+      "tier": "T1",
+      "type": "announcement",
+      "description": "华天科技申请延期回复审核问询函公告"
+    },
+    {
+      "url": "https://cj.sina.cn/articles/view/1651428902/626ece2601901fswq",
+      "tier": "T2",
+      "type": "industry_analysis",
+      "description": "先进封装行业分析-订单爆满产能紧缺"
+    },
+    {
+      "url": "https://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpInfo/stockid/002185.phtml",
+      "tier": "T2",
+      "type": "company_profile",
+      "description": "华天科技公司基本资料"
+    }
+  ],
+  "confidence": 0.78,
+  "import_decision": "needs_human_check",
+  "collected_at": "2026-05-17T02:37:00+08:00",
+  "run_id": "20260517-023522",
+  "collection_notes": "财务数据来自新浪财经（T2级别），非直接官方年报。公司公告为T1级别。行业分析数据来源于21世纪经济报道。缺少直接的营收总额和利润数据（仅有EPS）。"
+}
