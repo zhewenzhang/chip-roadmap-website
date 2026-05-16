@@ -1,0 +1,33 @@
+{
+  "company_id": "amkor-technology",
+  "name_en": "Amkor Technology, Inc.",
+  "review_score": 88,
+  "source_quality": "T1",
+  "import_decision": "import_ready",
+  "review_date": "2026-05-16",
+  "reviewed_by": "auto-pipeline",
+  "hard_conditions_check": {
+    "1_company_id": "PASS",
+    "2_name_en": "PASS",
+    "3_name_cn": "PASS",
+    "4_region_country": "PASS",
+    "5_founded": "PASS",
+    "6_business_scope": "PASS",
+    "7_abf_relevance": "PASS - 全球第二大OSAT，FCBGA/2.5D TSV直接使用ABF基板",
+    "8_market_data": "PASS - FY2025 $6.708B, TTM Mar'26 $7.071B完整财务数据",
+    "9_products": "PASS - 6项产品（FCBGA/2.5D TSV/SiP/fcCSP/WLCSP/Test）",
+    "10_key_facts": "PASS - 10条关键事实",
+    "11_sources": "PASS - 5 sources, T1/T2 quality",
+    "12_swot": "PASS - 完整SWOT分析，各5项"
+  },
+  "score_breakdown": {
+    "data_completeness": 27,
+    "source_quality": 22,
+    "abf_relevance": 17,
+    "financial_data": 12,
+    "swot_quality": 10
+  },
+  "strengths": "财务数据详实（StockAnalysis官方数据），公司概况来自官方网站，亚利桑那$70亿扩产信息来自权威新闻源（搜狐/芯智讯）。OSAT行业地位清晰。",
+  "weaknesses": "ABF基板关联为间接（通过封装服务而非直接基板制造），未覆盖具体客户营收占比数据。",
+  "notes": "全球第二大OSAT企业，FY2025营收67.08亿美元，TTM Mar'26达70.71亿美元（+12.7%）。亚利桑那$70亿工厂获CHIPS Act支持，2028年投产。苹果2025年通过Amkor生产190亿颗芯片。"
+}

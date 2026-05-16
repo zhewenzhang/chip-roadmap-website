@@ -1,15 +1,18 @@
-{"company":"AT&S","category":"IC substrate","priority":"P0","status":"reviewed","notes":"Reviewed in run 20260516-003529, score 95, needs_human_check, T4 source quality"}
-{"company":"Nan Ya PCB","category":"IC substrate","priority":"P0","status":"reviewed","notes":"Reviewed in run 20260516-003529, score 95, needs_human_check, T4 source quality"}
-{"company":"Zhuhai Access Semiconductor","category":"IC substrate","priority":"P0","status":"reviewed","notes":"Reviewed in run 20260516-003529, score 95, needs_human_check, T4 source quality"}
-{"company":"JCET Group","category":"OSAT","priority":"P1","status":"reviewed","notes":"Reviewed in run 20260516-023527, score 82, needs_human_check, T2 source quality"}
-{"company":"ASE Technology","category":"OSAT","priority":"P1","status":"reviewed","notes":"Reviewed in run 20260516-023527, score 72, needs_human_check, T3 source quality"}
-{"company":"Camtek","category":"Equipment","priority":"P1","status":"reviewed","notes":"Reviewed in run 20260516-023527, score 95, import_ready, T1 source quality"}
-{"company":"DeepX","category":"Edge AI Chip","priority":"P2","status":"reviewed","notes":"Reviewed in run 20260516-083523, score 92, import_ready, T1 source quality. NOTE: Corrected from Chinese AI Chip to Edge AI Chip (Korean company)"}
-{"company":"TSMC","category":"Foundry","priority":"P0","status":"reviewed","notes":"Score 93, import_ready"}
-{"company":"Broadcom","category":"Fabless","priority":"P0","status":"reviewed","notes":"Score 95, import_ready"}
-{"company":"Qualcomm","category":"Fabless","priority":"P1","status":"reviewed","notes":"import_ready"}
-{"company":"Marvell","category":"Fabless","priority":"P1","status":"reviewed","notes":"import_ready"}
-{"company":"Cambricon","category":"Chinese AI Chip","priority":"P2","status":"unverified","notes":"Needs retry - limited sources"}
-{"company":"MediaTek","category":"Fabless","priority":"P1","status":"rejected","notes":"Score 59, insufficient ABF relevance"}
-{"company":"SK Hynix","category":"HBM Memory","priority":"P1","status":"reviewed","notes":"Reviewed in run 20260516-083523, score 95, import_ready, T1 source quality"}
-{"company":"Shinko Electric Industries","category":"IC Substrate","priority":"P0","status":"reviewed","notes":"Reviewed in run 20260516-083523, score 72, needs_human_check, T3 source quality. Delisted 2025-06, missing financial data."}
+{"company": "AT&S", "category": "IC substrate", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-003529, score 95, needs_human_check, T4 source quality"}
+{"company": "Nan Ya PCB", "category": "IC substrate", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-003529, score 95, needs_human_check, T4 source quality"}
+{"company": "Zhuhai Access Semiconductor", "category": "IC substrate", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-003529, score 95, needs_human_check, T4 source quality"}
+{"company": "JCET Group", "category": "OSAT", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-023527, score 82, needs_human_check, T2 source quality"}
+{"company": "ASE Technology", "category": "OSAT", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-023527, score 72, needs_human_check, T3 source quality"}
+{"company": "Camtek", "category": "Equipment", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-023527, score 95, import_ready, T1 source quality"}
+{"company": "DeepX", "category": "Edge AI Chip", "priority": "P2", "status": "reviewed", "notes": "Reviewed in run 20260516-083523, score 92, import_ready, T1 source quality. NOTE: Corrected from Chinese AI Chip to Edge AI Chip (Korean company)"}
+{"company": "TSMC", "category": "Foundry", "priority": "P0", "status": "reviewed", "notes": "Score 93, import_ready"}
+{"company": "Broadcom", "category": "Fabless", "priority": "P0", "status": "reviewed", "notes": "Score 95, import_ready"}
+{"company": "Qualcomm", "category": "Fabless", "priority": "P1", "status": "reviewed", "notes": "import_ready"}
+{"company": "Marvell", "category": "Fabless", "priority": "P1", "status": "reviewed", "notes": "import_ready"}
+{"company": "Cambricon", "category": "Chinese AI Chip", "priority": "P2", "status": "unverified", "notes": "Needs retry - limited sources"}
+{"company": "MediaTek", "category": "Fabless", "priority": "P1", "status": "rejected", "notes": "Score 59, insufficient ABF relevance"}
+{"company": "SK Hynix", "category": "HBM Memory", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-083523, score 95, import_ready, T1 source quality"}
+{"company": "Shinko Electric Industries", "category": "IC Substrate", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-083523, score 72, needs_human_check, T3 source quality. Delisted 2025-06, missing financial data."}
+{"company": "Ibiden", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-103525"}
+{"company": "Unimicron", "category": "IC Substrate / ABF", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-103525"}
+{"company": "Amkor Technology", "category": "OSAT / Advanced Packaging", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-103525"}

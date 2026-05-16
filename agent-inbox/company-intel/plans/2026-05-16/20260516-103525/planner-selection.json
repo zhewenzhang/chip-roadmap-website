@@ -1,0 +1,27 @@
+{
+  "run_id": "20260516-103525",
+  "run_date": "2026-05-16",
+  "selection": [
+    {
+      "company": "Ibiden",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Top 3 global ABF substrate supplier (Japan), critical to Intel/NVIDIA packaging. Not yet reviewed today.",
+      "search_focus": "ABF substrate market share, revenue, capacity expansion, CoWoS/EMIB supply"
+    },
+    {
+      "company": "Unimicron",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Top 3 global ABF substrate supplier (Taiwan), major supplier to AMD/Intel. Not yet reviewed today.",
+      "search_focus": "ABF substrate revenue, capacity, technology nodes, customer concentration"
+    },
+    {
+      "company": "Amkor Technology",
+      "category": "OSAT / Advanced Packaging",
+      "priority": "P1",
+      "reason": "Top 5 OSAT globally, advanced packaging (flip chip, SiP) for HBM/CoWoS ecosystem. Not yet reviewed today.",
+      "search_focus": "advanced packaging revenue, HBM packaging capability, AI chip packaging orders"
+    }
+  ]
+}

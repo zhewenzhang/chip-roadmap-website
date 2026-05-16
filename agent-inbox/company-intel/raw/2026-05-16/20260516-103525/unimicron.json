@@ -1,0 +1,164 @@
+{
+  "company_id": "unimicron",
+  "name_en": "Unimicron Technology Corp.",
+  "name_cn": "欣兴电子股份有限公司",
+  "aliases": ["欣兴电子", "欣兴", "3037.TW"],
+  "region": "Taiwan, China",
+  "country": "Taiwan, China",
+  "headquarters": "Taoyuan City, Taiwan",
+  "founded": "1990",
+  "listed": "TWSE: 3037",
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "tracking_priority": "critical",
+  "business_scope": "印刷电路板（PCB）和集成电路载板（IC Carrier）的设计、制造与销售。产品涵盖HDI、ELIC、多层板、软硬结合板、FPC、FCCSP、FCBGA、CSP、内存模块、无核载板等。是全球ABF基板三大供应商之一。",
+  "abf_relevance": "欣兴电子是全球ABF基板三大供应商之一（与Ibiden、Shinko并列），直接为Intel、AMD、NVIDIA等提供FCBGA载板。ABF基板是先进AI芯片（如NVIDIA H100/B100、Intel Xeon、AMD EPYC）封装的关键材料，欣兴的产能和技术直接影响全球AI芯片供应链。",
+  "market_data": {
+    "currency": "TWD",
+    "fy2025": {
+      "revenue": "131.241 billion TWD (~4.1 billion USD)",
+      "operating_income": "6.674 billion TWD",
+      "net_income": "6.673 billion TWD",
+      "gross_margin": "13.94%",
+      "operating_margin": "5.09%",
+      "profit_margin": "5.08%",
+      "ebitda": "24.684 billion TWD",
+      "ebitda_margin": "18.81%",
+      "revenue_yoy_growth": "13.75%",
+      "eps_basic": "4.38 TWD"
+    },
+    "ttm_mar2026": {
+      "revenue": "138.598 billion TWD",
+      "net_income": "10.802 billion TWD",
+      "eps_basic": "7.07 TWD",
+      "revenue_yoy_growth": "16.41%",
+      "net_income_yoy_growth": "203.16%"
+    },
+    "fy2024": {
+      "revenue": "115.373 billion TWD",
+      "net_income": "5.082 billion TWD"
+    },
+    "fy2022": {
+      "revenue": "140.489 billion TWD",
+      "net_income": "29.619 billion TWD",
+      "note": "ABF基板超级周期高峰"
+    },
+    "market_cap": "595 billion TWD (~18.5 billion USD, 2025 Hurun ranking)",
+    "employees": "~31,448 (as of 2025)"
+  },
+  "products": [
+    {
+      "name": "FCBGA载板",
+      "description": "高端倒装芯片BGA载板，用于AI/HPC处理器（Intel/AMD/NVIDIA），ABF基板核心产品",
+      "status": "mass production"
+    },
+    {
+      "name": "FCCSP载板",
+      "description": "倒装芯片芯片级封装载板，用于移动处理器和SoC",
+      "status": "mass production"
+    },
+    {
+      "name": "无核载板 (Coreless)",
+      "description": "先进无核基板技术，提升信号传输性能",
+      "status": "mass production"
+    },
+    {
+      "name": "HDI/ELIC PCB",
+      "description": "高密度互连/任意层互连印刷电路板，用于智能手机等",
+      "status": "mass production"
+    },
+    {
+      "name": "内存模块载板",
+      "description": "DDR5/HBM内存模块用载板",
+      "status": "mass production"
+    },
+    {
+      "name": "PCBeam/X-Beam连接器",
+      "description": "高性能连接器产品",
+      "status": "mass production"
+    }
+  ],
+  "key_facts": [
+    "全球ABF基板三大供应商之一（与Ibiden、Shinko并列）",
+    "成立于1990年，隶属联华电子（UMC）集团",
+    "2009年合并全懋精密后成为全球第一大电路板供应商",
+    "客户包括Intel、AMD、NVIDIA、苹果等全球顶级芯片设计公司",
+    "在中国大陆设有苏州群策科技、昆山鼎鑫电子、联能科技等子公司",
+    "2024年泰国工厂封顶，持续扩产",
+    "2026年2月简山杰出任董事长",
+    "2025年胡润中国500强第262位，市值595亿元",
+    "截至2025年累计申请专利4331件，取得3198件专利权",
+    "FY2025营收1312.41亿TWD（+13.75% YoY），TTM Mar'26增长16.41%"
+  ],
+  "SWOT": {
+    "strengths": [
+      "全球ABF基板三大供应商之一，技术壁垒极高",
+      "客户阵容顶级（Intel/AMD/NVIDIA/Apple）",
+      "联电集团背景，资金和资源支持充足",
+      "产品线完整，涵盖PCB到IC载板全品类",
+      "全球化布局（台湾/中国大陆/德国/日本/泰国）",
+      "专利积累深厚（4331件申请）"
+    ],
+    "weaknesses": [
+      "毛利率波动大（FY2022 35.9% → FY2025 13.94%），受ABF周期影响剧烈",
+      "FY2022-2023经历严重下行（营收-25.95%），周期性风险显著",
+      "FCF连续为负（FY2024 -158.34亿TWD，FY2025 -106.5亿TWD），资本开支巨大",
+      "高度依赖ABF基板单一增长引擎",
+      "中国大陆子公司上市计划可能分散管理精力"
+    ],
+    "opportunities": [
+      "AI芯片爆发推动ABF基板需求持续增长",
+      "先进封装（CoWoS/EMIB）对高端ABF基板需求倍增",
+      "DDR5内存渗透率提升带动内存载板需求",
+      "泰国新工厂投产扩充产能",
+      "ABF基板供需持续紧张，ASP有望维持高位"
+    ],
+    "threats": [
+      "Ibiden、Shinko等日本竞争对手技术追赶",
+      "中国大陆ABF基板厂商（如深南电路、兴森科技）国产替代",
+      "ABF基板产能过剩风险（多家厂商同步扩产）",
+      "联电集团可能的战略调整影响资源投入",
+      "地缘政治风险（台海局势）影响客户信心"
+    ]
+  },
+  "source_quality": "T1",
+  "sources": [
+    {
+      "url": "https://stockanalysis.com/quote/tpe/3037/financials/",
+      "title": "Unimicron Technology (TPE:3037) Financials & Income Statement - StockAnalysis",
+      "date": "2026-05-16",
+      "type": "financial_data",
+      "quality": "T1"
+    },
+    {
+      "url": "https://stockanalysis.com/quote/tpe/3037/company/",
+      "title": "Unimicron Technology (TPE:3037) Company Profile - StockAnalysis",
+      "date": "2026-05-16",
+      "type": "company_profile",
+      "quality": "T1"
+    },
+    {
+      "url": "https://www.baike.com/wikiid/2792914769052084018",
+      "title": "欣兴电子股份有限公司 - 快懂百科",
+      "date": "2026-05-16",
+      "type": "company_profile",
+      "quality": "T2"
+    },
+    {
+      "url": "https://baike.baidu.com/item/欣兴电子股份有限公司/8913788",
+      "title": "欣兴电子股份有限公司 - 百度百科",
+      "date": "2026-05-16",
+      "type": "company_profile",
+      "quality": "T2"
+    },
+    {
+      "url": "https://www.marketcapwatch.com/zh/company/tpe-3037-marketcap",
+      "title": "Unimicron Technology Corp. 市值及排名 - MarketCapWatch",
+      "date": "2026-04-30",
+      "type": "market_data",
+      "quality": "T2"
+    }
+  ],
+  "confidence": 0.90,
+  "confidence_notes": "财务数据来自StockAnalysis（基于TWSE官方财报），公司概况来自StockAnalysis和中文百科。ABF基板三大供应商地位为行业共识。毛利率从FY2022的35.9%暴跌至FY2025的13.94%反映了ABF基板周期从超级高峰回落。TTM Mar'26数据（营收+16.41%，净利+203%）显示复苏趋势。"
+}

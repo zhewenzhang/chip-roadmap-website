@@ -1,0 +1,162 @@
+{
+  "company_id": "amkor-technology",
+  "name_en": "Amkor Technology, Inc.",
+  "name_cn": "安靠科技",
+  "aliases": ["AMKR", "安靠", "Amkor"],
+  "region": "United States",
+  "country": "United States",
+  "headquarters": "Tempe, Arizona, USA",
+  "founded": "1968",
+  "listed": "NASDAQ: AMKR",
+  "category": "OSAT / Advanced Packaging",
+  "priority": "P1",
+  "tracking_priority": "high",
+  "business_scope": "外包半导体封装和测试服务（OSAT），涵盖先进封装（2.5D/3D TSV、Flip Chip、SiP）、晶圆级封装、引线框架封装、测试服务等。客户涵盖AI/HPC、移动通信、汽车、IoT等领域。",
+  "abf_relevance": "Amkor是全球第二大OSAT企业，其先进封装服务（FCBGA、2.5D/3D TSV）直接使用ABF基板。CoWoS-like封装能力和HBM集成为ABF基板需求的核心驱动力之一。与台积电前端晶圆制造形成互补的端到端半导体制造链条。",
+  "market_data": {
+    "currency": "USD",
+    "fy2025": {
+      "revenue": "6.708 billion USD",
+      "operating_income": "467.39 million USD",
+      "net_income": "373.9 million USD",
+      "gross_margin": "13.99%",
+      "operating_margin": "6.97%",
+      "profit_margin": "5.61%",
+      "ebitda": "1.109 billion USD",
+      "ebitda_margin": "16.54%",
+      "revenue_yoy_growth": "6.18%"
+    },
+    "ttm_mar2026": {
+      "revenue": "7.071 billion USD",
+      "net_income": "436.12 million USD",
+      "eps_diluted": "1.75 USD",
+      "revenue_yoy_growth": "12.71%",
+      "net_income_yoy_growth": "37.91%"
+    },
+    "fy2024": {
+      "revenue": "6.318 billion USD",
+      "net_income": "354.01 million USD"
+    },
+    "market_cap": "17.44 billion USD (as of May 15, 2026)",
+    "pe_ratio": 40.46,
+    "forward_pe": 31.79,
+    "stock_price": "70.35 USD (May 15, 2026 close)",
+    "52_week_range": "17.79 - 79.23 USD",
+    "employees": "~35,000 globally"
+  },
+  "products": [
+    {
+      "name": "FCBGA (Flip Chip BGA)",
+      "description": "高端倒装芯片BGA封装，用于AI/HPC芯片，使用ABF基板",
+      "status": "mass production"
+    },
+    {
+      "name": "2.5D/3D TSV",
+      "description": "硅穿孔互连技术，用于HBM+GPU集成封装（类CoWoS）",
+      "status": "mass production"
+    },
+    {
+      "name": "SiP (System in Package)",
+      "description": "系统级封装，集成多芯片于单封装",
+      "status": "mass production"
+    },
+    {
+      "name": "fcCSP",
+      "description": "倒装芯片芯片级封装，用于移动处理器",
+      "status": "mass production"
+    },
+    {
+      "name": "WLCSP",
+      "description": "晶圆级芯片级封装",
+      "status": "mass production"
+    },
+    {
+      "name": "Test Services",
+      "description": "全流程半导体测试服务",
+      "status": "mass production"
+    }
+  ],
+  "key_facts": [
+    "全球第二大OSAT企业（仅次于ASE Technology）",
+    "1968年创立，是OSAT行业的原始先驱",
+    "亚利桑那州皮奥里亚先进封测厂投资总额70亿美元，预计2028年初投产",
+    "获美国CHIPS Act 4亿美元补助",
+    "苹果2025年通过Amkor生产了190亿颗芯片",
+    "与台积电亚利桑那晶圆厂形成前端+后端互补供应链",
+    "CEO Giel Rutten领导，全球运营覆盖亚洲、EMEA、美洲",
+    "FY2025营收67.08亿美元，TTM Mar'26达70.71亿美元（+12.7% YoY）",
+    "市值174.4亿美元（2026年5月），Beta 2.31",
+    "分析师评级：Buy，目标价64.50美元"
+  ],
+  "SWOT": {
+    "strengths": [
+      "OSAT行业原始先驱，58年行业经验",
+      "全球运营布局覆盖亚欧美，客户就近服务能力强",
+      "先进封装技术（2.5D/3D TSV、FCBGA）处于行业领先地位",
+      "与苹果、NVIDIA等顶级客户建立深度合作关系",
+      "美国本土制造能力获CHIPS Act政策支持",
+      "70亿美元亚利桑那工厂将大幅提升美国本土先进封装产能"
+    ],
+    "weaknesses": [
+      "毛利率（14%）低于部分竞争对手，成本压力大",
+      "高度依赖消费电子和移动领域，周期性明显",
+      "美国本土扩产成本高昂，短期利润承压",
+      "FCF波动较大（FY2025仅1.91亿美元，-44.65% YoY）",
+      "相对ASE Technology规模仍有差距"
+    ],
+    "opportunities": [
+      "AI/HPC爆发推动先进封装需求持续增长",
+      "美国CHIPS Act支持本土半导体供应链建设",
+      "HBM封装需求随AI GPU出量持续攀升",
+      "汽车半导体和IoT市场扩大",
+      "与台积电亚利桑那工厂的协同效应"
+    ],
+    "threats": [
+      "ASE Technology、日月光等竞争对手持续扩产",
+      "中国大陆OSAT企业（长电科技等）成本竞争",
+      "半导体周期下行风险",
+      "先进封装技术迭代速度快，研发投入压力大",
+      "地缘政治风险影响全球供应链布局"
+    ]
+  },
+  "source_quality": "T1",
+  "sources": [
+    {
+      "url": "https://stockanalysis.com/stocks/amkr/financials/",
+      "title": "Amkor Technology (AMKR) Financials & Income Statement - StockAnalysis",
+      "date": "2026-05-16",
+      "type": "financial_data",
+      "quality": "T1"
+    },
+    {
+      "url": "https://stockanalysis.com/stocks/amkr/financials/balance-sheet/",
+      "title": "Amkor Technology (AMKR) Balance Sheet - StockAnalysis",
+      "date": "2026-05-16",
+      "type": "financial_data",
+      "quality": "T1"
+    },
+    {
+      "url": "https://stockanalysis.com/stocks/amkr/",
+      "title": "Amkor Technology (AMKR) Stock Price & Overview - StockAnalysis",
+      "date": "2026-05-16",
+      "type": "market_data",
+      "quality": "T1"
+    },
+    {
+      "url": "https://www.amkor.com/amkor-overview",
+      "title": "Amkor Overview - Amkor Technology Official Website",
+      "date": "2026-05-16",
+      "type": "company_profile",
+      "quality": "T1"
+    },
+    {
+      "url": "https://www.sohu.com/a/942218056_128469",
+      "title": "总投资70亿美元！Amkor亚利桑那州封测厂动工 - 搜狐/芯智讯",
+      "date": "2025-10-09",
+      "type": "news",
+      "quality": "T2"
+    }
+  ],
+  "confidence": 0.92,
+  "confidence_notes": "财务数据来源可靠（StockAnalysis官方数据），公司概况来自官方网站。市场数据截至2026年5月15日。SWOT分析基于行业知识和公开信息综合评估。"
+}

@@ -1,0 +1,33 @@
+{
+  "company_id": "unimicron",
+  "name_en": "Unimicron Technology Corp.",
+  "review_score": 90,
+  "source_quality": "T1",
+  "import_decision": "import_ready",
+  "review_date": "2026-05-16",
+  "reviewed_by": "auto-pipeline",
+  "hard_conditions_check": {
+    "1_company_id": "PASS",
+    "2_name_en": "PASS",
+    "3_name_cn": "PASS",
+    "4_region_country": "PASS",
+    "5_founded": "PASS",
+    "6_business_scope": "PASS",
+    "7_abf_relevance": "PASS - 全球ABF基板三大供应商之一，直接为Intel/AMD/NVIDIA提供FCBGA载板",
+    "8_market_data": "PASS - FY2025 131.24B TWD, TTM Mar'26 138.6B TWD完整财务数据",
+    "9_products": "PASS - 6项产品（FCBGA/FCCSP/Coreless/HDI/内存载板/连接器）",
+    "10_key_facts": "PASS - 10条关键事实",
+    "11_sources": "PASS - 5 sources, T1/T2 quality",
+    "12_swot": "PASS - 完整SWOT分析，各5项"
+  },
+  "score_breakdown": {
+    "data_completeness": 28,
+    "source_quality": 22,
+    "abf_relevance": 20,
+    "financial_data": 10,
+    "swot_quality": 10
+  },
+  "strengths": "ABF基板核心标的，财务数据来自StockAnalysis（基于TWSE官方财报），公司概况来自StockAnalysis和中文百科。客户阵容顶级（Intel/AMD/NVIDIA/Apple），专利数据详实。",
+  "weaknesses": "FCF连续为负的深层原因需进一步分析，中国大陆子公司具体营收贡献未覆盖。",
+  "notes": "全球ABF基板三大供应商之一，FY2025营收1312亿TWD（+13.75%），TTM Mar'26净利增长203%显示强劲复苏。2025胡润中国500强第262位。毛利率从FY2022的35.9%回落至FY2025的13.94%反映ABF周期调整。"
+}

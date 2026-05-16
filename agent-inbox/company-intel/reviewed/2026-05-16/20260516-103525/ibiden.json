@@ -1,0 +1,33 @@
+{
+  "company_id": "ibiden",
+  "name_en": "IBIDEN CO., LTD.",
+  "review_score": 72,
+  "source_quality": "T3",
+  "import_decision": "reviewed_needs_human_check",
+  "review_date": "2026-05-16",
+  "reviewed_by": "auto-pipeline",
+  "hard_conditions_check": {
+    "1_company_id": "PASS",
+    "2_name_en": "PASS",
+    "3_name_cn": "PASS",
+    "4_region_country": "PASS",
+    "5_founded": "PASS",
+    "6_business_scope": "PASS",
+    "7_abf_relevance": "PASS - 全球ABF基板三大供应商之一，Intel最大ABF基板供应商",
+    "8_market_data": "PARTIAL - 有营收估算（500-550B JPY）但非官方精确数字，标记为估算",
+    "9_products": "PASS - 5项产品（ABF基板/PCB/塑料封装/DPF/碳产品）",
+    "10_key_facts": "PASS - 10条关键事实",
+    "11_sources": "PASS - 2 sources, T1 quality（官网IR页面）",
+    "12_swot": "PASS - 完整SWOT分析，各5项"
+  },
+  "score_breakdown": {
+    "data_completeness": 22,
+    "source_quality": 15,
+    "abf_relevance": 20,
+    "financial_data": 5,
+    "swot_quality": 10
+  },
+  "strengths": "ABF基板核心标的，全球三大供应商之一，Intel最大供应商。公司概况基于可靠行业知识。SWOT分析全面。",
+  "weaknesses": "财务数据缺失（官网IR页面内容有限，未能获取具体财务数字），仅有行业估算。来源仅2个且未获取到实质性财务信息。",
+  "notes": "Ibiden是全球ABF基板三大供应商之一，但因日本公司官网IR页面结构限制，本轮未能获取FY2025/FY2026具体财务数据。建议后续轮次：1) 尝试访问Ibiden日文IR页面获取年报PDF；2) 通过Nikkei等日本财经媒体补充数据。标记needs_human_check。"
+}

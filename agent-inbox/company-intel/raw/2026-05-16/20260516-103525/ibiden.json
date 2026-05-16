@@ -1,0 +1,121 @@
+{
+  "company_id": "ibiden",
+  "name_en": "IBIDEN CO., LTD.",
+  "name_cn": "伊比顿株式会社",
+  "aliases": ["IBIDEN", "イビデン", "4062.T"],
+  "region": "Japan",
+  "country": "Japan",
+  "headquarters": "Ogaki City, Gifu Prefecture, Japan",
+  "founded": "1912",
+  "listed": "TSE: 4062",
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "tracking_priority": "critical",
+  "business_scope": "电子产品业务（IC基板/ABF基板、印刷电路板、塑料封装）和陶瓷业务（DPF柴油颗粒过滤器、特殊碳产品）。IC基板/ABF基板是其核心增长引擎，占电子业务收入主要部分。",
+  "abf_relevance": "Ibiden是全球ABF基板三大供应商之一（与Unimicron、Shinko并列），是Intel ABF基板的最大供应商，也为AMD和NVIDIA提供FCBGA载板。Ibiden的技术能力和产能直接决定了全球高端AI芯片的封装能力。在ABF基板市场中占据约25-30%的全球份额。",
+  "market_data": {
+    "currency": "JPY",
+    "fy2025_fy2026_note": "Ibiden财年截至3月，FY2026指2025年4月-2026年3月",
+    "fy2025_fy2026_estimated": {
+      "revenue": "approximately 500-550 billion JPY (~3.3-3.7 billion USD)",
+      "operating_margin": "approximately 8-12%",
+      "note": "基于行业趋势和公司历史表现估算，具体数字需以官方年报为准。ABF基板需求随AI芯片爆发持续增长。"
+    },
+    "historical_context": {
+      "fy2022_peak": "ABF基板超级周期高峰，电子业务大幅增长",
+      "fy2023_downturn": "ABF基板周期下行，PC需求疲软导致营收下滑",
+      "fy2024_recovery": "AI需求拉动ABF基板复苏",
+      "note": "Ibiden近年ABF基板业务经历从超级周期高峰到低谷再到AI驱动复苏的过程"
+    },
+    "employees": "~12,000 (estimated)",
+    "abf_market_share": "约25-30%（全球ABF基板市场）"
+  },
+  "products": [
+    {
+      "name": "ABF基板 (FCBGA载板)",
+      "description": "高端倒装芯片BGA载板，用于Intel/AMD/NVIDIA处理器，Ibiden核心产品",
+      "status": "mass production"
+    },
+    {
+      "name": "印刷电路板 (PCB)",
+      "description": "多层PCB、HDI板，用于服务器、网络设备等",
+      "status": "mass production"
+    },
+    {
+      "name": "塑料封装",
+      "description": "半导体塑料封装服务",
+      "status": "mass production"
+    },
+    {
+      "name": "DPF (柴油颗粒过滤器)",
+      "description": "陶瓷基柴油颗粒过滤器，用于汽车尾气处理",
+      "status": "mass production"
+    },
+    {
+      "name": "特殊碳产品",
+      "description": "用于半导体制造等领域的特种碳材料",
+      "status": "mass production"
+    }
+  ],
+  "key_facts": [
+    "全球ABF基板三大供应商之一，Intel最大ABF基板供应商",
+    "成立于1912年，总部位于日本岐阜县大垣市",
+    "电子业务（IC基板+PCB+封装）和陶瓷业务（DPF+碳产品）双主业",
+    "在ABF基板市场占据约25-30%全球份额",
+    "日本本土制造为主，在马来西亚和中国设有生产基地",
+    "近年持续扩产ABF基板产能以应对AI芯片需求",
+    "与Intel保持最紧密的ABF基板供应关系",
+    "ABF基板技术壁垒极高，全球仅3-4家供应商具备量产能力",
+    "母公司为Ibiden集团，旗下还有环境工程等业务",
+    "FY2026（截至2026年3月）电子业务受AI需求拉动预计持续增长"
+  ],
+  "SWOT": {
+    "strengths": [
+      "全球ABF基板技术领导者，Intel最大供应商",
+      "百年企业（1912年创立），技术积累深厚",
+      "日本制造品质口碑，客户信任度高",
+      "ABF基板技术壁垒极高，护城河深",
+      "陶瓷业务（DPF）提供多元化收入来源"
+    ],
+    "weaknesses": [
+      "产能扩张速度可能落后于需求增长",
+      "高度依赖日本本土制造，全球化布局相对有限",
+      "陶瓷业务（传统汽车DPF）面临电动化转型风险",
+      "财务数据透明度相对较低（日本公司IR风格）",
+      "与Unimicron相比在中国大陆布局较少"
+    ],
+    "opportunities": [
+      "AI芯片爆发推动ABF基板需求持续增长",
+      "Intel/AMD新一代处理器对ABF基板需求倍增",
+      "扩产带来的营收增长弹性",
+      "先进封装技术对高端ABF基板的结构性需求增长",
+      "半导体供应链安全化趋势下客户倾向多元化供应商"
+    ],
+    "threats": [
+      "Unimicron和Shinko的技术追赶和产能扩张",
+      "中国大陆ABF基板厂商国产替代（深南电路、兴森科技）",
+      "ABF基板产能过剩风险（多家同步扩产）",
+      "日本地震等自然灾害风险",
+      "DPF业务受汽车电动化冲击"
+    ]
+  },
+  "source_quality": "T3",
+  "sources": [
+    {
+      "url": "https://www.ibiden.com/ir/",
+      "title": "IBIDEN CO.,LTD. Investor Relations",
+      "date": "2026-05-16",
+      "type": "company_ir",
+      "quality": "T1"
+    },
+    {
+      "url": "https://www.ibiden.com/ir/library/annual/",
+      "title": "IBIDEN Integrated Report | IR Library",
+      "date": "2026-05-16",
+      "type": "annual_report",
+      "quality": "T1"
+    }
+  ],
+  "confidence": 0.72,
+  "confidence_notes": "公司概况和行业地位基于可靠行业知识。财务数据因Ibiden官网结构限制未能获取具体数字，使用行业估算并标注。ABF基板三大供应商地位为行业共识。SWOT分析基于行业趋势和公司公开信息综合评估。建议后续轮次补充Ibiden FY2026年报具体财务数据。"
+}
