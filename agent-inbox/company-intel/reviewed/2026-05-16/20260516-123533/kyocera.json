@@ -1,0 +1,80 @@
+{
+  "company_name": "Kyocera Corporation",
+  "ticker": "6971.T (TSE) / KYO (NYSE ADR)",
+  "headquarters": "Kyoto, Japan",
+  "founded": 1959,
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "abf_relevance": "high",
+  "description": "Kyocera is a Japanese multinational ceramics and electronics conglomerate. Its IC substrate division is a key manufacturer of ABF (Ajinomoto Build-up Film) substrates used in advanced semiconductor packaging for CPUs, GPUs, and AI accelerators.",
+  "products_services": [
+    "ABF/FC-BGA IC substrates",
+    "Ceramic semiconductor packages",
+    "Crystal devices",
+    "Connectors",
+    "Printed circuit boards"
+  ],
+  "market_data": {
+    "market_cap_billion_usd": "~18-22",
+    "revenue_fy2025_billion_usd": "~2.0",
+    "employees": "~80,000",
+    "fiscal_year_end": "March 31"
+  },
+  "swot": {
+    "strengths": [
+      "Strong position in ABF/FC-BGA substrates",
+      "Vertically integrated ceramic and packaging technology",
+      "Long-standing relationships with Intel, AMD, NVIDIA",
+      "Diversified business"
+    ],
+    "weaknesses": [
+      "Lower operating margins vs pure-play substrate companies",
+      "ABF capacity behind Unimicron and Ibiden",
+      "Complex conglomerate structure"
+    ],
+    "opportunities": [
+      "AI/HPC demand driving ABF substrate shortage",
+      "New Kagoshima facility expanding capacity",
+      "Automotive advanced packaging demand"
+    ],
+    "threats": [
+      "Chinese IC substrate competition",
+      "Potential oversupply",
+      "Yen fluctuations"
+    ]
+  },
+  "review_result": {
+    "score": 68,
+    "hard_conditions": {
+      "1_company_name_present": true,
+      "2_category_identified": true,
+      "3_abf_relevance_assessed": true,
+      "4_products_services_listed": true,
+      "5_market_data_present": true,
+      "6_financial_highlights": false,
+      "7_swot_complete": true,
+      "8_sources_documented": true,
+      "9_confidence_scored": true,
+      "10_tracking_priority_set": true,
+      "11_import_decision_made": true,
+      "12_data_gaps_identified": true
+    },
+    "failed_conditions": ["6_financial_highlights: No precise FY2025 financial data obtained via web fetch"],
+    "source_quality": "T3",
+    "import_decision": "reviewed_needs_human_check",
+    "review_notes": "Strong ABF/IC substrate relevance (P0). SWOT and product data solid. Financial data from training knowledge only - need verification of FY2025 results and Kagoshima investment details. Network access severely limited."
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T3",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence_score": 0.65,
+  "data_gaps": [
+    "Precise FY2025 revenue and earnings",
+    "Exact ABF substrate market share",
+    "Kagoshima facility capacity details",
+    "Customer concentration breakdown"
+  ],
+  "collected_at": "2026-05-16T04:36:00Z",
+  "reviewed_at": "2026-05-16T04:39:00Z",
+  "run_id": "20260516-123533"
+}

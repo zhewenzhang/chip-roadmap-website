@@ -1,0 +1,82 @@
+{
+  "company_name": "Powertech Technology Inc. (PTI)",
+  "ticker": "6239.TW (TWSE)",
+  "headquarters": "Hsinchu, Taiwan",
+  "founded": 1997,
+  "category": "OSAT",
+  "priority": "P1",
+  "abf_relevance": "medium",
+  "description": "Powertech Technology Inc. (PTI) is a leading Taiwan-based OSAT company specializing in memory packaging and testing, with growing exposure to HBM (High Bandwidth Memory) advanced packaging.",
+  "products_services": [
+    "DRAM packaging (DDR4/DDR5/LPDDR)",
+    "NAND Flash packaging",
+    "HBM packaging and testing",
+    "Logic IC packaging",
+    "Final testing services",
+    "Wafer-level packaging",
+    "SiP"
+  ],
+  "market_data": {
+    "market_cap_billion_usd": "~5-7",
+    "revenue_2024_billion_usd": "~2.5-3.0",
+    "employees": "~25,000-30,000",
+    "fiscal_year_end": "December 31"
+  },
+  "swot": {
+    "strengths": [
+      "Dominant position in memory packaging",
+      "Early mover in HBM packaging",
+      "Strong relationship with SK Hynix",
+      "Taiwan ecosystem access"
+    ],
+    "weaknesses": [
+      "Heavy concentration on memory (cyclical)",
+      "Lower revenue scale vs ASE/Amkor",
+      "Limited logic packaging presence"
+    ],
+    "opportunities": [
+      "HBM demand exploding with AI GPU market",
+      "HBM3E/HBM4 increasing ASPs",
+      "Potential logic packaging expansion"
+    ],
+    "threats": [
+      "SK Hynix/Samsung vertical integration",
+      "ASE/Amkor investing in memory packaging",
+      "Memory market cyclicality"
+    ]
+  },
+  "review_result": {
+    "score": 65,
+    "hard_conditions": {
+      "1_company_name_present": true,
+      "2_category_identified": true,
+      "3_abf_relevance_assessed": true,
+      "4_products_services_listed": true,
+      "5_market_data_present": true,
+      "6_financial_highlights": false,
+      "7_swot_complete": true,
+      "8_sources_documented": true,
+      "9_confidence_scored": true,
+      "10_tracking_priority_set": true,
+      "11_import_decision_made": true,
+      "12_data_gaps_identified": true
+    },
+    "failed_conditions": ["6_financial_highlights: No precise 2024/2025 financial data obtained via web fetch"],
+    "source_quality": "T3",
+    "import_decision": "reviewed_needs_human_check",
+    "review_notes": "Key HBM packaging player (P1). SWOT solid. Financial data from training knowledge only - need verification of 2024/2025 results and HBM revenue share. PTI website accessible but had limited financial content."
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T3",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence_score": 0.60,
+  "data_gaps": [
+    "Precise 2024/2025 revenue and earnings",
+    "Exact HBM packaging revenue contribution",
+    "HBM capacity expansion capex figures",
+    "Customer breakdown (SK Hynix concentration)"
+  ],
+  "collected_at": "2026-05-16T04:37:00Z",
+  "reviewed_at": "2026-05-16T04:39:00Z",
+  "run_id": "20260516-123533"
+}

@@ -1,0 +1,74 @@
+{
+  "company_name": "Powertech Technology Inc. (PTI)",
+  "ticker": "6239.TW (TWSE)",
+  "headquarters": "Hsinchu, Taiwan",
+  "founded": 1997,
+  "ceo": "Miin Wu (Chairman), David Hsu (President)",
+  "category": "OSAT",
+  "priority": "P1",
+  "abf_relevance": "medium",
+  "description": "Powertech Technology Inc. (PTI) is a leading Taiwan-based OSAT (Outsourced Semiconductor Assembly and Test) company specializing in memory packaging and testing. PTI is one of the world's largest independent DRAM and Flash memory packaging companies, with growing exposure to HBM (High Bandwidth Memory) advanced packaging.",
+  "products_services": [
+    "DRAM packaging (DDR4/DDR5/LPDDR)",
+    "NAND Flash packaging",
+    "HBM (High Bandwidth Memory) packaging and testing",
+    "Logic IC packaging",
+    "Final testing services",
+    "Wafer-level packaging",
+    "SiP (System-in-Package)"
+  ],
+  "market_data": {
+    "market_cap_billion_usd": "~5-7",
+    "revenue_2024_billion_usd": "~2.5-3.0 (NTD ~80-90 billion)",
+    "net_income_2024_billion_usd": "~0.3-0.5",
+    "employees": "~25,000-30,000",
+    "fiscal_year_end": "December 31",
+    "pe_ratio": "~15-25",
+    "data_confidence": "medium",
+    "source": "Public filings, training data. PTI reports in NTD."
+  },
+  "financial_highlights": {
+    "revenue_trend": "Strong recovery in 2024 driven by memory market rebound and HBM demand. Revenue grew 20-30% YoY in 2024.",
+    "profitability": "Operating margin improving from ~8-10% to ~12-15% with better product mix (higher HBM content).",
+    "recent_developments": "PTI has been expanding HBM packaging capacity aggressively. In 2024-2025, the company invested in new production lines for HBM3E packaging. Strategic partnership with SK Hynix for HBM packaging."
+  },
+  "swot": {
+    "strengths": [
+      "Dominant position in memory packaging (DRAM + Flash)",
+      "Early mover in HBM packaging with proven technology",
+      "Strong relationship with SK Hynix (primary HBM supplier)",
+      "Located in Taiwan with access to TSMC ecosystem"
+    ],
+    "weaknesses": [
+      "Heavy concentration on memory packaging (cyclical market)",
+      "Lower revenue scale vs. ASE/Amkor in overall OSAT",
+      "Limited presence in logic/advanced SoC packaging"
+    ],
+    "opportunities": [
+      "HBM demand exploding with AI GPU market (NVIDIA H100/H200/B100 all require HBM)",
+      "HBM3E and HBM4 requiring more advanced packaging, increasing ASPs",
+      "Potential to expand into logic advanced packaging"
+    ],
+    "threats": [
+      "SK Hynix and Samsung may vertically integrate HBM packaging",
+      "ASE/Amkor investing in memory packaging capabilities",
+      "Memory market cyclicality could impact demand"
+    ]
+  },
+  "tracking_priority": "P1",
+  "source_quality": "T3",
+  "import_decision": "needs_human_check",
+  "confidence_score": 0.60,
+  "data_gaps": [
+    "Precise 2024/2025 revenue and earnings figures",
+    "Exact HBM packaging revenue contribution",
+    "HBM capacity expansion timeline and capex figures",
+    "Customer breakdown (SK Hynix concentration percentage)"
+  ],
+  "sources": [
+    "PTI website (https://www.pti.com.tw/en/) - accessed, limited content",
+    "Training data (publicly available financial reports and industry analysis)"
+  ],
+  "collected_at": "2026-05-16T04:37:00Z",
+  "collector_notes": "PTI website accessible but limited content. Financial data sites blocked. Data compiled from training knowledge. PTI is a key HBM packaging play - recommend verifying latest capex and HBM revenue share."
+}

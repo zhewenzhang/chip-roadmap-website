@@ -1,0 +1,76 @@
+{
+  "company_name": "Samsung Electro-Mechanics Co., Ltd.",
+  "ticker": "009150.KS (KRX)",
+  "headquarters": "Suwon, South Korea",
+  "founded": 1973,
+  "ceo": "Jang Deok-hyun (CEO)",
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "abf_relevance": "high",
+  "description": "Samsung Electro-Mechanics is Samsung Group's electronic components arm, manufacturing MLCCs, semiconductor substrates (including FC-BGA/ABF substrates), camera modules, and communication modules. It is a major ABF substrate manufacturer serving advanced processor packaging needs.",
+  "products_services": [
+    "FC-BGA / ABF IC substrates",
+    "MLCC (Multi-Layer Ceramic Capacitors)",
+    "Camera modules",
+    "Communication modules (5G antenna, Wi-Fi)",
+    "Power inductors",
+    "HDI (High Density Interconnect) PCBs"
+  ],
+  "market_data": {
+    "market_cap_billion_usd": "~12-15",
+    "revenue_2025_billion_usd": "~12-14 (KRW ~15-18 trillion)",
+    "net_income_2025_billion_usd": "~0.8-1.2",
+    "employees": "~30,000-35,000",
+    "fiscal_year_end": "December 31",
+    "pe_ratio": "~12-20",
+    "data_confidence": "medium",
+    "source": "Public filings, training data. Samsung Electro-Mechanics reports in KRW."
+  },
+  "financial_highlights": {
+    "revenue_trend": "Strong growth in 2024-2025 driven by MLCC recovery and FC-BGA substrate demand for AI applications. FC-BGA revenue growing 30%+ YoY.",
+    "profitality": "Operating margin ~10-14%. MLCC and substrate segments are key profit drivers.",
+    "recent_developments": "Samsung Electro-Mechanics invested heavily in FC-BGA/ABF substrate production, with new facility in Vietnam (Thai Nguyen) ramping up in 2024-2025. Announced KRW 1 trillion+ investment in advanced substrate capacity."
+  },
+  "swot": {
+    "strengths": [
+      "Samsung Group backing provides capital and customer access",
+      "Strong FC-BGA substrate technology for advanced processors",
+      "Diversified product portfolio (MLCC, substrates, modules) reduces risk",
+      "Vietnam facility provides cost-competitive manufacturing base",
+      "Access to Samsung Foundry and Samsung Semiconductor as potential customers"
+    ],
+    "weaknesses": [
+      "FC-BGA substrate market share still behind Unimicron and Ibiden",
+      "Heavy reliance on Samsung Group ecosystem may limit external customer diversification",
+      "MLCC segment is highly competitive (vs. Murata, TDK, Yageo)"
+    ],
+    "opportunities": [
+      "AI/HPC boom driving massive demand for advanced ABF substrates",
+      "FC-BGA substrate shortage expected to continue through 2026-2027",
+      "Vietnam expansion providing capacity to capture market share",
+      "Growing automotive electronics demand for MLCCs and substrates"
+    ],
+    "threats": [
+      "Japanese competitors (Ibiden, Shinko) have deeper substrate expertise",
+      "Chinese IC substrate makers (AT&S, Zhuhai Access) expanding aggressively",
+      "Potential oversupply if demand growth slows",
+      "Samsung Group internal transfer pricing dynamics"
+    ]
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T3",
+  "import_decision": "needs_human_check",
+  "confidence_score": 0.65,
+  "data_gaps": [
+    "Precise 2025 revenue breakdown by segment (MLCC vs FC-BGA vs modules)",
+    "Exact FC-BGA/ABF substrate market share",
+    "Vietnam facility capacity and ramp timeline details",
+    "Key external customers for FC-BGA substrates"
+  ],
+  "sources": [
+    "Samsung Electro-Mechanics website (https://www.samsungsem.com/) - attempted, returned 404",
+    "Training data (publicly available financial reports and industry analysis)"
+  ],
+  "collected_at": "2026-05-16T04:38:00Z",
+  "collector_notes": "Samsung Electro-Mechanics website returned 404 on multiple URL patterns. Financial data sites blocked. Data compiled from training knowledge. Samsung Electro-Mechanics is a key ABF substrate player - recommend verifying latest FC-BGA revenue growth and Vietnam expansion progress."
+}

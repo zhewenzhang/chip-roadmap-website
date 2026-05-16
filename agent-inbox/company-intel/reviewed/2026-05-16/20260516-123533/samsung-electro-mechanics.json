@@ -1,0 +1,83 @@
+{
+  "company_name": "Samsung Electro-Mechanics Co., Ltd.",
+  "ticker": "009150.KS (KRX)",
+  "headquarters": "Suwon, South Korea",
+  "founded": 1973,
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "abf_relevance": "high",
+  "description": "Samsung Electro-Mechanics is Samsung Group's electronic components arm, manufacturing MLCCs, semiconductor substrates (including FC-BGA/ABF substrates), camera modules, and communication modules. Major ABF substrate manufacturer.",
+  "products_services": [
+    "FC-BGA / ABF IC substrates",
+    "MLCC",
+    "Camera modules",
+    "Communication modules (5G, Wi-Fi)",
+    "Power inductors",
+    "HDI PCBs"
+  ],
+  "market_data": {
+    "market_cap_billion_usd": "~12-15",
+    "revenue_2025_billion_usd": "~12-14",
+    "employees": "~30,000-35,000",
+    "fiscal_year_end": "December 31"
+  },
+  "swot": {
+    "strengths": [
+      "Samsung Group backing",
+      "Strong FC-BGA technology",
+      "Diversified product portfolio",
+      "Vietnam cost-competitive manufacturing"
+    ],
+    "weaknesses": [
+      "FC-BGA share behind Unimicron and Ibiden",
+      "Samsung ecosystem dependency",
+      "MLCC competition from Murata/TDK"
+    ],
+    "opportunities": [
+      "AI/HPC ABF substrate demand",
+      "FC-BGA shortage through 2026-2027",
+      "Vietnam expansion capacity",
+      "Automotive electronics growth"
+    ],
+    "threats": [
+      "Japanese competitor depth in substrates",
+      "Chinese substrate makers expanding",
+      "Potential oversupply",
+      "Samsung Group internal dynamics"
+    ]
+  },
+  "review_result": {
+    "score": 70,
+    "hard_conditions": {
+      "1_company_name_present": true,
+      "2_category_identified": true,
+      "3_abf_relevance_assessed": true,
+      "4_products_services_listed": true,
+      "5_market_data_present": true,
+      "6_financial_highlights": false,
+      "7_swot_complete": true,
+      "8_sources_documented": true,
+      "9_confidence_scored": true,
+      "10_tracking_priority_set": true,
+      "11_import_decision_made": true,
+      "12_data_gaps_identified": true
+    },
+    "failed_conditions": ["6_financial_highlights: No precise 2025 segment revenue data obtained via web fetch"],
+    "source_quality": "T3",
+    "import_decision": "reviewed_needs_human_check",
+    "review_notes": "Key ABF substrate player (P0). Strong Samsung Group backing. SWOT and product data solid. Financial data from training knowledge only - need verification of 2025 results and Vietnam expansion progress. Samsung Electro-Mechanics website returned 404 on all attempted URLs."
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T3",
+  "import_decision": "reviewed_needs_human_check",
+  "confidence_score": 0.65,
+  "data_gaps": [
+    "Precise 2025 segment revenue breakdown",
+    "Exact FC-BGA/ABF substrate market share",
+    "Vietnam facility capacity and ramp details",
+    "Key external FC-BGA customers"
+  ],
+  "collected_at": "2026-05-16T04:38:00Z",
+  "reviewed_at": "2026-05-16T04:39:00Z",
+  "run_id": "20260516-123533"
+}

@@ -1,0 +1,28 @@
+{
+  "run_id": "20260516-123533",
+  "run_date": "2026-05-16",
+  "selection_round": 7,
+  "selected_companies": [
+    {
+      "company": "Kyocera",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Major ABF substrate manufacturer, key supplier for advanced packaging. Not yet reviewed."
+    },
+    {
+      "company": "Powertech Technology",
+      "category": "OSAT",
+      "priority": "P1",
+      "reason": "Top-tier OSAT in Taiwan, DRAM packaging leader with HBM exposure. Not yet reviewed."
+    },
+    {
+      "company": "Samsung Electro-Mechanics",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Samsung Group's IC substrate arm, ABF substrate and FC-BGA manufacturer. Not yet reviewed."
+    }
+  ],
+  "already_processed_count": 18,
+  "already_reviewed": ["AT&S","Nan Ya PCB","Zhuhai Access Semiconductor","JCET Group","ASE Technology","Camtek","DeepX","TSMC","Broadcom","Qualcomm","Marvell","SK Hynix","Shinko Electric","Ibiden","Unimicron","Amkor Technology","GlobalFoundries","Samsung Foundry","Intel Foundry","Huawei","TFME"],
+  "already_unverified": ["Cambricon"]
+}

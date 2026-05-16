@@ -1,0 +1,75 @@
+{
+  "company_name": "Kyocera Corporation",
+  "ticker": "6971.T (TSE) / KYO (NYSE ADR)",
+  "headquarters": "Kyoto, Japan",
+  "founded": 1959,
+  "ceo": "Hideo Tanimoto (President)",
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "abf_relevance": "high",
+  "description": "Kyocera is a Japanese multinational ceramics and electronics conglomerate. Its IC substrate division is a key manufacturer of ABF (Ajinomoto Build-up Film) substrates used in advanced semiconductor packaging for CPUs, GPUs, and AI accelerators. Kyocera also produces ceramic packages, connectors, and electronic components.",
+  "products_services": [
+    "ABF/FC-BGA IC substrates",
+    "Ceramic semiconductor packages",
+    "Crystal devices (oscillators, SAW filters)",
+    "Connectors",
+    "Printed circuit boards",
+    "Fine ceramic components",
+    "Solar power systems"
+  ],
+  "market_data": {
+    "market_cap_billion_usd": "~18-22",
+    "revenue_fy2025_billion_usd": "~2.0 (FY2025 ending Mar 2025)",
+    "net_income_billion_usd": "~0.15-0.20",
+    "employees": "~80,000 globally",
+    "fiscal_year_end": "March 31",
+    "pe_ratio": "~35-45",
+    "data_confidence": "medium",
+    "source": "Public filings, training data up to 2025. Note: FY2025 results may have been released after training cutoff."
+  },
+  "financial_highlights": {
+    "revenue_trend": "Revenue grew modestly in FY2024 (~2% YoY). IC substrate segment saw recovery in H2 2024 driven by AI/HPC demand.",
+    "profitability": "Operating margin ~6-8%. Ceramic and semiconductor packages are higher-margin segments.",
+    "recent_developments": "Kyocera announced JPY 150 billion investment in Kagoshima Prefecture for new semiconductor packaging facility, expected to begin production in 2026."
+  },
+  "swot": {
+    "strengths": [
+      "Strong position in ABF/FC-BGA substrates for high-end processors",
+      "Vertically integrated ceramic and packaging technology",
+      "Long-standing relationships with Intel, AMD, and NVIDIA",
+      "Diversified business reduces dependency on single segment"
+    ],
+    "weaknesses": [
+      "Lower operating margins compared to pure-play substrate companies",
+      "ABF substrate capacity still behind Unimicron and Ibiden in volume",
+      "Complex conglomerate structure may reduce investor focus on substrate business"
+    ],
+    "opportunities": [
+      "Massive AI/HPC demand driving ABF substrate shortage and pricing power",
+      "New Kagoshima facility to significantly expand capacity",
+      "Growing demand for advanced packaging in automotive (ADAS, EV)"
+    ],
+    "threats": [
+      "Intensifying competition from Chinese IC substrate makers (e.g., Zhuhai Access)",
+      "Potential oversupply if all major players expand simultaneously",
+      "Yen fluctuations affecting export competitiveness"
+    ]
+  },
+  "tracking_priority": "P0",
+  "source_quality": "T3",
+  "import_decision": "needs_human_check",
+  "confidence_score": 0.65,
+  "data_gaps": [
+    "Precise FY2025 revenue and earnings (may be available but not accessible via web fetch)",
+    "Exact ABF substrate market share percentage",
+    "Kagoshima facility capacity ramp details",
+    "Customer concentration breakdown"
+  ],
+  "sources": [
+    "Kyocera IR page (https://global.kyocera.com/ir/) - accessed, limited content",
+    "SIA semiconductor industry data",
+    "Training data (publicly available financial reports and industry analysis up to 2025)"
+  ],
+  "collected_at": "2026-05-16T04:36:00Z",
+  "collector_notes": "Network access severely restricted. Most external financial sites (Yahoo Finance, Bloomberg, Reuters, macrotrends) returned 403/404 or were blocked. Kyocera IR page had minimal content. Data compiled primarily from training knowledge with confidence annotations."
+}
