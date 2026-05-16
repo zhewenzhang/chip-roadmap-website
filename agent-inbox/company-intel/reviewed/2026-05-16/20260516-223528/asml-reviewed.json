@@ -1,0 +1,42 @@
+{
+  "company_name": "ASML Holding N.V.",
+  "review_date": "2026-05-16",
+  "run_id": "20260516-223528",
+  "reviewer": "automated-pipeline",
+  "hard_conditions_check": {
+    "1_company_name_present": true,
+    "2_category_classified": true,
+    "3_headquarters_location": true,
+    "4_at_least_one_financial_metric": true,
+    "5_revenue_or_market_cap": true,
+    "6_abf_relevance_explained": true,
+    "7_sources_cited": true,
+    "8_source_urls_accessible": true,
+    "9_no_fabricated_data": true,
+    "10_confidence_score_assigned": true,
+    "11_swot_complete": true,
+    "12_tracking_priority_set": true,
+    "all_passed": true,
+    "failed_items": []
+  },
+  "scoring": {
+    "data_completeness": 25,
+    "source_quality": 25,
+    "financial_data_depth": 20,
+    "abf_relevance": 10,
+    "swot_quality": 10,
+    "total_score": 90,
+    "max_score": 100,
+    "score_breakdown": {
+      "data_completeness": "25/25 - All fields populated with verified data",
+      "source_quality": "25/25 - T1 sources: stockanalysis.com (detailed financials), companiesmarketcap.com, ASML official website",
+      "financial_data_depth": "20/20 - Complete income statement, balance sheet, revenue/earnings history, market cap, margins",
+      "abf_relevance": "10/10 - Clear explanation of lithography's role in advanced packaging/ABF substrate manufacturing",
+      "swot_quality": "10/10 - Comprehensive SWOT with industry-specific insights"
+    }
+  },
+  "review_result": "import_ready",
+  "source_quality": "T1",
+  "action": "approve_for_import",
+  "notes": "Excellent data quality. Multiple T1 financial sources accessible. ASML is a critical enabler for advanced semiconductor manufacturing including ABF substrates. All 12 hard conditions passed."
+}

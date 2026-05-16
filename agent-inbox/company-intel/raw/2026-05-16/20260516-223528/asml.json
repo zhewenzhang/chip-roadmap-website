@@ -1,0 +1,98 @@
+{
+  "company_name": "ASML Holding N.V.",
+  "ticker": "NASDAQ: ASML",
+  "headquarters": "Veldhoven, Netherlands",
+  "founded": 1984,
+  "ceo": "Christophe Fouquet (since 2024)",
+  "employees_estimate": 43000,
+  "category": "Semiconductor Equipment",
+  "priority": "P1",
+  "relevance_to_abf": "ASML's lithography systems (EUV/DUV) are essential enablers for advanced semiconductor manufacturing, including ABF substrate layers and advanced packaging (CoWoS). Without ASML's equipment, leading-edge chips requiring fine-pitch ABF substrates cannot be manufactured.",
+  "business_overview": "ASML is the world's sole supplier of Extreme Ultraviolet (EUV) lithography systems and a dominant supplier of Deep Ultraviolet (DUV) lithography systems. These systems are critical for patterning the most advanced semiconductor nodes. The company also provides metrology and inspection solutions. ASML's technology is a bottleneck for the entire semiconductor industry's advancement.",
+  "market_data": {
+    "market_cap_usd": "578.82B",
+    "revenue_ttm_usd": "33.69B (EUR) / ~$38.82B (USD)",
+    "net_income_ttm_usd": "~$10B",
+    "eps_diluted": 25.84,
+    "pe_ratio": 50.66,
+    "forward_pe": 38.74,
+    "gross_margin": "52.60%",
+    "operating_margin": "34.79%",
+    "profit_margin": "28.86%",
+    "revenue_growth_yoy": "9.70%",
+    "data_date": "2026-05-15",
+    "currency": "USD (primary listing EUR, ADR in USD)"
+  },
+  "financials_summary": {
+    "revenue_history": [
+      {"year": 2025, "revenue_usd_b": 32.67},
+      {"year": 2024, "revenue_usd_b": 28.26},
+      {"year": 2023, "revenue_usd_b": 27.56},
+      {"year": 2022, "revenue_usd_b": 21.17}
+    ],
+    "earnings_history": [
+      {"year": 2025, "earnings_usd_b": 10.21},
+      {"year": 2024, "earnings_usd_b": 8.35},
+      {"year": 2023, "earnings_usd_b": 8.12}
+    ],
+    "total_assets_usd_b": 48.06,
+    "total_debt_usd_b": 2.71,
+    "cash_usd_b": 7.97,
+    "fcf_ttm_usd_b": 8.97
+  },
+  "products_and_technology": {
+    "key_products": [
+      "EUV lithography systems (TWINSCAN NXE series)",
+      "DUV lithography systems (TWINSCAN NXT series - immersion)",
+      "DUV lithography systems (TWINSCAN XT series - dry)",
+      "Metrology & Inspection systems",
+      "Computational lithography software"
+    ],
+    "technology_leadership": "Sole global supplier of EUV lithography. The NXE:3800E is the latest EUV system enabling 2nm and below nodes. High-NA EUV (EXE:5000 series) is in development/deployment for sub-2nm patterning.",
+    "competitive_position": "Near-monopoly in EUV lithography. In DUV immersion, competes with Nikon but maintains dominant share. No other company has successfully commercialized EUV."
+  },
+  "swot": {
+    "strengths": [
+      "Sole EUV supplier globally - irreplaceable technology",
+      "Strong pricing power with multi-year order backlog",
+      "Deep customer relationships (TSMC, Samsung, Intel)",
+      "Consistent R&D investment (~€3.6B annually)",
+      "High margins and strong cash generation"
+    ],
+    "weaknesses": [
+      "Extreme concentration risk - single point of failure for advanced chipmaking",
+      "Supply chain complexity (Zeiss optics, Cymer light source)",
+      "Geopolitical pressure on China sales (export controls)",
+      "Cyclical demand tied to semiconductor capex"
+    ],
+    "opportunities": [
+      "High-NA EUV rollout creates new revenue stream",
+      "Advanced packaging (CoWoS, 3D IC) drives additional lithography demand",
+      "AI chip boom accelerates leading-edge capacity expansion",
+      "China DUV demand remains strong despite EUV restrictions"
+    ],
+    "threats": [
+      "US/Netherlands export controls limiting China sales",
+      "Semiconductor downturn could reduce capex spending",
+      "Geopolitical tensions affecting global supply chains",
+      "Long-term: potential alternative patterning technologies (e-beam, directed self-assembly)"
+    ]
+  },
+  "abf_relevance_detail": "ASML's lithography systems are used in manufacturing advanced IC substrates and ABF layers. The trend toward finer-pitch substrates for advanced packaging (required by CoWoS, 2.5D/3D integration) increases lithography intensity per substrate. ASML benefits indirectly from every ABF substrate expansion as more advanced chips require more sophisticated lithography.",
+  "tracking_priority": "high",
+  "source_quality": "T1",
+  "confidence": 0.95,
+  "sources": [
+    {"url": "https://stockanalysis.com/stocks/asml/", "type": "financial_data", "date": "2026-05-15"},
+    {"url": "https://stockanalysis.com/stocks/asml/financials/", "type": "income_statement", "date": "2026-05-15"},
+    {"url": "https://stockanalysis.com/stocks/asml/financials/balance-sheet/", "type": "balance_sheet", "date": "2026-05-15"},
+    {"url": "https://companiesmarketcap.com/asml/revenue/", "type": "revenue_history", "date": "2026-05-15"},
+    {"url": "https://companiesmarketcap.com/asml/marketcap/", "type": "market_cap_history", "date": "2026-05-15"},
+    {"url": "https://www.asml.com/en/technology", "type": "official_website", "date": "2026-05-16"},
+    {"url": "https://www.asml.com/en/investors", "type": "investor_relations", "date": "2026-05-16"}
+  ],
+  "data_collection_date": "2026-05-16",
+  "run_id": "20260516-223528",
+  "import_decision": "import_ready",
+  "notes": "Strong T1 financial data from stockanalysis.com and companiesmarketcap.com. ASML official website partially accessible (technology page works, about page 404). Market data as of 2026-05-15."
+}

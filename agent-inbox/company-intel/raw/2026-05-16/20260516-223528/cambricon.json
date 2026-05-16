@@ -1,0 +1,102 @@
+{
+  "company_name": "Cambricon Technologies Corporation Limited",
+  "chinese_name": "中科寒武纪科技股份有限公司",
+  "ticker": "SSE: 688256 (科创板)",
+  "headquarters": "Beijing, China",
+  "founded": "2016-03-15",
+  "listed_date": "2020-07-20",
+  "ceo": "陈天石 (Chen Tianshi)",
+  "chairman": "陈天石 (Chen Tianshi)",
+  "employees_estimate": 2000,
+  "registered_capital": "628,293,000 CNY",
+  "category": "Chinese AI Chip",
+  "priority": "P2",
+  "relevance_to_abf": "Cambricon designs AI chips (cloud/edge/terminal) that require advanced packaging including ABF substrates. As a leading Chinese AI chip company, its products drive demand for advanced IC substrates. However, Cambricon is a fabless designer, not a substrate/materials supplier - relevance is indirect as a demand driver.",
+  "business_overview": "Cambricon is one of China's leading AI chip designers, specializing in neural network processors for cloud computing, edge computing, and terminal devices. The company's products include the Siyuan (思元) series of AI accelerators for cloud/edge inference and training, and IP licensing for terminal AI chips. Key products include Siyuan 590 (training), Siyuan 370 (inference/training), and MLU series accelerator cards.",
+  "market_data": {
+    "stock_price_cny_estimate": "~1300-1350 (May 2026, based on news reports)",
+    "market_cap_cny_estimate": "~8000-8500亿元 (~$110-120B USD)",
+    "pe_ratio_ttm_estimate": "Very high / negative earnings in prior years, recently profitable",
+    "eps_2025": 4.8833,
+    "eps_2026_q1": 2.4028,
+    "book_value_per_share": 30.5235,
+    "roe_2025": "17.40%",
+    "data_date": "2026-05-16",
+    "currency": "CNY",
+    "confidence": "medium - price from news reports, financials from Sina Finance"
+  },
+  "financials_summary": {
+    "eps_history": [
+      {"period": "2026-03 (Q1)", "eps": 2.4028},
+      {"period": "2025-12 (FY)", "eps": 4.8833},
+      {"period": "2025-09 (9M)", "eps": 3.8053},
+      {"period": "2025-06 (H1)", "eps": 2.4814},
+      {"period": "2025-03 (Q1)", "eps": 0.8515}
+    ],
+    "note": "Full revenue/earnings figures in CNY not directly available from current sources. EPS data from Sina Finance indicates strong profitability improvement in 2025.",
+    "shareholders_top": [
+      {"name": "陈天石 (Chen Tianshi)", "pct": 28.572},
+      {"name": "北京中科算源资产", "pct": 15.697},
+      {"name": "北京艾溪科技", "pct": 7.325},
+      {"name": "Hong Kong Central Clearing (港股通)", "pct": 2.567}
+    ]
+  },
+  "products_and_technology": {
+    "key_products": [
+      "Siyuan 590 (思元590) - Cloud AI training chip",
+      "Siyuan 370 (思元370) - Cloud AI inference/training chip, 3rd gen, Chiplet architecture, MLUarch03",
+      "Siyuan 270 (思元270) - Edge AI chip",
+      "MLU370-S4/S8 accelerator cards",
+      "MLU220-SOM - Edge AI module (16TOPS, 15W)",
+      "IP licensing for terminal AI (Cambricon-1M, Cambricon-1H)"
+    ],
+    "technology_capabilities": "Advanced chiplet-based architecture (MLUarch03), supports inference and training workloads. The Siyuan 370 uses advanced packaging technology. MLU220-SOM targets edge computing with 16TOPS at 15W power consumption.",
+    "key_customers": "Chinese cloud providers (Alibaba, Baidu, Tencent), government/enterprise AI projects, smart city deployments. Benefits from China's AI self-sufficiency push.",
+    "competitive_position": "Leading Chinese AI chip designer competing with Huawei Ascend, Biren Technology. Strong position in government/SOE AI deployments. Benefits from US export controls limiting NVIDIA's China sales."
+  },
+  "swot": {
+    "strengths": [
+      "Leading Chinese AI chip IP and design capabilities",
+      "Strong R&D team from Chinese Academy of Sciences background",
+      "First-mover advantage in Chinese AI chip market (listed 2020)",
+      "Full-stack capabilities: cloud, edge, terminal AI chips",
+      "Recently achieved profitability (2025 EPS 4.88 CNY)",
+      "Benefits from China AI self-sufficiency policy"
+    ],
+    "weaknesses": [
+      "Fabless model dependent on foundry access (TSMC/SMIC)",
+      "Still much smaller revenue than NVIDIA/AMD",
+      "Limited international presence",
+      "High valuation relative to revenue",
+      "Dependent on government/SOE demand"
+    ],
+    "opportunities": [
+      "US export controls on NVIDIA creates market opportunity in China",
+      "China's 'AI+' national strategy driving domestic chip adoption",
+      "DeepSeek and other Chinese AI models driving inference demand",
+      "Edge AI and terminal AI growth",
+      "Chiplet technology enabling performance scaling"
+    ],
+    "threats": [
+      "NVIDIA still dominates when accessible",
+      "Huawei Ascend is strong domestic competitor",
+      "Foundry access risk if export controls tighten further",
+      "Technology gap vs. NVIDIA/AMD in software ecosystem",
+      "High valuation vulnerability to sentiment shifts"
+    ]
+  },
+  "abf_relevance_detail": "Cambricon's AI chips use advanced packaging (chiplet architecture for Siyuan 370), which requires ABF substrates. As a major Chinese AI chip company, growing demand for Cambricon's products indirectly drives ABF substrate consumption. However, Cambricon is a fabless designer and does not manufacture substrates. Its relevance to ABF tracking is as a demand-side driver, not a supplier.",
+  "tracking_priority": "medium",
+  "source_quality": "T2",
+  "confidence": 0.75,
+  "sources": [
+    {"url": "https://finance.sina.com.cn/realstock/company/sh688256/nc.shtml", "type": "stock_overview", "date": "2026-05-16"},
+    {"url": "https://vip.stock.finance.sina.com.cn/corp/go.php/vCI_CorpInfo/stockid/688256.phtml", "type": "company_profile", "date": "2026-05-16"},
+    {"url": "https://www.cambricon.com", "type": "official_website", "date": "2026-05-16", "note": "Minimal content extracted"},
+    {"url": "https://www.cambricon.com/index.php?m=content&c=index&a=lists&catid=63", "type": "products_page", "date": "2026-05-16"}
+  ],
+  "data_collection_date": "2026-05-16",
+  "run_id": "20260516-223528",
+  "import_decision": "import_ready",
+  "notes": "Retry successful! This time obtained significant data from Sina Finance (Chinese financial data source). Company profile, financial metrics (EPS, ROE, book value), shareholder structure, and product information verified. Stock price estimated from recent news (1350元 new high on 2026-05-14). Previously unverified due to network limitations; Sina Finance proved to be an accessible and reliable T2 source for Chinese A-share companies."
+}

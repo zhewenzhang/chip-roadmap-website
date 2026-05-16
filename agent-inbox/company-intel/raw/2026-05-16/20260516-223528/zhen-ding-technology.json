@@ -1,0 +1,83 @@
+{
+  "company_name": "Zhen Ding Technology Holding Limited",
+  "chinese_name": "臻鼎科技控股",
+  "ticker": "TWSE: 4958",
+  "headquarters": "Taoyuan, Taiwan",
+  "founded": 2006,
+  "parent_company": "Foxconn Technology Group (Hon Hai Precision Industry)",
+  "ceo": "Charles Shen",
+  "employees_estimate": 50000,
+  "category": "IC Substrate / ABF",
+  "priority": "P0",
+  "relevance_to_abf": "Zhen Ding is one of the world's largest IC substrate manufacturers and a major ABF substrate producer. The company is a key supplier to leading chip designers for advanced packaging substrates. It ranks among the top 3 global IC substrate makers alongside Unimicron and Ibiden.",
+  "business_overview": "Zhen Ding Technology is a leading global manufacturer of printed circuit boards (PCBs), IC substrates, and flexible printed circuits (FPCs). The company operates through four main business segments: IC substrates (including ABF substrates), HDI PCBs, flexible PCBs, and rigid PCBs. It is the largest PCB manufacturer globally by revenue and a critical supplier in the semiconductor packaging ecosystem.",
+  "market_data": {
+    "market_cap_twd_estimate": "~500-600B TWD",
+    "revenue_2024_twd_estimate": "~180-200B TWD",
+    "stock_price_note": "TWSE:4958, price data not accessible via available web sources",
+    "data_date": "2026-05-16",
+    "currency": "TWD",
+    "confidence": "low - estimates based on prior reports, not verified from live sources"
+  },
+  "financials_summary": {
+    "revenue_history_note": "Revenue data not accessible from available web sources during this run. Wikipedia and financial data sites blocked.",
+    "estimated_revenue_range": "$5.5-6.5B USD (based on prior industry reports)",
+    "ic_substrate_revenue_share_estimate": "30-40% of total revenue",
+    "data_confidence": "low"
+  },
+  "products_and_technology": {
+    "key_products": [
+      "ABF (Ajinomoto Build-up Film) IC substrates",
+      "BGA/CSP IC substrates",
+      "HDI (High Density Interconnect) PCBs",
+      "Flexible Printed Circuits (FPC)",
+      "Rigid PCBs",
+      "Substrate-like PCBs (SLP)"
+    ],
+    "technology_capabilities": "Advanced ABF substrate technology supporting fine-pitch BGA for leading-edge processors. Capabilities include any-layer HDI, mSAP (modified Semi-Additive Process) for SLP, and high-layer-count substrates for HPC/AI chips.",
+    "key_customers": "Major customers include Apple (FPC/HDI), AMD, Qualcomm, MediaTek, and other leading fabless/IDM companies for IC substrates.",
+    "manufacturing_locations": "China (Shenzhen, Huai'an, Qinhuangdao), Taiwan"
+  },
+  "swot": {
+    "strengths": [
+      "World's largest PCB manufacturer by revenue",
+      "Diversified product portfolio (IC substrates, HDI, FPC, rigid PCB)",
+      "Strong backing from Foxconn Group",
+      "Major ABF substrate supplier alongside Unimicron/Ibiden",
+      "Scale advantages in manufacturing",
+      "Key customer relationships with top-tier tech companies"
+    ],
+    "weaknesses": [
+      "Lower margins compared to pure-play IC substrate peers",
+      "Heavy China manufacturing exposure",
+      "ABF substrate market share smaller than Unimicron/Ibiden",
+      "Dependency on cyclical semiconductor demand"
+    ],
+    "opportunities": [
+      "AI/HPC boom driving ABF substrate demand",
+      "Advanced packaging (CoWoS, 3D IC) requiring finer-pitch substrates",
+      "Capacity expansion in IC substrates",
+      "Substrate-like PCB (SLP) growth for mobile devices"
+    ],
+    "threats": [
+      "Intense competition from Unimicron, Ibiden, Shinko",
+      "ABF substrate overcapacity risk",
+      "US-China trade tensions affecting China operations",
+      "Raw material cost volatility"
+    ]
+  },
+  "abf_relevance_detail": "Zhen Ding is a Tier 1 ABF substrate supplier, directly competing with Unimicron and Ibiden. The company supplies ABF substrates used in advanced CPU/GPU/AI accelerator packaging. As AI chip demand surges, Zhen Ding's IC substrate business (particularly ABF) is a key growth driver. The company has been investing heavily in expanding ABF substrate capacity.",
+  "tracking_priority": "critical",
+  "source_quality": "T4",
+  "confidence": 0.45,
+  "sources": [
+    {"url": "https://www.zdt.com (unreachable)", "type": "official_website", "status": "DNS_NOT_FOUND"},
+    {"url": "https://en.wikipedia.org/wiki/Zhen_Ding_Technology (blocked)", "type": "reference", "status": "BLOCKED"},
+    {"url": "https://finance.yahoo.com/quote/4958.TW/ (blocked)", "type": "financial_data", "status": "BLOCKED"},
+    {"url": "https://www.bloomberg.com/profile/company/4958:TT (blocked)", "type": "financial_data", "status": "BLOCKED"}
+  ],
+  "data_collection_date": "2026-05-16",
+  "run_id": "20260516-223528",
+  "import_decision": "needs_human_check",
+  "notes": "ALL primary web sources were unreachable (ZDT website DNS not found, Wikipedia/Bloomberg/Yahoo blocked in this network environment). Data is based on training knowledge and prior pipeline runs. Financial figures are estimates and MUST be verified before import. Source quality rated T4 due to complete inability to verify via web access. Recommend manual data enrichment when network access improves."
+}

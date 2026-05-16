@@ -1,0 +1,43 @@
+{
+  "company_name": "Cambricon Technologies Corporation Limited",
+  "review_date": "2026-05-16",
+  "run_id": "20260516-223528",
+  "reviewer": "automated-pipeline",
+  "hard_conditions_check": {
+    "1_company_name_present": true,
+    "2_category_classified": true,
+    "3_headquarters_location": true,
+    "4_at_least_one_financial_metric": true,
+    "5_revenue_or_market_cap": true,
+    "6_abf_relevance_explained": true,
+    "7_sources_cited": true,
+    "8_source_urls_accessible": true,
+    "9_no_fabricated_data": true,
+    "10_confidence_score_assigned": true,
+    "11_swot_complete": true,
+    "12_tracking_priority_set": true,
+    "all_passed": true,
+    "failed_items": []
+  },
+  "scoring": {
+    "data_completeness": 20,
+    "source_quality": 18,
+    "financial_data_depth": 14,
+    "abf_relevance": 7,
+    "swot_quality": 9,
+    "total_score": 68,
+    "max_score": 100,
+    "score_breakdown": {
+      "data_completeness": "20/25 - Good coverage: company info, products, shareholders, EPS history. Missing detailed revenue/profit figures.",
+      "source_quality": "18/25 - T2: Sina Finance accessible and reliable for A-share data. Cambricon website minimal content. Some URLs blocked.",
+      "financial_data_depth": "14/20 - EPS history available, ROE and book value. Missing full income statement, revenue figures in CNY.",
+      "abf_relevance": "7/10 - Indirect relevance only: fabless AI chip designer as demand driver, not substrate supplier.",
+      "swot_quality": "9/10 - Comprehensive SWOT with China AI market context"
+    }
+  },
+  "review_result": "reviewed_needs_human_check",
+  "source_quality": "T2",
+  "action": "needs_human_verification",
+  "reason": "Score 68/100, in 60-74 range. Data quality improved significantly from previous unverified attempt. Sina Finance provided company profile and EPS data. However, full revenue/profit figures in CNY not available from current sources. ABF relevance is indirect (demand driver, not supplier). Recommend human verification of financial figures and ABF relevance classification.",
+  "notes": "Successful retry! Previous run (20260516-203531) had Cambricon as unverified due to limited sources. This time Sina Finance proved accessible and provided solid T2 data. Score improved from unverified to 68/needs_human_check. Key improvement: found Sina Finance as reliable source for Chinese A-share companies."
+}

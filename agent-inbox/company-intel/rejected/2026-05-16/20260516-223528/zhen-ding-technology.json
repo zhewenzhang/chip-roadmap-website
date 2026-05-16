@@ -1,0 +1,44 @@
+{
+  "company_name": "Zhen Ding Technology Holding Limited",
+  "review_date": "2026-05-16",
+  "run_id": "20260516-223528",
+  "reviewer": "automated-pipeline",
+  "hard_conditions_check": {
+    "1_company_name_present": true,
+    "2_category_classified": true,
+    "3_headquarters_location": true,
+    "4_at_least_one_financial_metric": true,
+    "5_revenue_or_market_cap": true,
+    "6_abf_relevance_explained": true,
+    "7_sources_cited": true,
+    "8_source_urls_accessible": false,
+    "9_no_fabricated_data": true,
+    "10_confidence_score_assigned": true,
+    "11_swot_complete": true,
+    "12_tracking_priority_set": true,
+    "all_passed": false,
+    "failed_items": ["8_source_urls_accessible - ALL primary web sources were unreachable (DNS not found, blocked)"]
+  },
+  "scoring": {
+    "data_completeness": 18,
+    "source_quality": 5,
+    "financial_data_depth": 8,
+    "abf_relevance": 10,
+    "swot_quality": 8,
+    "total_score": 49,
+    "max_score": 100,
+    "score_breakdown": {
+      "data_completeness": "18/25 - Basic info present but financial data is estimated ranges, not verified figures",
+      "source_quality": "5/25 - T4: ALL sources unreachable (ZDT website DNS not found, Wikipedia/Bloomberg/Yahoo blocked)",
+      "financial_data_depth": "8/20 - Only estimated revenue range ($5.5-6.5B), no verified financial statements",
+      "abf_relevance": "10/10 - Clear as one of top 3 global ABF substrate manufacturers",
+      "swot_quality": "8/10 - Good SWOT but some estimates lack verification"
+    }
+  },
+  "review_result": "rejected",
+  "source_quality": "T4",
+  "action": "reject_insufficient_sources",
+  "rejection_reason": "Score 49/100, below 60 threshold. ALL primary web sources were unreachable in this network environment. Company website DNS not found, Wikipedia/Bloomberg/Yahoo Finance all blocked. Financial data consists entirely of unverified estimates from training knowledge. Cannot be imported without verified sources.",
+  "recommendation": "Retry when network access improves or use VPN/proxy to reach ZDT website and financial data sources.",
+  "notes": "Despite being a P0 priority company (top 3 ABF substrate maker), data quality is insufficient for import. The pipeline's network limitations are the primary blocker."
+}

@@ -1,0 +1,25 @@
+{
+  "run_id": "20260516-223528",
+  "run_date": "2026-05-16",
+  "selected_companies": [
+    {
+      "company": "Zhen Ding Technology",
+      "category": "IC Substrate / ABF",
+      "priority": "P0",
+      "reason": "Major ABF substrate manufacturer (Taiwan), not yet in queue. Key player alongside Unimicron/Ibiden."
+    },
+    {
+      "company": "ASML",
+      "category": "Semiconductor Equipment",
+      "priority": "P1",
+      "reason": "Critical lithography equipment supplier, essential for advanced packaging/ABF process. Not yet covered."
+    },
+    {
+      "company": "Cambricon",
+      "category": "Chinese AI Chip",
+      "priority": "P2",
+      "reason": "Retry - previously unverified due to limited sources. Try alternative search strategies."
+    }
+  ],
+  "selection_rationale": "P0 priority: Zhen Ding fills gap in IC substrate coverage. P1: ASML is key equipment enabler. P2: Retry Cambricon with improved search."
+}

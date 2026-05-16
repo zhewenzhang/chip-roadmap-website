@@ -9,7 +9,7 @@
 {"company": "Broadcom", "category": "Fabless", "priority": "P0", "status": "reviewed", "notes": "Score 95, import_ready"}
 {"company": "Qualcomm", "category": "Fabless", "priority": "P1", "status": "reviewed", "notes": "import_ready"}
 {"company": "Marvell", "category": "Fabless", "priority": "P1", "status": "reviewed", "notes": "import_ready"}
-{"company": "Cambricon", "category": "Chinese AI Chip", "priority": "P2", "status": "unverified", "notes": "Needs retry - limited sources"}
+{"company": "Cambricon", "category": "Chinese AI Chip", "priority": "P2", "status": "reviewed", "notes": "Reviewed in run 20260516-223528, score 68, needs_human_check, T2 source quality. Retry successful - Sina Finance accessible."}
 {"company": "MediaTek", "category": "Fabless", "priority": "P1", "status": "rejected", "notes": "Score 59, insufficient ABF relevance"}
 {"company": "SK Hynix", "category": "HBM Memory", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-083523, score 95, import_ready, T1 source quality"}
 {"company": "Shinko Electric Industries", "category": "IC Substrate", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-083523, score 72, needs_human_check, T3 source quality. Delisted 2025-06, missing financial data."}
@@ -31,3 +31,5 @@
 {"company": "Micron Technology", "category": "HBM Memory / Advanced Packaging", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-203531, score 90, import_ready, T2 source quality"}
 {"company": "Tokyo Electron", "category": "Semiconductor Equipment", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-203531, score 68, needs_human_check, T3 source quality"}
 {"company": "Biren Technology", "category": "Chinese AI Chip", "priority": "P2", "status": "reviewed", "notes": "Reviewed in run 20260516-203531, score 84, import_ready, T2 source quality"}
+{"company": "Zhen Ding Technology", "category": "IC Substrate / ABF", "priority": "P0", "status": "rejected", "notes": "Reviewed in run 20260516-223528, score 49, rejected, T4 source quality. All web sources unreachable."}
+{"company": "ASML", "category": "Semiconductor Equipment", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-223528, score 90, import_ready, T1 source quality"}
