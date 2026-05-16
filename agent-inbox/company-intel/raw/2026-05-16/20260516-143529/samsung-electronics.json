@@ -1,0 +1,140 @@
+{
+  "company_name": "Samsung Electronics",
+  "company_name_en": "Samsung Electronics",
+  "company_name_local": "삼성전자",
+  "headquarters": "Suwon, South Korea",
+  "founded_year": 1969,
+  "stock_ticker": "005930.KS (KRX)",
+  "revenue_usd_billion": 220,
+  "fiscal_year": 2025,
+  "employees": 270000,
+  "website": "https://www.samsung.com/semiconductor/",
+
+  "business_segments": [
+    {
+      "name": "Memory",
+      "description": "DRAM, NAND Flash, HBM (High Bandwidth Memory)",
+      "revenue_share_pct": 45,
+      "abf_relevance": "high"
+    },
+    {
+      "name": "System LSI",
+      "description": "Exynos SoCs, image sensors, display ICs",
+      "revenue_share_pct": 20,
+      "abf_relevance": "medium"
+    },
+    {
+      "name": "Foundry",
+      "description": "Contract chip manufacturing, advanced nodes (3nm GAA)",
+      "revenue_share_pct": 25,
+      "abf_relevance": "high"
+    },
+    {
+      "name": "Advanced Packaging",
+      "description": "I-Cube, X-Cube, FOWLP packaging solutions",
+      "revenue_share_pct": 10,
+      "abf_relevance": "very_high"
+    }
+  ],
+
+  "abf_ic_substrate_activity": {
+    "is_abf_substrate_maker": false,
+    "is_abf_substrate_consumer": true,
+    "abf_usage": "Samsung is a major consumer of ABF substrates for its Exynos SoCs, HBM packaging, and foundry services. Uses ABF substrates from Samsung Electro-Mechanics, Ibiden, and Unimicron.",
+    "advanced_packaging_tech": [
+      "I-Cube (2.5D interposer-based integration)",
+      "X-Cube (3D stacking with TSV)",
+      "FO-WLP (Fan-Out Wafer Level Packaging)",
+      "2.5D/3D packaging for HBM integration"
+    ],
+    "cowos_competitor": true,
+    "cowos_details": "Samsung's I-Cube and X-Cube are direct competitors to TSMC CoWoS. Samsung has been expanding capacity to capture AI chip packaging demand."
+  },
+
+  "hbm_activity": {
+    "is_hbm_maker": true,
+    "hbm_generations": ["HBM2", "HBM2E", "HBM3", "HBM3E", "HBM4 (in development)"],
+    "market_position": "Second largest HBM maker after SK Hynix",
+    "hbm_revenue_growth_pct": 150,
+    "key_customers": ["NVIDIA", "AMD", "Google", "Microsoft"],
+    "notes": "Samsung has been aggressively expanding HBM capacity to compete with SK Hynix. HBM3E qualification with NVIDIA completed in 2025."
+  },
+
+  "foundry_activity": {
+    "is_foundry": true,
+    "advanced_nodes": ["3nm GAA", "4nm", "5nm", "7nm"],
+    "market_share_pct": 12,
+    "key_customers": ["Qualcomm", "Google", "NVIDIA (partial)"],
+    "capacity_expansion": "Taylor, Texas fab under construction; Pyeongtaek expansion"
+  },
+
+  "market_data": {
+    "market_cap_usd_billion": 350,
+    "pe_ratio": 15,
+    "stock_price_local": 72000,
+    "stock_currency": "KRW",
+    "52w_high_local": 85000,
+    "52w_low_local": 55000,
+    "data_date": "2025-Q4 (training knowledge)",
+    "confidence": "medium"
+  },
+
+  "swot": {
+    "strengths": [
+      "Vertically integrated: memory + foundry + packaging",
+      "Leading HBM technology (HBM3E qualified with NVIDIA)",
+      "Massive capex capacity ($35B+ annual semiconductor capex)",
+      "Strong brand and customer relationships"
+    ],
+    "weaknesses": [
+      "Foundry yield issues at advanced nodes (3nm GAA)",
+      "Late to HBM3E vs SK Hynix",
+      "Heavy dependence on memory cycle",
+      "Lower foundry market share vs TSMC"
+    ],
+    "opportunities": [
+      "AI chip boom driving HBM and advanced packaging demand",
+      "CoWoS-like packaging (I-Cube/X-Cube) capturing TSMC overflow",
+      "US fab subsidies (CHIPS Act) for Taylor, TX fab",
+      "Automotive semiconductor growth"
+    ],
+    "threats": [
+      "TSMC dominance in foundry and advanced packaging",
+      "SK Hynix HBM leadership",
+      "Chinese memory makers (CXMT, YMTC) gaining ground",
+      "Memory price cyclicality"
+    ]
+  },
+
+  "tracking_priority": "critical",
+  "source_quality": "T3",
+  "source_quality_reason": "Network access severely limited. Data based on training knowledge (cutoff 2025-Q4). Financial figures are approximate. Samsung Semiconductor official site accessible but provided limited data.",
+  "confidence": 0.7,
+  "import_decision": "needs_human_check",
+
+  "sources": [
+    {
+      "url": "https://semiconductor.samsung.com/about-us/",
+      "title": "Samsung Semiconductor About Us",
+      "accessible": true,
+      "data_quality": "limited - corporate overview only"
+    },
+    {
+      "url": "https://www.samsung.com/semiconductor/",
+      "title": "Samsung Semiconductor China",
+      "accessible": true,
+      "data_quality": "limited - product pages only"
+    }
+  ],
+
+  "collection_metadata": {
+    "run_id": "20260516-143529",
+    "collector_timestamp": "2026-05-16T14:36:00+08:00",
+    "web_search_attempts": 5,
+    "urls_opened": 2,
+    "urls_accessible": 2,
+    "urls_blocked": 3,
+    "network_issue": true,
+    "network_note": "Yahoo Finance, Bloomberg, Reuters, Macrotrends all blocked. Only Samsung corporate site accessible."
+  }
+}

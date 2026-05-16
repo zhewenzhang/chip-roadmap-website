@@ -1,0 +1,103 @@
+{
+  "company_name": "Tongfu Microelectronics",
+  "company_name_en": "Tongfu Microelectronics Co., Ltd.",
+  "company_name_local": "通富微电子股份有限公司",
+  "headquarters": "Nantong, Jiangsu, China",
+  "founded_year": 1997,
+  "stock_ticker": "002156.SZ (Shenzhen)",
+  "revenue_usd_billion": 3.2,
+  "fiscal_year": 2025,
+  "employees": 25000,
+  "website": "https://www.tfme.com/",
+
+  "business_segments": [
+    {"name": "IC Packaging & Testing", "description": "Traditional and advanced IC packaging and testing services", "revenue_share_pct": 85, "abf_relevance": "high"},
+    {"name": "Advanced Packaging", "description": "Flip Chip, BGA, FC-BGA, SiP, 2.5D/3D packaging", "revenue_share_pct": 15, "abf_relevance": "very_high"}
+  ],
+
+  "abf_ic_substrate_activity": {
+    "is_abf_substrate_maker": false,
+    "is_abf_substrate_consumer": true,
+    "abf_usage": "Tongfu uses ABF substrates for FC-BGA packaging of high-performance computing chips. Major customer is AMD for EPYC server processors and Instinct AI accelerators.",
+    "advanced_packaging_tech": ["FC-BGA (Flip Chip Ball Grid Array)", "2.5D interposer packaging", "SiP (System in Package)", "Fan-Out packaging"],
+    "cowos_competitor": false,
+    "cowos_details": "Tongfu offers FC-BGA packaging which is an alternative to CoWoS for some applications, but is not a direct CoWoS competitor."
+  },
+
+  "osat_activity": {
+    "is_osat": true,
+    "global_rank": 5,
+    "china_rank": 1,
+    "key_customers": ["AMD", "MediaTek", "Spreadtrum"],
+    "capacity_expansion": "Expanding Nantong and Suzhou facilities for advanced packaging",
+    "amd_partnership": "Tongfu is AMD's primary OSAT partner in China, handling packaging for EPYC and Instinct products"
+  },
+
+  "market_data": {
+    "market_cap_usd_billion": 8,
+    "pe_ratio": 35,
+    "stock_price_local": 28,
+    "stock_currency": "CNY",
+    "52w_high_local": 35,
+    "52w_low_local": 18,
+    "data_date": "2025-Q4 (training knowledge)",
+    "confidence": "medium"
+  },
+
+  "swot": {
+    "strengths": ["China's #1 OSAT company", "Strong AMD partnership for advanced packaging", "FC-BGA capability for HPC chips", "Government support for domestic semiconductor"],
+    "weaknesses": ["Technology gap vs ASE/Amkor in cutting-edge packaging", "Heavy dependence on AMD", "Lower margins than global OSAT leaders", "Limited international presence"],
+    "opportunities": ["China semiconductor self-sufficiency push", "AI chip packaging demand from Chinese customers", "Advanced packaging capacity expansion", "Potential to capture US-China trade diversion orders"],
+    "threats": ["US export controls on advanced packaging equipment", "ASE/Amkor competition", "TSMC/Intel in-house packaging expansion", "Economic slowdown affecting chip demand"]
+  },
+
+  "tracking_priority": "high",
+  "source_quality": "T3",
+  "confidence": 0.65,
+  "import_decision": "needs_human_check",
+
+  "review": {
+    "reviewer_timestamp": "2026-05-16T14:38:30+08:00",
+    "run_id": "20260516-143529",
+    "hard_criteria_check": {
+      "company_name_exists": true,
+      "company_name_en_exists": true,
+      "headquarters_exists": true,
+      "business_segments_present": true,
+      "abf_activity_present": true,
+      "swot_strengths_present": true,
+      "swot_weaknesses_present": true,
+      "swot_opportunities_present": true,
+      "swot_threats_present": true,
+      "source_quality_set": true,
+      "confidence_set": true,
+      "sources_present": true,
+      "all_passed": true
+    },
+    "score": 63,
+    "score_breakdown": {
+      "abf_relevance": {"score": 16, "max": 20, "notes": "High ABF relevance - FC-BGA packaging for HPC, AMD partner"},
+      "data_completeness": {"score": 10, "max": 20, "notes": "Limited financial data, missing quarterly breakdowns"},
+      "source_quality": {"score": 7, "max": 15, "notes": "T3 - training knowledge only, company website blocked"},
+      "financial_data": {"score": 8, "max": 15, "notes": "Revenue and market cap approximate"},
+      "swot_quality": {"score": 11, "max": 15, "notes": "Good SWOT, could have more specific data"},
+      "market_position": {"score": 11, "max": 15, "notes": "Clear position as China #1 OSAT but missing competitive details"}
+    },
+    "decision": "needs_human_check",
+    "decision_reason": "Score 63 >= 60 threshold. Tongfu is an important OSAT player for ABF substrate packaging but data quality needs improvement."
+  },
+
+  "sources": [
+    {"url": "https://www.tfme.com/en/about", "title": "Tongfu Microelectronics Official", "accessible": false, "data_quality": "blocked - 403 Forbidden"}
+  ],
+
+  "collection_metadata": {
+    "run_id": "20260516-143529",
+    "collector_timestamp": "2026-05-16T14:36:30+08:00",
+    "web_search_attempts": 5,
+    "urls_opened": 1,
+    "urls_accessible": 0,
+    "urls_blocked": 1,
+    "network_issue": true
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "20260516-143529",
+  "run_date": "2026-05-16",
+  "selection_round": 8,
+  "companies": [
+    {
+      "company": "Samsung Electronics",
+      "category": "Semiconductor / ABF Customer",
+      "priority": "P0",
+      "reason": "Major semiconductor manufacturer, key ABF substrate customer for HBM and AI chips, CoWoS competitor with I-Cube/X-Cube packaging",
+      "search_focus": "ABF substrate usage, HBM packaging, advanced packaging capacity, AI chip strategy"
+    },
+    {
+      "company": "Tongfu Microelectronics",
+      "category": "OSAT / Advanced Packaging",
+      "priority": "P1",
+      "reason": "Top 5 OSAT in China, advanced packaging for AI chips, AMD partner",
+      "search_focus": "ABF-related packaging, CoWoS-like capabilities, revenue growth, AI chip packaging"
+    },
+    {
+      "company": "Hitachi Chemical",
+      "category": "ABF Substrate Materials",
+      "priority": "P1",
+      "reason": "Key ABF material supplier (Ajinomoto Build-up Film competitor), semiconductor materials division",
+      "search_focus": "ABF film production, market share, capacity expansion, semiconductor materials revenue"
+    }
+  ],
+  "reviewed_companies_count": 21,
+  "unverified_companies": ["Cambricon"]
+}

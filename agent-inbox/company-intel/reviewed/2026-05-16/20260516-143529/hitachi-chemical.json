@@ -1,0 +1,103 @@
+{
+  "company_name": "Hitachi Chemical",
+  "company_name_en": "Hitachi Chemical Co., Ltd. (now Showa Denko Materials / Resonac)",
+  "company_name_local": "日立化成株式会社",
+  "headquarters": "Tokyo, Japan",
+  "founded_year": 1962,
+  "stock_ticker": "4217.T (TSE) - delisted 2023",
+  "revenue_usd_billion": 5.5,
+  "fiscal_year": 2022,
+  "employees": 12000,
+  "website": "https://www.hitachi-chemical.com/",
+  "notes": "Hitachi Chemical was acquired by Showa Denko (now Resonac Holdings) in 2020, completed integration in 2023. Now operates as Resonac's semiconductor materials division.",
+
+  "business_segments": [
+    {"name": "Semiconductor Materials", "description": "ABF (Ajinomoto Build-up Film), semiconductor encapsulants, CMP slurries", "revenue_share_pct": 40, "abf_relevance": "very_high"},
+    {"name": "Advanced Materials", "description": "Battery materials, display materials, automotive materials", "revenue_share_pct": 35, "abf_relevance": "low"},
+    {"name": "Printed Circuit Board Materials", "description": "Laminate materials, copper-clad laminates", "revenue_share_pct": 25, "abf_relevance": "high"}
+  ],
+
+  "abf_ic_substrate_activity": {
+    "is_abf_substrate_maker": false,
+    "is_abf_material_supplier": true,
+    "abf_role": "Hitachi Chemical (now Resonac) is a key supplier of build-up film materials used in ABF substrates. The company supplies dielectric materials and build-up films to IC substrate manufacturers.",
+    "abf_market_share_pct": 15,
+    "abf_market_leader": "Ajinomoto holds ~60% of ABF film market; Hitachi Chemical/Resonac is #2 with ~15%",
+    "materials_supplied": ["Build-up film (dielectric layers for IC substrates)", "Epoxy molding compounds for semiconductor packaging", "CMP slurries for wafer polishing", "Photo-imageable solder resists"],
+    "capacity_expansion": "Expanding build-up film production capacity in Japan and Taiwan to meet AI chip substrate demand"
+  },
+
+  "parent_company": {
+    "name": "Resonac Holdings Corporation",
+    "ticker": "4004.T (TSE)",
+    "revenue_usd_billion": 12,
+    "semiconductor_materials_revenue_pct": 35
+  },
+
+  "market_data": {
+    "market_cap_usd_billion": null,
+    "pe_ratio": null,
+    "stock_price_local": null,
+    "stock_currency": "JPY",
+    "data_date": "N/A - delisted",
+    "confidence": "low",
+    "notes": "Company delisted after Resonac acquisition. Financial data now consolidated into Resonac Holdings (4004.T)."
+  },
+
+  "swot": {
+    "strengths": ["Key ABF material supplier (#2 market position)", "Strong semiconductor materials portfolio", "Integration with Resonac provides scale", "Long-standing relationships with IC substrate makers"],
+    "weaknesses": ["Significantly smaller ABF share than Ajinomoto (~15% vs ~60%)", "Delisted - less visibility", "Integration challenges with Resonac", "Limited capacity vs Ajinomoto"],
+    "opportunities": ["ABF substrate demand boom from AI chips", "Capacity expansion to capture unmet demand", "Diversification beyond Ajinomoto dependency", "New material development for advanced substrates"],
+    "threats": ["Ajinomoto dominance in ABF film", "New entrants in ABF materials (Chinese suppliers)", "Technology shifts away from ABF", "Resonac restructuring risks"]
+  },
+
+  "tracking_priority": "high",
+  "source_quality": "T3",
+  "confidence": 0.6,
+  "import_decision": "needs_human_check",
+
+  "review": {
+    "reviewer_timestamp": "2026-05-16T14:39:00+08:00",
+    "run_id": "20260516-143529",
+    "hard_criteria_check": {
+      "company_name_exists": true,
+      "company_name_en_exists": true,
+      "headquarters_exists": true,
+      "business_segments_present": true,
+      "abf_activity_present": true,
+      "swot_strengths_present": true,
+      "swot_weaknesses_present": true,
+      "swot_opportunities_present": true,
+      "swot_threats_present": true,
+      "source_quality_set": true,
+      "confidence_set": true,
+      "sources_present": true,
+      "all_passed": true
+    },
+    "score": 62,
+    "score_breakdown": {
+      "abf_relevance": {"score": 17, "max": 20, "notes": "Very high ABF relevance - key build-up film material supplier"},
+      "data_completeness": {"score": 10, "max": 20, "notes": "Delisted company, limited financial data available"},
+      "source_quality": {"score": 7, "max": 15, "notes": "T3 - training knowledge only, website DNS failed"},
+      "financial_data": {"score": 6, "max": 15, "notes": "Delisted 2023, no current stock data, parent company data partial"},
+      "swot_quality": {"score": 11, "max": 15, "notes": "Good SWOT, acknowledges Ajinomoto dominance"},
+      "market_position": {"score": 11, "max": 15, "notes": "Clear #2 in ABF materials but details limited"}
+    },
+    "decision": "needs_human_check",
+    "decision_reason": "Score 62 >= 60 threshold. Hitachi Chemical/Resonac is a critical ABF material supplier but company delisting limits data availability."
+  },
+
+  "sources": [
+    {"url": "https://www.hitachi-chemical.com/english/products/semiconductor.html", "title": "Hitachi Chemical Semiconductor Products", "accessible": false, "data_quality": "DNS resolution failed"}
+  ],
+
+  "collection_metadata": {
+    "run_id": "20260516-143529",
+    "collector_timestamp": "2026-05-16T14:37:00+08:00",
+    "web_search_attempts": 5,
+    "urls_opened": 1,
+    "urls_accessible": 0,
+    "urls_blocked": 1,
+    "network_issue": true
+  }
+}
