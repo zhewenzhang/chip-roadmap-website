@@ -1,0 +1,28 @@
+{
+  "run_id": "20260516-183528",
+  "run_date": "2026-05-16",
+  "selected_companies": [
+    {
+      "company": "NVIDIA",
+      "category": "Fabless / CoWoS Customer",
+      "priority": "P0",
+      "reason": "World's largest CoWoS customer driving ABF substrate demand. Key for understanding ABF market dynamics and supply chain pressure points."
+    },
+    {
+      "company": "AMD",
+      "category": "Fabless / CoWoS Customer",
+      "priority": "P0",
+      "reason": "Second largest CoWoS customer after NVIDIA. EPYC server CPUs and Instinct MI-series GPUs use advanced ABF substrates."
+    },
+    {
+      "company": "Intel",
+      "category": "IDM / Foundry / ABF Customer",
+      "priority": "P0",
+      "reason": "Major ABF substrate consumer for server CPUs (Xeon). Also expanding foundry services with advanced packaging (EMIB, Foveros) that use ABF."
+    }
+  ],
+  "total_in_queue": 27,
+  "reviewed_count": 24,
+  "unverified_count": 1,
+  "rejected_count": 2
+}

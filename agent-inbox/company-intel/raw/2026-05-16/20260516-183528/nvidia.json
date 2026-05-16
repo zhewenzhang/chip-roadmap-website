@@ -1,0 +1,80 @@
+{
+  "company_name": "NVIDIA",
+  "ticker": "NVDA",
+  "headquarters": "Santa Clara, California, USA",
+  "founded": 1993,
+  "ceo": "Jensen Huang",
+  "category": "Fabless / CoWoS Customer",
+  "priority": "P0",
+  "abf_relation": "NVIDIA is the world's largest consumer of advanced ABF substrates through its GPU products. Its data center GPUs (H100, H200, B100, B200, GB200) use TSMC's CoWoS advanced packaging, which requires high-layer-count ABF substrates for the interposer and package substrate. Each GPU module consumes significantly more ABF substrate area than traditional chips due to large die sizes and HBM integration.",
+  "business_overview": {
+    "segments": ["Data Center (GPU/AI)", "Gaming (GeForce)", "Professional Visualization (RTX)", "Automotive", "OEM & Other"],
+    "primary_business": "Designs and sells high-performance GPUs, networking chips (Mellanox/BlueField), and AI computing platforms. Dominant in AI training and inference hardware.",
+    "key_products": ["Blackwell B200/GB200", "Hopper H100/H200", "Grace CPU", "BlueField DPU", "Spectrum-X networking", "CUDA software platform", "DGX systems"],
+    "manufacturing_partners": ["TSMC (primary foundry)", "Samsung (some legacy GPUs)", "SK Hynix / Micron (HBM)", "Ibiden/Shinko/Unimicron (ABF substrates via TSMC packaging)"]
+  },
+  "market_data": {
+    "market_cap_usd": ">$3 trillion (as of 2026)",
+    "revenue_fy2025_usd": "~$130 billion (FY2025 ended Jan 2025)",
+    "data_center_revenue_pct": ">80%",
+    "revenue_growth_yoy": ">100%",
+    "gross_margin": "~73-75%",
+    "employees": "~30,000+",
+    "fiscal_year_end": "January"
+  },
+  "cowos_abf_impact": {
+    "cowos_demand_driver": "NVIDIA is the single largest driver of CoWoS demand globally. Its Blackwell and Hopper GPUs require CoWoS-S and CoWoS-L packaging with HBM3E integration.",
+    "estimated_cowos_wafers_monthly": ">50,000 12-inch equivalent wafers/month (2025-2026 est.)",
+    "abf_substrate_consumption": "Very High - each B200 module uses large-format ABF substrates with 16+ layers",
+    "substrate_suppliers": ["Ibiden", "Shinko Electric", "Unimicron", "AT&S", "Samsung Electro-Mechanics"],
+    "supply_chain_risk": "NVIDIA's massive GPU demand has been the primary cause of ABF substrate capacity constraints since 2023. TSMC's CoWoS expansion directly benefits ABF substrate suppliers."
+  },
+  "swot": {
+    "strengths": [
+      "Dominant market share in AI training (>90% data center GPU market)",
+      "CUDA ecosystem creates massive switching costs",
+      "Full-stack platform (hardware + software + networking)",
+      "Strong relationships with all major cloud providers",
+      "Continuous architecture cadence (Hopper → Blackwell → Rubin)"
+    ],
+    "weaknesses": [
+      "Extreme dependence on TSMC for advanced manufacturing",
+      "CoWoS/ABF substrate supply constraints limit shipment growth",
+      "High ASPs create margin pressure for customers",
+      "Export controls to China limit addressable market",
+      "Competition from custom ASIC (Google TPU, Amazon Trainium)"
+    ],
+    "opportunities": [
+      "Sovereign AI buildouts driving new government demand",
+      "Automotive/robotics AI inference at edge",
+      "Enterprise AI adoption accelerating",
+      "Software and services revenue growing",
+      "Space computing (announced 2026)"
+    ],
+    "threats": [
+      "AMD MI350/MI400 series gaining traction",
+      "Custom silicon from hyperscalers (Google, Amazon, Microsoft)",
+      "US-China export restrictions expanding",
+      "CoWoS/ABF capacity bottlenecks",
+      "Potential AI spending slowdown/correction"
+    ]
+  },
+  "financials": {
+    "currency": "USD",
+    "source": "NVIDIA official website, industry knowledge",
+    "confidence": "medium",
+    "note": "Exact FY2026 Q1 figures not retrieved due to web access limitations. Market cap and revenue are widely known public data."
+  },
+  "tracking_priority": "critical",
+  "source_quality": "T2",
+  "import_decision": "import_ready",
+  "data_sources": [
+    {"url": "https://www.nvidia.com/en-us/about-nvidia/", "type": "official", "reliability": "high", "content": "Company overview, product lines, AI computing focus"},
+    {"url": "https://www.nvidia.com/en-us/data-center/", "type": "official", "reliability": "high", "content": "Data center solutions, Blackwell architecture, Grace CPU, BlueField DPU"},
+    {"url": "https://nvidianews.nvidia.com/news/latest", "type": "official", "reliability": "high", "content": "Latest news - SAP collaboration, space computing announcement"},
+    {"url": "https://www.nvidia.com/en-us/products/", "type": "official", "reliability": "high", "content": "Product categories overview"}
+  ],
+  "collection_date": "2026-05-16",
+  "collector_confidence": 0.85,
+  "notes": "NVIDIA is the most critical company for ABF substrate demand forecasting. Its GPU shipment volume directly determines CoWoS wafer starts and ABF substrate consumption. Financial data sourced from public knowledge; exact quarterly figures should be verified from SEC filings."
+}

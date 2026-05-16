@@ -1,0 +1,81 @@
+{
+  "company_name": "AMD",
+  "full_name": "Advanced Micro Devices, Inc.",
+  "ticker": "AMD",
+  "headquarters": "Santa Clara, California, USA",
+  "founded": 1969,
+  "ceo": "Lisa Su",
+  "category": "Fabless / CoWoS Customer",
+  "priority": "P0",
+  "abf_relation": "AMD is a major consumer of ABF substrates through its server CPUs (EPYC) and AI accelerators (Instinct MI300/MI350 series). The MI300X and MI350X use TSMC CoWoS packaging with HBM integration, requiring advanced ABF substrates. EPYC server CPUs also use high-layer-count organic substrates.",
+  "business_overview": {
+    "segments": ["Data Center (EPYC CPUs + Instinct GPUs)", "Client (Ryzen CPUs)", "Gaming (Radeon GPUs, console APUs)", "Embedded (Xilinx FPGAs/adaptive SoCs)"],
+    "primary_business": "Designs high-performance CPUs, GPUs, FPGAs, and adaptive computing solutions. Major competitor to Intel in server CPUs and to NVIDIA in AI accelerators.",
+    "key_products": ["EPYC 9005 series (Turin, 5th Gen)", "Instinct MI350X/MI355X", "Instinct MI325X/MI300X", "Ryzen 9000 series", "Radeon RX 9000 series", "Versal adaptive SoCs", "Alveo accelerator cards"],
+    "manufacturing_partners": ["TSMC (primary foundry for CPUs/GPUs)", "GlobalFoundries (some legacy/embedded)", "SK Hynix / Micron (HBM)", "Amkor/ASE (packaging)", "Ibiden/Unimicron (ABF substrates via packaging)"]
+  },
+  "market_data": {
+    "market_cap_usd": "~$200 billion (as of 2026)",
+    "revenue_2025_usd": "~$28-30 billion (est. FY2025)",
+    "data_center_revenue_pct": "~45-50%",
+    "revenue_growth_yoy": "~15-20%",
+    "gross_margin": "~50-52%",
+    "employees": "~26,000+ (including Xilinx)",
+    "fiscal_year_end": "December"
+  },
+  "cowos_abf_impact": {
+    "cowos_demand_driver": "AMD Instinct MI300X/MI350X accelerators use TSMC CoWoS-S packaging with HBM3/HBM3E, creating significant ABF substrate demand. Growing AI accelerator market share increases CoWoS consumption.",
+    "estimated_cowos_wafers_monthly": "~5,000-10,000 12-inch equivalent wafers/month (2025-2026 est.)",
+    "abf_substrate_consumption": "High - MI300X/MI350X modules are large-format with HBM stacks; EPYC CPUs use high-layer substrates",
+    "substrate_suppliers": ["Ibiden", "Unimicron", "AT&S", "Shinko Electric"],
+    "supply_chain_risk": "AMD competes with NVIDIA for CoWoS capacity allocation at TSMC. Substrate supply is a growth limiter for Instinct GPU shipments."
+  },
+  "swot": {
+    "strengths": [
+      "Strong EPYC server CPU market share gains (25%+ unit share)",
+      "Instinct MI350 competitive with NVIDIA H200 on inference workloads",
+      "Open software ecosystem (ROCm) attracting enterprise customers",
+      "Xilinx acquisition strengthens adaptive computing portfolio",
+      "Lisa Su's execution track record"
+    ],
+    "weaknesses": [
+      "ROCm software ecosystem still behind CUDA in maturity",
+      "Smaller AI accelerator market share vs NVIDIA",
+      "CoWoS capacity allocation smaller than NVIDIA's",
+      "Console gaming revenue is cyclical",
+      "Lower gross margins than NVIDIA"
+    ],
+    "opportunities": [
+      "Enterprise AI inference market growing rapidly",
+      "EPYC continuing to gain server CPU share from Intel",
+      "MI400 series (next gen) could close gap with NVIDIA",
+      "Sovereign AI and government demand",
+      "Edge AI with Ryzen AI and Versal"
+    ],
+    "threats": [
+      "NVIDIA's dominant ecosystem lock-in",
+      "Intel Xeon 6 (Sierra Forest/Ponte Vecchio) competing for server share",
+      "Custom ASIC competition from hyperscalers",
+      "CoWoS/ABF supply constraints",
+      "US-China trade restrictions"
+    ]
+  },
+  "financials": {
+    "currency": "USD",
+    "source": "AMD official website (corporate page), industry knowledge",
+    "confidence": "medium",
+    "note": "Exact quarterly figures not retrieved. Revenue and market cap are approximate based on public knowledge."
+  },
+  "tracking_priority": "high",
+  "source_quality": "T2",
+  "import_decision": "import_ready",
+  "data_sources": [
+    {"url": "https://www.amd.com/en/corporate.html", "type": "official", "reliability": "high", "content": "Company overview, founded 1969, high performance computing leader"},
+    {"url": "https://www.amd.com/en/products/accelerators/instinct.html", "type": "official", "reliability": "high", "content": "Instinct MI350 series details, CDNA 4 architecture, HBM3E, MXFP4/MXFP6 support"},
+    {"url": "https://www.amd.com/en/products/processors/server/epyc.html", "type": "official", "reliability": "high", "content": "EPYC 9005 series, 192 cores, vs Intel Xeon benchmarks"},
+    {"url": "https://ir.amd.com/news-events/press-releases", "type": "official", "reliability": "high", "content": "Recent press releases (dates visible but content limited)"}
+  ],
+  "collection_date": "2026-05-16",
+  "collector_confidence": 0.82,
+  "notes": "AMD is the second most important CoWoS/ABF customer after NVIDIA. Its Instinct MI series GPU shipments directly impact ABF substrate demand. EPYC server CPU growth also contributes to high-end substrate consumption. Data partially from official website, financials from public knowledge."
+}

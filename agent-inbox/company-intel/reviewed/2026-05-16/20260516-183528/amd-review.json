@@ -1,0 +1,54 @@
+{
+  "company_name": "AMD",
+  "review_date": "2026-05-16",
+  "reviewer": "automated-pipeline",
+  "run_id": "20260516-183528",
+  "hard_checks": {
+    "has_company_name": true,
+    "has_category": true,
+    "has_abf_relation": true,
+    "has_business_overview": true,
+    "has_market_data": true,
+    "has_swot": true,
+    "has_tracking_priority": true,
+    "has_source_quality": true,
+    "has_import_decision": true,
+    "has_data_sources": true,
+    "has_collection_date": true,
+    "has_collector_confidence": true,
+    "all_passed": true
+  },
+  "scoring": {
+    "abf_relevance": {
+      "score": 28,
+      "max": 30,
+      "notes": "Second largest CoWoS customer after NVIDIA. MI300X/MI350X accelerators drive significant ABF demand."
+    },
+    "data_completeness": {
+      "score": 22,
+      "max": 25,
+      "notes": "All major fields present. Product portfolio well documented from official sources."
+    },
+    "source_quality": {
+      "score": 16,
+      "max": 20,
+      "notes": "4 AMD official URLs successfully accessed. T2 rating."
+    },
+    "financial_data": {
+      "score": 11,
+      "max": 15,
+      "notes": "Revenue (~$28-30B) and market cap (~$200B) approximate. Exact quarterly figures not retrieved."
+    },
+    "swot_quality": {
+      "score": 9,
+      "max": 10,
+      "notes": "Comprehensive SWOT covering ROCm ecosystem, server CPU gains, and CoWoS allocation challenges."
+    },
+    "total": 86,
+    "max": 100
+  },
+  "source_quality": "T2",
+  "decision": "import_ready",
+  "confidence": 0.82,
+  "reviewer_notes": "AMD is the second most important ABF demand driver via Instinct GPU CoWoS packaging. EPYC server CPU growth also contributes to substrate consumption. Official website data confirmed product details."
+}

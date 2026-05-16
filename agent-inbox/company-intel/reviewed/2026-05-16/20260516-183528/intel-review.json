@@ -1,0 +1,54 @@
+{
+  "company_name": "Intel",
+  "review_date": "2026-05-16",
+  "reviewer": "automated-pipeline",
+  "run_id": "20260516-183528",
+  "hard_checks": {
+    "has_company_name": true,
+    "has_category": true,
+    "has_abf_relation": true,
+    "has_business_overview": true,
+    "has_market_data": true,
+    "has_swot": true,
+    "has_tracking_priority": true,
+    "has_source_quality": true,
+    "has_import_decision": true,
+    "has_data_sources": true,
+    "has_collection_date": true,
+    "has_collector_confidence": true,
+    "all_passed": true
+  },
+  "scoring": {
+    "abf_relevance": {
+      "score": 27,
+      "max": 30,
+      "notes": "Major ABF consumer for Xeon server CPUs and Core client CPUs. Also foundry/packaging provider using EMIB/Foveros."
+    },
+    "data_completeness": {
+      "score": 21,
+      "max": 25,
+      "notes": "All major fields present. Some data limited by geo-blocking of Intel website."
+    },
+    "source_quality": {
+      "score": 14,
+      "max": 20,
+      "notes": "3 URLs confirmed but content limited due to geo-blocking. T2 rating with lower confidence."
+    },
+    "financial_data": {
+      "score": 10,
+      "max": 15,
+      "notes": "Revenue (~$52-55B) and market cap (~$100-120B) approximate. Limited direct source verification."
+    },
+    "swot_quality": {
+      "score": 9,
+      "max": 10,
+      "notes": "Comprehensive SWOT covering foundry strategy, CHIPS Act, and competitive challenges."
+    },
+    "total": 81,
+    "max": 100
+  },
+  "source_quality": "T2",
+  "decision": "import_ready",
+  "confidence": 0.78,
+  "reviewer_notes": "Intel is unique as both ABF consumer and advanced packaging provider. Foundry strategy could diversify ABF supply chain. Score slightly lower due to limited web access to Intel's official pages (geo-blocking)."
+}

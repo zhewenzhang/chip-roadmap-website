@@ -1,0 +1,80 @@
+{
+  "company_name": "Intel",
+  "full_name": "Intel Corporation",
+  "ticker": "INTC",
+  "headquarters": "Santa Clara, California, USA",
+  "founded": 1968,
+  "ceo": "Lip-Bu Tan (since 2025)",
+  "category": "IDM / Foundry / ABF Customer",
+  "priority": "P0",
+  "abf_relation": "Intel is a major consumer of ABF substrates for its server CPUs (Xeon), client CPUs (Core Ultra), and AI accelerators (Gaudi). Intel also operates its own foundry business (Intel Foundry Services) and uses advanced packaging technologies (EMIB, Foveros) that require ABF substrates. As both a chip designer and foundry, Intel impacts ABF demand from multiple angles.",
+  "business_overview": {
+    "segments": ["Client Computing Group (CCG)", "Data Center and AI (DCAI)", "Network and Edge (NEX)", "Intel Foundry Services (IFS)", "Mobileye", "Altera (FPGA)"],
+    "primary_business": "Designs and manufactures CPUs, GPUs, AI accelerators, FPGAs, and networking chips. Operates as both IDM and foundry provider. Transitioning to foundry-first strategy under Lip-Bu Tan.",
+    "key_products": ["Xeon 6 (Granite Rapids/Sierra Forest)", "Core Ultra 200 series (Arrow Lake)", "Gaudi 3 AI accelerator", "Arc GPUs", "Agilex FPGAs", "Intel 18A process node", "EMIB/Foveros 3D packaging"],
+    "manufacturing_partners": ["Self-manufactured (Intel fabs)", "TSMC (some tiles/chiplets)", "Amkor/ASE (some packaging)", "Multiple ABF substrate suppliers"]
+  },
+  "market_data": {
+    "market_cap_usd": "~$100-120 billion (as of 2026)",
+    "revenue_2025_usd": "~$52-55 billion (est. FY2025)",
+    "data_center_revenue_pct": "~30%",
+    "revenue_growth_yoy": "~5-10%",
+    "gross_margin": "~40-45%",
+    "employees": "~110,000+",
+    "fiscal_year_end": "December"
+  },
+  "cowos_abf_impact": {
+    "cowos_demand_driver": "Intel uses its own advanced packaging (EMIB for Ponte Vecchio, Foveros for Meteor Lake) which consume ABF substrates. Xeon server CPUs are traditional large-format ABF substrate consumers. Gaudi AI accelerators use CoWoS-like packaging.",
+    "estimated_cowos_wafers_monthly": "N/A - Intel uses own packaging (EMIB/Foveros), not TSMC CoWoS for most products",
+    "abf_substrate_consumption": "Very High - Xeon CPUs are among the largest consumers of traditional ABF substrates; each Xeon Scalable processor uses 14-18 layer substrates",
+    "substrate_suppliers": ["Ibiden", "Shinko Electric", "Unimicron", "AT&S", "Samsung Electro-Mechanics", "Nan Ya PCB"],
+    "supply_chain_risk": "Intel's server CPU volume creates steady ABF demand. Foundry customers using Intel packaging could diversify ABF substrate demand away from TSMC-centric supply chain."
+  },
+  "swot": {
+    "strengths": [
+      "Only Western company with leading-edge logic fabs (Intel 18A)",
+      "Dominant x86 server CPU installed base",
+      "Advanced packaging capabilities (EMIB, Foveros, Hybrid Bonding)",
+      "Foundry services offering to external customers",
+      "Strong US government relationships and CHIPS Act funding"
+    ],
+    "weaknesses": [
+      "Lost server CPU market share to AMD EPYC consistently",
+      "Foundry business still not profitable",
+      "Process technology behind TSMC (Intel 7/4/3 vs TSMC N3/N2)",
+      "Gaudi AI accelerator market share minimal vs NVIDIA/AMD",
+      "High operating expenses and restructuring costs"
+    ],
+    "opportunities": [
+      "Intel 18A could be competitive foundry node",
+      "CHIPS Act subsidies ($8.5B+ in grants)",
+      "US/EU demand for supply chain diversification",
+      "Foundry customers seeking TSMC alternative",
+      "AI inference at edge with Core Ultra NPUs"
+    ],
+    "threats": [
+      "AMD EPYC continuing to gain server share",
+      "TSMC N2/A16 maintaining technology lead",
+      "NVIDIA/AMD dominance in AI accelerators",
+      "Qualcomm/MediaTek competing in client PC with Arm chips",
+      "Samsung Foundry and Rapidus as additional competitors"
+    ]
+  },
+  "financials": {
+    "currency": "USD",
+    "source": "Intel Xeon product page, industry knowledge",
+    "confidence": "medium",
+    "note": "Exact quarterly figures not retrieved due to web access limitations. Revenue and market cap are approximate."
+  },
+  "tracking_priority": "high",
+  "source_quality": "T2",
+  "import_decision": "import_ready",
+  "data_sources": [
+    {"url": "https://www.intel.com/content/www/us/en/products/details/processors/xeon.html", "type": "official", "reliability": "high", "content": "Xeon processor product page (limited content due to geo-blocking)"},
+    {"url": "https://www.intel.com/content/www/us/en/about.html", "type": "official", "reliability": "high", "content": "Corporate overview page (fetch failed but URL confirmed)"},
+    {"url": "https://en.wikipedia.org/wiki/Intel", "type": "reference", "reliability": "medium", "content": "Wikipedia page (blocked by network policy)"}
+  ],
+  "collection_date": "2026-05-16",
+  "collector_confidence": 0.78,
+  "notes": "Intel is a unique case as both ABF substrate consumer (Xeon, Core) and advanced packaging provider (EMIB, Foveros). Its foundry strategy could shift ABF demand patterns. Network access to Intel's website was limited (geo-blocking observed). Financial data based on public knowledge."
+}

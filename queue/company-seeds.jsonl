@@ -25,3 +25,6 @@
 {"company": "Fujitsu", "category": "ABF Substrate Materials / Electronics", "priority": "P0", "status": "reviewed", "notes": "Reviewed in run 20260516-163532, score 62, needs_human_check, T4 source quality. ABF technology inventor but NOT supplier."}
 {"company": "Showa Denko (Resonac Holdings)", "category": "ABF Substrate Materials / Chemicals", "priority": "P1", "status": "reviewed", "notes": "Reviewed in run 20260516-163532, score 75, import_ready, T2 source quality. Key semiconductor materials supplier."}
 {"company": "Mitsui Chemicals", "category": "ABF Substrate Materials / Chemicals", "priority": "P1", "status": "rejected", "notes": "Reviewed in run 20260516-163532, score 52, rejected, T4 source quality. Insufficient verified data."}
+{"company": "NVIDIA", "category": "Fabless / CoWoS Customer", "priority": "P0", "status": "reviewed", "notes": "Selected in run 20260516-183528"}
+{"company": "AMD", "category": "Fabless / CoWoS Customer", "priority": "P0", "status": "reviewed", "notes": "Selected in run 20260516-183528"}
+{"company": "Intel", "category": "IDM / Foundry / ABF Customer", "priority": "P0", "status": "reviewed", "notes": "Selected in run 20260516-183528"}
